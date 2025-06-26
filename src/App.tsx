@@ -6,8 +6,11 @@ import { Reviews } from './components/Reviews';
 import { Timeline } from './components/Timeline';
 import { Statistics } from './components/Statistics';
 import { Settings } from './components/Settings';
+import { Login } from './components/Login';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useFirestoreSync } from './hooks/useFirestoreSync';
 import { AppProvider } from './context/AppContext';
+import { useAuth } from './context/AuthContext';
 
 export type MediaType = 'games' | 'anime' | 'series' | 'books' | 'movies';
 export type Status = 'completed' | 'in-progress' | 'dropped' | 'planned';
@@ -61,6 +64,7 @@ export interface UserSettings {
 export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'settings';
 
 function App() {
+  const { user, loading } = useAuth();
   const [activePage, setActivePage] = useState<ActivePage>('dashboard');
   const [mediaItems, setMediaItems] = useLocalStorage<MediaItem[]>('nerdlog-media', []);
   const [reviews, setReviews] = useLocalStorage<Review[]>('nerdlog-reviews', []);
@@ -70,6 +74,11 @@ function App() {
     theme: 'dark',
     defaultLibrarySort: 'updatedAt'
   });
+
+  useFirestoreSync('mediaItems', mediaItems, setMediaItems);
+  useFirestoreSync('reviews', reviews, setReviews);
+  useFirestoreSync('milestones', milestones, setMilestones);
+  useFirestoreSync('settings', settings, setSettings);
 
   const contextValue = {
     mediaItems,
@@ -83,6 +92,14 @@ function App() {
     activePage,
     setActivePage
   };
+
+  if (loading) {
+    return null;
+  }
+
+  if (!user) {
+    return <Login />;
+  }
 
   const renderPage = () => {
     switch (activePage) {
