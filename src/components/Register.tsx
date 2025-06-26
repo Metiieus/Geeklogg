@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
 
 interface RegisterProps {
   onCancel: () => void;
@@ -21,16 +24,37 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     }));
   };
 
+  const { register, logout } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você implementaria a lógica de registro
-    console.log('Dados de registro:', formData);
+    try {
+      await register(formData.email, formData.senha);
+
+      const uid = auth.currentUser?.uid;
+      if (uid) {
+        const settings = {
+          name: formData.apelido,
+          theme: 'dark',
+          defaultLibrarySort: 'updatedAt'
+        };
+        await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
+          value: settings
+        });
+        window.localStorage.setItem('nerdlog-settings', JSON.stringify(settings));
+      }
+
+      await logout();
+      onCancel();
+    } catch (error) {
+      console.error('Erro ao registrar usuário:', error);
+    }
   };
 
   return (
     <div
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: 'url(\'/home/ubuntu/upload/transferir.jpeg\')' }}
+      style={{ backgroundImage: "url('https://storage.googleapis.com/images-etherium/geek%20log.png')" }}
     >
       <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay para escurecer a imagem */}
       <div className="relative z-10 p-8 rounded-xl shadow-lg backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 border border-gray-200 border-opacity-20 text-white w-96 max-h-[90vh] overflow-y-auto">
