@@ -7,10 +7,17 @@ export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showRegister, setShowRegister] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
+    try {
+      setError(null);
+      await login(email, password);
+    } catch (err: any) {
+      console.error('Falha no login:', err);
+      setError(err.message || 'Erro ao fazer login');
+    }
   };
 
   if (showRegister) {
@@ -27,6 +34,11 @@ export const Login: React.FC = () => {
         <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="text-red-400 text-center">
+              {error}
+            </div>
+          )}
           <div className="relative">
             <input
               type="email"
