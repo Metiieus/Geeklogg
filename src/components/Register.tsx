@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
 
 interface RegisterProps {
   onCancel: () => void;
@@ -21,10 +24,29 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     }));
   };
 
+  const { register, logout } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você implementaria a lógica de registro
-    console.log('Dados de registro:', formData);
+    try {
+      await register(formData.email, formData.senha);
+
+      const uid = auth.currentUser?.uid;
+      if (uid) {
+        await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
+          value: {
+            name: formData.apelido,
+            theme: 'dark',
+            defaultLibrarySort: 'updatedAt'
+          }
+        });
+      }
+
+      await logout();
+      onCancel();
+    } catch (error) {
+      console.error('Erro ao registrar usuário:', error);
+    }
   };
 
   return (
