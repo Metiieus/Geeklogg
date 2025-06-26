@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID'
+  apiKey: 'AIzaSyAOWlubX-pUfAmb0hDpL8YIvrIvlW4xAc4',
+  authDomain: 'geeklog-22d87.firebaseapp.com',
+  projectId: 'geeklog-22d87',
+  storageBucket: 'geeklog-22d87.firebasestorage.app',
+  messagingSenderId: '916719631860',
+  appId: '1:916719631860:web:b0754c1620547c4b2fcda1'
 };
 
 const app = initializeApp(firebaseConfig);
