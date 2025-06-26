@@ -15,6 +15,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     email: '',
     senha: ''
   });
+  const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,8 +47,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
 
       await logout();
       onCancel();
-    } catch (error) {
-      console.error('Erro ao registrar usuário:', error);
+    } catch (err: any) {
+      console.error('Erro ao registrar usuário:', err);
+      setError(err.message || 'Erro ao registrar usuário');
     }
   };
 
@@ -61,6 +63,11 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
         <h2 className="text-3xl font-bold text-center mb-6">Registro</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="text-red-400 text-center">
+              {error}
+            </div>
+          )}
           <div className="relative">
             <input
               type="text"
