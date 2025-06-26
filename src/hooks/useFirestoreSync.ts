@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 
 export function useFirestoreSync<T>(key: string, value: T, setValue: (v: T) => void) {
   const { user } = useAuth();
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -14,16 +15,17 @@ export function useFirestoreSync<T>(key: string, value: T, setValue: (v: T) => v
       if (snap.exists()) {
         setValue(snap.data().value as T);
       }
+      setInitialized(true);
     };
     fetchData();
   }, [user]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !initialized) return;
     const saveData = async () => {
       const ref = doc(db, 'users', user.uid, 'data', key);
       await setDoc(ref, { value });
     };
     saveData();
-  }, [user, value]);
+  }, [user, value, initialized]);
 }
