@@ -6,6 +6,7 @@ import {
   Clock, 
   BarChart3, 
   Settings,
+  LogOut,
   Gamepad2,
   Film,
   Tv,
@@ -13,6 +14,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { ActivePage } from '../App';
 
 interface NavItem {
@@ -32,6 +34,7 @@ const navigationItems: NavItem[] = [
 
 export const Sidebar: React.FC = () => {
   const { activePage, setActivePage, settings } = useAppContext();
+  const { logout } = useAuth();
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-20 bg-slate-900/95 backdrop-blur-sm border-r border-slate-800 flex flex-col items-center py-6 z-50">
@@ -74,8 +77,8 @@ export const Sidebar: React.FC = () => {
         ))}
       </nav>
 
-      {/* User Avatar */}
-      <div className="mt-auto">
+      {/* User Avatar and Logout */}
+      <div className="mt-auto flex flex-col items-center gap-4">
         <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-600 rounded-full flex items-center justify-center text-white font-medium text-sm overflow-hidden">
           {settings.avatar ? (
             <img src={settings.avatar} alt={settings.name} className="w-full h-full object-cover" />
@@ -83,6 +86,13 @@ export const Sidebar: React.FC = () => {
             settings.name.charAt(0).toUpperCase()
           )}
         </div>
+        <button
+          onClick={logout}
+          title="Sair"
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/50"
+        >
+          <LogOut size={20} />
+        </button>
       </div>
     </aside>
   );

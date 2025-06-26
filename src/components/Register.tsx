@@ -33,13 +33,15 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
 
       const uid = auth.currentUser?.uid;
       if (uid) {
+        const settings = {
+          name: formData.apelido,
+          theme: 'dark',
+          defaultLibrarySort: 'updatedAt'
+        };
         await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
-          value: {
-            name: formData.apelido,
-            theme: 'dark',
-            defaultLibrarySort: 'updatedAt'
-          }
+          value: settings
         });
+        window.localStorage.setItem('nerdlog-settings', JSON.stringify(settings));
       }
 
       await logout();
