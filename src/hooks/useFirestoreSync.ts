@@ -1,31 +1,39 @@
-import { useEffect, useState } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import { useAuth } from '../context/AuthContext';
+import { auth, db } from '../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
-export function useFirestoreSync<T>(key: string, value: T, setValue: (v: T) => void) {
-  const { user } = useAuth();
-  const [initialized, setInitialized] = useState(false);
+export const registerUser = async (nome: string, apelido: string, dataNascimento: string, email: string, senha: string) => {
+  console.log('🚀 Iniciando cadastro no Firebase Auth...');
 
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
-      const ref = doc(db, 'users', user.uid, 'data', key);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        setValue(snap.data().value as T);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+  const user = userCredential.user;
+
+  console.log('✅ Usuário criado com UID:', user.uid);
+
+  await new Promise(resolve => {
+    console.log('⏳ Aguardando confirmação de autenticação...');
+    const unsubscribe = auth.onAuthStateChanged(firebaseUser => {
+      console.log('🧐 Firebase authStateChanged: ', firebaseUser?.uid);
+      if (firebaseUser && firebaseUser.uid === user.uid) {
+        console.log('✅ Autenticação confirmada para UID:', firebaseUser.uid);
+        unsubscribe();
+        resolve(firebaseUser);
       }
-      setInitialized(true);
-    };
-    fetchData();
-  }, [user]);
+    });
+  });
 
-  useEffect(() => {
-    if (!user || !initialized) return;
-    const saveData = async () => {
-      const ref = doc(db, 'users', user.uid, 'data', key);
-      await setDoc(ref, { value });
-    };
-    saveData();
-  }, [user, value, initialized]);
-}
+  console.log('✍️ Gravando dados do usuário no Firestore...');
+
+  await setDoc(doc(db, 'users', user.uid), {
+    uid: user.uid,
+    nome,
+    apelido,
+    dataNascimento,
+    email,
+    createdAt: serverTimestamp(),
+  });
+
+  console.log('✅ Dados do usuário salvos no Firestore com sucesso.');
+
+  return user;
+};
