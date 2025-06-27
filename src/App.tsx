@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
+import { MobileNav } from './components/MobileNav';
 import { Dashboard } from './components/Dashboard';
 import { Library } from './components/Library';
 import { Reviews } from './components/Reviews';
 import { Timeline } from './components/Timeline';
 import { Statistics } from './components/Statistics';
 import { Settings } from './components/Settings';
+import { Profile } from './components/Profile';
 import { Login } from './components/Login';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useFirestoreSync } from './hooks/useFirestoreSync';
@@ -54,14 +56,26 @@ export interface Milestone {
   createdAt: string;
 }
 
+export interface FavoriteItem {
+  id: string;
+  name: string;
+  image?: string;
+}
+
 export interface UserSettings {
   name: string;
   avatar?: string;
+  bio?: string;
+  favorites: {
+    characters: FavoriteItem[];
+    games: FavoriteItem[];
+    movies: FavoriteItem[];
+  };
   theme: 'dark' | 'light';
   defaultLibrarySort: string;
 }
 
-export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'settings';
+export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'profile' | 'settings';
 
 function App() {
   const { user, loading } = useAuth();
@@ -71,6 +85,12 @@ function App() {
   const [milestones, setMilestones] = useLocalStorage<Milestone[]>('nerdlog-milestones', []);
   const [settings, setSettings] = useLocalStorage<UserSettings>('nerdlog-settings', {
     name: 'Nerd',
+    bio: '',
+    favorites: {
+      characters: [],
+      games: [],
+      movies: []
+    },
     theme: 'dark',
     defaultLibrarySort: 'updatedAt'
   });
@@ -113,6 +133,8 @@ function App() {
         return <Timeline />;
       case 'statistics':
         return <Statistics />;
+      case 'profile':
+        return <Profile />;
       case 'settings':
         return <Settings />;
       default:
@@ -125,12 +147,13 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="flex">
           <Sidebar />
-          <main className="flex-1 ml-20">
+          <main className="flex-1 sm:ml-20 pb-16 sm:pb-0">
             <div className="p-6">
               {renderPage()}
             </div>
           </main>
         </div>
+        <MobileNav />
       </div>
     </AppProvider>
   );
