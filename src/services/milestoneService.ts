@@ -6,6 +6,7 @@ import { getUserId, uploadFileToStorage, deleteFileFromStorage, removeUndefinedF
 export async function getMilestones(): Promise<Milestone[]> {
   const uid = getUserId();
   const snap = await getDocs(collection(db, 'users', uid, 'milestones'));
+  console.log('📥 Milestones carregadas:', snap.docs.length);
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<Milestone, 'id'>) }));
 }
 
@@ -17,25 +18,23 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
-  const toSave: Omit<Milestone, 'id'> = removeUndefinedFields({
-    ...rest,
-    createdAt: now
-  }) as Omit<Milestone, 'id'>;
   const docRef = await addDoc(collection(db, 'users', uid, 'milestones'), toSave);
   console.log('📝 Marco criado com ID:', docRef.id);
 
+  let imageUrl = '';
+
   if (imageFile instanceof File) {
     try {
-      const url = await uploadFileToStorage(`users/${uid}/milestones/${docRef.id}`, imageFile);
-      await updateDoc(doc(db, 'users', uid, 'milestones', docRef.id), { image: url });
-      console.log('✅ Imagem do marco enviada');
-      (toSave as Milestone).image = url;
+      console.log('🚀 Iniciando upload da imagem do marco...');
+      imageUrl = await uploadFileToStorage(`users/${uid}/milestones/${docRef.id}`, imageFile);
+      await updateDoc(doc(db, 'users', uid, 'milestones', docRef.id), { image: imageUrl });
+      console.log('✅ Imagem do marco enviada e atualizada no Firestore.');
     } catch (err) {
-      console.error('Erro ao enviar imagem do marco', err);
+      console.error('❌ Erro ao enviar imagem do marco', err);
     }
   }
 
-  return { id: docRef.id, ...(toSave as Milestone) };
+  return { ...toSave, id: docRef.id, image: imageUrl };
 }
 
 export interface UpdateMilestoneData extends Partial<Omit<Milestone, 'id'>> {
@@ -48,16 +47,18 @@ export async function updateMilestone(id: string, data: UpdateMilestoneData): Pr
     ...data
   });
   delete (toUpdate as { imageFile?: File }).imageFile;
+
   await setDoc(doc(db, 'users', uid, 'milestones', id), toUpdate, { merge: true });
-  console.log('📝 Marco atualizado:', id);
+  console.log('📝 Marco atualizado no Firestore:', id);
 
   if (data.imageFile instanceof File) {
     try {
+      console.log('🚀 Iniciando upload da nova imagem do marco...');
       const url = await uploadFileToStorage(`users/${uid}/milestones/${id}`, data.imageFile);
       await updateDoc(doc(db, 'users', uid, 'milestones', id), { image: url });
-      console.log('✅ Imagem do marco atualizada');
+      console.log('✅ Nova imagem do marco enviada e atualizada no Firestore.');
     } catch (err) {
-      console.error('Erro ao atualizar imagem do marco', err);
+      console.error('❌ Erro ao atualizar imagem do marco', err);
     }
   }
 }
@@ -65,7 +66,8 @@ export async function updateMilestone(id: string, data: UpdateMilestoneData): Pr
 export async function deleteMilestone(id: string): Promise<void> {
   const uid = getUserId();
   await deleteDoc(doc(db, 'users', uid, 'milestones', id));
-  console.log('🗑️ Marco removido:', id);
+  console.log('🗑️ Marco removido do Firestore:', id);
+
   await deleteFileFromStorage(`users/${uid}/milestones/${id}`);
+  console.log('🗑️ Imagem do marco removida do Storage.');
 }
-  
