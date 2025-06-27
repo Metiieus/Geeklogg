@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
+import { registerUser } from '../services/authService';
 
 interface RegisterProps {
   onCancel: () => void;
@@ -25,12 +26,18 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     }));
   };
 
-  const { register, logout } = useAuth();
+  const { logout } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(formData.email, formData.senha);
+      await registerUser(
+        formData.nome,
+        formData.apelido,
+        formData.dataNascimento,
+        formData.email,
+        formData.senha
+      );
 
       const uid = auth.currentUser?.uid;
       if (uid) {
