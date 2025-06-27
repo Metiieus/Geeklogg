@@ -87,16 +87,29 @@ export const Settings: React.FC = () => {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               URL do Avatar (opcional)
             </label>
-            <input
-              type="url"
-              value={localSettings.avatar || ''}
-              onChange={(e) => setLocalSettings(prev => ({ ...prev, avatar: e.target.value }))}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="https://exemplo.com/avatar.jpg"
-            />
-          </div>
+          <input
+            type="url"
+            value={localSettings.avatar || ''}
+            onChange={(e) => setLocalSettings(prev => ({ ...prev, avatar: e.target.value }))}
+            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="https://exemplo.com/avatar.jpg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Biografia
+          </label>
+          <textarea
+            value={localSettings.bio || ''}
+            onChange={(e) => setLocalSettings(prev => ({ ...prev, bio: e.target.value }))}
+            rows={4}
+            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+            placeholder="Fale um pouco sobre você"
+          />
         </div>
       </div>
+    </div>
 
       {/* Theme Settings */}
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
