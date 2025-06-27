@@ -50,7 +50,6 @@ export const Settings: React.FC = () => {
   };
 
   const handleDeleteAllData = () => {
-    localStorage.clear();
     window.location.reload();
   };
 
