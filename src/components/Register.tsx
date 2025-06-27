@@ -39,7 +39,18 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
       const user = userCredential.user;
       console.log('✅ Usuário criado com UID:', user.uid);
 
-      // 2. Gravar os dados no Firestore
+      // 2. Exibir dados antes da gravação
+      console.log('📦 Firebase Project ID:', db.app.options.projectId);
+      console.log('🛠️ Dados a serem gravados:', {
+        uid: user.uid,
+        nome: formData.nome,
+        apelido: formData.apelido,
+        dataNascimento: formData.dataNascimento,
+        email: formData.email,
+        createdAt: new Date().toISOString()
+      });
+
+      // 3. Gravar os dados no Firestore
       console.log('✍️ Gravando dados no Firestore...');
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
@@ -51,11 +62,11 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
       });
       console.log('🎉 Dados do usuário salvos com sucesso no Firestore!');
 
-      // 3. Deslogar o usuário após cadastro (caso faça parte do seu fluxo)
+      // 4. Deslogar o usuário após cadastro (caso faça parte do seu fluxo)
       await logout();
       console.log('👋 Usuário deslogado após cadastro.');
 
-      // 4. Voltar para a tela inicial
+      // 5. Voltar para a tela inicial
       onCancel();
 
     } catch (err: any) {
