@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import { Dashboard } from './components/Dashboard';
@@ -9,7 +9,16 @@ import { Statistics } from './components/Statistics';
 import { Settings } from './components/Settings';
 import { Profile } from './components/Profile';
 import { Login } from './components/Login';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import {
+  getUserMediaItems,
+  saveUserMediaItems,
+  getUserReviews,
+  saveUserReviews,
+  getUserMilestones,
+  saveUserMilestones,
+  getUserSettings,
+  saveUserSettings,
+} from './firebaseService';
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
 
@@ -79,10 +88,10 @@ export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'sta
 function App() {
   const { user, loading } = useAuth();
   const [activePage, setActivePage] = useState<ActivePage>('dashboard');
-  const [mediaItems, setMediaItems] = useLocalStorage<MediaItem[]>('nerdlog-media', []);
-  const [reviews, setReviews] = useLocalStorage<Review[]>('nerdlog-reviews', []);
-  const [milestones, setMilestones] = useLocalStorage<Milestone[]>('nerdlog-milestones', []);
-  const [settings, setSettings] = useLocalStorage<UserSettings>('nerdlog-settings', {
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [settings, setSettings] = useState<UserSettings>({
     name: 'Nerd',
     bio: '',
     favorites: {
@@ -93,6 +102,38 @@ function App() {
     theme: 'dark',
     defaultLibrarySort: 'updatedAt'
   });
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const [mItems, revs, miles, prefs] = await Promise.all([
+        getUserMediaItems(user.uid),
+        getUserReviews(user.uid),
+        getUserMilestones(user.uid),
+        getUserSettings(user.uid),
+      ]);
+      setMediaItems(mItems);
+      setReviews(revs);
+      setMilestones(miles);
+      if (prefs) setSettings(prefs);
+    })();
+  }, [user]);
+
+  useEffect(() => {
+    if (user) saveUserMediaItems(user.uid, mediaItems);
+  }, [user, mediaItems]);
+
+  useEffect(() => {
+    if (user) saveUserReviews(user.uid, reviews);
+  }, [user, reviews]);
+
+  useEffect(() => {
+    if (user) saveUserMilestones(user.uid, milestones);
+  }, [user, milestones]);
+
+  useEffect(() => {
+    if (user) saveUserSettings(user.uid, settings);
+  }, [user, settings]);
 
 
   const contextValue = {

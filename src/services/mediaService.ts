@@ -9,28 +9,10 @@ function getUserId(): string {
   return uid;
 }
 
-const LOCAL_KEY = 'nerdlog-media';
-
-function loadLocal(): MediaItem[] {
-  const data = localStorage.getItem(LOCAL_KEY);
-  return data ? (JSON.parse(data) as MediaItem[]) : [];
-}
-
-function saveLocal(items: MediaItem[]) {
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
-}
-
 export async function getMedias(): Promise<MediaItem[]> {
-  const local = loadLocal();
-  try {
-    const uid = getUserId();
-    const snapshot = await getDocs(collection(db, 'users', uid, 'medias'));
-    const items: MediaItem[] = snapshot.docs.map(d => ({ id: d.id, ...(d.data() as Omit<MediaItem, 'id'>) }));
-    saveLocal(items);
-    return items;
-  } catch {
-    return local;
-  }
+  const uid = getUserId();
+  const snapshot = await getDocs(collection(db, 'users', uid, 'medias'));
+  return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as Omit<MediaItem, 'id'>) }));
 }
 
 export interface AddMediaData extends Omit<MediaItem, 'id' | 'createdAt' | 'updatedAt' | 'cover'> {
@@ -61,11 +43,7 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
       console.error('Erro ao fazer upload da imagem', err);
     }
   }
-  const item: MediaItem = { id: docRef.id, ...toSave, cover: coverUrl };
-  const local = loadLocal();
-  local.push(item);
-  saveLocal(local);
-  return item;
+  return { id: docRef.id, ...toSave, cover: coverUrl };
 }
 
 export interface UpdateMediaData extends Partial<Omit<MediaItem, 'id'>> {
@@ -91,18 +69,12 @@ export async function updateMedia(id: string, data: UpdateMediaData): Promise<vo
       console.error('Erro ao atualizar imagem de capa', err);
     }
   }
-  const local = loadLocal();
-  const idx = local.findIndex(m => m.id === id);
-  if (idx !== -1) {
-    local[idx] = { ...local[idx], ...(toUpdate as Partial<MediaItem>), id, cover: coverUrl ?? local[idx].cover } as MediaItem;
-    saveLocal(local);
-  }
+  return;
 }
 
 export async function deleteMedia(id: string): Promise<void> {
   const uid = getUserId();
   await deleteDoc(doc(db, 'users', uid, 'medias', id));
   await deleteObject(ref(storage, `users/${uid}/covers/${id}.jpg`)).catch(() => {});
-  const local = loadLocal();
-  saveLocal(local.filter(m => m.id !== id));
+  return;
 }
