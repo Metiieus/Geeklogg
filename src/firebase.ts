@@ -15,5 +15,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+// The project uses a Firestore database with ID "geeklog"
+export const db = getFirestore(app, 'geeklog');
 export const storage = getStorage(app);
