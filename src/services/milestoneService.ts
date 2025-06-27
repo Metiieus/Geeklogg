@@ -61,3 +61,4 @@ export async function deleteMilestone(id: string): Promise<void> {
   const local = loadLocal();
   saveLocal(local.filter(m => m.id !== id));
 }
+  
