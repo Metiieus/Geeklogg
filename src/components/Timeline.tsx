@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { Milestone } from '../App';
 import { AddMilestoneModal } from './modals/AddMilestoneModal';
 import { EditMilestoneModal } from './modals/EditMilestoneModal';
+import { deleteMilestone } from '../services/milestoneService';
 
 export const Timeline: React.FC = () => {
   const { milestones, setMilestones, mediaItems } = useAppContext();
@@ -12,8 +13,9 @@ export const Timeline: React.FC = () => {
 
   const sortedMilestones = milestones.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const handleDeleteMilestone = (milestoneId: string) => {
+  const handleDeleteMilestone = async (milestoneId: string) => {
     if (confirm('Tem certeza que deseja excluir este marco?')) {
+      await deleteMilestone(milestoneId);
       setMilestones(milestones.filter(milestone => milestone.id !== milestoneId));
     }
   };

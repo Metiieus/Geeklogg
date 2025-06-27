@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { Review } from '../App';
 import { AddReviewModal } from './modals/AddReviewModal';
 import { EditReviewModal } from './modals/EditReviewModal';
+import { deleteReview } from '../services/reviewService';
 
 export const Reviews: React.FC = () => {
   const { reviews, setReviews, mediaItems } = useAppContext();
@@ -18,8 +19,9 @@ export const Reviews: React.FC = () => {
            (media && media.title.toLowerCase().includes(searchQuery.toLowerCase()));
   });
 
-  const handleDeleteReview = (reviewId: string) => {
+  const handleDeleteReview = async (reviewId: string) => {
     if (confirm('Tem certeza que deseja excluir esta resenha?')) {
+      await deleteReview(reviewId);
       setReviews(reviews.filter(review => review.id !== reviewId));
     }
   };
