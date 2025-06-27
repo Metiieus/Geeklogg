@@ -40,15 +40,26 @@ export interface AddMediaData extends Omit<MediaItem, 'id' | 'createdAt' | 'upda
 export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   const uid = getUserId();
   const now = new Date().toISOString();
-  const toSave: Omit<MediaItem, 'id'> = { ...data, createdAt: now, updatedAt: now } as Omit<MediaItem, 'id'>;
+  const { coverFile, ...rest } = data;
+  const toSave: Omit<MediaItem, 'id'> = {
+    ...(rest as Omit<MediaItem, 'id'>),
+    createdAt: now,
+    updatedAt: now
+  };
   const col = collection(db, 'users', uid, 'medias');
   const docRef = await addDoc(col, toSave);
   let coverUrl: string | undefined = undefined;
-  if (data.coverFile) {
-    const storageRef = ref(storage, `users/${uid}/covers/${docRef.id}.jpg`);
-    await uploadBytes(storageRef, data.coverFile);
-    coverUrl = await getDownloadURL(storageRef);
-    await updateDoc(doc(db, 'users', uid, 'medias', docRef.id), { cover: coverUrl });
+  if (coverFile instanceof File) {
+    try {
+      const storageRef = ref(storage, `users/${uid}/covers/${docRef.id}.jpg`);
+      await uploadBytes(storageRef, coverFile);
+      coverUrl = await getDownloadURL(storageRef);
+      await updateDoc(doc(db, 'users', uid, 'medias', docRef.id), {
+        cover: coverUrl
+      });
+    } catch (err) {
+      console.error('Erro ao fazer upload da imagem', err);
+    }
   }
   const item: MediaItem = { id: docRef.id, ...toSave, cover: coverUrl };
   const local = loadLocal();
@@ -68,11 +79,17 @@ export async function updateMedia(id: string, data: UpdateMediaData): Promise<vo
   delete (toUpdate as { coverFile?: File }).coverFile;
   await setDoc(doc(db, 'users', uid, 'medias', id), toUpdate, { merge: true });
   let coverUrl: string | undefined;
-  if (data.coverFile) {
-    const storageRef = ref(storage, `users/${uid}/covers/${id}.jpg`);
-    await uploadBytes(storageRef, data.coverFile);
-    coverUrl = await getDownloadURL(storageRef);
-    await updateDoc(doc(db, 'users', uid, 'medias', id), { cover: coverUrl });
+  if (data.coverFile instanceof File) {
+    try {
+      const storageRef = ref(storage, `users/${uid}/covers/${id}.jpg`);
+      await uploadBytes(storageRef, data.coverFile);
+      coverUrl = await getDownloadURL(storageRef);
+      await updateDoc(doc(db, 'users', uid, 'medias', id), {
+        cover: coverUrl
+      });
+    } catch (err) {
+      console.error('Erro ao atualizar imagem de capa', err);
+    }
   }
   const local = loadLocal();
   const idx = local.findIndex(m => m.id === id);
