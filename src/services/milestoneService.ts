@@ -33,3 +33,4 @@ export async function deleteMilestone(id: string): Promise<void> {
   await deleteDoc(doc(db, 'users', uid, 'milestones', id));
   return;
 }
+  
