@@ -24,3 +24,8 @@ export async function deleteFileFromStorage(path: string): Promise<void> {
     console.error('Erro ao remover arquivo', err);
   }
 }
+
+export function removeUndefinedFields<T extends Record<string, any>>(obj: T): T {
+  const cleanedEntries = Object.entries(obj).filter(([, v]) => v !== undefined);
+  return Object.fromEntries(cleanedEntries) as T;
+}

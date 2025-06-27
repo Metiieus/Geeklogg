@@ -1,7 +1,12 @@
 import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Review } from '../App';
-import { getUserId, uploadFileToStorage, deleteFileFromStorage } from './utils';
+import {
+  getUserId,
+  uploadFileToStorage,
+  deleteFileFromStorage,
+  removeUndefinedFields
+} from './utils';
 
 export async function getReviews(): Promise<Review[]> {
   const uid = getUserId();
@@ -17,7 +22,12 @@ export async function addReview(data: AddReviewData): Promise<Review> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
-  const toSave: Omit<Review, 'id'> = { ...rest, isFavorite: rest.isFavorite ?? false, createdAt: now, updatedAt: now } as Omit<Review, 'id'>;
+  const toSave: Omit<Review, 'id'> = removeUndefinedFields({
+    ...rest,
+    isFavorite: rest.isFavorite ?? false,
+    createdAt: now,
+    updatedAt: now
+  }) as Omit<Review, 'id'>;
   const docRef = await addDoc(collection(db, 'users', uid, 'reviews'), toSave);
   console.log('📝 Review criada com ID:', docRef.id);
 
@@ -42,7 +52,10 @@ export interface UpdateReviewData extends Partial<Omit<Review, 'id'>> {
 export async function updateReview(id: string, data: UpdateReviewData): Promise<void> {
   const uid = getUserId();
   const now = new Date().toISOString();
-  const toUpdate: Record<string, unknown> = { ...data, updatedAt: now };
+  const toUpdate: Record<string, unknown> = removeUndefinedFields({
+    ...data,
+    updatedAt: now
+  });
   delete (toUpdate as { imageFile?: File }).imageFile;
   await setDoc(doc(db, 'users', uid, 'reviews', id), toUpdate, { merge: true });
   console.log('📝 Review atualizada:', id);
