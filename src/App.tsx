@@ -9,7 +9,6 @@ import { Statistics } from './components/Statistics';
 import { Settings } from './components/Settings';
 import { Profile } from './components/Profile';
 import { Login } from './components/Login';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
 
