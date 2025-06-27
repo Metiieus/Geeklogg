@@ -27,7 +27,7 @@ export const Login: React.FC = () => {
   return (
     <div
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('https://storage.googleapis.com/images-etherium/NERD%20LOG..png')" }}
+      style={{ backgroundImage: "url('https://storage.googleapis.com/images-etherium/NERD%20LOG.%20(1).png')" }}
     >
       <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay para escurecer a imagem */}
       <div className="relative z-10 p-8 rounded-xl shadow-lg backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 border border-gray-200 border-opacity-20 text-white w-96">
@@ -68,7 +68,7 @@ export const Login: React.FC = () => {
               htmlFor="password"
               className="absolute left-4 -top-3.5 text-gray-300 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-purple-500 peer-focus:text-sm"
             >
-              Password
+              Senha
             </label>
             <span className="absolute right-4 top-3 text-gray-400">&#x1F512;</span> {/* Ícone de cadeado */}
           </div>
@@ -76,9 +76,9 @@ export const Login: React.FC = () => {
           <div className="flex justify-between items-center text-sm">
             <label className="flex items-center gap-2">
               <input type="checkbox" className="form-checkbox text-purple-600 bg-gray-700 border-gray-600 rounded" />
-              Remember me
+              Lembre-me
             </label>
-            <a href="#" className="text-gray-300 hover:text-purple-400">Forgot Password?</a>
+            <a href="#" className="text-gray-300 hover:text-purple-400">Esqueceu a senha?</a>
           </div>
 
           <button
@@ -90,9 +90,9 @@ export const Login: React.FC = () => {
         </form>
 
         <p className="text-center text-sm mt-6">
-          Don't have an account?{' '}
+          Não tem uma conta?{' '}
           <button type="button" onClick={() => setShowRegister(true)} className="text-purple-400 hover:underline focus:outline-none">
-            Register
+            Cadastre-se
           </button>
         </p>
       </div>
