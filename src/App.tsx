@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import { Dashboard } from './components/Dashboard';
@@ -10,7 +10,6 @@ import { Settings } from './components/Settings';
 import { Profile } from './components/Profile';
 import { Login } from './components/Login';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { useFirestoreSync } from './hooks/useFirestoreSync';
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
 
@@ -95,10 +94,6 @@ function App() {
     defaultLibrarySort: 'updatedAt'
   });
 
-  useFirestoreSync('mediaItems', mediaItems, setMediaItems);
-  useFirestoreSync('reviews', reviews, setReviews);
-  useFirestoreSync('milestones', milestones, setMilestones);
-  useFirestoreSync('settings', settings, setSettings);
 
   const contextValue = {
     mediaItems,
