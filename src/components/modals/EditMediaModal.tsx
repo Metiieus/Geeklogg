@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Upload } from 'lucide-react';
 import { MediaItem, MediaType, Status } from '../../App';
+import { updateMedia } from '../../services/mediaService';
 
 interface EditMediaModalProps {
   item: MediaItem;
@@ -28,13 +29,29 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
     platform: item.platform || '',
     tags: item.tags.join(', '),
     externalLink: item.externalLink || '',
-    cover: item.cover || '',
+    coverPreview: item.cover || '',
+    coverFile: undefined as File | undefined,
     description: item.description || ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    const updateRes = await updateMedia(item.id, {
+      title: formData.title,
+      type: formData.type,
+      status: formData.status,
+      rating: formData.rating ? parseInt(formData.rating) : undefined,
+      hoursSpent: formData.hoursSpent ? parseFloat(formData.hoursSpent) : undefined,
+      startDate: formData.startDate || undefined,
+      endDate: formData.endDate || undefined,
+      platform: formData.platform || undefined,
+      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+      externalLink: formData.externalLink || undefined,
+      description: formData.description || undefined,
+      coverFile: formData.coverFile
+    });
+
     const updatedItem: MediaItem = {
       ...item,
       title: formData.title,
@@ -47,7 +64,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       platform: formData.platform || undefined,
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
       externalLink: formData.externalLink || undefined,
-      cover: formData.cover || undefined,
+      cover: updateRes.cover ?? item.cover,
       description: formData.description || undefined,
       updatedAt: new Date().toISOString()
     };
@@ -65,7 +82,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
-        setFormData(prev => ({ ...prev, cover: result }));
+        setFormData(prev => ({ ...prev, coverPreview: result, coverFile: file }));
       };
       reader.readAsDataURL(file);
     }
@@ -245,14 +262,6 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               Imagem de Capa
             </label>
             <div className="space-y-3">
-              <input
-                type="url"
-                value={formData.cover}
-                onChange={(e) => handleChange('cover', e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="https://exemplo.com/capa.jpg"
-              />
-              <div className="text-center text-slate-400">ou</div>
               <div className="flex items-center justify-center">
                 <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
                   <Upload size={18} />
@@ -265,11 +274,11 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
                   />
                 </label>
               </div>
-              {formData.cover && (
+              {formData.coverPreview && (
                 <div className="mt-3">
-                  <img 
-                    src={formData.cover} 
-                    alt="Preview" 
+                  <img
+                    src={formData.coverPreview}
+                    alt="Preview"
                     className="w-32 h-40 object-cover rounded-lg mx-auto"
                   />
                 </div>

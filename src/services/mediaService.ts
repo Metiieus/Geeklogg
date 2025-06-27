@@ -1,13 +1,7 @@
 import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, auth, storage } from '../firebase';
+import { db } from '../firebase';
 import type { MediaItem } from '../App';
-
-function getUserId(): string {
-  const uid = auth.currentUser?.uid;
-  if (!uid) throw new Error('Usuário não autenticado');
-  return uid;
-}
+import { getUserId, uploadFileToStorage, deleteFileFromStorage } from './utils';
 
 export async function getMedias(): Promise<MediaItem[]> {
   const uid = getUserId();
@@ -30,19 +24,21 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   };
   const col = collection(db, 'users', uid, 'medias');
   const docRef = await addDoc(col, toSave);
-  let coverUrl: string | undefined = undefined;
+  console.log('📝 Mídia criada no Firestore com ID:', docRef.id);
+
+  let coverUrl: string | undefined;
   if (coverFile instanceof File) {
     try {
-      const storageRef = ref(storage, `users/${uid}/covers/${docRef.id}.jpg`);
-      await uploadBytes(storageRef, coverFile);
-      coverUrl = await getDownloadURL(storageRef);
+      coverUrl = await uploadFileToStorage(`users/${uid}/media/${docRef.id}`, coverFile);
       await updateDoc(doc(db, 'users', uid, 'medias', docRef.id), {
         cover: coverUrl
       });
+      console.log('✅ URL da imagem salva no documento.');
     } catch (err) {
       console.error('Erro ao fazer upload da imagem', err);
     }
   }
+
   return { id: docRef.id, ...toSave, cover: coverUrl };
 }
 
@@ -50,31 +46,31 @@ export interface UpdateMediaData extends Partial<Omit<MediaItem, 'id'>> {
   coverFile?: File;
 }
 
-export async function updateMedia(id: string, data: UpdateMediaData): Promise<void> {
+export async function updateMedia(id: string, data: UpdateMediaData): Promise<{ cover?: string }> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const toUpdate: Record<string, unknown> = { ...data, updatedAt: now };
   delete (toUpdate as { coverFile?: File }).coverFile;
   await setDoc(doc(db, 'users', uid, 'medias', id), toUpdate, { merge: true });
+  console.log('📝 Mídia atualizada no Firestore:', id);
   let coverUrl: string | undefined;
   if (data.coverFile instanceof File) {
     try {
-      const storageRef = ref(storage, `users/${uid}/covers/${id}.jpg`);
-      await uploadBytes(storageRef, data.coverFile);
-      coverUrl = await getDownloadURL(storageRef);
+      coverUrl = await uploadFileToStorage(`users/${uid}/media/${id}`, data.coverFile);
       await updateDoc(doc(db, 'users', uid, 'medias', id), {
         cover: coverUrl
       });
+      console.log('✅ Imagem de capa atualizada');
     } catch (err) {
       console.error('Erro ao atualizar imagem de capa', err);
     }
   }
-  return;
+  return { cover: coverUrl };
 }
 
 export async function deleteMedia(id: string): Promise<void> {
   const uid = getUserId();
   await deleteDoc(doc(db, 'users', uid, 'medias', id));
-  await deleteObject(ref(storage, `users/${uid}/covers/${id}.jpg`)).catch(() => {});
-  return;
+  console.log('🗑️ Documento de mídia removido:', id);
+  await deleteFileFromStorage(`users/${uid}/media/${id}`);
 }

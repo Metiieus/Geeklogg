@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { MediaType, MediaItem, Status } from '../App';
 import { AddMediaModal } from './modals/AddMediaModal';
 import { EditMediaModal } from './modals/EditMediaModal';
+import { deleteMedia } from '../services/mediaService';
 
 const mediaTypeColors = {
   games: 'from-blue-500 to-cyan-500',
@@ -88,8 +89,9 @@ export const Library: React.FC = () => {
     return labels[status];
   };
 
-  const handleDeleteItem = (itemId: string) => {
+  const handleDeleteItem = async (itemId: string) => {
     if (confirm('Tem certeza que deseja excluir este item?')) {
+      await deleteMedia(itemId);
       setMediaItems(mediaItems.filter(item => item.id !== itemId));
     }
   };
