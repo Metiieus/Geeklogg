@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "geeklog-26b2c"
-  }
+    "default": "geeklog-26b2c",
+    "prod": "geeklog-26b2c"
+  },
+  "targets": {},
+  "etags": {}
 }
