@@ -1,6 +1,6 @@
 # NerdLog
 
-NerdLog é um diário digital para acompanhar tudo que você consome no mundo geek – jogos, animes, séries, livros e filmes. O projeto foi desenvolvido em React + TypeScript com Vite e TailwindCSS. Os dados são sincronizados com o Firebase (Authentication e Firestore) e também são mantidos no **localStorage** para funcionar offline.
+NerdLog é um diário digital para acompanhar tudo que você consome no mundo geek – jogos, animes, séries, livros e filmes. O projeto foi desenvolvido em React + TypeScript com Vite e TailwindCSS. Os dados são sincronizados com o Firebase (Authentication e Firestore).
 
 ## Funcionalidades Principais
 
