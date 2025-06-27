@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { User, Palette, Download, Upload, Trash2, Save } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { saveSettings } from '../services/settingsService';
 
 export const Settings: React.FC = () => {
   const { settings, setSettings, mediaItems, reviews, milestones } = useAppContext();
   const [localSettings, setLocalSettings] = useState(settings);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSettings(localSettings);
+    await saveSettings(localSettings);
     alert('Configurações salvas com sucesso!');
   };
 

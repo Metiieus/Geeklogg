@@ -9,16 +9,10 @@ import { Statistics } from './components/Statistics';
 import { Settings } from './components/Settings';
 import { Profile } from './components/Profile';
 import { Login } from './components/Login';
-import {
-  getUserMediaItems,
-  saveUserMediaItems,
-  getUserReviews,
-  saveUserReviews,
-  getUserMilestones,
-  saveUserMilestones,
-  getUserSettings,
-  saveUserSettings,
-} from './firebaseService';
+import { getMedias } from './services/mediaService';
+import { getReviews } from './services/reviewService';
+import { getMilestones } from './services/milestoneService';
+import { getSettings } from './services/settingsService';
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
 
@@ -50,6 +44,7 @@ export interface Review {
   content: string;
   rating: number;
   isFavorite: boolean;
+  image?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -61,6 +56,7 @@ export interface Milestone {
   date: string;
   icon: string;
   mediaId?: string;
+  image?: string;
   createdAt: string;
 }
 
@@ -107,10 +103,10 @@ function App() {
     if (!user) return;
     (async () => {
       const [mItems, revs, miles, prefs] = await Promise.all([
-        getUserMediaItems(user.uid),
-        getUserReviews(user.uid),
-        getUserMilestones(user.uid),
-        getUserSettings(user.uid),
+        getMedias(),
+        getReviews(),
+        getMilestones(),
+        getSettings(),
       ]);
       setMediaItems(mItems);
       setReviews(revs);
@@ -118,22 +114,6 @@ function App() {
       if (prefs) setSettings(prefs);
     })();
   }, [user]);
-
-  useEffect(() => {
-    if (user) saveUserMediaItems(user.uid, mediaItems);
-  }, [user, mediaItems]);
-
-  useEffect(() => {
-    if (user) saveUserReviews(user.uid, reviews);
-  }, [user, reviews]);
-
-  useEffect(() => {
-    if (user) saveUserMilestones(user.uid, milestones);
-  }, [user, milestones]);
-
-  useEffect(() => {
-    if (user) saveUserSettings(user.uid, settings);
-  }, [user, settings]);
 
 
   const contextValue = {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Save, Calendar } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import { Milestone } from '../../App';
+import { addMilestone } from '../../services/milestoneService';
 
 interface AddMilestoneModalProps {
   onClose: () => void;
@@ -20,18 +21,16 @@ export const AddMilestoneModal: React.FC<AddMilestoneModalProps> = ({ onClose, o
     mediaId: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newMilestone: Milestone = {
-      id: Date.now().toString(),
+
+    const newMilestone = await addMilestone({
       title: formData.title,
       description: formData.description,
       date: formData.date,
       icon: formData.icon,
       mediaId: formData.mediaId || undefined,
-      createdAt: new Date().toISOString()
-    };
+    });
 
     onSave(newMilestone);
   };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import { Milestone } from '../../App';
+import { updateMilestone } from '../../services/milestoneService';
 
 interface EditMilestoneModalProps {
   milestone: Milestone;
@@ -21,16 +22,24 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ mileston
     mediaId: milestone.mediaId || ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    await updateMilestone(milestone.id, {
+      title: formData.title,
+      description: formData.description,
+      date: formData.date,
+      icon: formData.icon,
+      mediaId: formData.mediaId || undefined,
+    });
+
     const updatedMilestone: Milestone = {
       ...milestone,
       title: formData.title,
       description: formData.description,
       date: formData.date,
       icon: formData.icon,
-      mediaId: formData.mediaId || undefined
+      mediaId: formData.mediaId || undefined,
     };
 
     onSave(updatedMilestone);
