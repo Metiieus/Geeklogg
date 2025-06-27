@@ -1,7 +1,7 @@
 import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Milestone } from '../App';
-import { getUserId, uploadFileToStorage, deleteFileFromStorage } from './utils';
+import { getUserId, uploadFileToStorage, deleteFileFromStorage, removeUndefinedFields } from './utils';
 
 export async function getMilestones(): Promise<Milestone[]> {
   const uid = getUserId();
@@ -17,7 +17,10 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
-  const toSave: Omit<Milestone, 'id'> = { ...rest, createdAt: now } as Omit<Milestone, 'id'>;
+  const toSave: Omit<Milestone, 'id'> = removeUndefinedFields({
+    ...rest,
+    createdAt: now
+  }) as Omit<Milestone, 'id'>;
   const docRef = await addDoc(collection(db, 'users', uid, 'milestones'), toSave);
   console.log('📝 Marco criado com ID:', docRef.id);
 
@@ -41,7 +44,9 @@ export interface UpdateMilestoneData extends Partial<Omit<Milestone, 'id'>> {
 
 export async function updateMilestone(id: string, data: UpdateMilestoneData): Promise<void> {
   const uid = getUserId();
-  const toUpdate: Record<string, unknown> = { ...data };
+  const toUpdate: Record<string, unknown> = removeUndefinedFields({
+    ...data
+  });
   delete (toUpdate as { imageFile?: File }).imageFile;
   await setDoc(doc(db, 'users', uid, 'milestones', id), toUpdate, { merge: true });
   console.log('📝 Marco atualizado:', id);
