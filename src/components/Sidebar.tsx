@@ -39,7 +39,7 @@ export const Sidebar: React.FC = () => {
   const { logout } = useAuth();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-20 bg-slate-900/95 backdrop-blur-sm border-r border-slate-800 flex flex-col items-center py-6 z-50">
+    <aside className="hidden sm:flex fixed left-0 top-0 h-screen w-20 bg-slate-900/95 backdrop-blur-sm border-r border-slate-800 flex flex-col items-center py-6 z-50">
       {/* Logo */}
       <div className="mb-8 p-2">
         <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
