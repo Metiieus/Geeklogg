@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 
 interface RegisterProps {
@@ -33,42 +33,47 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     console.log('🚀 Tentando registrar novo usuário...');
 
     try {
-      // 1. Criar o usuário no Firebase Auth
+      // Criar o usuário no Firebase Auth
       console.log('🚀 Iniciando cadastro no Firebase Auth...');
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
       const user = userCredential.user;
       console.log('✅ Usuário criado com UID:', user.uid);
 
-      // 2. Exibir dados antes da gravação
-      console.log('📦 Firebase Project ID:', db.app.options.projectId);
-      console.log('🛠️ Dados a serem gravados:', {
+      // Validar se o usuário realmente está autenticado
+      console.log('🛡️ Usuário autenticado:', auth.currentUser);
+      if (!auth.currentUser) {
+        throw new Error('Usuário não autenticado no momento da gravação.');
+      }
+
+      // Preparar os dados
+      const userData = {
         uid: user.uid,
         nome: formData.nome,
         apelido: formData.apelido,
         dataNascimento: formData.dataNascimento,
         email: formData.email,
         createdAt: new Date().toISOString()
-      });
+      };
 
-      // 3. Gravar os dados no Firestore
+      console.log('🛠️ Dados preparados para gravação:', userData);
+
+      // Validar se existem campos inválidos
+      if (Object.values(userData).some(value => value === undefined || value === null || value === '')) {
+        console.error('🚨 Dados inválidos detectados:', userData);
+        setError('Existem campos vazios ou inválidos.');
+        return;
+      }
+
+      // Gravar os dados no Firestore
       console.log('✍️ Gravando dados no Firestore...');
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        nome: formData.nome,
-        apelido: formData.apelido,
-        dataNascimento: formData.dataNascimento,
-        email: formData.email,
-        createdAt: serverTimestamp()
-      });
+      await setDoc(doc(db, 'users', user.uid), userData);
       console.log('🎉 Dados do usuário salvos com sucesso no Firestore!');
 
-      // 4. Deslogar o usuário após cadastro (caso faça parte do seu fluxo)
+      // Deslogar o usuário após cadastro (opcional)
       await logout();
       console.log('👋 Usuário deslogado após cadastro.');
 
-      // 5. Voltar para a tela inicial
       onCancel();
-
     } catch (err: any) {
       console.error('❌ Erro ao registrar usuário:', err);
       setError(err.message || 'Erro ao registrar usuário');
