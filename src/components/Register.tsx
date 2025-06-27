@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import { registerUser } from '../services/authService';
 
 interface RegisterProps {
   onCancel: () => void;
@@ -18,6 +18,8 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
   });
   const [error, setError] = useState<string | null>(null);
 
+  const { logout } = useAuth();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -26,36 +28,38 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     }));
   };
 
-  const { logout } = useAuth();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚀 Tentando registrar novo usuário...');
+
     try {
-      await registerUser(
-        formData.nome,
-        formData.apelido,
-        formData.dataNascimento,
-        formData.email,
-        formData.senha
-      );
+      // 1. Criar o usuário no Firebase Auth
+      console.log('🚀 Iniciando cadastro no Firebase Auth...');
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
+      const user = userCredential.user;
+      console.log('✅ Usuário criado com UID:', user.uid);
 
-      const uid = auth.currentUser?.uid;
-      if (uid) {
-        const settings = {
-          name: formData.apelido,
-          theme: 'dark',
-          defaultLibrarySort: 'updatedAt'
-        };
-        await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
-          value: settings
-        });
-        window.localStorage.setItem('nerdlog-settings', JSON.stringify(settings));
-      }
+      // 2. Gravar os dados no Firestore
+      console.log('✍️ Gravando dados no Firestore...');
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        nome: formData.nome,
+        apelido: formData.apelido,
+        dataNascimento: formData.dataNascimento,
+        email: formData.email,
+        createdAt: serverTimestamp()
+      });
+      console.log('🎉 Dados do usuário salvos com sucesso no Firestore!');
 
+      // 3. Deslogar o usuário após cadastro (caso faça parte do seu fluxo)
       await logout();
+      console.log('👋 Usuário deslogado após cadastro.');
+
+      // 4. Voltar para a tela inicial
       onCancel();
+
     } catch (err: any) {
-      console.error('Erro ao registrar usuário:', err);
+      console.error('❌ Erro ao registrar usuário:', err);
       setError(err.message || 'Erro ao registrar usuário');
     }
   };
@@ -65,7 +69,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('https://storage.googleapis.com/images-etherium/NERD%20LOG.%20(1).png')" }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay para escurecer a imagem */}
+      <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="relative z-10 p-8 rounded-xl shadow-lg backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 border border-gray-200 border-opacity-20 text-white w-96 max-h-[90vh] overflow-y-auto">
         <h2 className="text-3xl font-bold text-center mb-6">Registro</h2>
 
@@ -91,7 +95,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Nome
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F464;</span> {/* Ícone de pessoa */}
+            <span className="absolute right-4 top-3 text-gray-400">&#x1F464;</span>
           </div>
 
           <div className="relative">
@@ -110,7 +114,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Apelido
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F3AD;</span> {/* Ícone de máscara */}
+            <span className="absolute right-4 top-3 text-gray-400">&#x1F3AD;</span>
           </div>
 
           <div className="relative">
@@ -128,7 +132,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Data de Nascimento
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F4C5;</span> {/* Ícone de calendário */}
+            <span className="absolute right-4 top-3 text-gray-400">&#x1F4C5;</span>
           </div>
 
           <div className="relative">
@@ -147,7 +151,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Email
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x2709;</span> {/* Ícone de email */}
+            <span className="absolute right-4 top-3 text-gray-400">&#x2709;</span>
           </div>
 
           <div className="relative">
@@ -166,7 +170,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Senha
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F512;</span> {/* Ícone de cadeado */}
+            <span className="absolute right-4 top-3 text-gray-400">&#x1F512;</span>
           </div>
 
           <div className="flex gap-3 mt-8">
@@ -196,4 +200,3 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     </div>
   );
 };
-
