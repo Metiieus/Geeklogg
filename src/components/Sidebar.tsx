@@ -4,9 +4,10 @@ import {
   BookOpen, 
   MessageSquare, 
   Clock, 
-  BarChart3, 
+  BarChart3,
   Settings,
   LogOut,
+  User,
   Gamepad2,
   Film,
   Tv,
@@ -29,6 +30,7 @@ const navigationItems: NavItem[] = [
   { id: 'reviews', icon: <MessageSquare size={20} />, label: 'Resenhas' },
   { id: 'timeline', icon: <Clock size={20} />, label: 'Jornada' },
   { id: 'statistics', icon: <BarChart3 size={20} />, label: 'Estatísticas' },
+  { id: 'profile', icon: <User size={20} />, label: 'Perfil' },
   { id: 'settings', icon: <Settings size={20} />, label: 'Configurações' },
 ];
 

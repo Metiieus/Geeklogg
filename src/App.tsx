@@ -6,6 +6,7 @@ import { Reviews } from './components/Reviews';
 import { Timeline } from './components/Timeline';
 import { Statistics } from './components/Statistics';
 import { Settings } from './components/Settings';
+import { Profile } from './components/Profile';
 import { Login } from './components/Login';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useFirestoreSync } from './hooks/useFirestoreSync';
@@ -57,11 +58,12 @@ export interface Milestone {
 export interface UserSettings {
   name: string;
   avatar?: string;
+  bio?: string;
   theme: 'dark' | 'light';
   defaultLibrarySort: string;
 }
 
-export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'settings';
+export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'profile' | 'settings';
 
 function App() {
   const { user, loading } = useAuth();
@@ -71,6 +73,7 @@ function App() {
   const [milestones, setMilestones] = useLocalStorage<Milestone[]>('nerdlog-milestones', []);
   const [settings, setSettings] = useLocalStorage<UserSettings>('nerdlog-settings', {
     name: 'Nerd',
+    bio: '',
     theme: 'dark',
     defaultLibrarySort: 'updatedAt'
   });
@@ -113,6 +116,8 @@ function App() {
         return <Timeline />;
       case 'statistics':
         return <Statistics />;
+      case 'profile':
+        return <Profile />;
       case 'settings':
         return <Settings />;
       default:
