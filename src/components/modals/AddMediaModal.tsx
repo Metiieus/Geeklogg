@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Image, Upload } from 'lucide-react';
 import { MediaItem, MediaType, Status } from '../../App';
+import { addMedia } from '../../services/mediaService';
 
 interface AddMediaModalProps {
   onClose: () => void;
@@ -27,15 +28,15 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({ onClose, onSave })
     platform: '',
     tags: '',
     externalLink: '',
-    cover: '',
+    coverPreview: '',
+    coverFile: undefined as File | undefined,
     description: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newItem: MediaItem = {
-      id: Date.now().toString(),
+
+    const newItem = await addMedia({
       title: formData.title,
       type: formData.type,
       status: formData.status,
@@ -46,11 +47,9 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({ onClose, onSave })
       platform: formData.platform || undefined,
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
       externalLink: formData.externalLink || undefined,
-      cover: formData.cover || undefined,
       description: formData.description || undefined,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+      coverFile: formData.coverFile
+    });
 
     onSave(newItem);
   };
@@ -65,7 +64,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({ onClose, onSave })
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
-        setFormData(prev => ({ ...prev, cover: result }));
+        setFormData(prev => ({ ...prev, coverPreview: result, coverFile: file }));
       };
       reader.readAsDataURL(file);
     }
@@ -245,14 +244,6 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({ onClose, onSave })
               Imagem de Capa
             </label>
             <div className="space-y-3">
-              <input
-                type="url"
-                value={formData.cover}
-                onChange={(e) => handleChange('cover', e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="https://exemplo.com/capa.jpg"
-              />
-              <div className="text-center text-slate-400">ou</div>
               <div className="flex items-center justify-center">
                 <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
                   <Upload size={18} />
@@ -265,11 +256,11 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({ onClose, onSave })
                   />
                 </label>
               </div>
-              {formData.cover && (
+              {formData.coverPreview && (
                 <div className="mt-3">
-                  <img 
-                    src={formData.cover} 
-                    alt="Preview" 
+                  <img
+                    src={formData.coverPreview}
+                    alt="Preview"
                     className="w-32 h-40 object-cover rounded-lg mx-auto"
                   />
                 </div>

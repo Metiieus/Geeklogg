@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Save, Star } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import { Review } from '../../App';
+import { updateReview } from '../../services/reviewService';
 
 interface EditReviewModalProps {
   review: Review;
@@ -19,9 +20,17 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
     isFavorite: review.isFavorite
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    await updateReview(review.id, {
+      title: formData.title,
+      content: formData.content,
+      rating: formData.rating,
+      mediaId: formData.mediaId,
+      isFavorite: formData.isFavorite,
+    });
+
     const updatedReview: Review = {
       ...review,
       title: formData.title,
@@ -29,7 +38,7 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
       rating: formData.rating,
       mediaId: formData.mediaId,
       isFavorite: formData.isFavorite,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     onSave(updatedReview);
