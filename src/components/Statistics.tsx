@@ -27,7 +27,7 @@ const mediaTypeLabels = {
   movies: 'Filmes'
 };
 
-export const Statistics: React.FC = () => {
+const Statistics: React.FC = () => {
   const { mediaItems, reviews } = useAppContext();
 
   const getMediaStats = () => {
@@ -144,6 +144,7 @@ export const Statistics: React.FC = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {Object.entries(mediaStats).map(([type, stats]) => {
+            console.log('Media stats', type, stats);
             const Icon = mediaTypeIcons[type as MediaType];
             return (
               <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50`}>
@@ -187,7 +188,9 @@ export const Statistics: React.FC = () => {
           
           <div className="space-y-4">
             {topRated.length > 0 ? (
-              topRated.map((item, index) => (
+              topRated.map((item, index) => {
+                console.log('Top rated', item);
+                return (
                 <div key={item.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
                   <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                     {index + 1}
@@ -210,7 +213,8 @@ export const Statistics: React.FC = () => {
                     <span className="text-white font-medium">{item.rating}</span>
                   </div>
                 </div>
-              ))
+                );
+              })
             ) : (
               <p className="text-slate-400 text-center py-4">Nenhum item avaliado ainda</p>
             )}
@@ -226,7 +230,9 @@ export const Statistics: React.FC = () => {
           
           <div className="space-y-4">
             {mostPlayed.length > 0 ? (
-              mostPlayed.map((item, index) => (
+              mostPlayed.map((item, index) => {
+                console.log('Most played', item);
+                return (
                 <div key={item.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                     {index + 1}
@@ -249,7 +255,8 @@ export const Statistics: React.FC = () => {
                     <span className="text-white font-medium">{item.hoursSpent}h</span>
                   </div>
                 </div>
-              ))
+                );
+              })
             ) : (
               <p className="text-slate-400 text-center py-4">Nenhum dado de tempo ainda</p>
             )}
@@ -258,4 +265,5 @@ export const Statistics: React.FC = () => {
       </div>
     </div>
   );
-};
+};export default Statistics;
+
