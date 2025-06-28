@@ -33,10 +33,10 @@ export const Profile: React.FC = () => {
   );
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div className="text-center space-y-4">
-        <div className="w-32 h-32 mx-auto rounded-full overflow-hidden bg-slate-700 flex items-center justify-center text-white text-4xl font-bold">
+        <div className="w-40 h-40 mx-auto rounded-full overflow-hidden bg-slate-700 flex items-center justify-center text-white text-4xl font-bold">
           {settings.avatar ? (
             <img src={settings.avatar} alt={settings.name} className="w-full h-full object-cover" />
           ) : (

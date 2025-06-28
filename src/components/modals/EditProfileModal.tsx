@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, X } from 'lucide-react';
+import { Save, X, Upload } from 'lucide-react';
 import { UserSettings } from '../../App';
 
 interface EditProfileModalProps {
@@ -26,8 +26,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ settings, on
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-lg w-full overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-lg w-full overflow-hidden animate-slide-up">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Editar Perfil</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
@@ -46,14 +46,34 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ settings, on
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">URL da Foto</label>
-            <input
-              type="url"
-              value={local.avatar}
-              onChange={(e) => setLocal(prev => ({ ...prev, avatar: e.target.value }))}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="https://exemplo.com/avatar.jpg"
-            />
+            <label className="block text-sm font-medium text-slate-300 mb-2">Avatar</label>
+            <div className="space-y-3">
+              <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
+                <Upload size={18} />
+                Fazer Upload da Imagem
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        const result = ev.target?.result as string;
+                        setLocal(prev => ({ ...prev, avatar: result }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="hidden"
+                />
+              </label>
+              {local.avatar && (
+                <div className="mt-2">
+                  <img src={local.avatar} alt="Preview" className="w-24 h-24 object-cover rounded-full mx-auto" />
+                </div>
+              )}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Biografia</label>
