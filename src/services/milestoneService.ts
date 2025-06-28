@@ -18,6 +18,15 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
+
+  // Montar e limpar o objeto
+  let toSave: Omit<Milestone, 'id'> = {
+    ...rest,
+    createdAt: now
+  };
+
+  toSave = removeUndefinedFields(toSave);
+
   const docRef = await addDoc(collection(db, 'users', uid, 'milestones'), toSave);
   console.log('📝 Marco criado com ID:', docRef.id);
 
@@ -43,18 +52,17 @@ export interface UpdateMilestoneData extends Partial<Omit<Milestone, 'id'>> {
 
 export async function updateMilestone(id: string, data: UpdateMilestoneData): Promise<void> {
   const uid = getUserId();
-  const toUpdate: Record<string, unknown> = removeUndefinedFields({
-    ...data
-  });
-  delete (toUpdate as { imageFile?: File }).imageFile;
+  const { imageFile, ...rest } = data;
+
+  const toUpdate = removeUndefinedFields(rest);
 
   await setDoc(doc(db, 'users', uid, 'milestones', id), toUpdate, { merge: true });
   console.log('📝 Marco atualizado no Firestore:', id);
 
-  if (data.imageFile instanceof File) {
+  if (imageFile instanceof File) {
     try {
       console.log('🚀 Iniciando upload da nova imagem do marco...');
-      const url = await uploadFileToStorage(`users/${uid}/milestones/${id}`, data.imageFile);
+      const url = await uploadFileToStorage(`users/${uid}/milestones/${id}`, imageFile);
       await updateDoc(doc(db, 'users', uid, 'milestones', id), { image: url });
       console.log('✅ Nova imagem do marco enviada e atualizada no Firestore.');
     } catch (err) {
