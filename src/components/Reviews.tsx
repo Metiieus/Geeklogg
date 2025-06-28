@@ -6,7 +6,7 @@ import { AddReviewModal } from './modals/AddReviewModal';
 import { EditReviewModal } from './modals/EditReviewModal';
 import { deleteReview } from '../services/reviewService';
 
-export const Reviews: React.FC = () => {
+const Reviews: React.FC = () => {
   const { reviews, setReviews, mediaItems } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -76,6 +76,7 @@ export const Reviews: React.FC = () => {
       <div className="space-y-6">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => {
+            console.log('Review item', review);
             const media = mediaItems.find(item => item.id === review.mediaId);
             return (
               <div key={review.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
@@ -185,4 +186,5 @@ export const Reviews: React.FC = () => {
       )}
     </div>
   );
-};
+};export default Reviews;
+
