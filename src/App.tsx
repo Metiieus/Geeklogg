@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
-import { Dashboard } from './components/Dashboard';
-import { Library } from './components/Library';
-import { Reviews } from './components/Reviews';
-import { Timeline } from './components/Timeline';
-import { Statistics } from './components/Statistics';
-import { Settings } from './components/Settings';
-import { Profile } from './components/Profile';
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const Library = lazy(() => import('./components/Library'));
+const Reviews = lazy(() => import('./components/Reviews'));
+const Timeline = lazy(() => import('./components/Timeline'));
+const Statistics = lazy(() => import('./components/Statistics'));
+const Settings = lazy(() => import('./components/Settings'));
+const Profile = lazy(() => import('./components/Profile'));
 import { Login } from './components/Login';
 import { getMedias } from './services/mediaService';
 import { getReviews } from './services/reviewService';
@@ -164,9 +164,11 @@ function App() {
         <div className="flex">
           <Sidebar />
           <main className="flex-1 sm:ml-20 pb-16 sm:pb-0">
-            <div className="p-6">
-              {renderPage()}
-            </div>
+            <Suspense fallback={<div className="p-6 text-center text-white">Carregando...</div>}>
+              <div className="p-6" key={activePage}>
+                {renderPage()}
+              </div>
+            </Suspense>
           </main>
         </div>
         <MobileNav />
