@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { EditProfileModal } from './modals/EditProfileModal';
 import { EditFavoritesModal } from './modals/EditFavoritesModal';
 
-export const Profile: React.FC = () => {
+const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
@@ -20,14 +20,17 @@ export const Profile: React.FC = () => {
 
   const renderCards = (items: typeof settings.favorites.characters) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-      {items.map((it) => (
-        <div key={it.id} className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50">
-          <div className="w-full h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
-            {it.image ? <img src={it.image} alt={it.name} className="w-full h-full object-cover" /> : null}
+      {items.map((it) => {
+        console.log('Favorite item', it);
+        return (
+          <div key={it.id} className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50">
+            <div className="w-full h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
+              {it.image ? <img src={it.image} alt={it.name} className="w-full h-full object-cover" /> : null}
+            </div>
+            <p className="text-sm text-white break-words">{it.name}</p>
           </div>
-          <p className="text-sm text-white break-words">{it.name}</p>
-        </div>
-      ))}
+        );
+      })}
       {items.length === 0 && <p className="text-slate-500 col-span-full">Nenhum item</p>}
     </div>
   );
@@ -85,3 +88,5 @@ export const Profile: React.FC = () => {
     </div>
   );
 };
+export default Profile;
+

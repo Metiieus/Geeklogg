@@ -3,7 +3,7 @@ import { Clock, Star, TrendingUp, Calendar, Plus, BookOpen } from 'lucide-react'
 import { useAppContext } from '../context/AppContext';
 import { MediaItem, Status } from '../App';
 
-export const Dashboard: React.FC = () => {
+const Dashboard: React.FC = () => {
   const { mediaItems, reviews, milestones, settings, setActivePage } = useAppContext();
 
   const getGreeting = () => {
@@ -180,7 +180,9 @@ export const Dashboard: React.FC = () => {
         
         {milestones.length > 0 ? (
           <div className="space-y-3">
-            {milestones.slice(0, 3).map((milestone) => (
+            {milestones.slice(0, 3).map((milestone) => {
+              console.log('Dashboard milestone', milestone);
+              return (
               <div key={milestone.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
                 <div className="text-2xl">{milestone.icon}</div>
                 <div className="flex-1">
@@ -188,7 +190,7 @@ export const Dashboard: React.FC = () => {
                   <p className="text-sm text-slate-400">{new Date(milestone.date).toLocaleDateString('pt-BR')}</p>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         ) : (
           <div className="text-center py-8">
@@ -199,4 +201,6 @@ export const Dashboard: React.FC = () => {
       </div>
     </div>
   );
-};
+};export default Dashboard;
+
+
