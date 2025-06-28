@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes } from 'firebase/storage';
-import { db, auth, storage } from '../firebase';
+import { db, auth } from '../firebase';
 import type { UserSettings } from '../App';
+import { uploadFileToStorage } from './utils';
 
 function getUserId(): string {
   const uid = auth.currentUser?.uid;
@@ -21,9 +21,7 @@ export async function saveSettings(data: UserSettings): Promise<void> {
 }
 
 export async function backupUserData(data: unknown): Promise<void> {
-  const uid = getUserId();
   const timestamp = Date.now();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const storageRef = ref(storage, `users/${uid}/backups/${timestamp}.json`);
-  await uploadBytes(storageRef, blob);
+  await uploadFileToStorage(`backups/${timestamp}.json`, blob);
 }
