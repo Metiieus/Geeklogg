@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Save, X, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload } from 'lucide-react';
 import { FavoriteItem, UserSettings } from '../../App';
 
 interface EditFavoritesModalProps {
@@ -25,6 +25,18 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
       arr[index] = { ...arr[index], [field]: value };
       return { ...prev, [cat]: arr };
     });
+  };
+
+  const uploadImage = (cat: Category, index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const result = ev.target?.result as string;
+        updateItem(cat, index, 'image', result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const removeItem = (cat: Category, index: number) => {
@@ -64,13 +76,16 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
               className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Nome"
             />
-            <input
-              type="url"
-              value={item.image || ''}
-              onChange={(e) => updateItem(cat, idx, 'image', e.target.value)}
-              className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="URL da imagem"
-            />
+            <label className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
+              <Upload size={16} />
+              Enviar Imagem
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => uploadImage(cat, idx, e)}
+                className="hidden"
+              />
+            </label>
           </div>
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => moveItem(cat, idx, Math.max(0, idx - 1))} disabled={idx === 0} className="p-1 text-slate-300 hover:text-white disabled:opacity-50">
@@ -92,8 +107,8 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full overflow-hidden animate-slide-up">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Editar Favoritos</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">

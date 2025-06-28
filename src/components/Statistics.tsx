@@ -84,7 +84,7 @@ export const Statistics: React.FC = () => {
   const mostPlayed = getMostPlayed();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">Estatísticas</h1>

@@ -56,61 +56,14 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">Configurações</h1>
         <p className="text-slate-400">Personalize sua experiência no NerdLog</p>
       </div>
 
-      {/* Profile Settings */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-        <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-          <User className="text-purple-400" size={20} />
-          Perfil
-        </h2>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Nome de Exibição
-            </label>
-            <input
-              type="text"
-              value={localSettings.name}
-              onChange={(e) => setLocalSettings(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Seu nome de exibição"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              URL do Avatar (opcional)
-            </label>
-          <input
-            type="url"
-            value={localSettings.avatar || ''}
-            onChange={(e) => setLocalSettings(prev => ({ ...prev, avatar: e.target.value }))}
-            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder="https://exemplo.com/avatar.jpg"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
-            Biografia
-          </label>
-          <textarea
-            value={localSettings.bio || ''}
-            onChange={(e) => setLocalSettings(prev => ({ ...prev, bio: e.target.value }))}
-            rows={4}
-            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-            placeholder="Fale um pouco sobre você"
-          />
-        </div>
-      </div>
-    </div>
 
       {/* Theme Settings */}
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
