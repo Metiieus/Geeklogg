@@ -8,6 +8,7 @@ const Timeline = lazy(() => import('./components/Timeline'));
 const Statistics = lazy(() => import('./components/Statistics'));
 const Settings = lazy(() => import('./components/Settings'));
 const Profile = lazy(() => import('./components/Profile'));
+import ErrorBoundary from './components/ErrorBoundary';
 import { Login } from './components/Login';
 import { getMedias } from './services/mediaService';
 import { getReviews } from './services/reviewService';
@@ -164,11 +165,13 @@ function App() {
         <div className="flex">
           <Sidebar />
           <main className="flex-1 sm:ml-20 pb-16 sm:pb-0">
-            <Suspense fallback={<div className="p-6 text-center text-white">Carregando...</div>}>
-              <div className="p-6" key={activePage}>
-                {renderPage()}
-              </div>
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<div className="p-6 text-center text-white">Carregando...</div>}>
+                <div className="p-6" key={activePage}>
+                  {renderPage()}
+                </div>
+              </Suspense>
+            </ErrorBoundary>
           </main>
         </div>
         <MobileNav />

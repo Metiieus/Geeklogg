@@ -6,7 +6,7 @@ import { AddMilestoneModal } from './modals/AddMilestoneModal';
 import { EditMilestoneModal } from './modals/EditMilestoneModal';
 import { deleteMilestone } from '../services/milestoneService';
 
-export const Timeline: React.FC = () => {
+const Timeline: React.FC = () => {
   const { milestones, setMilestones, mediaItems } = useAppContext();
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
@@ -51,7 +51,9 @@ export const Timeline: React.FC = () => {
             {/* Timeline Line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-500 via-purple-500 to-cyan-500 opacity-30" />
 
-            {sortedMilestones.map((milestone, index) => (
+            {sortedMilestones.map((milestone, index) => {
+              console.log('Timeline milestone', milestone);
+              return (
               <div key={milestone.id} className="relative flex items-start gap-6">
                 {/* Timeline Dot */}
                 <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-purple-500 rounded-full flex items-center justify-center">
@@ -111,7 +113,8 @@ export const Timeline: React.FC = () => {
                   })()}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-12">
@@ -151,4 +154,5 @@ export const Timeline: React.FC = () => {
       )}
     </div>
   );
-};
+};export default Timeline;
+

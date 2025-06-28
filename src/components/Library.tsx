@@ -22,7 +22,7 @@ const mediaTypeLabels = {
   movies: 'Filmes'
 };
 
-export const Library: React.FC = () => {
+const Library: React.FC = () => {
   const { mediaItems, setMediaItems } = useAppContext();
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
@@ -181,7 +181,9 @@ export const Library: React.FC = () => {
 
       {/* Media Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredAndSortedItems.map((item) => (
+        {filteredAndSortedItems.map((item) => {
+          console.log('Library item', item);
+          return (
           <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-200 hover:scale-105">
             {/* Cover Image */}
             <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
@@ -258,11 +260,14 @@ export const Library: React.FC = () => {
               {/* Tags */}
               {item.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-3">
-                  {item.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                      {tag}
-                    </span>
-                  ))}
+                  {item.tags.slice(0, 3).map((tag) => {
+                    console.log('Tag', tag);
+                    return (
+                      <span key={tag} className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                        {tag}
+                      </span>
+                    );
+                  })}
                   {item.tags.length > 3 && (
                     <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
                       +{item.tags.length - 3}
@@ -313,4 +318,5 @@ export const Library: React.FC = () => {
       )}
     </div>
   );
-};
+};export default Library;
+
