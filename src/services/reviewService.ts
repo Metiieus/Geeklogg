@@ -33,7 +33,7 @@ export async function addReview(data: AddReviewData): Promise<Review> {
 
   if (imageFile instanceof File) {
     try {
-      const imageUrl = await uploadFileToStorage(`users/${uid}/reviews/${docRef.id}`, imageFile);
+      const imageUrl = await uploadFileToStorage(`reviews/${docRef.id}`, imageFile);
       await updateDoc(doc(db, 'users', uid, 'reviews', docRef.id), { image: imageUrl });
       console.log('✅ Imagem da review enviada');
       (toSave as Review).image = imageUrl;
@@ -62,7 +62,7 @@ export async function updateReview(id: string, data: UpdateReviewData): Promise<
 
   if (data.imageFile instanceof File) {
     try {
-      const url = await uploadFileToStorage(`users/${uid}/reviews/${id}`, data.imageFile);
+      const url = await uploadFileToStorage(`reviews/${id}`, data.imageFile);
       await updateDoc(doc(db, 'users', uid, 'reviews', id), { image: url });
       console.log('✅ Imagem da review atualizada');
     } catch (err) {
@@ -75,5 +75,5 @@ export async function deleteReview(id: string): Promise<void> {
   const uid = getUserId();
   await deleteDoc(doc(db, 'users', uid, 'reviews', id));
   console.log('🗑️ Review removida:', id);
-  await deleteFileFromStorage(`users/${uid}/reviews/${id}`);
+  await deleteFileFromStorage(`reviews/${id}`);
 }

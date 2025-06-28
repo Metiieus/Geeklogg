@@ -29,7 +29,7 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   let coverUrl: string | undefined;
   if (coverFile instanceof File) {
     try {
-      coverUrl = await uploadFileToStorage(`users/${uid}/media/${docRef.id}`, coverFile);
+      coverUrl = await uploadFileToStorage(`media/${docRef.id}`, coverFile);
       await updateDoc(doc(db, 'users', uid, 'medias', docRef.id), {
         cover: coverUrl
       });
@@ -59,7 +59,7 @@ export async function updateMedia(id: string, data: UpdateMediaData): Promise<{ 
   let coverUrl: string | undefined;
   if (data.coverFile instanceof File) {
     try {
-      coverUrl = await uploadFileToStorage(`users/${uid}/media/${id}`, data.coverFile);
+      coverUrl = await uploadFileToStorage(`media/${id}`, data.coverFile);
       await updateDoc(doc(db, 'users', uid, 'medias', id), {
         cover: coverUrl
       });
@@ -75,5 +75,5 @@ export async function deleteMedia(id: string): Promise<void> {
   const uid = getUserId();
   await deleteDoc(doc(db, 'users', uid, 'medias', id));
   console.log('🗑️ Documento de mídia removido:', id);
-  await deleteFileFromStorage(`users/${uid}/media/${id}`);
+  await deleteFileFromStorage(`media/${id}`);
 }
