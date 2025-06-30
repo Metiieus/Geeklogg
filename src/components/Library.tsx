@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Plus, Star, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
+import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, MediaItem, Status } from '../App';
 import { AddMediaModal } from './modals/AddMediaModal';
@@ -34,17 +34,14 @@ const Library: React.FC = () => {
   const filteredAndSortedItems = useMemo(() => {
     let filtered = mediaItems;
 
-    // Filter by type
     if (selectedType !== 'all') {
       filtered = filtered.filter(item => item.type === selectedType);
     }
 
-    // Filter by status
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(item => item.status === selectedStatus);
     }
 
-    // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(item =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,7 +49,6 @@ const Library: React.FC = () => {
       );
     }
 
-    // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'title':
@@ -97,7 +93,7 @@ const Library: React.FC = () => {
   };
 
   const handleEditItem = (updatedItem: MediaItem) => {
-    setMediaItems(mediaItems.map(item => 
+    setMediaItems(mediaItems.map(item =>
       item.id === updatedItem.id ? updatedItem : item
     ));
     setEditingItem(null);
@@ -111,7 +107,7 @@ const Library: React.FC = () => {
           <h1 className="text-3xl font-bold text-white mb-2">Biblioteca de Mídia</h1>
           <p className="text-slate-400">Sua coleção pessoal de jogos, anime, séries, livros e filmes</p>
         </div>
-        <button 
+        <button
           onClick={() => setShowAddModal(true)}
           className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2"
         >
@@ -184,102 +180,104 @@ const Library: React.FC = () => {
         {filteredAndSortedItems.map((item) => {
           console.log('Library item', item);
           return (
-          <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-200 hover:scale-105">
-            {/* Cover Image */}
-            <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
-              {item.cover ? (
-                <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500">
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
-                </div>
-              )}
-              
-              {/* Overlay with actions */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-2">
-                <button 
-                  onClick={() => setEditingItem(item)}
-                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                  title="Editar"
-                >
-                  <Edit size={16} className="text-white" />
-                </button>
-                {item.externalLink && (
-                  <a 
-                    href={item.externalLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                    title="Link Externo"
-                  >
-                    <ExternalLink size={16} className="text-white" />
-                  </a>
+            <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-200 hover:scale-105">
+              {/* Cover Image */}
+              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
+                {item.cover ? (
+                  <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-500">
+                    <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
+                  </div>
                 )}
-                <button 
-                  onClick={() => handleDeleteItem(item.id)}
-                  className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
-                  title="Excluir"
-                >
-                  <Trash2 size={16} className="text-white" />
-                </button>
-              </div>
 
-              {/* Type Badge */}
-              <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${mediaTypeColors[item.type]}`}>
-                {mediaTypeLabels[item.type]}
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-              <h3 className="font-semibold text-white mb-2 line-clamp-2">{item.title}</h3>
-              
-              {/* Status */}
-              <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-3`}>
-                {getStatusLabel(item.status)}
-              </div>
-
-              {/* Stats */}
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-4">
-                  {item.rating && (
-                    <div className="flex items-center gap-1">
-                      <Star className="text-yellow-400" size={14} fill="currentColor" />
-                      <span className="text-white">{item.rating}</span>
-                    </div>
+                {/* Overlay with actions */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setEditingItem(item)}
+                    className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                    title="Editar"
+                  >
+                    <Edit size={16} className="text-white" />
+                  </button>
+                  {item.externalLink && (
+                    <a
+                      href={item.externalLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                      title="Link Externo"
+                    >
+                      <ExternalLink size={16} className="text-white" />
+                    </a>
                   )}
-                  {item.hoursSpent && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="text-blue-400" size={14} />
-                      <span className="text-white">{item.hoursSpent}h</span>
-                    </div>
-                  )}
+                  <button
+                    onClick={() => handleDeleteItem(item.id)}
+                    className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
+                    title="Excluir"
+                  >
+                    <Trash2 size={16} className="text-white" />
+                  </button>
+                </div>
+
+                {/* Type Badge */}
+                <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${mediaTypeColors[item.type]}`}>
+                  {mediaTypeLabels[item.type]}
                 </div>
               </div>
 
-              {/* Tags */}
-              {item.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-3">
-                  {item.tags.slice(0, 3).map((tag) => {
-                    console.log('Tag', tag);
-                    return (
-                      <span key={tag} className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                        {tag}
+              {/* Content */}
+              <div className="p-4">
+                <h3 className="font-semibold text-white mb-2 line-clamp-2">{item.title}</h3>
+
+                {/* Status */}
+                <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-3`}>
+                  {getStatusLabel(item.status)}
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-4">
+                    {item.rating && (
+                      <div className="flex items-center gap-1">
+                        <Star className="text-yellow-400" size={14} fill="currentColor" />
+                        <span className="text-white">{item.rating}</span>
+                      </div>
+                    )}
+                    {item.hoursSpent && (
+                      <div className="flex items-center gap-1">
+                        <Clock className="text-blue-400" size={14} />
+                        <span className="text-white">{item.hoursSpent}h</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tags */}
+                {item.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {item.tags.slice(0, 3).map((tag) => {
+                      console.log('Tag', tag);
+                      return (
+                        <span key={tag} className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                          {tag}
+                        </span>
+                      );
+                    })}
+                    {item.tags.length > 3 && (
+                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                        +{item.tags.length - 3}
                       </span>
-                    );
-                  })}
-                  {item.tags.length > 3 && (
-                    <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                      +{item.tags.length - 3}
-                    </span>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
+      {/* Empty State */}
       {/* Empty State */}
       {filteredAndSortedItems.length === 0 && (
         <div className="text-center py-12">
@@ -288,7 +286,7 @@ const Library: React.FC = () => {
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">Nenhum item encontrado</h3>
           <p className="text-slate-400 mb-6">Tente ajustar sua busca ou filtros</p>
-          <button 
+          <button
             onClick={() => setShowAddModal(true)}
             className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200"
           >
@@ -299,7 +297,7 @@ const Library: React.FC = () => {
 
       {/* Add Media Modal */}
       {showAddModal && (
-        <AddMediaModal 
+        <AddMediaModal
           onClose={() => setShowAddModal(false)}
           onSave={(newItem) => {
             setMediaItems([...mediaItems, newItem]);
@@ -310,7 +308,7 @@ const Library: React.FC = () => {
 
       {/* Edit Media Modal */}
       {editingItem && (
-        <EditMediaModal 
+        <EditMediaModal
           item={editingItem}
           onClose={() => setEditingItem(null)}
           onSave={handleEditItem}
@@ -318,5 +316,6 @@ const Library: React.FC = () => {
       )}
     </div>
   );
-};export default Library;
+};
 
+export default Library;
