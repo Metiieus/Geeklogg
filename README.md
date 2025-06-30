@@ -48,6 +48,9 @@ O projeto utiliza React + TypeScript com Vite e TailwindCSS, além dos serviços
 
 ## Execução
 
+Antes de rodar o projeto, copie o arquivo `.env.example` para `.env` e
+preencha com as credenciais do Firebase.
+
 1. Instale as dependências:
    ```bash
    npm install
@@ -71,7 +74,7 @@ O projeto utiliza React + TypeScript com Vite e TailwindCSS, além dos serviços
 - **src/App.tsx** organiza a navegação e repassa os dados via context.
 - **src/components/** traz as telas e modais utilizados em cada funcionalidade.
 - **src/context/** define os providers de autenticação e de estado global.
-- **src/services/** contém a lógica de comunicação com Firestore e Storage.
+ - **src/services/** concentra a camada de acesso a dados e pode ser trocada por outro banco facilmente.
 - **src/firebase.ts** inicializa os serviços do Firebase.
 
 Sinta-se à vontade para abrir issues ou contribuir com melhorias.
