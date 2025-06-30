@@ -1,74 +1,77 @@
 # NerdLog
 
-NerdLog é um diário digital para acompanhar tudo que você consome no mundo geek – jogos, animes, séries, livros e filmes. O projeto foi desenvolvido em React + TypeScript com Vite e TailwindCSS. Os dados são sincronizados com o Firebase (Authentication e Firestore).
+NerdLog é um diário digital para registrar e acompanhar seu consumo de mídias geek.
+O projeto utiliza React + TypeScript com Vite e TailwindCSS, além dos serviços do Firebase (Authentication, Firestore e Storage).
 
-## Funcionalidades Principais
+## Funcionalidades
 
-- **Autenticação e Cadastro**
-  - Login e registro de usuário utilizando Firebase Authentication.
-  - Cada usuário possui sua própria coleção de dados no Firestore.
+### Autenticação
+- Login e registro de usuários via Firebase Authentication.
+- Cada usuário tem sua própria coleção de dados.
 
-- **Dashboard**
-  - Saudação dinâmica de acordo com o horário do dia.
-  - Destaque para o item de mídia atualizado recentemente.
-  - Estatísticas rápidas: total de horas, quantidade concluída e nota média.
-  - Visão geral de status (concluídos, em progresso, abandonados e planejados).
-  - Lista dos marcos mais recentes.
+### Dashboard
+- Saudação dinâmica conforme o horário do dia.
+- Destaque para o item de mídia atualizado mais recentemente.
+- Resumo rápido de horas investidas, itens concluídos e nota média.
+- Painel com contagem de status (concluídos, em progresso, abandonados, planejados).
+- Exibição dos últimos marcos adicionados.
 
-- **Biblioteca de Mídias**
-  - Adição, edição e remoção de itens de mídia (jogos, anime, séries, livros e filmes).
-  - Filtros por tipo e status, busca por título ou tags e ordenação por título, avaliação, horas ou última atualização.
-  - Cada item pode receber imagem de capa, nota, horas gastas, datas de início/conclusão, plataforma, tags, link externo e descrição.
+### Biblioteca
+- Cadastro, edição e remoção de jogos, anime, séries, livros e filmes.
+- Filtros por tipo e status, busca por título ou tags e ordenação por título, avaliação, horas ou data de atualização.
+- Upload de imagem de capa e campos para nota, horas, datas, plataforma, tags, link e descrição.
 
-- **Resenhas**
-  - Criação, edição e exclusão de resenhas associadas a itens da biblioteca.
-  - Marcar resenhas como favoritas e buscar por título, conteúdo ou nome da mídia.
+### Resenhas
+- Criação e edição de resenhas ligadas a itens da biblioteca.
+- Marcação de resenhas como favoritas.
+- Busca por título, conteúdo ou nome da mídia associada.
+- Upload opcional de imagem para ilustrar a resenha.
 
-- **Jornada (Timeline)**
-  - Registro de marcos importantes com data, ícone personalizado e descrição.
-  - Opcionalmente relacionar o marco a uma mídia da biblioteca.
-  - Possibilidade de editar ou excluir marcos existentes.
+### Jornada (Timeline)
+- Registro de marcos importantes com data, ícone e descrição.
+- Possibilidade de relacionar o marco a uma mídia específica.
+- Edição e exclusão dos marcos registrados.
 
-- **Estatísticas**
-  - Visão geral do tempo investido, itens concluídos e nota média geral.
-  - Indicadores por tipo de mídia (quantidade, horas, concluídos e nota média).
-  - Listas de melhores avaliados e itens com mais horas gastas.
+### Estatísticas
+- Visão geral de tempo total, número de itens concluídos e nota média.
+- Indicadores por tipo de mídia (quantidade, horas, concluídos e nota).
+- Listas de melhores avaliados e de maior tempo investido.
 
-- **Perfil**
-  - Exibição do avatar, nome e biografia do usuário.
+### Perfil
+- Exibição e edição de avatar, nome e biografia.
+- Gerenciamento de favoritos (personagens, jogos e filmes/séries) com upload de imagens.
 
-- **Configurações**
-  - Personalização do perfil (nome, avatar, bio) e escolha de tema (claro ou escuro).
-  - Definição da ordenação padrão da biblioteca.
-  - Exportação de backup de todos os dados em formato JSON e importação de backups.
-  - Opção para excluir todos os dados salvos.
+### Configurações
+- Escolha entre tema claro ou escuro e definição da ordenação padrão da biblioteca.
+- Exportação de um backup JSON com todos os dados e importação de backups.
+- Opção para apagar todos os dados armazenados.
 
-## Execução do Projeto
+## Execução
 
-1. Instale as dependências (será necessário acesso à internet):
+1. Instale as dependências:
    ```bash
    npm install
    ```
-2. Rode o ambiente de desenvolvimento:
+2. Inicie o servidor de desenvolvimento:
    ```bash
    npm run dev
    ```
-   O Vite iniciará o servidor em `http://localhost:5173` por padrão.
-3. Para gerar uma build de produção:
+   A aplicação fica acessível por padrão em `http://localhost:5173`.
+3. Para gerar a build de produção:
    ```bash
    npm run build
    ```
-4. (Opcional) Verifique a build localmente:
+4. Para pré-visualizar a build:
    ```bash
    npm run preview
    ```
 
-## Estrutura do Código
+## Estrutura
 
-- **src/App.tsx** define a lógica principal e as páginas visíveis de acordo com a navegação.
-- **src/components/** contém os componentes de interface (Dashboard, Library, Reviews, Timeline, Statistics, Profile, Settings e modais de adição/edição).
-- **src/context/** possui os providers para autenticação e para o estado global da aplicação.
-- **src/hooks/** reúne hooks utilitários, como armazenamento local e sincronização com Firestore.
-- **src/firebase.ts** inicializa o Firebase.
+- **src/App.tsx** organiza a navegação e repassa os dados via context.
+- **src/components/** traz as telas e modais utilizados em cada funcionalidade.
+- **src/context/** define os providers de autenticação e de estado global.
+- **src/services/** contém a lógica de comunicação com Firestore e Storage.
+- **src/firebase.ts** inicializa os serviços do Firebase.
 
 Sinta-se à vontade para abrir issues ou contribuir com melhorias.
