@@ -1,7 +1,8 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import type { UserSettings } from '../App';
-import { uploadFileToStorage } from './utils';
+import { storageClient } from './storageClient';
+import { database } from './database';
 
 function getUserId(): string {
   const uid = auth.currentUser?.uid;
@@ -11,17 +12,17 @@ function getUserId(): string {
 
 export async function getSettings(): Promise<UserSettings | null> {
   const uid = getUserId();
-  const snap = await getDoc(doc(db, 'users', uid, 'settings', 'profile'));
-  return snap.exists() ? (snap.data() as UserSettings) : null;
+  const snap = await database.getDocument<UserSettings>(['users', uid, 'settings', 'profile']);
+  return snap;
 }
 
 export async function saveSettings(data: UserSettings): Promise<void> {
   const uid = getUserId();
-  await setDoc(doc(db, 'users', uid, 'settings', 'profile'), data, { merge: true });
+  await database.set(['users', uid, 'settings', 'profile'], data, { merge: true });
 }
 
 export async function backupUserData(data: unknown): Promise<void> {
   const timestamp = Date.now();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  await uploadFileToStorage(`backups/${timestamp}.json`, blob);
+  await storageClient.upload(`backups/${timestamp}.json`, blob);
 }
