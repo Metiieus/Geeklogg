@@ -1,11 +1,43 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { useAppContext } from '../context/AppContext';
+import { EditProfileModal } from './modals/EditProfileModal';
+import { EditFavoritesModal } from './modals/EditFavoritesModal';
+import { saveSettings } from '../services/settingsService';
 
 const Profile: React.FC = () => {
-  const { profile, loading } = useAuth();
+  const { settings, setSettings } = useAppContext();
+  const [editProfile, setEditProfile] = useState(false);
+  const [editFav, setEditFav] = useState(false);
 
-  if (loading) return <div className="text-white text-center p-6">Carregando perfil...</div>;
-  if (!profile) return <div className="text-white text-center p-6">Perfil não encontrado.</div>;
+  const saveProfile = async (newSettings: typeof settings) => {
+    setSettings(newSettings);
+    await saveSettings(newSettings);
+    setEditProfile(false);
+  };
+
+  const saveFav = async (fav: typeof settings.favorites) => {
+    const updated = { ...settings, favorites: fav };
+    setSettings(updated);
+    await saveSettings(updated);
+    setEditFav(false);
+  };
+
+  const renderCards = (items: typeof settings.favorites.characters) => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      {items.map((it) => {
+        console.log('Favorite item', it);
+        return (
+          <div key={it.id} className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50">
+            <div className="w-full h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
+              {it.image ? <img src={it.image} alt={it.name} className="w-full h-full object-cover" /> : null}
+            </div>
+            <p className="text-sm text-white break-words">{it.name}</p>
+          </div>
+        );
+      })}
+      {items.length === 0 && <p className="text-slate-500 col-span-full">Nenhum item</p>}
+    </div>
+  );
 
   return (
     <div className="max-w-4xl mx-auto p-6">
