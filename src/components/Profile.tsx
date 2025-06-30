@@ -2,19 +2,23 @@ import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { EditProfileModal } from './modals/EditProfileModal';
 import { EditFavoritesModal } from './modals/EditFavoritesModal';
+import { saveSettings } from '../services/settingsService';
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
 
-  const saveProfile = (newSettings: typeof settings) => {
+  const saveProfile = async (newSettings: typeof settings) => {
     setSettings(newSettings);
+    await saveSettings(newSettings);
     setEditProfile(false);
   };
 
-  const saveFav = (fav: typeof settings.favorites) => {
-    setSettings({ ...settings, favorites: fav });
+  const saveFav = async (fav: typeof settings.favorites) => {
+    const updated = { ...settings, favorites: fav };
+    setSettings(updated);
+    await saveSettings(updated);
     setEditFav(false);
   };
 
