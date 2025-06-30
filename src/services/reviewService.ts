@@ -1,17 +1,12 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import type { Review } from '../App';
-import {
-  getUserId,
-  uploadFileToStorage,
-  deleteFileFromStorage,
-  removeUndefinedFields
-} from './utils';
+import { getUserId, removeUndefinedFields } from './utils';
+import { database } from './database';
+import { storageClient } from './storageClient';
 
 export async function getReviews(): Promise<Review[]> {
   const uid = getUserId();
-  const snap = await getDocs(collection(db, 'users', uid, 'reviews'));
-  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<Review, 'id'>) }));
+  const snap = await database.getCollection<Omit<Review, 'id'>>(['users', uid, 'reviews']);
+  return snap.map(d => ({ id: d.id, ...d.data }));
 }
 
 export interface AddReviewData extends Omit<Review, 'id' | 'createdAt' | 'updatedAt' | 'image'> {
@@ -28,13 +23,13 @@ export async function addReview(data: AddReviewData): Promise<Review> {
     createdAt: now,
     updatedAt: now
   }) as Omit<Review, 'id'>;
-  const docRef = await addDoc(collection(db, 'users', uid, 'reviews'), toSave);
+  const docRef = await database.add(['users', uid, 'reviews'], toSave);
   console.log('📝 Review criada com ID:', docRef.id);
 
   if (imageFile instanceof File) {
     try {
-      const imageUrl = await uploadFileToStorage(`reviews/${docRef.id}`, imageFile);
-      await updateDoc(doc(db, 'users', uid, 'reviews', docRef.id), { image: imageUrl });
+      const imageUrl = await storageClient.upload(`reviews/${docRef.id}`, imageFile);
+      await database.update(['users', uid, 'reviews', docRef.id], { image: imageUrl });
       console.log('✅ Imagem da review enviada');
       (toSave as Review).image = imageUrl;
     } catch (err) {
@@ -57,13 +52,13 @@ export async function updateReview(id: string, data: UpdateReviewData): Promise<
     updatedAt: now
   });
   delete (toUpdate as { imageFile?: File }).imageFile;
-  await setDoc(doc(db, 'users', uid, 'reviews', id), toUpdate, { merge: true });
+  await database.set(['users', uid, 'reviews', id], toUpdate, { merge: true });
   console.log('📝 Review atualizada:', id);
 
   if (data.imageFile instanceof File) {
     try {
-      const url = await uploadFileToStorage(`reviews/${id}`, data.imageFile);
-      await updateDoc(doc(db, 'users', uid, 'reviews', id), { image: url });
+      const url = await storageClient.upload(`reviews/${id}`, data.imageFile);
+      await database.update(['users', uid, 'reviews', id], { image: url });
       console.log('✅ Imagem da review atualizada');
     } catch (err) {
       console.error('Erro ao atualizar imagem da review', err);
@@ -73,7 +68,7 @@ export async function updateReview(id: string, data: UpdateReviewData): Promise<
 
 export async function deleteReview(id: string): Promise<void> {
   const uid = getUserId();
-  await deleteDoc(doc(db, 'users', uid, 'reviews', id));
+  await database.delete(['users', uid, 'reviews', id]);
   console.log('🗑️ Review removida:', id);
-  await deleteFileFromStorage(`reviews/${id}`);
+  await storageClient.remove(`reviews/${id}`);
 }
