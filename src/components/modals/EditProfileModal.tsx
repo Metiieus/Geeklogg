@@ -3,25 +3,25 @@ import { Save, X, Upload } from 'lucide-react';
 import { UserSettings } from '../../App';
 
 interface EditProfileModalProps {
-  settings: UserSettings;
+  profile: UserSettings;
   onSave: (settings: UserSettings) => void;
   onClose: () => void;
 }
 
-export const EditProfileModal: React.FC<EditProfileModalProps> = ({ settings, onSave, onClose }) => {
+export const EditProfileModal: React.FC<EditProfileModalProps> = ({ profile, onSave, onClose }) => {
   const [local, setLocal] = useState({
-    name: settings.name,
-    avatar: settings.avatar || '',
-    bio: settings.bio || ''
+    name: profile?.name || '',
+    avatar: profile?.avatar || '',
+    bio: profile?.bio || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
-      ...settings,
+      ...profile,
       name: local.name,
       avatar: local.avatar || undefined,
-      bio: local.bio
+      bio: local.bio,
     });
   };
 

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { EditProfileModal } from './modals/EditProfileModal';
 import { EditFavoritesModal } from './modals/EditFavoritesModal';
 import { saveSettings } from '../services/settingsService';
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
+  const { profile, loading } = useAuth();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
 
@@ -38,6 +40,14 @@ const Profile: React.FC = () => {
       {items.length === 0 && <p className="text-slate-500 col-span-full">Nenhum item</p>}
     </div>
   );
+
+  if (loading) {
+    return <div className="text-white text-center p-6">Carregando perfil...</div>;
+  }
+
+  if (!profile) {
+    return <div className="text-white text-center p-6">Perfil não encontrado.</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -101,6 +111,22 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {editProfile && profile && (
+        <EditProfileModal
+          profile={profile}
+          onSave={saveProfile}
+          onClose={() => setEditProfile(false)}
+        />
+      )}
+
+      {editFav && profile && (
+        <EditFavoritesModal
+          favorites={settings.favorites}
+          onSave={saveFav}
+          onClose={() => setEditFav(false)}
+        />
+      )}
     </div>
   );
 };
