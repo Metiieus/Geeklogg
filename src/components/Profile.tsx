@@ -130,7 +130,6 @@ const Profile: React.FC = () => {
                   <p className="text-slate-500">Nenhum personagem favorito.</p>
                 )}
               </div>
-          </div>
 
               <div className="bg-slate-800 p-4 rounded-xl">
                 <h4 className="text-white font-medium mb-2">Jogos</h4>
