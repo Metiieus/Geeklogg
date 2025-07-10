@@ -16,6 +16,7 @@ import { getMilestones } from './services/milestoneService';
 import { getSettings } from './services/settingsService';
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
+import { checkAchievements } from './services/achievementService';
 
 export type MediaType = 'games' | 'anime' | 'series' | 'books' | 'movies';
 export type Status = 'completed' | 'in-progress' | 'dropped' | 'planned';
@@ -113,6 +114,18 @@ function App() {
       setReviews(revs);
       setMilestones(miles);
       if (prefs) setSettings(prefs);
+      
+      // Verificar conquistas após carregar os dados
+      if (mItems.length > 0 || revs.length > 0 || prefs) {
+        try {
+          const newAchievements = await checkAchievements(mItems, revs, prefs || settings);
+          if (newAchievements.length > 0) {
+            console.log('🏆 Novas conquistas desbloqueadas:', newAchievements);
+          }
+        } catch (error) {
+          console.error('Erro ao verificar conquistas:', error);
+        }
+      }
     })();
   }, [user]);
 
