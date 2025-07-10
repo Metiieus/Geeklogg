@@ -6,7 +6,7 @@ import { storageClient } from './storageClient';
 export async function getMilestones(): Promise<Milestone[]> {
   const uid = getUserId();
   const snap = await database.getCollection<Omit<Milestone, 'id'>>(['users', uid, 'milestones']);
-  console.log('📥 Milestones carregadas:', snap.docs.length);
+  console.log('📥 Milestones carregadas:', snap.length);
   return snap.map(d => ({ id: d.id, ...d.data }));
 }
 
