@@ -57,9 +57,9 @@ const Dashboard: React.FC = () => {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-slide-down">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">
             {getGreeting()}, {settings.name || 'Nerd'}
@@ -72,9 +72,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Featured Content & Quick Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-in-left">
         {/* Featured Item */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 hover:scale-105 transition-transform duration-300">
           <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
               <Star className="text-yellow-400" size={20} />
@@ -124,8 +124,8 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="space-y-4">
-          <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
+        <div className="space-y-4 animate-slide-in-right">
+          <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
             <div className="flex items-center gap-3 mb-2">
               <Clock className="text-blue-400" size={20} />
               <span className="text-blue-400 font-medium">Total de Horas</span>
@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
             <p className="text-2xl font-bold text-white">{stats.totalHours.toLocaleString()}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20">
+          <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
             <div className="flex items-center gap-3 mb-2">
               <TrendingUp className="text-green-400" size={20} />
               <span className="text-green-400 font-medium">Concluídos</span>
@@ -141,7 +141,7 @@ const Dashboard: React.FC = () => {
             <p className="text-2xl font-bold text-white">{stats.completed}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20">
+          <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
             <div className="flex items-center gap-3 mb-2">
               <Star className="text-yellow-400" size={20} />
               <span className="text-yellow-400 font-medium">Nota Média</span>
@@ -152,27 +152,27 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Status Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-green-500/5 to-green-600/5 backdrop-blur-sm rounded-xl p-4 border border-green-500/10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up">
+        <div className="bg-gradient-to-br from-green-500/5 to-green-600/5 backdrop-blur-sm rounded-xl p-4 border border-green-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
           <p className="text-green-400 text-sm font-medium">Concluídos</p>
           <p className="text-2xl font-bold text-white">{statusCounts.completed}</p>
         </div>
-        <div className="bg-gradient-to-br from-blue-500/5 to-blue-600/5 backdrop-blur-sm rounded-xl p-4 border border-blue-500/10">
+        <div className="bg-gradient-to-br from-blue-500/5 to-blue-600/5 backdrop-blur-sm rounded-xl p-4 border border-blue-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
           <p className="text-blue-400 text-sm font-medium">Em Progresso</p>
           <p className="text-2xl font-bold text-white">{statusCounts['in-progress']}</p>
         </div>
-        <div className="bg-gradient-to-br from-red-500/5 to-red-600/5 backdrop-blur-sm rounded-xl p-4 border border-red-500/10">
+        <div className="bg-gradient-to-br from-red-500/5 to-red-600/5 backdrop-blur-sm rounded-xl p-4 border border-red-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10">
           <p className="text-red-400 text-sm font-medium">Abandonados</p>
           <p className="text-2xl font-bold text-white">{statusCounts.dropped}</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-500/5 to-purple-600/5 backdrop-blur-sm rounded-xl p-4 border border-purple-500/10">
+        <div className="bg-gradient-to-br from-purple-500/5 to-purple-600/5 backdrop-blur-sm rounded-xl p-4 border border-purple-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
           <p className="text-purple-400 text-sm font-medium">Planejados</p>
           <p className="text-2xl font-bold text-white">{statusCounts.planned}</p>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 animate-fade-in hover:scale-105 transition-all duration-300">
         <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
           <Calendar className="text-purple-400" size={20} />
           Marcos Recentes

@@ -86,9 +86,18 @@ const Library: React.FC = () => {
   };
 
   const handleDeleteItem = async (itemId: string) => {
-    if (confirm('Tem certeza que deseja excluir este item?')) {
+    const item = mediaItems.find(m => m.id === itemId);
+    const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
+    
+    if (confirm(confirmMessage)) {
       await deleteMedia(itemId);
       setMediaItems(mediaItems.filter(item => item.id !== itemId));
+      // Feedback visual de sucesso
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up';
+      toast.textContent = '✅ Item removido com sucesso!';
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
     }
   };
 
@@ -176,15 +185,15 @@ const Library: React.FC = () => {
       </div>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
         {filteredAndSortedItems.map((item) => {
           console.log('Library item', item);
           return (
-            <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-200 hover:scale-105">
+            <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
               {/* Cover Image */}
               <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
                 {item.cover ? (
-                  <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
+                  <img src={item.cover} alt={item.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-500">
                     <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
@@ -192,10 +201,10 @@ const Library: React.FC = () => {
                 )}
 
                 {/* Overlay with actions */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center gap-2">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2">
                   <button
                     onClick={() => setEditingItem(item)}
-                    className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                    className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110 animate-bounce"
                     title="Editar"
                   >
                     <Edit size={16} className="text-white" />
@@ -205,7 +214,7 @@ const Library: React.FC = () => {
                       href={item.externalLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                      className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110 animate-bounce"
                       title="Link Externo"
                     >
                       <ExternalLink size={16} className="text-white" />
@@ -213,7 +222,7 @@ const Library: React.FC = () => {
                   )}
                   <button
                     onClick={() => handleDeleteItem(item.id)}
-                    className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
+                    className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-all duration-200 hover:scale-110 animate-wiggle"
                     title="Excluir"
                   >
                     <Trash2 size={16} className="text-white" />

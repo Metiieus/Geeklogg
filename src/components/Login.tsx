@@ -16,7 +16,18 @@ export const Login: React.FC = () => {
       await login(email, password);
     } catch (err: any) {
       console.error('Falha no login:', err);
-      setError(err.message || 'Erro ao fazer login');
+      // Mensagens amigáveis para erros comuns
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' || err.code === 'auth/invalid-login-credentials') {
+        setError('Opa! Não é essa senha não 🤔');
+      } else if (err.code === 'auth/user-not-found') {
+        setError('Hmm... esse email não está cadastrado 🤷‍♂️');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Esse email não parece válido 📧');
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Calma aí! Muitas tentativas. Tenta de novo em alguns minutos ⏰');
+      } else {
+        setError('Algo deu errado... tenta de novo? 😅');
+      }
     }
   };
 

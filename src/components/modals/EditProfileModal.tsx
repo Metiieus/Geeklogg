@@ -17,6 +17,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ profile, onS
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('💾 Salvando perfil no modal:', local);
     onSave({
       ...profile,
       name: local.name,
