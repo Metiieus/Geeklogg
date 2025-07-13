@@ -66,7 +66,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({ onAchievementC
     <div className="space-y-8">
       {/* Progress Overview */}
       {progress && (
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white flex items-center gap-2">
               <Trophy className="text-yellow-400" size={24} />
@@ -80,14 +80,33 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({ onAchievementC
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {/* Progress Bar */}
+          <div className="mb-4">
+            <div className="w-full bg-slate-700 rounded-full h-3">
+              <div 
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${(progress.totalUnlocked / progress.totalAvailable) * 100}%` }}
+              />
+            </div>
+            <p className="text-xs text-slate-400 mt-1 text-center">
+              {Math.round((progress.totalUnlocked / progress.totalAvailable) * 100)}% completo
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {Object.entries(progress.byCategory).map(([category, stats]) => (
-              <div key={category} className="text-center">
-                <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${categoryColors[category as keyof typeof categoryColors]} flex items-center justify-center`}>
-                  <span className="text-white font-bold">{stats.unlocked}</span>
+              <div key={category} className="text-center p-3 bg-slate-800/30 rounded-lg">
+                <div className={`w-10 h-10 mx-auto mb-2 rounded-full bg-gradient-to-br ${categoryColors[category as keyof typeof categoryColors]} flex items-center justify-center`}>
+                  <span className="text-white font-bold text-sm">{stats.unlocked}</span>
                 </div>
-                <p className="text-xs text-slate-400 capitalize">{category}</p>
-                <p className="text-xs text-slate-500">{stats.unlocked}/{stats.total}</p>
+                <p className="text-xs text-slate-300 capitalize font-medium">{category}</p>
+                <p className="text-xs text-slate-400">{stats.unlocked}/{stats.total}</p>
+                <div className="w-full bg-slate-700 rounded-full h-1 mt-1">
+                  <div 
+                    className={`bg-gradient-to-r ${categoryColors[category as keyof typeof categoryColors]} h-1 rounded-full transition-all duration-300`}
+                    style={{ width: `${stats.total > 0 ? (stats.unlocked / stats.total) * 100 : 0}%` }}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -101,7 +120,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({ onAchievementC
           Árvore de Conquistas
         </h3>
         
-        <div className="relative min-h-96">
+        <div className="relative min-h-[500px]">
           {/* Connection Lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             {achievements.map(achievement => 
@@ -156,12 +175,14 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({ onAchievementC
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onAchievementClick(achievement)}
               >
-                <div className={`
-                  relative w-20 h-20 rounded-full border-4 overflow-hidden
-                  ${rarityColors[achievement.rarity]}
-                  ${achievement.unlocked ? `shadow-lg ${rarityGlow[achievement.rarity]}` : 'opacity-60'}
-                  ${canUnlock && !achievement.unlocked ? 'animate-pulse' : ''}
-                `}>
+                <>
+                  <div className="relative group">
+                  <div className={`
+                    relative w-20 h-20 rounded-full border-4 overflow-hidden transition-all duration-300
+                    ${rarityColors[achievement.rarity]}
+                    ${achievement.unlocked ? `shadow-lg ${rarityGlow[achievement.rarity]}` : 'opacity-60'}
+                    ${canUnlock && !achievement.unlocked ? 'animate-pulse' : ''}
+                  `}>
                   <img
                     src={achievement.image}
                     alt={achievement.title}
@@ -194,14 +215,25 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({ onAchievementC
                   <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br ${categoryColors[achievement.category]} flex items-center justify-center`}>
                     <Star size={12} className="text-white" fill="currentColor" />
                   </div>
-                </div>
+                  </div>
+                  </div>
                 
-                {/* Achievement title */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 text-center">
-                  <p className={`text-xs font-medium ${achievement.unlocked ? 'text-white' : 'text-slate-500'} whitespace-nowrap`}>
+                  {/* Achievement title */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 text-center max-w-24">
+                    <p className={`text-xs font-medium ${achievement.unlocked ? 'text-white' : 'text-slate-500'} break-words leading-tight`}>
                     {achievement.title}
-                  </p>
-                </div>
+                    </p>
+                  </div>
+                  
+                  {/* Tooltip on hover */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                    <div className="bg-slate-900 text-white text-xs rounded-lg p-2 whitespace-nowrap border border-slate-700 shadow-lg">
+                      <p className="font-medium">{achievement.title}</p>
+                      <p className="text-slate-300 text-xs">{achievement.description}</p>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-slate-700" />
+                    </div>
+                  </div>
+                </>
               </motion.div>
             );
           })}

@@ -6,7 +6,8 @@ import {
   Clock,
   BarChart3,
   Settings,
-  User
+  User,
+  Users
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { ActivePage } from '../App';
@@ -23,6 +24,7 @@ const navItems: NavItem[] = [
   { id: 'reviews', icon: <MessageSquare size={20} />, label: 'Resenhas' },
   { id: 'timeline', icon: <Clock size={20} />, label: 'Jornada' },
   { id: 'statistics', icon: <BarChart3 size={20} />, label: 'Estat\u00edsticas' },
+  { id: 'social', icon: <Users size={20} />, label: 'Social' },
   { id: 'profile', icon: <User size={20} />, label: 'Perfil' },
   { id: 'settings', icon: <Settings size={20} />, label: 'Configura\u00e7\u00f5es' }
 ];

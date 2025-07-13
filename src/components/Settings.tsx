@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Palette, Download, Upload, Trash2, Save } from 'lucide-react';
+import { Download, Upload, Trash2, Save } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { saveSettings } from '../services/settingsService';
 
@@ -9,9 +9,15 @@ const Settings: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleSave = async () => {
+    console.log('💾 Salvando configurações:', localSettings);
     setSettings(localSettings);
     await saveSettings(localSettings);
-    alert('Configurações salvas com sucesso!');
+    // Feedback visual melhorado
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    toast.innerHTML = '✅ Configurações salvas com sucesso!';
+    document.body.appendChild(toast);
+    setTimeout(() => document.body.removeChild(toast), 3000);
   };
 
   const handleExport = () => {
@@ -32,6 +38,13 @@ const Settings: React.FC = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    
+    // Feedback visual
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    toast.innerHTML = '📤 Backup baixado com sucesso!';
+    document.body.appendChild(toast);
+    setTimeout(() => document.body.removeChild(toast), 3000);
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,15 +56,36 @@ const Settings: React.FC = () => {
       try {
         const data = JSON.parse(e.target?.result as string);
         if (data.settings) setSettings(data.settings);
-        alert('Backup importado com sucesso!');
+        // Feedback visual
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+        toast.innerHTML = '📥 Backup importado com sucesso!';
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
       } catch (error) {
-        alert('Erro ao importar arquivo de backup');
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+        toast.innerHTML = '❌ Ops! Arquivo de backup inválido 😅';
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
       }
     };
     reader.readAsText(file);
   };
 
   const handleDeleteAllData = () => {
+    const confirmMessage = `🚨 ATENÇÃO! 🚨\n\nVai apagar TODOS os seus dados mesmo?\n\n• Todas as mídias\n• Todas as resenhas\n• Todos os marcos\n• Todas as configurações\n\nEssa ação é IRREVERSÍVEL!\n\nTem certeza ABSOLUTA?`;
+    
+    if (!confirm(confirmMessage)) return;
+    
+    const finalConfirm = `Última chance! 🛑\n\nDigite "APAGAR TUDO" para confirmar:`;
+    const userInput = prompt(finalConfirm);
+    
+    if (userInput !== "APAGAR TUDO") {
+      alert('Ufa! Dados salvos 😅');
+      return;
+    }
+    
     window.location.reload();
   };
 
@@ -65,49 +99,26 @@ const Settings: React.FC = () => {
 
 
 
-      {/* Theme Settings */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-        <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-          <Palette className="text-pink-400" size={20} />
-          Aparência
-        </h2>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Tema
-            </label>
-            <select
-              value={localSettings.theme}
-              onChange={(e) => setLocalSettings(prev => ({ ...prev, theme: e.target.value as 'dark' | 'light' }))}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="dark">Escuro</option>
-              <option value="light">Claro</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Ordenação Padrão da Biblioteca
-            </label>
-            <select
-              value={localSettings.defaultLibrarySort}
-              onChange={(e) => setLocalSettings(prev => ({ ...prev, defaultLibrarySort: e.target.value }))}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="updatedAt">Recém Atualizados</option>
-              <option value="title">Título A-Z</option>
-              <option value="rating">Melhor Avaliados</option>
-              <option value="hoursSpent">Mais Horas</option>
-            </select>
-          </div>
-        </div>
-      </div>
 
       {/* Data Management */}
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-        <h2 className="text-xl font-semibold text-white mb-6">Gerenciamento de Dados</h2>
+        <h2 className="text-xl font-semibold text-white mb-6">Configurações</h2>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-300 mb-2">
+            Ordenação Padrão da Biblioteca
+          </label>
+          <select
+            value={localSettings.defaultLibrarySort}
+            onChange={(e) => setLocalSettings(prev => ({ ...prev, defaultLibrarySort: e.target.value }))}
+            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="updatedAt">Recém Atualizados</option>
+            <option value="title">Título A-Z</option>
+            <option value="rating">Melhor Avaliados</option>
+            <option value="hoursSpent">Mais Horas</option>
+          </select>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Export */}

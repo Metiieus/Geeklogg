@@ -7,17 +7,17 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { FavoriteItem } from '../App';
 
-interface UserProfile {
+export interface UserProfile {
   name: string;
   avatar?: string;
   bio?: string;
   favorites: {
-    characters: any[];
-    games: any[];
-    movies: any[];
+    characters: FavoriteItem[];
+    games: FavoriteItem[];
+    movies: FavoriteItem[];
   };
-  theme: 'dark' | 'light';
   defaultLibrarySort: string;
 }
 
@@ -44,7 +44,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const userRef = doc(db, 'users', currentUser.uid);
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
-            setProfile(userSnap.data() as UserProfile);
+            const userData = userSnap.data();
+            console.log('📥 Dados do usuário carregados:', userData);
+            // Normalize favorites data to ensure consistent structure
+            const normalizedProfile: UserProfile = {
+              name: userData.nome || userData.name || userData.apelido || 'Usuário',
+              avatar: userData.avatar,
+              bio: userData.bio || '',
+              favorites: {
+                characters: Array.isArray(userData.favorites?.characters) 
+                  ? userData.favorites.characters.map((item: any) => 
+                      typeof item === 'string' ? { id: Math.random().toString(), name: item } : item
+                    )
+                  : [],
+                games: Array.isArray(userData.favorites?.games)
+                  ? userData.favorites.games.map((item: any) => 
+                      typeof item === 'string' ? { id: Math.random().toString(), name: item } : item
+                    )
+                  : [],
+                movies: Array.isArray(userData.favorites?.movies)
+                  ? userData.favorites.movies.map((item: any) => 
+                      typeof item === 'string' ? { id: Math.random().toString(), name: item } : item
+                    )
+                  : []
+              },
+              defaultLibrarySort: userData.defaultLibrarySort || 'updatedAt'
+            } as UserProfile;
+            console.log('✅ Perfil normalizado:', normalizedProfile);
+            setProfile(normalizedProfile);
           } else {
             console.log('Perfil não encontrado no Firestore.');
             setProfile(null);

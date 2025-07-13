@@ -8,6 +8,7 @@ const Timeline = lazy(() => import('./components/Timeline'));
 const Statistics = lazy(() => import('./components/Statistics'));
 const Settings = lazy(() => import('./components/Settings'));
 const Profile = lazy(() => import('./components/Profile'));
+import { SocialFeed } from './components/SocialFeed';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Login } from './components/Login';
 import { getMedias } from './services/mediaService';
@@ -77,11 +78,10 @@ export interface UserSettings {
     games: FavoriteItem[];
     movies: FavoriteItem[];
   };
-  theme: 'dark' | 'light';
   defaultLibrarySort: string;
 }
 
-export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'profile' | 'settings';
+export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'profile' | 'settings' | 'social';
 
 function App() {
   const { user, loading } = useAuth();
@@ -90,7 +90,7 @@ function App() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [settings, setSettings] = useState<UserSettings>({
-    name: 'Nerd',
+    name: 'Usuário',
     bio: '',
     favorites: {
       characters: [],
@@ -103,7 +103,8 @@ function App() {
 
   useEffect(() => {
     if (!user) return;
-    (async () => {
+    
+    const loadData = async () => {
       const [mItems, revs, miles, prefs] = await Promise.all([
         getMedias(),
         getReviews(),
@@ -113,7 +114,21 @@ function App() {
       setMediaItems(mItems);
       setReviews(revs);
       setMilestones(miles);
-      if (prefs) setSettings(prefs);
+      if (prefs) {
+        // Ensure favorites structure is properly initialized
+        const normalizedSettings = {
+          name: prefs.name || 'Usuário',
+          bio: prefs.bio || '',
+          defaultLibrarySort: prefs.defaultLibrarySort || 'updatedAt',
+          favorites: {
+            characters: Array.isArray(prefs.favorites?.characters) ? prefs.favorites.characters : [],
+            games: Array.isArray(prefs.favorites?.games) ? prefs.favorites.games : [],
+            movies: Array.isArray(prefs.favorites?.movies) ? prefs.favorites.movies : []
+          }
+        };
+        console.log('⚙️ Configurações carregadas:', normalizedSettings);
+        setSettings(normalizedSettings);
+      }
       
       // Verificar conquistas após carregar os dados
       if (mItems.length > 0 || revs.length > 0 || prefs) {
@@ -126,7 +141,9 @@ function App() {
           console.error('Erro ao verificar conquistas:', error);
         }
       }
-    })();
+    };
+    
+    loadData();
   }, [user]);
 
 
@@ -167,6 +184,8 @@ function App() {
         return <Profile />;
       case 'settings':
         return <Settings />;
+      case 'social':
+        return <SocialFeed />;
       default:
         return <Dashboard />;
     }

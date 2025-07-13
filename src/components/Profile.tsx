@@ -11,13 +11,14 @@ import { AchievementNode } from '../types/achievements';
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
-  const { profile, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState<AchievementNode | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'achievements'>('info');
 
   const saveProfile = async (newSettings: typeof settings) => {
+    console.log('💾 Salvando perfil:', newSettings);
     setSettings(newSettings);
     await saveSettings(newSettings);
     setEditProfile(false);
@@ -25,6 +26,7 @@ const Profile: React.FC = () => {
 
   const saveFav = async (fav: typeof settings.favorites) => {
     const updated = { ...settings, favorites: fav };
+    console.log('💾 Salvando favoritos:', updated);
     setSettings(updated);
     await saveSettings(updated);
     setEditFav(false);
@@ -33,7 +35,6 @@ const Profile: React.FC = () => {
   const renderCards = (items: typeof settings.favorites.characters) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
       {items.map((it) => {
-        console.log('Favorite item', it);
         return (
           <div key={it.id} className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50">
             <div className="w-full h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
@@ -51,9 +52,14 @@ const Profile: React.FC = () => {
     return <div className="text-white text-center p-6">Carregando perfil...</div>;
   }
 
-  if (!profile) {
-    return <div className="text-white text-center p-6">Perfil não encontrado.</div>;
+  if (!user) {
+    return <div className="text-white text-center p-6">Usuário não encontrado.</div>;
   }
+
+  // Use settings as primary source, fallback to profile data
+  const displayName = settings.name || profile?.name || user.email?.split('@')[0] || 'Usuário';
+  const displayAvatar = settings.avatar || profile?.avatar;
+  const displayBio = settings.bio || profile?.bio || 'Sem bio definida.';
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -88,16 +94,16 @@ const Profile: React.FC = () => {
         <div className="space-y-6">
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl flex items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+              {displayAvatar ? (
+                <img src={displayAvatar} alt={displayName} className="w-full h-full object-cover" />
               ) : (
-                profile.name?.charAt(0).toUpperCase()
+                displayName.charAt(0).toUpperCase()
               )}
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold text-white">{profile.name}</h2>
-              <p className="text-slate-400">{profile.bio || 'Sem bio definida.'}</p>
+              <h2 className="text-2xl font-semibold text-white">{displayName}</h2>
+              <p className="text-slate-400">{displayBio}</p>
               <button
                 onClick={() => setEditProfile(true)}
                 className="mt-2 text-purple-400 hover:text-purple-300 text-sm"
@@ -120,41 +126,17 @@ const Profile: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-slate-800 p-4 rounded-xl">
                 <h4 className="text-white font-medium mb-2">Personagens</h4>
-                {profile.favorites?.characters?.length > 0 ? (
-                  <ul className="text-slate-400 list-disc list-inside">
-                    {profile.favorites.characters.map((char, idx) => (
-                      <li key={idx}>{char}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-slate-500">Nenhum personagem favorito.</p>
-                )}
+                {renderCards(settings.favorites.characters)}
               </div>
 
               <div className="bg-slate-800 p-4 rounded-xl">
                 <h4 className="text-white font-medium mb-2">Jogos</h4>
-                {profile.favorites?.games?.length > 0 ? (
-                  <ul className="text-slate-400 list-disc list-inside">
-                    {profile.favorites.games.map((game, idx) => (
-                      <li key={idx}>{game}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-slate-500">Nenhum jogo favorito.</p>
-                )}
+                {renderCards(settings.favorites.games)}
               </div>
 
               <div className="bg-slate-800 p-4 rounded-xl">
                 <h4 className="text-white font-medium mb-2">Filmes</h4>
-                {profile.favorites?.movies?.length > 0 ? (
-                  <ul className="text-slate-400 list-disc list-inside">
-                    {profile.favorites.movies.map((movie, idx) => (
-                      <li key={idx}>{movie}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-slate-500">Nenhum filme favorito.</p>
-                )}
+                {renderCards(settings.favorites.movies)}
               </div>
             </div>
           </div>
@@ -165,15 +147,15 @@ const Profile: React.FC = () => {
       {activeTab === 'achievements' && (
         <AchievementTree onAchievementClick={setSelectedAchievement} />
       )}
-      {editProfile && profile && (
+      {editProfile && (
         <EditProfileModal
-          profile={profile}
+          profile={settings}
           onSave={saveProfile}
           onClose={() => setEditProfile(false)}
         />
       )}
 
-      {editFav && profile && (
+      {editFav && (
         <EditFavoritesModal
           favorites={settings.favorites}
           onSave={saveFav}

@@ -14,9 +14,18 @@ const Timeline: React.FC = () => {
   const sortedMilestones = milestones.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const handleDeleteMilestone = async (milestoneId: string) => {
-    if (confirm('Tem certeza que deseja excluir este marco?')) {
+    const milestone = milestones.find(m => m.id === milestoneId);
+    const confirmMessage = `Vai apagar o marco "${milestone?.title}" mesmo? 🏆\n\nEssa memória será perdida para sempre!`;
+    
+    if (confirm(confirmMessage)) {
       await deleteMilestone(milestoneId);
       setMilestones(milestones.filter(milestone => milestone.id !== milestoneId));
+      // Feedback visual
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up';
+      toast.textContent = '✅ Marco removido!';
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
     }
   };
 
@@ -45,23 +54,23 @@ const Timeline: React.FC = () => {
       </div>
 
       {/* Timeline */}
-      <div className="relative">
+      <div className="relative animate-fade-in">
         {sortedMilestones.length > 0 ? (
           <div className="space-y-8">
             {/* Timeline Line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-500 via-purple-500 to-cyan-500 opacity-30" />
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-500 via-purple-500 to-cyan-500 opacity-30 animate-pulse" />
 
             {sortedMilestones.map((milestone, index) => {
               console.log('Timeline milestone', milestone);
               return (
-              <div key={milestone.id} className="relative flex items-start gap-6">
+              <div key={milestone.id} className="relative flex items-start gap-6 animate-slide-in-left hover:scale-105 transition-all duration-300" style={{ animationDelay: `${index * 0.1}s` }}>
                 {/* Timeline Dot */}
-                <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-purple-500 rounded-full flex items-center justify-center">
+                <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-purple-500 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 animate-bounce">
                   <span className="text-2xl">{milestone.icon}</span>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                <div className="flex-1 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-xl font-semibold text-white mb-1">{milestone.title}</h3>
@@ -73,14 +82,14 @@ const Timeline: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setEditingMilestone(milestone)}
-                        className="p-2 text-slate-400 hover:text-purple-400 transition-colors"
+                        className="p-2 text-slate-400 hover:text-purple-400 transition-all duration-200 hover:scale-110"
                         title="Editar"
                       >
                         <Edit size={16} />
                       </button>
                       <button
                         onClick={() => handleDeleteMilestone(milestone.id)}
-                        className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                        className="p-2 text-slate-400 hover:text-red-400 transition-all duration-200 hover:scale-110 hover:animate-wiggle"
                         title="Excluir"
                       >
                         <Trash2 size={16} />

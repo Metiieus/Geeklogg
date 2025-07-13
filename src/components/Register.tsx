@@ -76,7 +76,16 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
       onCancel();
     } catch (err: any) {
       console.error('❌ Erro ao registrar usuário:', err);
-      setError(err.message || 'Erro ao registrar usuário');
+      // Mensagens amigáveis para erros de registro
+      if (err.code === 'auth/email-already-in-use') {
+        setError('Opa! Esse email já está sendo usado 📧');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Essa senha tá fraquinha... que tal uma mais forte? 💪');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Esse email não parece válido 📧');
+      } else {
+        setError('Algo deu errado no cadastro... tenta de novo? 😅');
+      }
     }
   };
 

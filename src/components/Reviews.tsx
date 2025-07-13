@@ -20,9 +20,18 @@ const Reviews: React.FC = () => {
   });
 
   const handleDeleteReview = async (reviewId: string) => {
-    if (confirm('Tem certeza que deseja excluir esta resenha?')) {
+    const review = reviews.find(r => r.id === reviewId);
+    const confirmMessage = `Vai apagar a resenha "${review?.title}" mesmo? 📝\n\nTodo seu texto será perdido!`;
+    
+    if (confirm(confirmMessage)) {
       await deleteReview(reviewId);
       setReviews(reviews.filter(review => review.id !== reviewId));
+      // Feedback visual
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up';
+      toast.textContent = '✅ Resenha removida!';
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
     }
   };
 
@@ -73,17 +82,17 @@ const Reviews: React.FC = () => {
       </div>
 
       {/* Reviews List */}
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => {
             console.log('Review item', review);
             const media = mediaItems.find(item => item.id === review.mediaId);
             return (
-              <div key={review.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+              <div key={review.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 animate-slide-up">
                 <div className="flex items-start gap-4">
                   {/* Media Cover */}
                   {media && (
-                    <div className="w-16 h-20 bg-slate-700 rounded-lg flex-shrink-0 overflow-hidden">
+                    <div className="w-16 h-20 bg-slate-700 rounded-lg flex-shrink-0 overflow-hidden hover:scale-110 transition-transform duration-300">
                       {media.cover ? (
                         <img src={media.cover} alt={media.title} className="w-full h-full object-cover" />
                       ) : (

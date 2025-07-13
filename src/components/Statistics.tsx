@@ -84,16 +84,16 @@ const Statistics: React.FC = () => {
   const mostPlayed = getMostPlayed();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div>
+      <div className="animate-slide-down">
         <h1 className="text-3xl font-bold text-white mb-2">Estatísticas</h1>
         <p className="text-slate-400">Insights sobre seu consumo de mídia e preferências</p>
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-slide-up">
+        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-blue-500/20 rounded-lg">
               <Clock className="text-blue-400" size={20} />
@@ -104,7 +104,7 @@ const Statistics: React.FC = () => {
           <p className="text-slate-400 text-sm mt-1">Tempo investido</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20">
+        <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
               <TrendingUp className="text-green-400" size={20} />
@@ -115,7 +115,7 @@ const Statistics: React.FC = () => {
           <p className="text-slate-400 text-sm mt-1">De {totalStats.totalItems} total</p>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20">
+        <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-yellow-500/20 rounded-lg">
               <Star className="text-yellow-400" size={20} />
@@ -126,7 +126,7 @@ const Statistics: React.FC = () => {
           <p className="text-slate-400 text-sm mt-1">De 10</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20">
+        <div className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-purple-500/20 rounded-lg">
               <BarChart3 className="text-purple-400" size={20} />
@@ -139,15 +139,15 @@ const Statistics: React.FC = () => {
       </div>
 
       {/* Media Type Breakdown */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 animate-slide-in-left hover:scale-105 transition-all duration-300">
         <h2 className="text-xl font-semibold text-white mb-6">Por Tipo de Mídia</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 animate-fade-in">
           {Object.entries(mediaStats).map(([type, stats]) => {
             console.log('Media stats', type, stats);
             const Icon = mediaTypeIcons[type as MediaType];
             return (
-              <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50`}>
+              <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:scale-105 transition-all duration-300 hover:shadow-lg`}>
                 <div className="flex items-center gap-2 mb-3">
                   <Icon size={20} className="text-white" />
                   <span className="text-white font-medium">{mediaTypeLabels[type as MediaType]}</span>
