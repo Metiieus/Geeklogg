@@ -24,6 +24,8 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
     status: item.status,
     rating: item.rating?.toString() || '',
     hoursSpent: item.hoursSpent?.toString() || '',
+    totalPages: item.totalPages?.toString() || '',
+    currentPage: item.currentPage?.toString() || '',
     startDate: item.startDate || '',
     endDate: item.endDate || '',
     platform: item.platform || '',
@@ -43,6 +45,8 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       status: formData.status,
       rating: formData.rating ? parseInt(formData.rating) : undefined,
       hoursSpent: formData.hoursSpent ? parseFloat(formData.hoursSpent) : undefined,
+      totalPages: formData.totalPages ? parseInt(formData.totalPages) : undefined,
+      currentPage: formData.currentPage ? parseInt(formData.currentPage) : undefined,
       startDate: formData.startDate || undefined,
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
@@ -59,6 +63,8 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       status: formData.status,
       rating: formData.rating ? parseInt(formData.rating) : undefined,
       hoursSpent: formData.hoursSpent ? parseFloat(formData.hoursSpent) : undefined,
+      totalPages: formData.totalPages ? parseInt(formData.totalPages) : undefined,
+      currentPage: formData.currentPage ? parseInt(formData.currentPage) : undefined,
       startDate: formData.startDate || undefined,
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
@@ -200,6 +206,37 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               />
             </div>
           </div>
+
+          {formData.type === 'books' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Páginas Totais
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.totalPages}
+                  onChange={(e) => handleChange('totalPages', e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="350"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Página Atual
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.currentPage}
+                  onChange={(e) => handleChange('currentPage', e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="42"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Dates */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

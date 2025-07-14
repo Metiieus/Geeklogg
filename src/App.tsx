@@ -31,6 +31,8 @@ export interface MediaItem {
   status: Status;
   rating?: number;
   hoursSpent?: number;
+  totalPages?: number;
+  currentPage?: number;
   startDate?: string;
   endDate?: string;
   tags: string[];
