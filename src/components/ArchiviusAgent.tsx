@@ -121,8 +121,8 @@ export const ArchiviusAgent: React.FC = () => {
             />
           </div>
 
-          {/* Texto e Status */}
-          <div className="px-4 py-3 pr-6">
+          {/* Texto e Status - oculto em mobile pequeno */}
+          <div className="hidden sm:block px-4 py-3 pr-6">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white text-lg">Archivius</h3>
               {isPremium && <Crown className="w-4 h-4 text-cyan-400" />}
