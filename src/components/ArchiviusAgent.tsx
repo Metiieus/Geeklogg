@@ -108,15 +108,17 @@ export const ArchiviusAgent: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {/* Avatar do Bot */}
+          {/* Avatar do Archivius */}
           <div
-            className={`w-14 h-14 rounded-full flex items-center justify-center ${
-              isPremium
-                ? "bg-gradient-to-br from-cyan-500 to-pink-500"
-                : "bg-gradient-to-br from-gray-600 to-gray-700"
+            className={`w-14 h-14 rounded-full overflow-hidden border-2 ${
+              isPremium ? "border-cyan-400/50" : "border-gray-600/50"
             }`}
           >
-            <Bot className="w-8 h-8 text-white" />
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
+              alt="Archivius - Assistente IA"
+              className="w-full h-full object-cover"
+            />
           </div>
 
           {/* Texto e Status */}
