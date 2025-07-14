@@ -154,7 +154,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
       console.log("🎉 Dados do usuário salvos com sucesso!");
 
       showSuccess(
-        "Registro concluído!",
+        "Registro conclu��do!",
         "Conta criada com sucesso. Agora você pode fazer login.",
       );
 
@@ -291,9 +291,17 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
           <div className="flex gap-3 mt-8">
             <button
               type="submit"
-              className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition duration-300"
+              disabled={isLoading}
+              className={`flex-1 font-bold py-3 rounded-lg transition duration-300 flex items-center justify-center gap-2 ${
+                isLoading
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-purple-600 hover:bg-purple-700"
+              } text-white`}
             >
-              Registrar
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : null}
+              {isLoading ? "Registrando..." : "Registrar"}
             </button>
             <button
               type="button"
