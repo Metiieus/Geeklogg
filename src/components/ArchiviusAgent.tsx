@@ -216,11 +216,35 @@ export const ArchiviusAgent: React.FC = () => {
                     <p className="text-lg font-medium">
                       Olá! Eu sou o Archivius
                     </p>
-                    <p className="text-sm mt-2">
+                    <p className="text-sm mt-2 mb-4">
                       {isPremium
                         ? "Seu assistente pessoal para sugestões de games, filmes e muito mais!"
                         : "Faça upgrade para Premium e desbloqueie minhas funcionalidades!"}
                     </p>
+
+                    {isPremium && (
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-400 mb-2">
+                          Sugestões rápidas:
+                        </p>
+                        {[
+                          "Recomende um jogo RPG",
+                          "Sugira um filme de ficção científica",
+                          "Qual anime devo assistir?",
+                        ].map((suggestion, index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setInputValue(suggestion);
+                              setTimeout(() => handleSendMessage(), 100);
+                            }}
+                            className="block w-full text-left px-3 py-2 bg-gray-100 rounded-lg text-gray-700 text-sm hover:bg-gray-200 transition-colors"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 
