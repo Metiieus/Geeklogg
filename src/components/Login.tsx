@@ -7,18 +7,72 @@ import { Register } from "./Register";
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [showRegister, setShowRegister] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const { showError, showSuccess } = useToast();
+
+  const getErrorMessage = (error: any): string => {
+    const code = error?.code || error?.message || "";
+
+    switch (code) {
+      case "auth/user-not-found":
+        return "Usuário não encontrado. Verifique o email ou registre-se.";
+      case "auth/wrong-password":
+        return "Senha incorreta. Tente novamente.";
+      case "auth/invalid-email":
+        return "Email inválido. Verifique o formato do email.";
+      case "auth/user-disabled":
+        return "Esta conta foi desabilitada. Entre em contato com o suporte.";
+      case "auth/too-many-requests":
+        return "Muitas tentativas de login. Tente novamente mais tarde.";
+      case "auth/network-request-failed":
+        return "Erro de conexão. Verifique sua internet e tente novamente.";
+      case "auth/invalid-credential":
+        return "Credenciais inválidas. Verifique email e senha.";
+      default:
+        return "Erro no login. Tente novamente.";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validações
+    if (!email.trim()) {
+      showError("Email obrigatório", "Por favor, insira seu email");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      showError("Email inválido", "Por favor, insira um email válido");
+      return;
+    }
+
+    if (!password.trim()) {
+      showError("Senha obrigatória", "Por favor, insira sua senha");
+      return;
+    }
+
+    if (password.length < 6) {
+      showError(
+        "Senha muito curta",
+        "A senha deve ter pelo menos 6 caracteres",
+      );
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      await login(email, password);
+      await login(email.trim(), password);
+      showSuccess("Login realizado!", "Bem-vindo de volta!");
     } catch (error: any) {
       console.error("Falha no login:", error);
-      setError("Falha no login: " + error.message);
+      const message = getErrorMessage(error);
+      showError("Falha no login", message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
