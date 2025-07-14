@@ -202,9 +202,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Biografia
               <span
-                className={`ml-2 text-xs ${local.bio.length > 450 ? "text-red-400" : local.bio.length > 400 ? "text-yellow-400" : "text-slate-500"}`}
+                className={`ml-2 text-xs ${local.bio.length > 900 ? "text-red-400" : local.bio.length > 800 ? "text-yellow-400" : "text-slate-500"}`}
               >
-                {local.bio.length}/500
+                {local.bio.length}/1000
               </span>
             </label>
             <textarea
