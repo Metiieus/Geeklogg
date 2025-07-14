@@ -104,6 +104,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error("Firebase auth not initialized");
+    }
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
@@ -113,6 +116,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
+    if (!auth) {
+      console.warn("Firebase auth not initialized");
+      return;
+    }
     await signOut(auth);
     setProfile(null);
   };
