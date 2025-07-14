@@ -8,6 +8,7 @@ import { EditProfileModal } from "./modals/EditProfileModal";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
+import { startCheckout } from "../services/stripeService";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
@@ -88,12 +89,7 @@ const Profile: React.FC = () => {
         </h1>
         {!profile?.isPremium && (
           <button
-            onClick={() =>
-              window.open(
-                "https://checkout.stripe.com/pay/cs_test_premium",
-                "_blank",
-              )
-            }
+            onClick={() => startCheckout()}
             className="group bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
           >
             <Crown className="w-4 sm:w-5 h-4 sm:h-5 group-hover:animate-bounce" />
@@ -171,12 +167,7 @@ const Profile: React.FC = () => {
               </div>
               {!profile?.isPremium && (
                 <button
-                  onClick={() =>
-                    window.open(
-                      "https://checkout.stripe.com/pay/cs_test_premium",
-                      "_blank",
-                    )
-                  }
+                  onClick={() => startCheckout()}
                   className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
                 >
                   <Zap className="w-5 h-5" />

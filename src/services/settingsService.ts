@@ -2,7 +2,7 @@ import { auth } from "../firebase";
 import type { UserSettings } from "../App";
 import { storageClient } from "./storageClient";
 import { database } from "./database";
-import { removeUndefinedFields } from "./utils";
+import { removeUndefinedFields, sanitizeStrings } from "./utils";
 
 function getUserId(): string {
   if (!auth) throw new Error("Firebase auth não inicializado");
@@ -24,7 +24,9 @@ export async function getSettings(): Promise<UserSettings | null> {
 
 export async function saveSettings(data: UserSettings): Promise<void> {
   const uid = getUserId();
-  const cleaned = removeUndefinedFields(data);
+  const cleaned = removeUndefinedFields(
+    sanitizeStrings(data as Record<string, any>),
+  );
   await database.set(["users", uid, "settings", "profile"], cleaned, {
     merge: true,
   });
