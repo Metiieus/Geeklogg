@@ -91,9 +91,11 @@ const Sidebar: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center justify-center mb-8 mt-2">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=80"
+                alt="GeekLog"
+                className="w-16 h-16 object-contain"
+              />
               {isPremium && (
                 <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                   <Crown className="w-3 h-3 text-white" />
