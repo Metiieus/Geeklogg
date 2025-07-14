@@ -75,18 +75,80 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const file = e.target.files?.[0];
-                    if (file) {
+                    if (!file) return;
+
+                    setIsUploading(true);
+
+                    try {
+                      // Validar arquivo
+                      const validation = await validateFile(file, {
+                        maxSizeInMB: 2,
+                        allowedTypes: [
+                          "image/jpeg",
+                          "image/png",
+                          "image/gif",
+                          "image/webp",
+                        ],
+                        maxWidth: 1024,
+                        maxHeight: 1024,
+                      });
+
+                      if (!validation.isValid) {
+                        showError("Erro no upload da imagem", validation.error);
+                        setIsUploading(false);
+                        return;
+                      }
+
+                      // Se a imagem for muito grande, comprimir
+                      let processedFile = file;
+                      if (file.size > 1024 * 1024) {
+                        // > 1MB
+                        showWarning(
+                          "Comprimindo imagem",
+                          "A imagem está sendo otimizada para melhor performance",
+                        );
+                        processedFile = await compressImage(
+                          file,
+                          512,
+                          512,
+                          0.8,
+                        );
+                      }
+
+                      // Converter para base64 para preview
                       const reader = new FileReader();
                       reader.onload = (ev) => {
                         const result = ev.target?.result as string;
                         setLocal((prev) => ({ ...prev, avatar: result }));
+                        showSuccess(
+                          "Imagem carregada!",
+                          "Sua foto de perfil foi atualizada",
+                        );
+                        setIsUploading(false);
                       };
-                      reader.readAsDataURL(file);
+
+                      reader.onerror = () => {
+                        showError(
+                          "Erro ao processar imagem",
+                          "Não foi possível carregar a imagem selecionada",
+                        );
+                        setIsUploading(false);
+                      };
+
+                      reader.readAsDataURL(processedFile);
+                    } catch (error) {
+                      console.error("Erro no upload:", error);
+                      showError(
+                        "Erro inesperado",
+                        "Ocorreu um erro ao processar a imagem. Tente novamente.",
+                      );
+                      setIsUploading(false);
                     }
                   }}
                   className="hidden"
+                  disabled={isUploading}
                 />
               </label>
               {local.avatar && (
