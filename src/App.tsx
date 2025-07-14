@@ -212,9 +212,10 @@ function App() {
     }
   };
 
-  return (
-    <AppProvider value={contextValue}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
+    return (
+    <ToastProvider>
+      <AppProvider value={contextValue}>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
         {/* Elementos geométricos de fundo */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/15 rounded-full blur-3xl"></div>
