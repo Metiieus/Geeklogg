@@ -1,18 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Users, UserPlus, UserCheck, Calendar, Star, Clock } from 'lucide-react';
-import { UserProfile } from '../types/social';
-import { getUserProfile, followUser, unfollowUser, isFollowing } from '../services/socialService';
-import { getMedias } from '../services/mediaService';
-import { getReviews } from '../services/reviewService';
-import { getMilestones } from '../services/milestoneService';
-import { MediaItem, Review, Milestone } from '../App';
+import React, { useState, useEffect } from "react";
+import {
+  ArrowLeft,
+  Users,
+  UserPlus,
+  UserCheck,
+  Calendar,
+  Star,
+  Clock,
+} from "lucide-react";
+import { UserProfile } from "../types/social";
+import {
+  getUserProfile,
+  followUser,
+  unfollowUser,
+  isFollowing,
+} from "../services/socialService";
+import { getMedias } from "../services/mediaService";
+import { getReviews } from "../services/reviewService";
+import { getMilestones } from "../services/milestoneService";
+import { MediaItem, Review, Milestone } from "../App";
+import { TruncatedBio } from "./TruncatedBio";
 
 interface UserProfileViewProps {
   userId: string;
   onBack: () => void;
 }
 
-export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack }) => {
+export const UserProfileView: React.FC<UserProfileViewProps> = ({
+  userId,
+  onBack,
+}) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -28,7 +45,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
     try {
       const userProfile = await getUserProfile(userId);
       setProfile(userProfile);
-      
+
       if (userProfile?.isPublic) {
         // Carregar dados públicos do usuário
         // Nota: Em produção, você criaria endpoints específicos para dados públicos
@@ -36,7 +53,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
         setIsFollowingUser(following);
       }
     } catch (error) {
-      console.error('Erro ao carregar perfil:', error);
+      console.error("Erro ao carregar perfil:", error);
     } finally {
       setLoading(false);
     }
@@ -54,16 +71,25 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
       // Atualizar contadores
       await loadUserData();
     } catch (error) {
-      console.error('Erro ao seguir/deixar de seguir:', error);
+      console.error("Erro ao seguir/deixar de seguir:", error);
     }
   };
 
   const getStats = () => {
-    const totalHours = mediaItems.reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
-    const completed = mediaItems.filter(item => item.status === 'completed').length;
-    const ratedItems = mediaItems.filter(item => item.rating);
-    const avgRating = ratedItems.length > 0 ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) / ratedItems.length : 0;
-    
+    const totalHours = mediaItems.reduce(
+      (sum, item) => sum + (item.hoursSpent || 0),
+      0,
+    );
+    const completed = mediaItems.filter(
+      (item) => item.status === "completed",
+    ).length;
+    const ratedItems = mediaItems.filter((item) => item.rating);
+    const avgRating =
+      ratedItems.length > 0
+        ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) /
+          ratedItems.length
+        : 0;
+
     return { totalHours, completed, avgRating };
   };
 
@@ -79,7 +105,10 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
     return (
       <div className="text-center py-12">
         <p className="text-slate-400">Usuário não encontrado</p>
-        <button onClick={onBack} className="mt-4 text-purple-400 hover:text-purple-300">
+        <button
+          onClick={onBack}
+          className="mt-4 text-purple-400 hover:text-purple-300"
+        >
           Voltar
         </button>
       </div>
@@ -90,9 +119,16 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
     return (
       <div className="text-center py-12">
         <Users size={48} className="mx-auto mb-4 text-slate-500" />
-        <h3 className="text-xl font-semibold text-white mb-2">Perfil Privado</h3>
-        <p className="text-slate-400 mb-6">Este usuário mantém seu perfil privado</p>
-        <button onClick={onBack} className="text-purple-400 hover:text-purple-300">
+        <h3 className="text-xl font-semibold text-white mb-2">
+          Perfil Privado
+        </h3>
+        <p className="text-slate-400 mb-6">
+          Este usuário mantém seu perfil privado
+        </p>
+        <button
+          onClick={onBack}
+          className="text-purple-400 hover:text-purple-300"
+        >
           Voltar
         </button>
       </div>
@@ -120,30 +156,43 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
               {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 profile.name.charAt(0).toUpperCase()
               )}
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold text-white mb-2">{profile.name}</h2>
-              {profile.bio && <p className="text-slate-400 mb-4">{profile.bio}</p>}
-              
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                {profile.name}
+              </h2>
+              {profile.bio && (
+                <p className="text-slate-400 mb-4">{profile.bio}</p>
+              )}
+
               <div className="flex items-center gap-6 text-sm">
                 <div className="flex items-center gap-1">
                   <Users size={16} className="text-slate-400" />
-                  <span className="text-white font-medium">{profile.followers?.length || 0}</span>
+                  <span className="text-white font-medium">
+                    {profile.followers?.length || 0}
+                  </span>
                   <span className="text-slate-400">seguidores</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-white font-medium">{profile.following?.length || 0}</span>
+                  <span className="text-white font-medium">
+                    {profile.following?.length || 0}
+                  </span>
                   <span className="text-slate-400">seguindo</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar size={16} className="text-slate-400" />
                   <span className="text-slate-400">
-                    Desde {new Date(profile.createdAt).toLocaleDateString('pt-BR')}
+                    Desde{" "}
+                    {new Date(profile.createdAt).toLocaleDateString("pt-BR")}
                   </span>
                 </div>
               </div>
@@ -154,8 +203,8 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
             onClick={handleFollow}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-200 ${
               isFollowingUser
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25 text-white'
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25 text-white"
             }`}
           >
             {isFollowingUser ? (
@@ -182,7 +231,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
             </div>
             <span className="text-blue-400 font-medium">Total de Horas</span>
           </div>
-          <p className="text-3xl font-bold text-white">{stats.totalHours.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-white">
+            {stats.totalHours.toLocaleString()}
+          </p>
         </div>
 
         <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20">
@@ -202,22 +253,31 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ userId, onBack
             </div>
             <span className="text-yellow-400 font-medium">Nota Média</span>
           </div>
-          <p className="text-3xl font-bold text-white">{stats.avgRating.toFixed(1)}/10</p>
+          <p className="text-3xl font-bold text-white">
+            {stats.avgRating.toFixed(1)}/10
+          </p>
         </div>
       </div>
 
       {/* Recent Activity */}
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-        <h3 className="text-xl font-semibold text-white mb-4">Atividade Recente</h3>
-        
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Atividade Recente
+        </h3>
+
         {milestones.length > 0 ? (
           <div className="space-y-3">
             {milestones.slice(0, 5).map((milestone) => (
-              <div key={milestone.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
+              <div
+                key={milestone.id}
+                className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg"
+              >
                 <div className="text-2xl">{milestone.icon}</div>
                 <div className="flex-1">
                   <p className="text-white font-medium">{milestone.title}</p>
-                  <p className="text-sm text-slate-400">{new Date(milestone.date).toLocaleDateString('pt-BR')}</p>
+                  <p className="text-sm text-slate-400">
+                    {new Date(milestone.date).toLocaleDateString("pt-BR")}
+                  </p>
                 </div>
               </div>
             ))}
