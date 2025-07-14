@@ -184,41 +184,41 @@ const Profile: React.FC = () => {
             {/* Premium Features */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
                   <Star className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-cyan-400" : "text-gray-400"}`}
                 >
                   Archivius AI Assistant
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-pink-400" : "text-gray-400"}`}
                 >
                   Sugestões Personalizadas
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
                   <Crown className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-purple-400" : "text-gray-400"}`}
                 >
                   Badge Premium
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full flex items-center justify-center">
                   <Trophy className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-indigo-400" : "text-gray-400"}`}
                 >
                   Conquistas Exclusivas
                 </span>
