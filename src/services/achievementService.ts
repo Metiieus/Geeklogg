@@ -54,7 +54,7 @@ export async function unlockAchievement(achievementId: string): Promise<void> {
     await database.add(["users", uid, "achievements"], userAchievement);
     console.log("🏆 Conquista desbloqueada:", achievement.title);
   } catch (error) {
-    console.log("🎭 Mock achievement unlock for demo mode:", achievementId);
+    console.log('🎭 Mock achievement unlock for demo mode:', achievementId);
   }
 }
 
@@ -127,10 +127,11 @@ export async function checkAchievements(
   reviews: Review[],
   settings: UserSettings,
 ): Promise<string[]> {
-  const uid = getUserId();
-  const userAchievements = await getUserAchievements();
-  const unlockedIds = new Set(userAchievements.map((ua) => ua.achievementId));
-  const newlyUnlocked: string[] = [];
+  try {
+    const uid = getUserId();
+    const userAchievements = await getUserAchievements();
+    const unlockedIds = new Set(userAchievements.map((ua) => ua.achievementId));
+    const newlyUnlocked: string[] = [];
 
   // Verificar cada conquista
   for (const achievement of ACHIEVEMENTS_DATA) {
