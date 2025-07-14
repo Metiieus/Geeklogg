@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Send, Sparkles, Crown } from "lucide-react";
+import { Bot, X, Send, Sparkles, Crown, Brain, Zap } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useAppContext } from "../context/AppContext";
+import { useToast } from "../context/ToastContext";
 import { openaiService } from "../services/openaiService";
 
 interface Message {
