@@ -50,7 +50,64 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("🚀 Tentando registrar novo usuário...");
+
+    // Validações
+    if (!formData.nome.trim()) {
+      showError("Nome obrigatório", "Por favor, insira seu nome completo");
+      return;
+    }
+
+    if (formData.nome.trim().length < 2) {
+      showError("Nome muito curto", "O nome deve ter pelo menos 2 caracteres");
+      return;
+    }
+
+    if (!formData.apelido.trim()) {
+      showError("Apelido obrigatório", "Por favor, insira um apelido");
+      return;
+    }
+
+    if (!formData.dataNascimento) {
+      showError("Data obrigatória", "Por favor, insira sua data de nascimento");
+      return;
+    }
+
+    // Validar idade mínima (13 anos)
+    const birthDate = new Date(formData.dataNascimento);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    if (age < 13) {
+      showError(
+        "Idade mínima",
+        "Você deve ter pelo menos 13 anos para se registrar",
+      );
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      showError("Email obrigatório", "Por favor, insira seu email");
+      return;
+    }
+
+    if (!formData.email.includes("@")) {
+      showError("Email inválido", "Por favor, insira um email válido");
+      return;
+    }
+
+    if (!formData.senha.trim()) {
+      showError("Senha obrigatória", "Por favor, insira uma senha");
+      return;
+    }
+
+    if (formData.senha.length < 6) {
+      showError(
+        "Senha muito curta",
+        "A senha deve ter pelo menos 6 caracteres",
+      );
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       if (!auth || !db) {
@@ -59,79 +116,58 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
         );
       }
 
-      // Criar o usuário no Firebase Auth
-      console.log("🚀 Iniciando cadastro no Firebase Auth...");
+      console.log("🚀 Iniciando cadastro...");
 
       let userCredential;
       // Check if we're using mock auth (demo mode)
       if (typeof auth.createUserWithEmailAndPassword === "function") {
         // Mock auth - use the mock function
         userCredential = await auth.createUserWithEmailAndPassword(
-          formData.email,
+          formData.email.trim(),
           formData.senha,
         );
       } else {
         // Real Firebase auth
         userCredential = await createUserWithEmailAndPassword(
           auth,
-          formData.email,
+          formData.email.trim(),
           formData.senha,
         );
       }
+
       const user = userCredential.user;
       console.log("✅ Usuário criado com UID:", user.uid);
-
-      // Validar se o usuário realmente está autenticado
-      console.log("🛡️ Usuário autenticado:", auth.currentUser);
-      if (!auth.currentUser) {
-        throw new Error("Usuário não autenticado no momento da gravação.");
-      }
 
       // Preparar os dados
       const userData = {
         uid: user.uid,
-        nome: formData.nome,
-        apelido: formData.apelido,
+        nome: formData.nome.trim(),
+        apelido: formData.apelido.trim(),
         dataNascimento: formData.dataNascimento,
-        email: formData.email,
+        email: formData.email.trim(),
         createdAt: new Date().toISOString(),
       };
-
-      console.log("🛠️ Dados preparados para gravação:", userData);
-
-      // Validar se existem campos inválidos
-      if (
-        Object.values(userData).some(
-          (value) => value === undefined || value === null || value === "",
-        )
-      ) {
-        console.error("🚨 Dados inválidos detectados:", userData);
-        setError("Existem campos vazios ou inválidos.");
-        return;
-      }
 
       // Gravar os dados no Firestore
       console.log("✍️ Gravando dados no Firestore...");
       await setDoc(doc(db, "users", user.uid), userData);
-      console.log("🎉 Dados do usuário salvos com sucesso no Firestore!");
+      console.log("🎉 Dados do usuário salvos com sucesso!");
 
-      // Deslogar o usuário após cadastro (opcional)
+      showSuccess(
+        "Registro concluído!",
+        "Conta criada com sucesso. Agora você pode fazer login.",
+      );
+
+      // Deslogar o usuário após cadastro
       await logout();
-      console.log("👋 Usuário deslogado após cadastro.");
 
       onCancel();
     } catch (err: any) {
       console.error("❌ Erro ao registrar usuário:", err);
-      // Mensagens amigáveis para erros de registro
-      if (err.code === "auth/email-already-in-use") {
-        setError("Opa! Esse email já está sendo usado 📧");
-      } else if (err.code === "auth/weak-password") {
-        setError("Essa senha tá fraquinha... que tal uma mais forte? 💪");
-      } else if (err.code === "auth/invalid-email") {
-        setError("Esse email não parece válido 📧");
-      } else {
-        setError("Algo deu errado no cadastro... tenta de novo? 😅");
-      }
+      const message = getErrorMessage(err);
+      showError("Erro no registro", message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
