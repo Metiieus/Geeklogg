@@ -201,6 +201,11 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Biografia
+              <span
+                className={`ml-2 text-xs ${local.bio.length > 450 ? "text-red-400" : local.bio.length > 400 ? "text-yellow-400" : "text-slate-500"}`}
+              >
+                {local.bio.length}/500
+              </span>
             </label>
             <textarea
               value={local.bio}
@@ -208,9 +213,22 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 setLocal((prev) => ({ ...prev, bio: e.target.value }))
               }
               rows={4}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              maxLength={500}
+              className={`w-full px-4 py-3 bg-slate-700/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${
+                local.bio.length > 450
+                  ? "border-red-500"
+                  : local.bio.length > 400
+                    ? "border-yellow-500"
+                    : "border-slate-600"
+              }`}
               placeholder="Fale algo sobre você"
             />
+            {local.bio.length > 450 && (
+              <div className="mt-1 flex items-center gap-1 text-red-400 text-xs">
+                <AlertCircle size={12} />
+                Limite de caracteres quase atingido
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-700">
             <button
