@@ -325,26 +325,49 @@ export const ArchiviusAgent: React.FC = () => {
                     </p>
 
                     {isPremium && (
-                      <div className="space-y-2">
-                        <p className="text-xs text-cyan-400 mb-2">
-                          Sugestões rápidas:
-                        </p>
-                        {[
-                          "Recomende um jogo RPG",
-                          "Sugira um filme de ficção científica",
-                          "Qual anime devo assistir?",
-                        ].map((suggestion, index) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setInputValue(suggestion);
-                              setTimeout(() => handleSendMessage(), 100);
-                            }}
-                            className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors"
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
+                      <div className="space-y-3">
+                        {/* Botão de Análise de Perfil */}
+                        <button
+                          onClick={handleAnalyzeProfile}
+                          disabled={isAnalyzing}
+                          className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-all"
+                        >
+                          {isAnalyzing ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Analisando perfil...
+                            </>
+                          ) : (
+                            <>
+                              <Brain className="w-4 h-4" />
+                              Analisar meu perfil
+                            </>
+                          )}
+                        </button>
+
+                        <div className="border-t border-gray-600/30 pt-3">
+                          <p className="text-xs text-cyan-400 mb-2">
+                            Sugestões rápidas:
+                          </p>
+                          {[
+                            "Baseado no que já joguei, o que recomenda?",
+                            "Sugira algo diferente do que costumo assistir",
+                            "Qual seria meu próximo jogo favorito?",
+                            "Analise meus padrões de avaliação",
+                          ].map((suggestion, index) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setInputValue(suggestion);
+                                setTimeout(() => handleSendMessage(), 100);
+                              }}
+                              className="block w-full text-left px-3 py-2 mb-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors"
+                            >
+                              <Zap className="w-3 h-3 inline mr-2 text-cyan-400" />
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
