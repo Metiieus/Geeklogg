@@ -131,7 +131,7 @@ const Sidebar: React.FC = () => {
                   className={`flex items-center justify-center w-6 h-6 ${
                     activePage === item.id
                       ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
-                      : "text-gray-400 group-hover:text-white"
+                      : "text-gray-200 group-hover:text-white"
                   }`}
                 >
                   {item.icon}
@@ -142,7 +142,7 @@ const Sidebar: React.FC = () => {
                     className={`ml-3 text-sm font-medium transition-colors whitespace-nowrap ${
                       activePage === item.id
                         ? "text-white"
-                        : "text-gray-400 group-hover:text-white"
+                        : "text-gray-200 group-hover:text-white"
                     }`}
                   >
                     {item.label}
@@ -171,7 +171,7 @@ const Sidebar: React.FC = () => {
                 className={`flex items-center justify-center w-6 h-6 ${
                   activePage === "profile"
                     ? "text-purple-400"
-                    : "text-gray-400 group-hover:text-white"
+                    : "text-gray-200 group-hover:text-white"
                 }`}
               >
                 <User size={20} />
@@ -181,7 +181,7 @@ const Sidebar: React.FC = () => {
                   className={`ml-3 text-sm font-medium whitespace-nowrap ${
                     activePage === "profile"
                       ? "text-white"
-                      : "text-gray-400 group-hover:text-white"
+                      : "text-gray-200 group-hover:text-white"
                   }`}
                 >
                   Perfil
@@ -201,7 +201,7 @@ const Sidebar: React.FC = () => {
                 className={`flex items-center justify-center w-6 h-6 ${
                   activePage === "settings"
                     ? "text-gray-300"
-                    : "text-gray-400 group-hover:text-white"
+                    : "text-gray-200 group-hover:text-white"
                 }`}
               >
                 <Settings size={20} />
@@ -211,7 +211,7 @@ const Sidebar: React.FC = () => {
                   className={`ml-3 text-sm font-medium whitespace-nowrap ${
                     activePage === "settings"
                       ? "text-white"
-                      : "text-gray-400 group-hover:text-white"
+                      : "text-gray-200 group-hover:text-white"
                   }`}
                 >
                   Configurações
