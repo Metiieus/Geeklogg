@@ -57,7 +57,7 @@ export const Login: React.FC = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
               GeekLog
             </h1>
-            <p className="text-gray-400 mt-2">Entre na sua conta</p>
+            <p className="text-gray-200 mt-2">Entre na sua conta</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
