@@ -223,7 +223,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               }`}
               placeholder="Fale algo sobre você"
             />
-            {local.bio.length > 450 && (
+            {local.bio.length > 900 && (
               <div className="mt-1 flex items-center gap-1 text-red-400 text-xs">
                 <AlertCircle size={12} />
                 Limite de caracteres quase atingido
