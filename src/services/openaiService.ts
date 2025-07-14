@@ -119,10 +119,8 @@ Seja conciso, impactante e use emojis temáticos.`,
 
     if (message.includes("anime") || message.includes("série")) {
       const animeResponses = [
-        '⚔️ Sugiro "Attack on Titan" - uma obra-prima com plot twists incríveis!',
-        '📓 "Death Note" é perfeito para quem gosta de suspense psicológico!',
-        '👹 Que tal "Demon Slayer"? Animação linda e lutas épicas!',
-        '⚗️ "Fullmetal Alchemist: Brotherhood" é considerado um dos melhores animes!',
+        '# ⚔️ Guerreiro dos Episódios Lendários!\n\n## 🏰 **Missão**: *A Saga dos Titãs Colossais*\n\nTua jornada pelos animes desperta poder! **"Attack on Titan"** - onde reviravoltas épicas e batalhas titanescas te aguardam.\n\n🛡️ Prepare-se para o inesperado!\n\n*Archivius, o Guardião do GeekLog* ⚡',
+        '# 📓 Mestre das Artes Obscuras!\n\n## 🖤 **Missão**: *O Caderno do Destino*\n\nVejo que aprecias tramas complexas! **"Death Note"** - onde mente e suspense criam batalhas psicológicas épicas.\n\n🧠 Que a estratégia te guie!\n\n*Archivius, o Guardião do GeekLog* 💀',
       ];
       return animeResponses[Math.floor(Math.random() * animeResponses.length)];
     }
@@ -187,7 +185,7 @@ Que tipo de recomendação você gostaria? Posso sugerir algo baseado no que voc
 
   private getProfileAnalysis(context: any): string {
     if (!context) {
-      return "📊 Para fazer uma análise detalhada, preciso que você tenha alguns itens em sua biblioteca primeiro!";
+      return "��� Para fazer uma análise detalhada, preciso que você tenha alguns itens em sua biblioteca primeiro!";
     }
 
     const {
