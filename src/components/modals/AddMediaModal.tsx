@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Save, Image, Upload, AlertCircle } from "lucide-react";
+import { X, Save, Upload } from "lucide-react";
 import { MediaItem, MediaType, Status } from "../../App";
 import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
