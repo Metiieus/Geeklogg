@@ -227,8 +227,8 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold overflow-hidden">
               {displayAvatar ? (
                 <img
                   src={displayAvatar}
