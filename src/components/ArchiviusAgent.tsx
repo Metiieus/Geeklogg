@@ -74,7 +74,7 @@ export const ArchiviusAgent: React.FC = () => {
       console.error("Erro ao obter resposta da IA:", error);
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Desculpe, ocorreu um erro. Tente novamente em alguns instantes! 🤖",
+        text: "Desculpe, ocorreu um erro. Tente novamente em alguns instantes! ����",
         isUser: false,
         timestamp: new Date(),
       };
@@ -138,7 +138,7 @@ export const ArchiviusAgent: React.FC = () => {
           {/* Indicador de IA */}
           {isPremium && (
             <motion.div
-              className="absolute -top-1 -right-1 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center"
+              className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full flex items-center justify-center"
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             >
