@@ -90,7 +90,7 @@ const Profile: React.FC = () => {
                 "_blank",
               )
             }
-            className="group bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+            className="group bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
           >
             <Crown className="w-5 h-5 group-hover:animate-bounce" />
             Assinar Premium
