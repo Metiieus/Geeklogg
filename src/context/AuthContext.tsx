@@ -19,6 +19,8 @@ export interface UserProfile {
     movies: FavoriteItem[];
   };
   defaultLibrarySort: string;
+  isPremium?: boolean;
+  premiumExpiresAt?: string;
 }
 
 interface AuthContextType {
