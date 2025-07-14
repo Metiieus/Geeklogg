@@ -400,14 +400,25 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </label>
             <div className="space-y-3">
               <div className="flex items-center justify-center">
-                <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
-                  <Upload size={18} />
-                  Fazer Upload da Imagem
+                <label
+                  className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
+                    isUploading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer hover:bg-slate-700"
+                  }`}
+                >
+                  {isUploading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Upload size={18} />
+                  )}
+                  {isUploading ? "Processando..." : "Fazer Upload da Imagem"}
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
                     className="hidden"
+                    disabled={isUploading}
                   />
                 </label>
               </div>
