@@ -459,10 +459,19 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </button>
             <button
               type="submit"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2"
+              disabled={isSaving || isUploading}
+              className={`px-6 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                isSaving || isUploading
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25"
+              } text-white`}
             >
-              <Save size={18} />
-              Salvar Mídia
+              {isSaving ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Save size={18} />
+              )}
+              {isSaving ? "Salvando..." : "Salvar Mídia"}
             </button>
           </div>
         </form>
