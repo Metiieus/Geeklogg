@@ -24,7 +24,8 @@ export const ArchiviusAgent: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const isPremium = profile?.isPremium || false;
+  // Para teste: considerar premium se não há API key configurada (modo demo)
+  const isPremium = profile?.isPremium || !import.meta.env.VITE_OPENAI_API_KEY;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
