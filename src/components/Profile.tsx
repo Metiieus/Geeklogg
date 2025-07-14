@@ -34,7 +34,7 @@ const Profile: React.FC = () => {
   };
 
   const renderCards = (items: typeof settings.favorites.characters) => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
       {items.map((it) => {
         return (
           <div
