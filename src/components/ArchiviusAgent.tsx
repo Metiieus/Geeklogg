@@ -348,9 +348,9 @@ export const ArchiviusAgent: React.FC = () => {
                   <button
                     onClick={handleSendMessage}
                     disabled={!isPremium || !inputValue.trim()}
-                    className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full flex items-center justify-center hover:from-cyan-600 hover:to-pink-600 transition-colors disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
+                    className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full flex items-center justify-center hover:from-cyan-600 hover:to-pink-600 transition-colors disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
                   >
-                    <Send className="w-5 h-5" />
+                    <Send className="w-4 sm:w-5 h-4 sm:h-5" />
                   </button>
                 </div>
               </div>
