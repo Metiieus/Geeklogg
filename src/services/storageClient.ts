@@ -1,11 +1,50 @@
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
 import { storage } from "../firebase";
 import { getUserId } from "./utils";
+
+// Funções que funcionam tanto com Firebase real quanto mock
+const storageRef = (path: string) => {
+  if (storage.ref) {
+    // Mock storage
+    return storage.ref(path);
+  } else {
+    // Firebase real
+    const { ref } = require("firebase/storage");
+    return ref(storage, path);
+  }
+};
+
+const uploadFile = async (storageRef: any, file: File | Blob) => {
+  if (storage.uploadBytes) {
+    // Mock storage
+    return await storage.uploadBytes(storageRef, file);
+  } else {
+    // Firebase real
+    const { uploadBytes } = require("firebase/storage");
+    return await uploadBytes(storageRef, file);
+  }
+};
+
+const getURL = async (storageRef: any) => {
+  if (storage.getDownloadURL) {
+    // Mock storage
+    return await storage.getDownloadURL(storageRef);
+  } else {
+    // Firebase real
+    const { getDownloadURL } = require("firebase/storage");
+    return await getDownloadURL(storageRef);
+  }
+};
+
+const deleteFile = async (storageRef: any) => {
+  if (storage.deleteObject) {
+    // Mock storage
+    return await storage.deleteObject(storageRef);
+  } else {
+    // Firebase real
+    const { deleteObject } = require("firebase/storage");
+    return await deleteObject(storageRef);
+  }
+};
 
 /**
  * Thin wrapper around Firebase Storage operations.  By routing all calls
