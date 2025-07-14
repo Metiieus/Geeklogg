@@ -9,11 +9,19 @@ import {
 
 // Perfis de usuários
 export async function searchUsers(query: string): Promise<UserProfile[]> {
-  try {
-    if (!query.trim()) return [];
+  console.log("🔍 Buscando usuários:", { query });
 
+  try {
+    if (!query.trim()) {
+      console.log("❌ Query vazia, retornando lista vazia");
+      return [];
+    }
+
+    console.log("📋 Tentando buscar usuários no banco...");
     const users = await database.getCollection<UserProfile>(["users"]);
-    return users
+    console.log("✅ Usuários encontrados no banco:", users.length);
+
+    const filteredUsers = users
       .map((doc) => ({ ...doc.data, id: doc.id }))
       .filter(
         (user) =>
@@ -21,8 +29,11 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
           user.bio?.toLowerCase().includes(query.toLowerCase()),
       )
       .slice(0, 20);
+
+    console.log("🎯 Usuários filtrados:", filteredUsers.length);
+    return filteredUsers;
   } catch (error) {
-    // Database error, likely in demo mode - return mock data
+    console.error("❌ Erro na busca do banco, usando dados mock:", error);
     console.log("🎭 Mock user search for demo mode");
     return [
       {
