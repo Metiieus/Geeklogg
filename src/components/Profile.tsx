@@ -188,7 +188,7 @@ const Profile: React.FC = () => {
                   <Star className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-cyan-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-cyan-400" : "text-gray-200"}`}
                 >
                   Archivius AI Assistant
                 </span>
@@ -198,7 +198,7 @@ const Profile: React.FC = () => {
                   <Zap className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-pink-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-pink-400" : "text-gray-200"}`}
                 >
                   Sugestões Personalizadas
                 </span>
@@ -208,7 +208,7 @@ const Profile: React.FC = () => {
                   <Crown className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-purple-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-purple-400" : "text-gray-200"}`}
                 >
                   Badge Premium
                 </span>
@@ -218,7 +218,7 @@ const Profile: React.FC = () => {
                   <Trophy className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className={`${profile?.isPremium ? "text-indigo-400" : "text-gray-400"}`}
+                  className={`${profile?.isPremium ? "text-indigo-400" : "text-gray-200"}`}
                 >
                   Conquistas Exclusivas
                 </span>
