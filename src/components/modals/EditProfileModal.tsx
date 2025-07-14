@@ -25,13 +25,39 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("💾 Salvando perfil no modal:", local);
-    onSave({
-      ...profile,
-      name: local.name,
-      avatar: local.avatar || undefined,
-      bio: local.bio,
-    });
+
+    // Validar campos obrigatórios
+    if (!local.name.trim()) {
+      showError("Nome obrigatório", "Por favor, insira seu nome");
+      return;
+    }
+
+    if (local.name.trim().length < 2) {
+      showError("Nome muito curto", "O nome deve ter pelo menos 2 caracteres");
+      return;
+    }
+
+    if (local.bio && local.bio.length > 500) {
+      showError(
+        "Biografia muito longa",
+        "A biografia deve ter no máximo 500 caracteres",
+      );
+      return;
+    }
+
+    try {
+      console.log("💾 Salvando perfil no modal:", local);
+      onSave({
+        ...profile,
+        name: local.name.trim(),
+        avatar: local.avatar || undefined,
+        bio: local.bio.trim(),
+      });
+      showSuccess("Perfil salvo!", "Suas informações foram atualizadas");
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+      showError("Erro ao salvar", "Não foi possível salvar as alterações");
+    }
   };
 
   return (
