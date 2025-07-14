@@ -25,8 +25,8 @@ export const ArchiviusAgent: React.FC = () => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Para teste: considerar premium se não há API key configurada (modo demo)
-  const isPremium = profile?.isPremium || !import.meta.env.VITE_OPENAI_API_KEY;
+  // Para teste: modo premium sempre ativo para testar o Archivius épico
+  const isPremium = true; // profile?.isPremium || !import.meta.env.VITE_OPENAI_API_KEY;
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
   // Inicializar com mensagem de boas-vindas personalizada
