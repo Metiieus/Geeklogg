@@ -253,7 +253,7 @@ const Library: React.FC = () => {
                         <span className="text-white">{item.rating}</span>
                       </div>
                     )}
-                    {item.hoursSpent && (
+                   {item.hoursSpent && (
                       <div className="flex items-center gap-1">
                         <Clock className="text-blue-400" size={14} />
                         <span className="text-white">{item.hoursSpent}h</span>
@@ -261,6 +261,20 @@ const Library: React.FC = () => {
                     )}
                   </div>
                 </div>
+
+                {item.type === 'books' && item.totalPages && (
+                  <div className="mt-2">
+                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-green-500"
+                        style={{ width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {item.currentPage || 0}/{item.totalPages} páginas
+                    </p>
+                  </div>
+                )}
 
                 {/* Tags */}
                 {item.tags.length > 0 && (
