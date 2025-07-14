@@ -47,11 +47,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      if (currentUser) {
+            if (currentUser) {
         try {
-          const userRef = doc(db, "users", currentUser.uid);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
+          // Check if we're using mock Firestore (demo mode)
+          if (db && typeof db.collection === 'function') {
+            console.log('🎭 Using mock user profile for demo mode');
+            const normalizedProfile: UserProfile = {
+              name: currentUser.displayName || currentUser.email?.split('@')[0] || 'Demo User',
+              avatar: undefined,
+              bio: 'This is a demo profile using mock authentication.',
+              favorites: {
+                characters: [],
+                games: [],
+                movies: []
+              },
+              defaultLibrarySort: 'updatedAt'
+            };
+            setProfile(normalizedProfile);
+          } else if (db) {
+            // Real Firestore
+            const userRef = doc(db, "users", currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
             const userData = userSnap.data();
             console.log("📥 Dados do usuário carregados:", userData);
             // Normalize favorites data to ensure consistent structure
