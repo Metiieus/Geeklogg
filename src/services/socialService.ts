@@ -16,6 +16,12 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
     return [];
   }
 
+  // Se query for muito curta, não buscar ainda
+  if (query.length < 2) {
+    console.log("⏳ Query muito curta, aguardando mais caracteres");
+    return [];
+  }
+
   try {
     console.log("📋 Tentando buscar usuários no banco...");
 
