@@ -9,48 +9,127 @@ import {
 
 // Perfis de usuários
 export async function searchUsers(query: string): Promise<UserProfile[]> {
-  try {
-    if (!query.trim()) return [];
+  console.log("🔍 Buscando usuários:", { query });
 
-    const users = await database.getCollection<UserProfile>(["users"]);
-    return users
-      .map((doc) => ({ ...doc.data, id: doc.id }))
-      .filter(
-        (user) =>
-          user.name?.toLowerCase().includes(query.toLowerCase()) ||
-          user.bio?.toLowerCase().includes(query.toLowerCase()),
-      )
-      .slice(0, 20);
-  } catch (error) {
-    // Database error, likely in demo mode - return mock data
-    console.log("🎭 Mock user search for demo mode");
-    return [
-      {
-        id: "demo-user-1",
-        name: "Demo Friend 1",
-        avatar: undefined,
-        bio: "Another demo user you can follow",
-        followers: [],
-        following: [],
-        postsCount: 5,
-        reviewsCount: 3,
-      },
-      {
-        id: "demo-user-2",
-        name: "Demo Friend 2",
-        avatar: undefined,
-        bio: "Yet another demo user for testing",
-        followers: [],
-        following: [],
-        postsCount: 2,
-        reviewsCount: 1,
-      },
-    ].filter(
-      (user) =>
-        user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.bio.toLowerCase().includes(query.toLowerCase()),
-    );
+  if (!query.trim()) {
+    console.log("❌ Query vazia, retornando lista vazia");
+    return [];
   }
+
+  // Se query for muito curta, não buscar ainda
+  if (query.length < 2) {
+    console.log("⏳ Query muito curta, aguardando mais caracteres");
+    return [];
+  }
+
+  try {
+    console.log("📋 Tentando buscar usuários no banco...");
+
+    // Primeiro tentar buscar usuários
+    const users = await database.getCollection<any>(["users"]);
+    console.log("✅ Dados brutos encontrados:", users.length);
+
+    if (users.length === 0) {
+      console.log("⚠️ Nenhum usuário encontrado no banco, usando mock data");
+      // Não lançar erro, apenas usar mock data
+      return getMockUsers(query);
+    }
+
+    // Mapear e filtrar usuários
+    const mappedUsers = users
+      .map((doc) => {
+        const data = doc.data;
+        return {
+          id: doc.id,
+          uid: data.uid || doc.id,
+          name: data.name || data.nome || "Usuário Anônimo",
+          bio: data.bio || "",
+          avatar: data.avatar,
+          email: data.email,
+          followers: data.followers || [],
+          following: data.following || [],
+          postsCount: data.postsCount || 0,
+          reviewsCount: data.reviewsCount || 0,
+        } as UserProfile;
+      })
+      .filter((user) => {
+        const nameMatch = user.name
+          ?.toLowerCase()
+          .includes(query.toLowerCase());
+        const bioMatch = user.bio?.toLowerCase().includes(query.toLowerCase());
+        return nameMatch || bioMatch;
+      })
+      .slice(0, 20);
+
+    console.log("🎯 Usuários filtrados:", mappedUsers.length);
+    return mappedUsers;
+  } catch (error) {
+    console.error("❌ Erro na busca do banco, usando dados mock:", error);
+    return getMockUsers(query);
+  }
+}
+
+// Função para retornar usuários mock filtrados por query
+function getMockUsers(query: string): UserProfile[] {
+  console.log("🎭 Retornando dados mock para demo");
+
+  const mockUsers: UserProfile[] = [
+    {
+      id: "demo-user-1",
+      uid: "demo-user-1",
+      name: "Alex GameMaster",
+      avatar: undefined,
+      bio: "Gamer apaixonado por RPGs e aventuras épicas",
+      email: "alex@demo.com",
+      followers: [],
+      following: [],
+      postsCount: 15,
+      reviewsCount: 8,
+    },
+    {
+      id: "demo-user-2",
+      uid: "demo-user-2",
+      name: "Luna AnimeWatcher",
+      avatar: undefined,
+      bio: "Otaku de carteirinha, sempre em busca do próximo anime incrível",
+      email: "luna@demo.com",
+      followers: [],
+      following: [],
+      postsCount: 22,
+      reviewsCount: 12,
+    },
+    {
+      id: "demo-user-3",
+      uid: "demo-user-3",
+      name: "Marcus Bookworm",
+      avatar: undefined,
+      bio: "Leitor voraz, especialmente ficção científica e fantasia",
+      email: "marcus@demo.com",
+      followers: [],
+      following: [],
+      postsCount: 8,
+      reviewsCount: 15,
+    },
+    {
+      id: "demo-user-4",
+      uid: "demo-user-4",
+      name: "Sophie CinemaLover",
+      avatar: undefined,
+      bio: "Cinéfila apaixonada por filmes independentes e clássicos",
+      email: "sophie@demo.com",
+      followers: [],
+      following: [],
+      postsCount: 12,
+      reviewsCount: 20,
+    },
+  ].filter(
+    (user) =>
+      user.name.toLowerCase().includes(query.toLowerCase()) ||
+      user.bio?.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  console.log("🎭 Mock users filtered:", mockUsers.length);
+  return mockUsers;
 }
 
 export async function getUserProfile(

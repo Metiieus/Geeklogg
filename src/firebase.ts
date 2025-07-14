@@ -94,6 +94,38 @@ const createMockDb = () => ({
   }),
 });
 
+// Mock Storage
+const createMockStorage = () => ({
+  ref: (path: string) => ({
+    put: async (file: File | Blob) => {
+      console.log("🎭 Mock Storage upload for demo mode:", path);
+      return {
+        ref: {
+          getDownloadURL: async () => {
+            // Retorna uma URL mock mas válida para imagens
+            return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`;
+          },
+        },
+      };
+    },
+    delete: async () =>
+      console.log("🎭 Mock Storage delete for demo mode:", path),
+    getDownloadURL: async () =>
+      `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`,
+  }),
+  uploadBytes: async (ref: any, file: File | Blob) => {
+    console.log("🎭 Mock uploadBytes for demo mode");
+    return {};
+  },
+  getDownloadURL: async (ref: any) => {
+    console.log("🎭 Mock getDownloadURL for demo mode");
+    return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`;
+  },
+  deleteObject: async (ref: any) => {
+    console.log("🎭 Mock deleteObject for demo mode");
+  },
+});
+
 let app: any = null;
 let auth: any = null;
 let db: any = null;
@@ -111,11 +143,11 @@ if (hasValidFirebaseConfig()) {
   }
 } else {
   console.warn(
-    "🎭 Firebase not configured - using mock authentication for demo mode",
+    "🎭 Firebase not configured - using mock services for demo mode",
   );
   auth = createMockAuth();
   db = createMockDb();
-  storage = null;
+  storage = createMockStorage();
 }
 
 export { auth, db, storage };
