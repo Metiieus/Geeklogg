@@ -343,7 +343,7 @@ export const ArchiviusAgent: React.FC = () => {
                         : "Premium necessário..."
                     }
                     disabled={!isPremium}
-                    className="flex-1 px-4 py-2 bg-gray-900/50 border border-gray-600/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:bg-gray-800 disabled:cursor-not-allowed"
+                    className="flex-1 px-3 sm:px-4 py-2 bg-gray-900/50 border border-gray-600/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:bg-gray-800 disabled:cursor-not-allowed text-sm sm:text-base"
                   />
                   <button
                     onClick={handleSendMessage}
