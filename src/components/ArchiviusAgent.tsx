@@ -127,9 +127,9 @@ export const ArchiviusAgent: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${isPremium ? "bg-green-400" : "bg-orange-400"}`}
+                className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-400" : "bg-orange-400"}`}
               />
-              <span className="text-gray-500 text-sm">
+              <span className="text-gray-300 text-sm">
                 {isPremium ? "Online" : "Premium"}
               </span>
             </div>
