@@ -86,7 +86,7 @@ export const MobileNav: React.FC = () => {
                   className={`${
                     activePage === item.id
                       ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
-                      : "text-gray-400"
+                      : "text-gray-200"
                   }`}
                 >
                   {item.icon}
