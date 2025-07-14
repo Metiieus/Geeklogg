@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, X, Send, Sparkles, Crown } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { openaiService } from "../services/openaiService";
 
 interface Message {
   id: string;
