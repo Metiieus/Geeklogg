@@ -258,7 +258,7 @@ const Profile: React.FC = () => {
             </div>
           </div>
 
-          <div>
+          <div className="w-full">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-white">Favoritos</h3>
               <button
@@ -268,19 +268,25 @@ const Profile: React.FC = () => {
                 Editar Favoritos
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-slate-800 p-4 rounded-xl">
-                <h4 className="text-white font-medium mb-2">Personagens</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+              <div className="bg-slate-800 p-4 rounded-xl w-full">
+                <h4 className="text-white font-medium mb-2 text-center">
+                  Personagens
+                </h4>
                 {renderCards(settings.favorites.characters)}
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl">
-                <h4 className="text-white font-medium mb-2">Jogos</h4>
+              <div className="bg-slate-800 p-4 rounded-xl w-full">
+                <h4 className="text-white font-medium mb-2 text-center">
+                  Jogos
+                </h4>
                 {renderCards(settings.favorites.games)}
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl">
-                <h4 className="text-white font-medium mb-2">Filmes</h4>
+              <div className="bg-slate-800 p-4 rounded-xl w-full">
+                <h4 className="text-white font-medium mb-2 text-center">
+                  Filmes
+                </h4>
                 {renderCards(settings.favorites.movies)}
               </div>
             </div>
