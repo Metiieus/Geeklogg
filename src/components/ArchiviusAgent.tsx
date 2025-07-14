@@ -53,7 +53,7 @@ ${
 
 ## 🎯 **Comandos Místicos**
 • 🔮 "Analisar meu perfil" - Revelações arcanas
-• ⚔️ Pergunte sobre recomendações épicas
+�� ⚔️ Pergunte sobre recomendações épicas
 
 ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantidas!*" : "🤖 *Modo demo místico - Configure vossa API key para magia suprema!*"}
 
@@ -370,7 +370,9 @@ Entre em contato para participar do programa beta ou aguarde o lançamento ofici
                             ? hasRealAPI
                               ? "API OpenAI"
                               : "Modo Demo"
-                            : "Premium Only"}
+                            : isAuthorizedUser
+                              ? "Premium Only"
+                              : "Beta Exclusivo"}
                         </span>
                       </div>
                     </div>
