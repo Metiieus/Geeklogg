@@ -18,6 +18,7 @@ import { getMilestones } from "./services/milestoneService";
 import { getSettings } from "./services/settingsService";
 import { AppProvider } from "./context/AppContext";
 import { useAuth } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 import { checkAchievements } from "./services/achievementService";
 
 export type MediaType = "games" | "anime" | "series" | "books" | "movies";
