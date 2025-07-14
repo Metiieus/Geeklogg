@@ -181,8 +181,12 @@ export const ArchiviusAgent: React.FC = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                      <Bot className="w-6 h-6 text-white" />
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20">
+                      <img
+                        src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
+                        alt="Archivius"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
