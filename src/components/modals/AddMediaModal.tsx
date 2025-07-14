@@ -129,19 +129,61 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    setIsUploading(true);
+
+    try {
+      // Validar arquivo
+      const validation = await validateFile(file, {
+        maxSizeInMB: 5,
+        allowedTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+        maxWidth: 1920,
+        maxHeight: 1080,
+      });
+
+      if (!validation.isValid) {
+        showError("Erro no upload da capa", validation.error);
+        setIsUploading(false);
+        return;
+      }
+
+      // Se a imagem for muito grande, comprimir
+      let processedFile = file;
+      if (file.size > 2 * 1024 * 1024) {
+        // > 2MB
+        showWarning("Comprimindo imagem", "A imagem está sendo otimizada");
+        processedFile = await compressImage(file, 1024, 1024, 0.8);
+      }
+
+      // Converter para base64 para preview
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
         setFormData((prev) => ({
           ...prev,
           coverPreview: result,
-          coverFile: file,
+          coverFile: processedFile,
         }));
+        showSuccess("Capa carregada!", "Imagem da capa foi adicionada");
+        setIsUploading(false);
       };
-      reader.readAsDataURL(file);
+
+      reader.onerror = () => {
+        showError(
+          "Erro ao processar imagem",
+          "Não foi possível carregar a imagem selecionada",
+        );
+        setIsUploading(false);
+      };
+
+      reader.readAsDataURL(processedFile);
+    } catch (error) {
+      console.error("Erro no upload:", error);
+      showError("Erro inesperado", "Ocorreu um erro ao processar a imagem");
+      setIsUploading(false);
     }
   };
 
