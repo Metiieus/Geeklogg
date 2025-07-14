@@ -19,7 +19,7 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
   try {
     console.log("📋 Tentando buscar usuários no banco...");
 
-    // Primeiro tentar buscar usuários
+        // Primeiro tentar buscar usuários
     const users = await database.getCollection<any>(["users"]);
     console.log("✅ Dados brutos encontrados:", users.length);
 
@@ -57,12 +57,17 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
 
     console.log("🎯 Usuários filtrados:", mappedUsers.length);
     return mappedUsers;
-  } catch (error) {
+    } catch (error) {
     console.error("❌ Erro na busca do banco, usando dados mock:", error);
-    console.log("🎭 Retornando dados mock para demo");
+    return getMockUsers(query);
+  }
+}
 
-    // Retornar dados mock que correspondem à busca
-    const mockUsers: UserProfile[] = [
+// Função para retornar usuários mock filtrados por query
+function getMockUsers(query: string): UserProfile[] {
+  console.log("🎭 Retornando dados mock para demo");
+
+  const mockUsers: UserProfile[] = [
       {
         id: "demo-user-1",
         uid: "demo-user-1",
