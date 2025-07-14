@@ -133,6 +133,98 @@ const Profile: React.FC = () => {
       {/* Tab Content */}
       {activeTab === "info" && (
         <div className="space-y-6">
+          {/* Premium Status Card */}
+          <div
+            className={`p-6 rounded-2xl border-2 ${
+              profile?.isPremium
+                ? "bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-purple-500/50"
+                : "bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-yellow-500/50"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div
+                  className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                    profile?.isPremium
+                      ? "bg-gradient-to-br from-purple-500 to-pink-500"
+                      : "bg-gradient-to-br from-yellow-400 to-orange-500"
+                  }`}
+                >
+                  <Crown className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">
+                    {profile?.isPremium
+                      ? "Premium Ativo"
+                      : "Upgrade para Premium"}
+                  </h3>
+                  <p className="text-gray-300">
+                    {profile?.isPremium
+                      ? "Acesso completo a todas as funcionalidades"
+                      : "Desbloqueie recursos exclusivos como o Archivius AI"}
+                  </p>
+                </div>
+              </div>
+              {!profile?.isPremium && (
+                <button
+                  onClick={() =>
+                    window.open(
+                      "https://checkout.stripe.com/pay/cs_test_premium",
+                      "_blank",
+                    )
+                  }
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                >
+                  <Zap className="w-5 h-5" />
+                  Assinar Agora
+                </button>
+              )}
+            </div>
+
+            {/* Premium Features */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <Star className="w-4 h-4 text-white" />
+                </div>
+                <span
+                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                >
+                  Archivius AI Assistant
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-white" />
+                </div>
+                <span
+                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                >
+                  Sugestões Personalizadas
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                  <Crown className="w-4 h-4 text-white" />
+                </div>
+                <span
+                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                >
+                  Badge Premium
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <Trophy className="w-4 h-4 text-white" />
+                </div>
+                <span
+                  className={`${profile?.isPremium ? "text-green-400" : "text-gray-400"}`}
+                >
+                  Conquistas Exclusivas
+                </span>
+              </div>
+            </div>
+          </div>
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl flex items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
               {displayAvatar ? (
