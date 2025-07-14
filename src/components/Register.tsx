@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { User, Mail, Lock, Calendar, UserPlus, ArrowLeft } from "lucide-react";
 
 interface RegisterProps {
   onCancel: () => void;
