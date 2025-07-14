@@ -153,7 +153,7 @@ export const ArchiviusAgent: React.FC = () => {
       {/* Modal de Chat */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-end justify-end p-6">
+          <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6">
             {/* Overlay */}
             <motion.div
               className="absolute inset-0 bg-black bg-opacity-20"
@@ -163,9 +163,9 @@ export const ArchiviusAgent: React.FC = () => {
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Chat Window */}
+            {/* Chat Window - responsivo */}
             <motion.div
-              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl w-96 h-[500px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl w-full sm:w-96 h-[80vh] sm:h-[500px] overflow-hidden"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
