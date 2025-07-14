@@ -227,7 +227,7 @@ const Sidebar: React.FC = () => {
                 <LogOut size={20} />
               </div>
               {isExpanded && (
-                <span className="ml-3 text-sm font-medium text-gray-400 group-hover:text-red-400 whitespace-nowrap">
+                <span className="ml-3 text-sm font-medium text-gray-200 group-hover:text-red-400 whitespace-nowrap">
                   Sair
                 </span>
               )}
