@@ -122,11 +122,32 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantida
     if (!inputValue.trim()) return;
 
     if (!isPremium) {
+      const upgradeMessage = isAuthorizedUser
+        ? "Para usar o Archivius épico, você precisa ser um usuário Premium! 👑"
+        : `# 🔒 **Archivius Épico - Acesso Exclusivo**
+
+## ⚔️ **Em Fase de Testes Limitados**
+
+O novo **Archivius 2.0** está em fase beta exclusiva! Este Companion IA épico transforma sua jornada geek em missões personalizadas.
+
+### 🏆 **Funcionalidades Épicas:**
+• 🧙‍♂️ Narrador sábio e carismático
+• 🎯 Missões personalizadas baseadas no seu perfil
+• 🔮 Análise mística completa da sua biblioteca
+• ⚔️ Linguagem adaptada ao seu tipo favorito
+
+### 💎 **Como Obter Acesso:**
+Entre em contato para participar do programa beta ou aguarde o lançamento oficial!
+
+**Em breve para todos os heróis!** ✨
+
+*Archivius, o Guardião do GeekLog* 🏆`;
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
-          text: "Para usar o Archivius, você precisa ser um usuário Premium! 👑 Faça upgrade para ter acesso a sugestões personalizadas baseadas no seu histórico!",
+          text: upgradeMessage,
           isUser: false,
           timestamp: new Date(),
         },
