@@ -50,7 +50,9 @@ const Profile: React.FC = () => {
                 />
               ) : null}
             </div>
-            <p className="text-sm text-white break-words">{it.name}</p>
+            <p className="text-xs sm:text-sm text-white break-words">
+              {it.name}
+            </p>
           </div>
         );
       })}
