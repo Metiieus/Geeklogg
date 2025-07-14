@@ -80,7 +80,31 @@ const Profile: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-white mb-4">Meu Perfil</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-white mb-4">Meu Perfil</h1>
+        {!profile?.isPremium && (
+          <button
+            onClick={() =>
+              window.open(
+                "https://checkout.stripe.com/pay/cs_test_premium",
+                "_blank",
+              )
+            }
+            className="group bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+          >
+            <Crown className="w-5 h-5 group-hover:animate-bounce" />
+            Assinar Premium
+            <Star className="w-4 h-4" />
+          </button>
+        )}
+        {profile?.isPremium && (
+          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2">
+            <Crown className="w-5 h-5 text-yellow-300" />
+            <span>Premium Ativo</span>
+            <Zap className="w-4 h-4 text-yellow-300" />
+          </div>
+        )}
+      </div>
 
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg">
