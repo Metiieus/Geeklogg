@@ -171,7 +171,13 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 {profile.name}
               </h2>
               {profile.bio && (
-                <p className="text-slate-400 mb-4">{profile.bio}</p>
+                <div className="mb-4">
+                  <TruncatedBio
+                    bio={profile.bio}
+                    maxLength={400}
+                    className="text-slate-400"
+                  />
+                </div>
               )}
 
               <div className="flex items-center gap-6 text-sm">
