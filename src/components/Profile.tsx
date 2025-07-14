@@ -146,8 +146,8 @@ const Profile: React.FC = () => {
                 <div
                   className={`w-16 h-16 rounded-full flex items-center justify-center ${
                     profile?.isPremium
-                      ? "bg-gradient-to-br from-purple-500 to-pink-500"
-                      : "bg-gradient-to-br from-yellow-400 to-orange-500"
+                      ? "bg-gradient-to-br from-cyan-500 to-pink-500"
+                      : "bg-gradient-to-br from-cyan-400 to-pink-400"
                   }`}
                 >
                   <Crown className="w-8 h-8 text-white" />
