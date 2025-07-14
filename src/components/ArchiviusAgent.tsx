@@ -163,7 +163,7 @@ export const ArchiviusAgent: React.FC = () => {
 
             {/* Chat Window */}
             <motion.div
-              className="relative bg-white rounded-2xl shadow-2xl w-96 h-[500px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl w-96 h-[500px] overflow-hidden"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -171,7 +171,7 @@ export const ArchiviusAgent: React.FC = () => {
             >
               {/* Header */}
               <div
-                className={`p-4 border-b ${
+                className={`p-4 border-b border-cyan-500/20 ${
                   isPremium
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500"
                     : "bg-gradient-to-r from-gray-600 to-gray-700"
@@ -186,12 +186,12 @@ export const ArchiviusAgent: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-white">Archivius</h3>
                         {isPremium && (
-                          <Crown className="w-4 h-4 text-yellow-300" />
+                          <Crown className="w-4 h-4 text-cyan-300" />
                         )}
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${isPremium ? "bg-green-300" : "bg-orange-300"}`}
+                          className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-300" : "bg-orange-300"}`}
                         />
                         <span className="text-white text-sm opacity-90">
                           {isPremium ? "Online" : "Premium Only"}
@@ -209,11 +209,11 @@ export const ArchiviusAgent: React.FC = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 h-80">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 h-80 bg-gray-900/50">
                 {messages.length === 0 && (
-                  <div className="text-center text-gray-500 mt-8">
-                    <Bot className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                    <p className="text-lg font-medium">
+                  <div className="text-center text-gray-400 mt-8">
+                    <Bot className="w-12 h-12 mx-auto mb-4 text-cyan-400" />
+                    <p className="text-lg font-medium text-white">
                       Olá! Eu sou o Archivius
                     </p>
                     <p className="text-sm mt-2 mb-4">
@@ -224,7 +224,7 @@ export const ArchiviusAgent: React.FC = () => {
 
                     {isPremium && (
                       <div className="space-y-2">
-                        <p className="text-xs text-gray-400 mb-2">
+                        <p className="text-xs text-cyan-400 mb-2">
                           Sugestões rápidas:
                         </p>
                         {[
@@ -238,7 +238,7 @@ export const ArchiviusAgent: React.FC = () => {
                               setInputValue(suggestion);
                               setTimeout(() => handleSendMessage(), 100);
                             }}
-                            className="block w-full text-left px-3 py-2 bg-gray-100 rounded-lg text-gray-700 text-sm hover:bg-gray-200 transition-colors"
+                            className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-300 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors"
                           >
                             {suggestion}
                           </button>
@@ -258,8 +258,8 @@ export const ArchiviusAgent: React.FC = () => {
                     <div
                       className={`max-w-xs px-4 py-2 rounded-2xl ${
                         message.isUser
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-100 text-gray-800"
+                          ? "bg-gradient-to-r from-cyan-500 to-pink-500 text-white"
+                          : "bg-gray-700/50 border border-gray-600/30 text-gray-200"
                       }`}
                     >
                       <p className="text-sm">{message.text}</p>
@@ -273,15 +273,15 @@ export const ArchiviusAgent: React.FC = () => {
                     animate={{ opacity: 1 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-gray-100 px-4 py-2 rounded-2xl">
+                    <div className="bg-gray-700/50 border border-gray-600/30 px-4 py-2 rounded-2xl">
                       <div className="flex gap-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
                         <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                          className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
                           style={{ animationDelay: "0.1s" }}
                         />
                         <div
-                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
                           style={{ animationDelay: "0.2s" }}
                         />
                       </div>
@@ -293,7 +293,7 @@ export const ArchiviusAgent: React.FC = () => {
               </div>
 
               {/* Input */}
-              <div className="p-4 border-t bg-gray-50">
+              <div className="p-4 border-t border-cyan-500/20 bg-gray-800/50">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -306,12 +306,12 @@ export const ArchiviusAgent: React.FC = () => {
                         : "Premium necessário..."
                     }
                     disabled={!isPremium}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-200"
+                    className="flex-1 px-4 py-2 bg-gray-900/50 border border-gray-600/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:bg-gray-800 disabled:cursor-not-allowed"
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!isPremium || !inputValue.trim()}
-                    className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors disabled:bg-gray-400"
+                    className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full flex items-center justify-center hover:from-cyan-600 hover:to-pink-600 transition-colors disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
                   >
                     <Send className="w-5 h-5" />
                   </button>
