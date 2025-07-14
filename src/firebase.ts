@@ -143,11 +143,11 @@ if (hasValidFirebaseConfig()) {
   }
 } else {
   console.warn(
-    "🎭 Firebase not configured - using mock authentication for demo mode",
+    "🎭 Firebase not configured - using mock services for demo mode",
   );
   auth = createMockAuth();
   db = createMockDb();
-  storage = null;
+  storage = createMockStorage();
 }
 
 export { auth, db, storage };
