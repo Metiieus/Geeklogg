@@ -17,9 +17,28 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
     email: "",
     senha: "",
   });
-  const [error, setError] = useState<string | null>(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { logout } = useAuth();
+  const { showError, showSuccess } = useToast();
+
+  const getErrorMessage = (error: any): string => {
+    const code = error?.code || error?.message || "";
+
+    switch (code) {
+      case "auth/email-already-in-use":
+        return "Este email já está em uso. Tente fazer login ou use outro email.";
+      case "auth/invalid-email":
+        return "Email inválido. Verifique o formato do email.";
+      case "auth/operation-not-allowed":
+        return "Registro desabilitado. Entre em contato com o suporte.";
+      case "auth/weak-password":
+        return "Senha muito fraca. Use pelo menos 6 caracteres.";
+      case "auth/network-request-failed":
+        return "Erro de conexão. Verifique sua internet e tente novamente.";
+      default:
+        return "Erro no registro. Tente novamente.";
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
