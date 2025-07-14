@@ -173,7 +173,7 @@ const Profile: React.FC = () => {
                       "_blank",
                     )
                   }
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                  className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
                 >
                   <Zap className="w-5 h-5" />
                   Assinar Agora
