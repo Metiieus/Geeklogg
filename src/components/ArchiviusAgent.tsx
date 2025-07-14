@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
 import { openaiService } from "../services/openaiService";
+import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
 
 interface Message {
   id: string;
@@ -53,7 +54,7 @@ ${
 
 ## 🎯 **Comandos Místicos**
 • 🔮 "Analisar meu perfil" - Revelações arcanas
-�� ⚔️ Pergunte sobre recomendações épicas
+• ⚔️ Pergunte sobre recomendações épicas
 
 ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantidas!*" : "🤖 *Modo demo místico - Configure vossa API key para magia suprema!*"}
 
