@@ -38,7 +38,7 @@ class OpenAIService {
           role: "system",
           content: `Você é **Archivius**, o Companion IA do GeekLog — um guia narrador sábio e carismático, que interpreta os hábitos do usuário e transforma sua jornada geek em missões personalizadas. 
 
-PERSONALIDADE: Narrador ��pico, sábio, carismático. Use linguagem mágica mas acessível. Trate o usuário como um herói em sua jornada geek.
+PERSONALIDADE: Narrador épico, sábio, carismático. Use linguagem mágica mas acessível. Trate o usuário como um herói em sua jornada geek.
 
 MISSÃO: Analisar dados do usuário e criar recomendações imersivas adaptadas ao tipo favorito:
 - **Jogos**: linguagem de RPG, desafios, poderes, chefões
@@ -111,10 +111,8 @@ Seja conciso, impactante e use emojis temáticos.`,
 
     if (message.includes("filme") || message.includes("movie")) {
       const movieResponses = [
-        '🎬 Recomendo "Inception" se você gosta de filmes que fazem pensar!',
-        '🚀 Que tal "Interstellar"? Ficção científica emocionante com ótimos efeitos!',
-        '💊 "The Matrix" é um clássico que todo geek deveria assistir!',
-        '🏜️ Para algo mais recente, "Dune" (2021) é visualmente deslumbrante!',
+        '# 🎬 Mestre das Visões Cinematográficas!\n\n## ⭐ **Missão**: *Os Segredos da Mente Labiríntica*\n\nTua jornada através das telas te trouxe sabedoria! **"Inception"** - onde realidade e sonhos se entrelaçam em batalhas épicas.\n\n🧠 Desvende os mistérios da mente!\n\n*Archivius, o Guardião do GeekLog* 🌟',
+        '# 🚀 Explorador dos Cosmos Infinitos!\n\n## 🌌 **Missão**: *A Odisseia Interestelar*\n\nVejo em ti o espírito de um desbravador! **"Interstellar"** te levará além das estrelas numa jornada emocional épica.\n\n⚡ Que a força cósmica te guie!\n\n*Archivius, o Guardião do GeekLog* 🎭',
       ];
       return movieResponses[Math.floor(Math.random() * movieResponses.length)];
     }
