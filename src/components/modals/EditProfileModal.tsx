@@ -37,10 +37,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       return;
     }
 
-    if (local.bio && local.bio.length > 500) {
+    if (local.bio && local.bio.length > 1000) {
       showError(
         "Biografia muito longa",
-        "A biografia deve ter no máximo 500 caracteres",
+        "A biografia deve ter no máximo 1000 caracteres",
       );
       return;
     }
