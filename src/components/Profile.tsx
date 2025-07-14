@@ -98,10 +98,10 @@ const Profile: React.FC = () => {
           </button>
         )}
         {profile?.isPremium && (
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2">
-            <Crown className="w-5 h-5 text-yellow-300" />
+          <div className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2">
+            <Crown className="w-5 h-5 text-cyan-300" />
             <span>Premium Ativo</span>
-            <Zap className="w-4 h-4 text-yellow-300" />
+            <Zap className="w-4 h-4 text-cyan-300" />
           </div>
         )}
       </div>
