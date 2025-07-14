@@ -15,11 +15,13 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   onSave,
   onClose,
 }) => {
+  const { showError, showSuccess, showWarning } = useToast();
   const [local, setLocal] = useState({
     name: profile?.name || "",
     avatar: profile?.avatar || "",
     bio: profile?.bio || "",
   });
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
