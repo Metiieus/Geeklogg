@@ -43,8 +43,10 @@ const createMockAuth = () => {
   let currentUser: any = null;
   let authStateListeners: Array<(user: any) => void> = [];
 
-  return {
-    currentUser,
+  const mockAuth = {
+    get currentUser() {
+      return currentUser;
+    },
     onAuthStateChanged: (callback: (user: any) => void) => {
       authStateListeners.push(callback);
       // Immediately call with current user
@@ -74,6 +76,8 @@ const createMockAuth = () => {
       return { user: currentUser };
     },
   };
+
+  return mockAuth;
 };
 
 // Mock Firestore
