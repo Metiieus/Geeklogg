@@ -105,6 +105,25 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
         </div>
       )}
 
+      {!loading && query.length === 0 && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Search className="w-8 h-8 text-slate-400" />
+          </div>
+          <h3 className="text-lg font-medium text-white mb-2">
+            Buscar Usuários
+          </h3>
+          <p className="text-slate-400 text-sm">
+            Digite o nome ou biografia de usuários para encontrar novos amigos
+          </p>
+          <div className="mt-4 space-y-1">
+            <p className="text-xs text-slate-500">
+              Sugestões: alex, luna, marcus, sophie
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {users.map((user) => (
           <div
