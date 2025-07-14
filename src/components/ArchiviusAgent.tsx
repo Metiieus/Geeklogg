@@ -375,12 +375,12 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantida
                       />
                     </div>
                     <p className="text-base sm:text-lg font-medium text-white">
-                      Olá! Eu sou o Archivius
+                      🧙‍♂️ Archivius, o Guardião
                     </p>
                     <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
                       {isPremium
-                        ? "Seu assistente pessoal para sugestões de games, filmes e muito mais!"
-                        : "Faça upgrade para Premium e desbloqueie minhas funcionalidades!"}
+                        ? "⚔️ Companion IA para missões épicas de entretenimento!"
+                        : "👑 Desperte os poderes premium para desbloquear magia suprema!"}
                     </p>
 
                     {isPremium && (
