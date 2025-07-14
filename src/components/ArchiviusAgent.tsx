@@ -112,8 +112,8 @@ export const ArchiviusAgent: React.FC = () => {
           <div
             className={`w-14 h-14 rounded-full flex items-center justify-center ${
               isPremium
-                ? "bg-gradient-to-br from-purple-500 to-blue-600"
-                : "bg-gradient-to-br from-blue-500 to-blue-600"
+                ? "bg-gradient-to-br from-cyan-500 to-pink-500"
+                : "bg-gradient-to-br from-gray-600 to-gray-700"
             }`}
           >
             <Bot className="w-8 h-8 text-white" />
