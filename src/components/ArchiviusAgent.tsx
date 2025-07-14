@@ -56,17 +56,32 @@ export const ArchiviusAgent: React.FC = () => {
     setInputValue("");
     setIsLoading(true);
 
-    // Simulação de resposta da IA (aqui você integraria com OpenAI)
-    setTimeout(() => {
+    try {
+      // Usar OpenAI service para gerar resposta
+      const aiResponseText = await openaiService.sendMessage(
+        inputValue,
+        profile,
+      );
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Como seu assistente pessoal Archivius, sugiro que você explore mais jogos do gênero RPG baseado no seu histórico. Que tal experimentar "The Witcher 3" ou "Cyberpunk 2077"? 🎮✨`,
+        text: aiResponseText,
         isUser: false,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiResponse]);
-      setIsLoading(false);
-    }, 1500);
+    } catch (error) {
+      console.error("Erro ao obter resposta da IA:", error);
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Desculpe, ocorreu um erro. Tente novamente em alguns instantes! 🤖",
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorResponse]);
+    }
+
+    setIsLoading(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
