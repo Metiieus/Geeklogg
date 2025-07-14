@@ -61,32 +61,63 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
     console.log("🎭 Retornando dados mock para demo");
 
     // Retornar dados mock que correspondem à busca
-    const mockUsers = [
+    const mockUsers: UserProfile[] = [
       {
         id: "demo-user-1",
-        name: "Demo Friend 1",
+        uid: "demo-user-1",
+        name: "Alex GameMaster",
         avatar: undefined,
-        bio: "Another demo user you can follow",
+        bio: "Gamer apaixonado por RPGs e aventuras épicas",
+        email: "alex@demo.com",
         followers: [],
         following: [],
-        postsCount: 5,
-        reviewsCount: 3,
+        postsCount: 15,
+        reviewsCount: 8,
       },
       {
         id: "demo-user-2",
-        name: "Demo Friend 2",
+        uid: "demo-user-2",
+        name: "Luna AnimeWatcher",
         avatar: undefined,
-        bio: "Yet another demo user for testing",
+        bio: "Otaku de carteirinha, sempre em busca do próximo anime incrível",
+        email: "luna@demo.com",
         followers: [],
         following: [],
-        postsCount: 2,
-        reviewsCount: 1,
+        postsCount: 22,
+        reviewsCount: 12,
+      },
+      {
+        id: "demo-user-3",
+        uid: "demo-user-3",
+        name: "Marcus Bookworm",
+        avatar: undefined,
+        bio: "Leitor voraz, especialmente ficção científica e fantasia",
+        email: "marcus@demo.com",
+        followers: [],
+        following: [],
+        postsCount: 8,
+        reviewsCount: 15,
+      },
+      {
+        id: "demo-user-4",
+        uid: "demo-user-4",
+        name: "Sophie CinemaLover",
+        avatar: undefined,
+        bio: "Cinéfila apaixonada por filmes independentes e clássicos",
+        email: "sophie@demo.com",
+        followers: [],
+        following: [],
+        postsCount: 12,
+        reviewsCount: 20,
       },
     ].filter(
       (user) =>
         user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.bio.toLowerCase().includes(query.toLowerCase()),
+        user.bio?.toLowerCase().includes(query.toLowerCase()),
     );
+
+    console.log("🎭 Mock users filtered:", mockUsers.length);
+    return mockUsers;
   }
 }
 
