@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Send, Sparkles, Crown } from "lucide-react";
+import { Bot, X, Send, Sparkles, Crown, Brain, Zap } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useAppContext } from "../context/AppContext";
+import { useToast } from "../context/ToastContext";
 import { openaiService } from "../services/openaiService";
+import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
 
 interface Message {
   id: string;
@@ -13,13 +16,62 @@ interface Message {
 
 export const ArchiviusAgent: React.FC = () => {
   const { profile } = useAuth();
+  const { mediaItems, reviews, settings } = useAppContext();
+  const { showSuccess, showError } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const isPremium = profile?.isPremium || false;
+  // Archivius épico restrito para contas autorizadas (fase beta)
+  const isAuthorizedUser = hasArchiviusAccess(profile?.email);
+  const isPremium = isAuthorizedUser || profile?.isPremium;
+  const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
+
+  // Inicializar com mensagem de boas-vindas personalizada
+  useEffect(() => {
+    if (isOpen && !hasInitialized && isPremium) {
+      const userContext = generateUserContext();
+      const welcomeMessage: Message = {
+        id: "welcome",
+        text: `# 🧙‍♂️ Saudações, ${settings.name || "Guardião"}!
+
+**Sou Archivius, o Companion IA do GeekLog!** ⚔️
+
+## 📚 **Vossa Biblioteca Mística**
+Vejo que possuis **${userContext.totalMedia} pergaminhos** em vossa coleção!
+
+${
+  userContext.completedMedia > 0
+    ? `🏆 **Conquistas Épicas**: ${userContext.completedMedia} missões completadas ${userContext.favoriteTypes.length > 0 ? `nos domínios de **${userContext.favoriteTypes.join(", ")}**` : ""}. \n\n⚡ Posso decifrar os segredos do vosso perfil e forjar missões personalizadas!`
+    : "🌟 **Nova Jornada**: Quando adicionardes mais conquistas, poderei criar missões épicas baseadas em vossos gostos!"
+}
+
+## 🎯 **Comandos Místicos**
+• 🔮 "Analisar meu perfil" - Revelações arcanas
+• ⚔️ Pergunte sobre recomendações épicas
+
+${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantidas!*" : "🤖 *Modo demo místico - Configure vossa API key para magia suprema!*"}
+
+**Que vossa jornada seja lendária!** ✨`,
+        isUser: false,
+        timestamp: new Date(),
+      };
+
+      setMessages([welcomeMessage]);
+      setHasInitialized(true);
+    }
+  }, [isOpen, hasInitialized, isPremium, settings.name]);
+
+  // Reset quando fechar
+  useEffect(() => {
+    if (!isOpen) {
+      setHasInitialized(false);
+    }
+  }, [isOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,15 +81,70 @@ export const ArchiviusAgent: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const generateUserContext = () => {
+    const completedMedia = mediaItems.filter(
+      (item) => item.status === "completed",
+    );
+    const favoriteGenres = settings.favorites;
+    const averageRating =
+      reviews.length > 0
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+          reviews.length
+        : 0;
+
+    return {
+      totalMedia: mediaItems.length,
+      completedMedia: completedMedia.length,
+      favoriteTypes: [...new Set(completedMedia.map((item) => item.type))],
+      averageRating: Math.round(averageRating * 10) / 10,
+      totalReviews: reviews.length,
+      favorites: favoriteGenres,
+      recentlyCompleted: completedMedia
+        .sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        )
+        .slice(0, 3)
+        .map((item) => ({
+          title: item.title,
+          type: item.type,
+          rating: item.rating,
+        })),
+      preferences: {
+        name: settings.name,
+        bio: settings.bio,
+      },
+    };
+  };
+
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     if (!isPremium) {
+      const config = ARCHIVIUS_CONFIG.upgradeMessage;
+      const upgradeMessage = isAuthorizedUser
+        ? "Para usar o Archivius épico, você precisa ser um usuário Premium! 👑"
+        : `# 🔒 **${config.title}**
+
+## ⚔️ **${config.subtitle}**
+
+${config.description}
+
+### 🏆 **Funcionalidades Épicas:**
+${config.features.map((feature) => `• ${feature}`).join("\n")}
+
+### 💎 **Como Obter Acesso:**
+${config.callToAction}
+
+**${config.footer}**
+
+*Archivius, o Guardião do GeekLog* 🏆`;
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
-          text: "Para usar o Archivius, você precisa ser um usuário Premium! 👑",
+          text: upgradeMessage,
           isUser: false,
           timestamp: new Date(),
         },
@@ -57,10 +164,13 @@ export const ArchiviusAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Usar OpenAI service para gerar resposta
+      // Gerar contexto completo do usuário
+      const userContext = generateUserContext();
+
+      // Usar OpenAI service para gerar resposta com contexto
       const aiResponseText = await openaiService.sendMessage(
         inputValue,
-        profile,
+        userContext,
       );
 
       const aiResponse: Message = {
@@ -70,6 +180,11 @@ export const ArchiviusAgent: React.FC = () => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiResponse]);
+
+      showSuccess(
+        "Archivius respondeu!",
+        "Nova sugestão baseada no seu perfil",
+      );
     } catch (error) {
       console.error("Erro ao obter resposta da IA:", error);
       const errorResponse: Message = {
@@ -79,9 +194,45 @@ export const ArchiviusAgent: React.FC = () => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorResponse]);
+      showError("Erro no Archivius", "Não foi possível obter resposta");
     }
 
     setIsLoading(false);
+  };
+
+  const handleAnalyzeProfile = async () => {
+    if (!isPremium) return;
+
+    setIsAnalyzing(true);
+
+    try {
+      const userContext = generateUserContext();
+      const analysisPrompt =
+        "Faça uma análise completa do meu perfil de entretenimento e dê insights sobre meus gostos, padrões e 3 recomendações personalizadas.";
+
+      const analysis = await openaiService.sendMessage(
+        analysisPrompt,
+        userContext,
+      );
+
+      const analysisMessage: Message = {
+        id: Date.now().toString(),
+        text: `🔍 **Análise do seu perfil:**\n\n${analysis}`,
+        isUser: false,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, analysisMessage]);
+      showSuccess(
+        "Análise completa!",
+        "Archivius analisou seu perfil de entretenimento",
+      );
+    } catch (error) {
+      console.error("Erro na análise:", error);
+      showError("Erro na análise", "Não foi possível analisar seu perfil");
+    }
+
+    setIsAnalyzing(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -134,6 +285,11 @@ export const ArchiviusAgent: React.FC = () => {
               <span className="text-gray-100 text-sm">
                 {isPremium ? "Online" : "Premium"}
               </span>
+              {isPremium && mediaItems.length > 0 && (
+                <span className="text-cyan-400 text-xs">
+                  • {mediaItems.length} itens
+                </span>
+              )}
             </div>
           </div>
 
@@ -196,13 +352,24 @@ export const ArchiviusAgent: React.FC = () => {
                         {isPremium && (
                           <Crown className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-300" />
                         )}
+                        {hasRealAPI && (
+                          <span className="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full border border-green-500/30">
+                            API Real
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-300" : "bg-orange-300"}`}
+                          className={`w-2 h-2 rounded-full ${isPremium ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
                         />
                         <span className="text-white text-sm opacity-90">
-                          {isPremium ? "Online" : "Premium Only"}
+                          {isPremium
+                            ? hasRealAPI
+                              ? "API OpenAI"
+                              : "Modo Demo"
+                            : isAuthorizedUser
+                              ? "Premium Only"
+                              : "Beta Exclusivo"}
                         </span>
                       </div>
                     </div>
@@ -231,35 +398,58 @@ export const ArchiviusAgent: React.FC = () => {
                       />
                     </div>
                     <p className="text-base sm:text-lg font-medium text-white">
-                      Olá! Eu sou o Archivius
+                      🧙‍♂️ Archivius, o Guardião
                     </p>
                     <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
                       {isPremium
-                        ? "Seu assistente pessoal para sugestões de games, filmes e muito mais!"
-                        : "Faça upgrade para Premium e desbloqueie minhas funcionalidades!"}
+                        ? "⚔️ Companion IA para missões épicas de entretenimento!"
+                        : "👑 Desperte os poderes premium para desbloquear magia suprema!"}
                     </p>
 
                     {isPremium && (
-                      <div className="space-y-2">
-                        <p className="text-xs text-cyan-400 mb-2">
-                          Sugestões rápidas:
-                        </p>
-                        {[
-                          "Recomende um jogo RPG",
-                          "Sugira um filme de ficção científica",
-                          "Qual anime devo assistir?",
-                        ].map((suggestion, index) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setInputValue(suggestion);
-                              setTimeout(() => handleSendMessage(), 100);
-                            }}
-                            className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors"
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
+                      <div className="space-y-3">
+                        {/* Botão de Análise de Perfil */}
+                        <button
+                          onClick={handleAnalyzeProfile}
+                          disabled={isAnalyzing}
+                          className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-all"
+                        >
+                          {isAnalyzing ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Analisando perfil...
+                            </>
+                          ) : (
+                            <>
+                              <Brain className="w-4 h-4" />
+                              Analisar meu perfil
+                            </>
+                          )}
+                        </button>
+
+                        <div className="border-t border-gray-600/30 pt-3">
+                          <p className="text-xs text-cyan-400 mb-2">
+                            Sugestões rápidas:
+                          </p>
+                          {[
+                            "🏰 Forje uma missão baseada nas minhas conquistas",
+                            "🌟 Revele segredos de reinos inexplorados",
+                            "⚔️ Qual seria minha próxima aventura épica?",
+                            "🔮 Desvende os mistérios do meu perfil",
+                          ].map((suggestion, index) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setInputValue(suggestion);
+                                setTimeout(() => handleSendMessage(), 100);
+                              }}
+                              className="block w-full text-left px-3 py-2 mb-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors"
+                            >
+                              <Zap className="w-3 h-3 inline mr-2 text-cyan-400" />
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
