@@ -186,7 +186,11 @@ function App() {
   }
 
   if (!user) {
-    return <Login />;
+    return (
+      <ToastProvider>
+        <Login />
+      </ToastProvider>
+    );
   }
 
   const renderPage = () => {
