@@ -240,11 +240,13 @@ const Profile: React.FC = () => {
               )}
             </div>
 
-            <div>
-              <h2 className="text-2xl font-semibold text-white">
+            <div className="text-center sm:text-left">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white">
                 {displayName}
               </h2>
-              <p className="text-slate-400">{displayBio}</p>
+              <p className="text-slate-400 text-sm sm:text-base">
+                {displayBio}
+              </p>
               <button
                 onClick={() => setEditProfile(true)}
                 className="mt-2 text-purple-400 hover:text-purple-300 text-sm"
