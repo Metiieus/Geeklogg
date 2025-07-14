@@ -34,6 +34,42 @@ export const ArchiviusAgent: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const generateUserContext = () => {
+    const completedMedia = mediaItems.filter(
+      (item) => item.status === "completed",
+    );
+    const favoriteGenres = settings.favorites;
+    const averageRating =
+      reviews.length > 0
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) /
+          reviews.length
+        : 0;
+
+    return {
+      totalMedia: mediaItems.length,
+      completedMedia: completedMedia.length,
+      favoriteTypes: [...new Set(completedMedia.map((item) => item.type))],
+      averageRating: Math.round(averageRating * 10) / 10,
+      totalReviews: reviews.length,
+      favorites: favoriteGenres,
+      recentlyCompleted: completedMedia
+        .sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        )
+        .slice(0, 3)
+        .map((item) => ({
+          title: item.title,
+          type: item.type,
+          rating: item.rating,
+        })),
+      preferences: {
+        name: settings.name,
+        bio: settings.bio,
+      },
+    };
+  };
+
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
@@ -42,7 +78,7 @@ export const ArchiviusAgent: React.FC = () => {
         ...prev,
         {
           id: Date.now().toString(),
-          text: "Para usar o Archivius, você precisa ser um usuário Premium! 👑",
+          text: "Para usar o Archivius, você precisa ser um usuário Premium! 👑 Faça upgrade para ter acesso a sugestões personalizadas baseadas no seu histórico!",
           isUser: false,
           timestamp: new Date(),
         },
@@ -62,10 +98,13 @@ export const ArchiviusAgent: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Usar OpenAI service para gerar resposta
+      // Gerar contexto completo do usuário
+      const userContext = generateUserContext();
+
+      // Usar OpenAI service para gerar resposta com contexto
       const aiResponseText = await openaiService.sendMessage(
         inputValue,
-        profile,
+        userContext,
       );
 
       const aiResponse: Message = {
@@ -75,6 +114,11 @@ export const ArchiviusAgent: React.FC = () => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiResponse]);
+
+      showSuccess(
+        "Archivius respondeu!",
+        "Nova sugestão baseada no seu perfil",
+      );
     } catch (error) {
       console.error("Erro ao obter resposta da IA:", error);
       const errorResponse: Message = {
@@ -84,9 +128,45 @@ export const ArchiviusAgent: React.FC = () => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorResponse]);
+      showError("Erro no Archivius", "Não foi possível obter resposta");
     }
 
     setIsLoading(false);
+  };
+
+  const handleAnalyzeProfile = async () => {
+    if (!isPremium) return;
+
+    setIsAnalyzing(true);
+
+    try {
+      const userContext = generateUserContext();
+      const analysisPrompt =
+        "Faça uma análise completa do meu perfil de entretenimento e dê insights sobre meus gostos, padrões e 3 recomendações personalizadas.";
+
+      const analysis = await openaiService.sendMessage(
+        analysisPrompt,
+        userContext,
+      );
+
+      const analysisMessage: Message = {
+        id: Date.now().toString(),
+        text: `🔍 **Análise do seu perfil:**\n\n${analysis}`,
+        isUser: false,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, analysisMessage]);
+      showSuccess(
+        "Análise completa!",
+        "Archivius analisou seu perfil de entretenimento",
+      );
+    } catch (error) {
+      console.error("Erro na análise:", error);
+      showError("Erro na análise", "Não foi possível analisar seu perfil");
+    }
+
+    setIsAnalyzing(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
