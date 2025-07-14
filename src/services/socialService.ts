@@ -25,7 +25,8 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
 
     if (users.length === 0) {
       console.log("⚠️ Nenhum usuário encontrado no banco, usando mock data");
-      throw new Error("No users found");
+      // Não lançar erro, apenas usar mock data
+      return getMockUsers(query);
     }
 
     // Mapear e filtrar usuários
