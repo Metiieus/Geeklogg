@@ -54,7 +54,7 @@ export async function unlockAchievement(achievementId: string): Promise<void> {
     await database.add(["users", uid, "achievements"], userAchievement);
     console.log("🏆 Conquista desbloqueada:", achievement.title);
   } catch (error) {
-    console.log('🎭 Mock achievement unlock for demo mode:', achievementId);
+    console.log("🎭 Mock achievement unlock for demo mode:", achievementId);
   }
 }
 
@@ -133,90 +133,95 @@ export async function checkAchievements(
     const unlockedIds = new Set(userAchievements.map((ua) => ua.achievementId));
     const newlyUnlocked: string[] = [];
 
-  // Verificar cada conquista
-  for (const achievement of ACHIEVEMENTS_DATA) {
-    if (unlockedIds.has(achievement.id)) continue;
+    // Verificar cada conquista
+    for (const achievement of ACHIEVEMENTS_DATA) {
+      if (unlockedIds.has(achievement.id)) continue;
 
-    // Verificar dependências
-    if (
-      achievement.dependsOn &&
-      !achievement.dependsOn.every((depId) => unlockedIds.has(depId))
-    ) {
-      continue;
+      // Verificar dependências
+      if (
+        achievement.dependsOn &&
+        !achievement.dependsOn.every((depId) => unlockedIds.has(depId))
+      ) {
+        continue;
+      }
+
+      let shouldUnlock = false;
+
+      switch (achievement.id) {
+        case "primeiro_game":
+          shouldUnlock = mediaItems.some((item) => item.type === "games");
+          break;
+
+        case "completou_primeiro_game":
+          shouldUnlock = mediaItems.some(
+            (item) => item.type === "games" && item.status === "completed",
+          );
+          break;
+
+        case "viciado_em_horas":
+          shouldUnlock = mediaItems.some(
+            (item) => item.type === "games" && (item.hoursSpent || 0) >= 100,
+          );
+          break;
+
+        case "primeiro_livro":
+          shouldUnlock = mediaItems.some((item) => item.type === "books");
+          break;
+
+        case "devorador_de_livros":
+          shouldUnlock =
+            mediaItems.filter(
+              (item) => item.type === "books" && item.status === "completed",
+            ).length >= 10;
+          break;
+
+        case "primeiro_filme":
+          shouldUnlock = mediaItems.some(
+            (item) => item.type === "movies" || item.type === "series",
+          );
+          break;
+
+        case "maratonista":
+          const totalAudiovisualHours = mediaItems
+            .filter((item) => item.type === "movies" || item.type === "series")
+            .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
+          shouldUnlock = totalAudiovisualHours >= 50;
+          break;
+
+        case "mini_review":
+          shouldUnlock = reviews.some((review) => review.content.length >= 100);
+          break;
+
+        case "critico_experiente":
+          shouldUnlock =
+            reviews.filter((review) => review.content.length >= 100).length >=
+            5;
+          break;
+
+        case "personalizou_perfil":
+          shouldUnlock = !!(settings.name && settings.avatar && settings.bio);
+          break;
+
+        case "mestre_multimidia":
+          const completedTypes = new Set(
+            mediaItems
+              .filter((item) => item.status === "completed")
+              .map((item) => item.type),
+          );
+          shouldUnlock = completedTypes.size >= 3;
+          break;
+      }
+
+      if (shouldUnlock) {
+        await unlockAchievement(achievement.id);
+        newlyUnlocked.push(achievement.id);
+        unlockedIds.add(achievement.id);
+      }
     }
 
-    let shouldUnlock = false;
-
-    switch (achievement.id) {
-      case "primeiro_game":
-        shouldUnlock = mediaItems.some((item) => item.type === "games");
-        break;
-
-      case "completou_primeiro_game":
-        shouldUnlock = mediaItems.some(
-          (item) => item.type === "games" && item.status === "completed",
-        );
-        break;
-
-      case "viciado_em_horas":
-        shouldUnlock = mediaItems.some(
-          (item) => item.type === "games" && (item.hoursSpent || 0) >= 100,
-        );
-        break;
-
-      case "primeiro_livro":
-        shouldUnlock = mediaItems.some((item) => item.type === "books");
-        break;
-
-      case "devorador_de_livros":
-        shouldUnlock =
-          mediaItems.filter(
-            (item) => item.type === "books" && item.status === "completed",
-          ).length >= 10;
-        break;
-
-      case "primeiro_filme":
-        shouldUnlock = mediaItems.some(
-          (item) => item.type === "movies" || item.type === "series",
-        );
-        break;
-
-      case "maratonista":
-        const totalAudiovisualHours = mediaItems
-          .filter((item) => item.type === "movies" || item.type === "series")
-          .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
-        shouldUnlock = totalAudiovisualHours >= 50;
-        break;
-
-      case "mini_review":
-        shouldUnlock = reviews.some((review) => review.content.length >= 100);
-        break;
-
-      case "critico_experiente":
-        shouldUnlock =
-          reviews.filter((review) => review.content.length >= 100).length >= 5;
-        break;
-
-      case "personalizou_perfil":
-        shouldUnlock = !!(settings.name && settings.avatar && settings.bio);
-        break;
-
-      case "mestre_multimidia":
-        const completedTypes = new Set(
-          mediaItems
-            .filter((item) => item.status === "completed")
-            .map((item) => item.type),
-        );
-        shouldUnlock = completedTypes.size >= 3;
-        break;
-    }
-
-    if (shouldUnlock) {
-      await unlockAchievement(achievement.id);
-      newlyUnlocked.push(achievement.id);
-      unlockedIds.add(achievement.id);
-    }
+    return newlyUnlocked;
+  } catch (error) {
+    console.log("🎭 Mock achievement check for demo mode");
+    return [];
   }
-
-  return newlyUnlocked;
 }
