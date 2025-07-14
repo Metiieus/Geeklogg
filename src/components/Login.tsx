@@ -84,10 +84,10 @@ export const Login: React.FC = () => {
               />
             </div>
 
-            {/* Password Input */}
+            {/* Password Input - responsivo */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-pink-400" />
+                <Lock className="h-4 sm:h-5 w-4 sm:w-5 text-pink-400" />
               </div>
               <input
                 type="password"
@@ -95,7 +95,7 @@ export const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Senha"
                 required
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base"
               />
             </div>
 
