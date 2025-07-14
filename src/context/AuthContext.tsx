@@ -134,8 +134,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!auth) {
       throw new Error("Firebase auth not initialized");
     }
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Check if we're using mock auth (demo mode)
+      if (typeof auth.signInWithEmailAndPassword === "function") {
+        // Mock auth - use the mock function
+        await auth.signInWithEmailAndPassword(email, password);
+      } else {
+        // Real Firebase auth
+        await signInWithEmailAndPassword(auth, email, password);
+      }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       throw error;
@@ -147,7 +155,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.warn("Firebase auth not initialized");
       return;
     }
-    await signOut(auth);
+
+    // Check if we're using mock auth (demo mode)
+    if (typeof auth.signOut === "function") {
+      // Mock auth - use the mock function
+      await auth.signOut();
+    } else {
+      // Real Firebase auth
+      await signOut(auth);
+    }
     setProfile(null);
   };
 
