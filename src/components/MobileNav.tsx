@@ -101,7 +101,7 @@ export const MobileNav: React.FC = () => {
               {/* Label */}
               <span
                 className={`text-xs mt-1 font-medium transition-colors truncate ${
-                  activePage === item.id ? "text-white" : "text-gray-400"
+                  activePage === item.id ? "text-white" : "text-gray-200"
                 }`}
               >
                 {item.label}
