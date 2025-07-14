@@ -180,8 +180,8 @@ export const ArchiviusAgent: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full overflow-hidden border-2 border-white/20">
                       <img
                         src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
                         alt="Archivius"
@@ -190,9 +190,11 @@ export const ArchiviusAgent: React.FC = () => {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white">Archivius</h3>
+                        <h3 className="font-semibold text-white text-sm sm:text-base">
+                          Archivius
+                        </h3>
                         {isPremium && (
-                          <Crown className="w-4 h-4 text-cyan-300" />
+                          <Crown className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-300" />
                         )}
                       </div>
                       <div className="flex items-center gap-2">
