@@ -121,24 +121,22 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantida
     if (!inputValue.trim()) return;
 
     if (!isPremium) {
+      const config = ARCHIVIUS_CONFIG.upgradeMessage;
       const upgradeMessage = isAuthorizedUser
         ? "Para usar o Archivius épico, você precisa ser um usuário Premium! 👑"
-        : `# 🔒 **Archivius Épico - Acesso Exclusivo**
+        : `# 🔒 **${config.title}**
 
-## ⚔️ **Em Fase de Testes Limitados**
+## ⚔️ **${config.subtitle}**
 
-O novo **Archivius 2.0** está em fase beta exclusiva! Este Companion IA épico transforma sua jornada geek em missões personalizadas.
+${config.description}
 
 ### 🏆 **Funcionalidades Épicas:**
-• 🧙‍♂️ Narrador sábio e carismático
-• 🎯 Missões personalizadas baseadas no seu perfil
-• 🔮 Análise mística completa da sua biblioteca
-• ⚔️ Linguagem adaptada ao seu tipo favorito
+${config.features.map((feature) => `• ${feature}`).join("\n")}
 
 ### 💎 **Como Obter Acesso:**
-Entre em contato para participar do programa beta ou aguarde o lançamento oficial!
+${config.callToAction}
 
-**Em breve para todos os heróis!** ✨
+**${config.footer}**
 
 *Archivius, o Guardião do GeekLog* 🏆`;
 
@@ -410,7 +408,7 @@ Entre em contato para participar do programa beta ou aguarde o lançamento ofici
 
                     {isPremium && (
                       <div className="space-y-3">
-                        {/* Bot��o de Análise de Perfil */}
+                        {/* Botão de Análise de Perfil */}
                         <button
                           onClick={handleAnalyzeProfile}
                           disabled={isAnalyzing}
