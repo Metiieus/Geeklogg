@@ -158,7 +158,7 @@ const Profile: React.FC = () => {
                       ? "Premium Ativo"
                       : "Upgrade para Premium"}
                   </h3>
-                  <p className="text-gray-300">
+                  <p className="text-gray-100">
                     {profile?.isPremium
                       ? "Acesso completo a todas as funcionalidades"
                       : "Desbloqueie recursos exclusivos como o Archivius AI"}
