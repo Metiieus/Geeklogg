@@ -93,9 +93,9 @@ export const ArchiviusAgent: React.FC = () => {
 
   return (
     <>
-      {/* Botão Flutuante */}
+      {/* Botão Flutuante - responsivo */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 200 }}
