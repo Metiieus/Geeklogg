@@ -322,13 +322,22 @@ ${
                         {isPremium && (
                           <Crown className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-300" />
                         )}
+                        {hasRealAPI && (
+                          <span className="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full border border-green-500/30">
+                            API Real
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-300" : "bg-orange-300"}`}
+                          className={`w-2 h-2 rounded-full ${isPremium ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
                         />
                         <span className="text-white text-sm opacity-90">
-                          {isPremium ? "Online" : "Premium Only"}
+                          {isPremium
+                            ? hasRealAPI
+                              ? "API OpenAI"
+                              : "Modo Demo"
+                            : "Premium Only"}
                         </span>
                       </div>
                     </div>
