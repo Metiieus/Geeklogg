@@ -222,18 +222,18 @@ export const ArchiviusAgent: React.FC = () => {
                 style={{ height: "calc(100% - 140px)" }}
               >
                 {messages.length === 0 && (
-                  <div className="text-center text-gray-200 mt-8">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden border-2 border-cyan-400/50">
+                  <div className="text-center text-gray-200 mt-4 sm:mt-8">
+                    <div className="w-12 sm:w-16 h-12 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full overflow-hidden border-2 border-cyan-400/50">
                       <img
                         src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
                         alt="Archivius"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <p className="text-lg font-medium text-white">
+                    <p className="text-base sm:text-lg font-medium text-white">
                       Olá! Eu sou o Archivius
                     </p>
-                    <p className="text-sm mt-2 mb-4">
+                    <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
                       {isPremium
                         ? "Seu assistente pessoal para sugestões de games, filmes e muito mais!"
                         : "Faça upgrade para Premium e desbloqueie minhas funcionalidades!"}
