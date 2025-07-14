@@ -213,11 +213,11 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 setLocal((prev) => ({ ...prev, bio: e.target.value }))
               }
               rows={4}
-              maxLength={500}
+              maxLength={1000}
               className={`w-full px-4 py-3 bg-slate-700/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${
-                local.bio.length > 450
+                local.bio.length > 900
                   ? "border-red-500"
-                  : local.bio.length > 400
+                  : local.bio.length > 800
                     ? "border-yellow-500"
                     : "border-slate-600"
               }`}
