@@ -46,18 +46,20 @@ export const Login: React.FC = () => {
         By: Metieus
       </span>
 
-      {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md mx-4">
-        <div className="bg-gray-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-8 shadow-2xl">
-          {/* Header com logo */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-500 to-pink-500 rounded-full mb-4">
-              <Sparkles className="w-8 h-8 text-white" />
+      {/* Login Card - responsivo */}
+      <div className="relative z-10 w-full max-w-md mx-auto">
+        <div className="bg-gray-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
+          {/* Header com logo - responsivo */}
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-cyan-500 to-pink-500 rounded-full mb-4">
+              <Sparkles className="w-6 sm:w-8 h-6 sm:h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
               GeekLog
             </h1>
-            <p className="text-gray-200 mt-2">Entre na sua conta</p>
+            <p className="text-gray-200 mt-2 text-sm sm:text-base">
+              Entre na sua conta
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
