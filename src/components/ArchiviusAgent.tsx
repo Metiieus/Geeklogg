@@ -45,7 +45,9 @@ ${
     : "Quando você adicionar mais itens à sua biblioteca, posso dar sugestões ainda mais personalizadas!"
 }
 
-💡 Experimente me perguntar algo ou use o botão "Analisar meu perfil"!`,
+💡 Experimente me perguntar algo ou use o botão "Analisar meu perfil"!
+
+${hasRealAPI ? "🔌 *Usando API OpenAI real para respostas inteligentes*" : "🤖 *Modo demo ativo - configure sua API key para respostas da IA real*"}`,
         isUser: false,
         timestamp: new Date(),
       };
@@ -397,7 +399,7 @@ ${
 
                         <div className="border-t border-gray-600/30 pt-3">
                           <p className="text-xs text-cyan-400 mb-2">
-                            Sugestões rápidas:
+                            Sugestões r��pidas:
                           </p>
                           {[
                             "Baseado no que já joguei, o que recomenda?",
