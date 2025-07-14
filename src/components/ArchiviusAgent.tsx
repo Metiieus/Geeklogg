@@ -61,9 +61,6 @@ ${
     }
   }, [isOpen]);
 
-  // Para teste: considerar premium se não há API key configurada (modo demo)
-  const isPremium = profile?.isPremium || !import.meta.env.VITE_OPENAI_API_KEY;
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
