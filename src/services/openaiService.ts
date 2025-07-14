@@ -183,7 +183,7 @@ Que tipo de recomendação você gostaria? Posso sugerir algo baseado no que voc
 
   private getProfileAnalysis(context: any): string {
     if (!context) {
-      return "📊 Para fazer uma análise detalhada, preciso que você tenha alguns itens em sua biblioteca primeiro!";
+      return "# 🧙‍♂️ Guardião em Formação!\n\n## 📚 **Missão**: *A Construção da Biblioteca Épica*\n\nVossa jornada apenas começou! Adicione algumas conquistas à vossa biblioteca para que eu possa decifrar os segredos de vossos gostos.\n\n⚔️ *Que a aventura comece!*\n\n**Archivius, o Guardião do GeekLog** ✨";
     }
 
     const {
