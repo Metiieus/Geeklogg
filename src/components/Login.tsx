@@ -116,16 +116,16 @@ export const Login: React.FC = () => {
             <div className="flex-1 border-t border-gray-700"></div>
           </div>
 
-          {/* Register Button */}
+          {/* Register Button - responsivo */}
           <button
             onClick={() => setShowRegister(true)}
-            className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300"
+            className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base"
           >
             Criar nova conta
           </button>
 
-          {/* Demo Info */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-cyan-500/20 rounded-lg">
+          {/* Demo Info - responsivo */}
+          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-cyan-500/20 rounded-lg">
             <p className="text-xs text-cyan-400 text-center">
               💡 <strong>Modo Demo:</strong> Use qualquer email/senha para
               entrar
