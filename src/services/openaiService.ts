@@ -25,9 +25,12 @@ class OpenAIService {
 
   async sendMessage(userMessage: string, context?: any): Promise<string> {
     if (!this.apiKey) {
+      console.log("🤖 Archivius: Usando modo demo (API key não configurada)");
       // Fallback para demo - simulação de resposta da IA
       return this.getMockResponse(userMessage, context);
     }
+
+    console.log("🔌 Archivius: Usando API OpenAI real");
 
     try {
       const messages: OpenAIMessage[] = [
@@ -126,7 +129,7 @@ RESPOSTA: Máximo 250 palavras, estruturado, sempre explique POR QUE está recom
     // Resposta padrão
     const defaultResponses = [
       "🎯 Como seu assistente Archivius, posso te ajudar com sugestões de games, filmes, animes e séries! O que você tem interesse?",
-      "�� Estou aqui para dar as melhores recomendações baseadas no seu perfil! Me conte o que você está procurando!",
+      "✨ Estou aqui para dar as melhores recomendações baseadas no seu perfil! Me conte o que você está procurando!",
       "🌟 Precisa de sugestões de entretenimento? Posso te ajudar a descobrir seu próximo game ou filme favorito!",
       "🎮🎬 Vamos encontrar algo incrível para você! Me fale sobre seus gostos e preferências!",
     ];
