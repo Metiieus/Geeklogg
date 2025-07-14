@@ -231,6 +231,7 @@ function App() {
           </main>
         </div>
         <MobileNav />
+        <ArchiviusAgent />
       </div>
     </AppProvider>
   );
