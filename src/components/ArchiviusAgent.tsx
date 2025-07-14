@@ -254,6 +254,11 @@ ${
               <span className="text-gray-100 text-sm">
                 {isPremium ? "Online" : "Premium"}
               </span>
+              {isPremium && mediaItems.length > 0 && (
+                <span className="text-cyan-400 text-xs">
+                  • {mediaItems.length} itens
+                </span>
+              )}
             </div>
           </div>
 
