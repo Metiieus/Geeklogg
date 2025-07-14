@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
 import { AchievementModal } from "./AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
+import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
