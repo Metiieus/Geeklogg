@@ -41,7 +41,7 @@ const Profile: React.FC = () => {
             key={it.id}
             className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50"
           >
-            <div className="w-full h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
+            <div className="w-full h-20 sm:h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
               {it.image ? (
                 <img
                   src={it.image}
