@@ -110,7 +110,7 @@ export const Login: React.FC = () => {
           {/* Divider */}
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-gray-700"></div>
-            <span className="px-4 text-gray-400 text-sm">ou</span>
+            <span className="px-4 text-gray-200 text-sm">ou</span>
             <div className="flex-1 border-t border-gray-700"></div>
           </div>
 
