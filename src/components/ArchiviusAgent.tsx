@@ -26,10 +26,8 @@ export const ArchiviusAgent: React.FC = () => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Archivius épico restrito para conta específica (fase de teste)
-  const authorizedEmails = ["demo@example.com"]; // Adicione seu email aqui
-  const isAuthorizedUser =
-    profile?.email && authorizedEmails.includes(profile.email);
+  // Archivius épico restrito para contas autorizadas (fase beta)
+  const isAuthorizedUser = hasArchiviusAccess(profile?.email);
   const isPremium = isAuthorizedUser || profile?.isPremium;
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -412,7 +410,7 @@ Entre em contato para participar do programa beta ou aguarde o lançamento ofici
 
                     {isPremium && (
                       <div className="space-y-3">
-                        {/* Botão de Análise de Perfil */}
+                        {/* Bot��o de Análise de Perfil */}
                         <button
                           onClick={handleAnalyzeProfile}
                           disabled={isAnalyzing}
