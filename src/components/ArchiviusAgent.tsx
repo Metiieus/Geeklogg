@@ -15,10 +15,13 @@ interface Message {
 
 export const ArchiviusAgent: React.FC = () => {
   const { profile } = useAuth();
+  const { mediaItems, reviews, settings } = useAppContext();
+  const { showSuccess, showError } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isPremium = profile?.isPremium || false;
