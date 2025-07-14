@@ -46,33 +46,83 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newItem = await addMedia({
-      title: formData.title,
-      type: formData.type,
-      status: formData.status,
-      rating: formData.rating ? parseInt(formData.rating) : undefined,
-      hoursSpent: formData.hoursSpent
-        ? parseFloat(formData.hoursSpent)
-        : undefined,
-      totalPages: formData.totalPages
-        ? parseInt(formData.totalPages)
-        : undefined,
-      currentPage: formData.currentPage
-        ? parseInt(formData.currentPage)
-        : undefined,
-      startDate: formData.startDate || undefined,
-      endDate: formData.endDate || undefined,
-      platform: formData.platform || undefined,
-      tags: formData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0),
-      externalLink: formData.externalLink || undefined,
-      description: formData.description || undefined,
-      coverFile: formData.coverFile,
-    });
+    // Validações
+    if (!formData.title.trim()) {
+      showError("Título obrigatório", "Por favor, insira o título da mídia");
+      return;
+    }
 
-    onSave(newItem);
+    if (formData.title.trim().length < 2) {
+      showError(
+        "Título muito curto",
+        "O título deve ter pelo menos 2 caracteres",
+      );
+      return;
+    }
+
+    if (
+      formData.rating &&
+      (parseInt(formData.rating) < 1 || parseInt(formData.rating) > 10)
+    ) {
+      showError("Avaliação inválida", "A avaliação deve estar entre 1 e 10");
+      return;
+    }
+
+    if (
+      formData.currentPage &&
+      formData.totalPages &&
+      parseInt(formData.currentPage) > parseInt(formData.totalPages)
+    ) {
+      showError(
+        "Páginas inválidas",
+        "A página atual não pode ser maior que o total de páginas",
+      );
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const newItem = await addMedia({
+        title: formData.title.trim(),
+        type: formData.type,
+        status: formData.status,
+        rating: formData.rating ? parseInt(formData.rating) : undefined,
+        hoursSpent: formData.hoursSpent
+          ? parseFloat(formData.hoursSpent)
+          : undefined,
+        totalPages: formData.totalPages
+          ? parseInt(formData.totalPages)
+          : undefined,
+        currentPage: formData.currentPage
+          ? parseInt(formData.currentPage)
+          : undefined,
+        startDate: formData.startDate || undefined,
+        endDate: formData.endDate || undefined,
+        platform: formData.platform?.trim() || undefined,
+        tags: formData.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0),
+        externalLink: formData.externalLink?.trim() || undefined,
+        description: formData.description?.trim() || undefined,
+        coverFile: formData.coverFile,
+      });
+
+      showSuccess(
+        "Mídia adicionada!",
+        `${formData.title} foi adicionado à sua biblioteca`,
+      );
+      onSave(newItem);
+    } catch (error: any) {
+      console.error("Erro ao adicionar mídia:", error);
+      showError(
+        "Erro ao salvar",
+        error.message || "Não foi possível adicionar a mídia",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
