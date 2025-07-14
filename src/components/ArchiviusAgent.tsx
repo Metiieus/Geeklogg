@@ -211,7 +211,7 @@ export const ArchiviusAgent: React.FC = () => {
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 h-80 bg-gray-900/50">
                 {messages.length === 0 && (
-                  <div className="text-center text-gray-400 mt-8">
+                  <div className="text-center text-gray-200 mt-8">
                     <Bot className="w-12 h-12 mx-auto mb-4 text-cyan-400" />
                     <p className="text-lg font-medium text-white">
                       Olá! Eu sou o Archivius
