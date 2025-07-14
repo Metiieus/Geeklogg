@@ -1,5 +1,5 @@
 // Serviço para integração com OpenAI API
-// Para usar em produ��ão, adicione sua API key nas variáveis de ambiente
+// Para usar em produção, adicione sua API key nas variáveis de ambiente
 
 interface OpenAIMessage {
   role: "system" | "user" | "assistant";
@@ -38,7 +38,7 @@ class OpenAIService {
           role: "system",
           content: `Você é **Archivius**, o Companion IA do GeekLog — um guia narrador sábio e carismático, que interpreta os hábitos do usuário e transforma sua jornada geek em missões personalizadas. 
 
-PERSONALIDADE: Narrador épico, sábio, carismático. Use linguagem mágica mas acessível. Trate o usuário como um herói em sua jornada geek.
+PERSONALIDADE: Narrador ��pico, sábio, carismático. Use linguagem mágica mas acessível. Trate o usuário como um herói em sua jornada geek.
 
 MISSÃO: Analisar dados do usuário e criar recomendações imersivas adaptadas ao tipo favorito:
 - **Jogos**: linguagem de RPG, desafios, poderes, chefões
@@ -103,10 +103,8 @@ Seja conciso, impactante e use emojis temáticos.`,
     // Respostas baseadas em palavras-chave (fallback)
     if (message.includes("jogo") || message.includes("game")) {
       const gameResponses = [
-        '🎮 Baseado no seu perfil, recomendo "The Witcher 3: Wild Hunt" - um RPG épico com uma história incrível!',
-        '⚔️ Que tal experimentar "Hades"? É um roguelike indie fantástico com combate dinâmico!',
-        '🌆 Sugiro "Cyberpunk 2077" se você gosta de RPGs futurísticos com mundo aberto!',
-        '🌱 Para algo relaxante, "Stardew Valley" é perfeito - farming e relacionamentos!',
+        '# 🧙‍♂️ Guardião dos Reinos Digitais!\n\n## ⚔️ **Missão**: *O Chamado da Épica Aventura*\n\nVejo que buscas novos desafios! Como um verdadeiro herói dos jogos, recomendo **"The Witcher 3"** - onde poderes mágicos e escolhas épicas te aguardam.\n\n🎯 Esta jornada combina com seu espírito aventureiro!\n\n*Archivius, o Guardião do GeekLog* 🏆',
+        '# ⚔️ Herói dos Mundos Infinitos!\n\n## 🎮 **Missão**: *O Desafio do Labirinto Eterno*\n\nTua sede por conquistas me impressiona! **"Hades"** te espera - um roguelike onde cada morte fortalece teu poder.\n\n🔥 Prepare-se para batalhas épicas no submundo!\n\n*Archivius, o Guardião do GeekLog* ⚡',
       ];
       return gameResponses[Math.floor(Math.random() * gameResponses.length)];
     }
