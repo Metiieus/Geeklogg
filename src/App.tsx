@@ -211,7 +211,18 @@ function App() {
 
   return (
     <AppProvider value={contextValue}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900/20 to-pink-900/20 relative overflow-hidden">
+        {/* Elementos geométricos de fundo */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-purple-500/10 rounded-full blur-xl"></div>
+
+          <div className="absolute top-10 right-10 w-16 h-16 bg-cyan-400/20 rotate-45 opacity-30"></div>
+          <div className="absolute bottom-10 left-10 w-12 h-12 bg-pink-400/25 rotate-12 opacity-25"></div>
+          <div className="absolute top-1/3 left-10 w-8 h-8 bg-purple-400/30 -rotate-45 opacity-40"></div>
+          <div className="absolute bottom-1/3 right-10 w-12 h-12 bg-indigo-400/20 -rotate-12 opacity-30"></div>
+        </div>
         <div className="flex">
           <Sidebar />
           <main className="flex-1 sm:ml-20 pb-16 sm:pb-0">
