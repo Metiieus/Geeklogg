@@ -108,14 +108,11 @@ export const Login: React.FC = () => {
           <div className="text-center mb-6 sm:mb-8">
             <div className="inline-flex items-center justify-center mb-4">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=100"
+                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=150"
                 alt="GeekLog"
-                className="w-20 sm:w-24 h-20 sm:h-24 object-contain"
+                className="w-28 sm:w-36 h-28 sm:h-36 object-contain"
               />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
-              GeekLog
-            </h1>
             <p className="text-gray-200 mt-2 text-sm sm:text-base">
               Entre na sua conta
             </p>
