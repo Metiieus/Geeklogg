@@ -102,8 +102,8 @@ export const ArchiviusAgent: React.FC = () => {
       >
         <motion.button
           onClick={() => setIsOpen(true)}
-          className={`group relative flex items-center bg-white rounded-full shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
-            isPremium ? "border-purple-200" : "border-gray-200"
+          className={`group relative flex items-center bg-gray-800/50 backdrop-blur-xl rounded-full shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
+            isPremium ? "border-cyan-500/30" : "border-gray-600/30"
           }`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
