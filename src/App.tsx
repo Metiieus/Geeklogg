@@ -223,7 +223,7 @@ function App() {
           <div className="absolute top-1/3 left-10 w-8 h-8 bg-purple-400/30 -rotate-45 opacity-40"></div>
           <div className="absolute bottom-1/3 right-10 w-12 h-12 bg-indigo-400/20 -rotate-12 opacity-30"></div>
         </div>
-        <div className="flex">
+        <div className="relative z-10 flex">
           <Sidebar />
           <main className="flex-1 sm:ml-20 pb-16 sm:pb-0">
             <ErrorBoundary>
