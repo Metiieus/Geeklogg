@@ -35,19 +35,26 @@ export const ArchiviusAgent: React.FC = () => {
       const userContext = generateUserContext();
       const welcomeMessage: Message = {
         id: "welcome",
-        text: `👋 Olá ${settings.name || "usuário"}!
+        text: `# 🧙‍♂️ Saudações, ${settings.name || "Guardião"}!
 
-Sou seu assistente Archivius! 🤖 Vejo que você tem ${userContext.totalMedia} itens na sua biblioteca.
+**Sou Archivius, o Companion IA do GeekLog!** ⚔️
+
+## 📚 **Vossa Biblioteca Mística**
+Vejo que possuis **${userContext.totalMedia} pergaminhos** em vossa coleção!
 
 ${
   userContext.completedMedia > 0
-    ? `Notei que você completou ${userContext.completedMedia} ${userContext.favoriteTypes.length > 0 ? `e parece gostar de ${userContext.favoriteTypes.join(", ")}` : "itens"}. Posso analisar seu perfil e dar sugestões personalizadas!`
-    : "Quando você adicionar mais itens à sua biblioteca, posso dar sugestões ainda mais personalizadas!"
+    ? `🏆 **Conquistas Épicas**: ${userContext.completedMedia} missões completadas ${userContext.favoriteTypes.length > 0 ? `nos domínios de **${userContext.favoriteTypes.join(", ")}**` : ""}. \n\n⚡ Posso decifrar os segredos do vosso perfil e forjar missões personalizadas!`
+    : "🌟 **Nova Jornada**: Quando adicionardes mais conquistas, poderei criar missões épicas baseadas em vossos gostos!"
 }
 
-💡 Experimente me perguntar algo ou use o botão "Analisar meu perfil"!
+## 🎯 **Comandos Místicos**
+• 🔮 "Analisar meu perfil" - Revelações arcanas
+• ⚔️ Pergunte sobre recomendações épicas
 
-${hasRealAPI ? "🔌 *Usando API OpenAI real para respostas inteligentes*" : "🤖 *Modo demo ativo - configure sua API key para respostas da IA real*"}`,
+${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantidas!*" : "🤖 *Modo demo místico - Configure vossa API key para magia suprema!*"}
+
+**Que vossa jornada seja lendária!** ✨`,
         isUser: false,
         timestamp: new Date(),
       };
@@ -399,7 +406,7 @@ ${hasRealAPI ? "🔌 *Usando API OpenAI real para respostas inteligentes*" : "�
 
                         <div className="border-t border-gray-600/30 pt-3">
                           <p className="text-xs text-cyan-400 mb-2">
-                            Sugestões r��pidas:
+                            Sugestões rápidas:
                           </p>
                           {[
                             "Baseado no que já joguei, o que recomenda?",
