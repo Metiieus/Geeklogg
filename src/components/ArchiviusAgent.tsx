@@ -265,8 +265,19 @@ export const ArchiviusAgent: React.FC = () => {
                     key={message.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}
+                    className={`flex gap-2 ${message.isUser ? "justify-end" : "justify-start"}`}
                   >
+                    {/* Avatar do Archivius para mensagens da IA */}
+                    {!message.isUser && (
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-cyan-500/30 flex-shrink-0 mt-1">
+                        <img
+                          src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
+                          alt="Archivius"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+
                     <div
                       className={`max-w-xs px-4 py-2 rounded-2xl ${
                         message.isUser
