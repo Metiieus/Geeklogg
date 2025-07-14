@@ -22,7 +22,41 @@ export const ArchiviusAgent: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Inicializar com mensagem de boas-vindas personalizada
+  useEffect(() => {
+    if (isOpen && !hasInitialized && isPremium) {
+      const userContext = generateUserContext();
+      const welcomeMessage: Message = {
+        id: "welcome",
+        text: `👋 Olá ${settings.name || "usuário"}!
+
+Sou seu assistente Archivius! 🤖 Vejo que você tem ${userContext.totalMedia} itens na sua biblioteca.
+
+${
+  userContext.completedMedia > 0
+    ? `Notei que você completou ${userContext.completedMedia} ${userContext.favoriteTypes.length > 0 ? `e parece gostar de ${userContext.favoriteTypes.join(", ")}` : "itens"}. Posso analisar seu perfil e dar sugestões personalizadas!`
+    : "Quando você adicionar mais itens à sua biblioteca, posso dar sugestões ainda mais personalizadas!"
+}
+
+💡 Experimente me perguntar algo ou use o botão "Analisar meu perfil"!`,
+        isUser: false,
+        timestamp: new Date(),
+      };
+
+      setMessages([welcomeMessage]);
+      setHasInitialized(true);
+    }
+  }, [isOpen, hasInitialized, isPremium, settings.name]);
+
+  // Reset quando fechar
+  useEffect(() => {
+    if (!isOpen) {
+      setHasInitialized(false);
+    }
+  }, [isOpen]);
 
   // Para teste: considerar premium se não há API key configurada (modo demo)
   const isPremium = profile?.isPremium || !import.meta.env.VITE_OPENAI_API_KEY;
