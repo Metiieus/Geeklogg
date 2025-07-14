@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut
-} from 'firebase/auth';
-import { auth, db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import { FavoriteItem } from '../App';
+  signOut,
+} from "firebase/auth";
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { FavoriteItem } from "../App";
 
 export interface UserProfile {
   name: string;
@@ -19,6 +19,8 @@ export interface UserProfile {
     movies: FavoriteItem[];
   };
   defaultLibrarySort: string;
+  isPremium?: boolean;
+  premiumExpiresAt?: string;
 }
 
 interface AuthContextType {
@@ -31,53 +33,97 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async currentUser => {
+    if (!auth) {
+      console.warn("Firebase auth not initialized");
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         try {
-          const userRef = doc(db, 'users', currentUser.uid);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            const userData = userSnap.data();
-            console.log('📥 Dados do usuário carregados:', userData);
-            // Normalize favorites data to ensure consistent structure
+          // Check if we're using mock Firestore (demo mode)
+          if (db && typeof db.collection === "function") {
+            console.log("🎭 Using mock user profile for demo mode");
             const normalizedProfile: UserProfile = {
-              name: userData.nome || userData.name || userData.apelido || 'Usuário',
-              avatar: userData.avatar,
-              bio: userData.bio || '',
+              name:
+                currentUser.displayName ||
+                currentUser.email?.split("@")[0] ||
+                "Demo User",
+              avatar: undefined,
+              bio: "This is a demo profile using mock authentication.",
               favorites: {
-                characters: Array.isArray(userData.favorites?.characters) 
-                  ? userData.favorites.characters.map((item: any) => 
-                      typeof item === 'string' ? { id: Math.random().toString(), name: item } : item
-                    )
-                  : [],
-                games: Array.isArray(userData.favorites?.games)
-                  ? userData.favorites.games.map((item: any) => 
-                      typeof item === 'string' ? { id: Math.random().toString(), name: item } : item
-                    )
-                  : [],
-                movies: Array.isArray(userData.favorites?.movies)
-                  ? userData.favorites.movies.map((item: any) => 
-                      typeof item === 'string' ? { id: Math.random().toString(), name: item } : item
-                    )
-                  : []
+                characters: [],
+                games: [],
+                movies: [],
               },
-              defaultLibrarySort: userData.defaultLibrarySort || 'updatedAt'
-            } as UserProfile;
-            console.log('✅ Perfil normalizado:', normalizedProfile);
+              defaultLibrarySort: "updatedAt",
+              isPremium: false,
+              premiumExpiresAt: undefined,
+            };
             setProfile(normalizedProfile);
+          } else if (db) {
+            // Real Firestore
+            const userRef = doc(db, "users", currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+              const userData = userSnap.data();
+              console.log("📥 Dados do usuário carregados:", userData);
+              // Normalize favorites data to ensure consistent structure
+              const normalizedProfile: UserProfile = {
+                name:
+                  userData.nome ||
+                  userData.name ||
+                  userData.apelido ||
+                  "Usuário",
+                avatar: userData.avatar,
+                bio: userData.bio || "",
+                favorites: {
+                  characters: Array.isArray(userData.favorites?.characters)
+                    ? userData.favorites.characters.map((item: any) =>
+                        typeof item === "string"
+                          ? { id: Math.random().toString(), name: item }
+                          : item,
+                      )
+                    : [],
+                  games: Array.isArray(userData.favorites?.games)
+                    ? userData.favorites.games.map((item: any) =>
+                        typeof item === "string"
+                          ? { id: Math.random().toString(), name: item }
+                          : item,
+                      )
+                    : [],
+                  movies: Array.isArray(userData.favorites?.movies)
+                    ? userData.favorites.movies.map((item: any) =>
+                        typeof item === "string"
+                          ? { id: Math.random().toString(), name: item }
+                          : item,
+                      )
+                    : [],
+                },
+                defaultLibrarySort: userData.defaultLibrarySort || "updatedAt",
+              } as UserProfile;
+              console.log("✅ Perfil normalizado:", normalizedProfile);
+              setProfile(normalizedProfile);
+            } else {
+              console.log("Perfil não encontrado no Firestore.");
+              setProfile(null);
+            }
           } else {
-            console.log('Perfil não encontrado no Firestore.');
+            console.log("Firestore não disponível.");
             setProfile(null);
           }
         } catch (error) {
-          console.error('Erro ao buscar perfil no Firestore:', error);
+          console.error("Erro ao buscar perfil no Firestore:", error);
           setProfile(null);
         }
       } else {
@@ -89,16 +135,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error("Firebase auth not initialized");
+    }
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Check if we're using mock auth (demo mode)
+      if (typeof auth.signInWithEmailAndPassword === "function") {
+        // Mock auth - use the mock function
+        await auth.signInWithEmailAndPassword(email, password);
+      } else {
+        // Real Firebase auth
+        await signInWithEmailAndPassword(auth, email, password);
+      }
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      console.error("Erro ao fazer login:", error);
       throw error;
     }
   };
 
   const logout = async () => {
-    await signOut(auth);
+    if (!auth) {
+      console.warn("Firebase auth not initialized");
+      return;
+    }
+
+    // Check if we're using mock auth (demo mode)
+    if (typeof auth.signOut === "function") {
+      // Mock auth - use the mock function
+      await auth.signOut();
+    } else {
+      // Real Firebase auth
+      await signOut(auth);
+    }
     setProfile(null);
   };
 
@@ -112,7 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
