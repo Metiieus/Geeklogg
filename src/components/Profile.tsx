@@ -137,8 +137,8 @@ const Profile: React.FC = () => {
           <div
             className={`p-6 rounded-2xl border-2 ${
               profile?.isPremium
-                ? "bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-purple-500/50"
-                : "bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-yellow-500/50"
+                ? "bg-gradient-to-br from-cyan-900/50 to-pink-900/50 border-cyan-500/50"
+                : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-cyan-500/30"
             }`}
           >
             <div className="flex items-center justify-between">
