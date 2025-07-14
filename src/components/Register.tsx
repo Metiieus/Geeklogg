@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import { auth, db } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { useAuth } from "../context/AuthContext";
 
 interface RegisterProps {
   onCancel: () => void;
@@ -10,11 +10,11 @@ interface RegisterProps {
 
 export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
   const [formData, setFormData] = useState({
-    nome: '',
-    apelido: '',
-    dataNascimento: '',
-    email: '',
-    senha: ''
+    nome: "",
+    apelido: "",
+    dataNascimento: "",
+    email: "",
+    senha: "",
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -22,27 +22,37 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🚀 Tentando registrar novo usuário...');
+    console.log("🚀 Tentando registrar novo usuário...");
 
     try {
+      if (!auth || !db) {
+        throw new Error(
+          "Firebase não foi inicializado. Verifique sua configuração.",
+        );
+      }
+
       // Criar o usuário no Firebase Auth
-      console.log('🚀 Iniciando cadastro no Firebase Auth...');
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
+      console.log("🚀 Iniciando cadastro no Firebase Auth...");
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.senha,
+      );
       const user = userCredential.user;
-      console.log('✅ Usuário criado com UID:', user.uid);
+      console.log("✅ Usuário criado com UID:", user.uid);
 
       // Validar se o usuário realmente está autenticado
-      console.log('🛡️ Usuário autenticado:', auth.currentUser);
+      console.log("🛡️ Usuário autenticado:", auth.currentUser);
       if (!auth.currentUser) {
-        throw new Error('Usuário não autenticado no momento da gravação.');
+        throw new Error("Usuário não autenticado no momento da gravação.");
       }
 
       // Preparar os dados
@@ -52,39 +62,43 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
         apelido: formData.apelido,
         dataNascimento: formData.dataNascimento,
         email: formData.email,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
-      console.log('🛠️ Dados preparados para gravação:', userData);
+      console.log("🛠️ Dados preparados para gravação:", userData);
 
       // Validar se existem campos inválidos
-      if (Object.values(userData).some(value => value === undefined || value === null || value === '')) {
-        console.error('🚨 Dados inválidos detectados:', userData);
-        setError('Existem campos vazios ou inválidos.');
+      if (
+        Object.values(userData).some(
+          (value) => value === undefined || value === null || value === "",
+        )
+      ) {
+        console.error("🚨 Dados inválidos detectados:", userData);
+        setError("Existem campos vazios ou inválidos.");
         return;
       }
 
       // Gravar os dados no Firestore
-      console.log('✍️ Gravando dados no Firestore...');
-      await setDoc(doc(db, 'users', user.uid), userData);
-      console.log('🎉 Dados do usuário salvos com sucesso no Firestore!');
+      console.log("✍️ Gravando dados no Firestore...");
+      await setDoc(doc(db, "users", user.uid), userData);
+      console.log("🎉 Dados do usuário salvos com sucesso no Firestore!");
 
       // Deslogar o usuário após cadastro (opcional)
       await logout();
-      console.log('👋 Usuário deslogado após cadastro.');
+      console.log("👋 Usuário deslogado após cadastro.");
 
       onCancel();
     } catch (err: any) {
-      console.error('❌ Erro ao registrar usuário:', err);
+      console.error("❌ Erro ao registrar usuário:", err);
       // Mensagens amigáveis para erros de registro
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Opa! Esse email já está sendo usado 📧');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Essa senha tá fraquinha... que tal uma mais forte? 💪');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Esse email não parece válido 📧');
+      if (err.code === "auth/email-already-in-use") {
+        setError("Opa! Esse email já está sendo usado 📧");
+      } else if (err.code === "auth/weak-password") {
+        setError("Essa senha tá fraquinha... que tal uma mais forte? 💪");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Esse email não parece válido 📧");
       } else {
-        setError('Algo deu errado no cadastro... tenta de novo? 😅');
+        setError("Algo deu errado no cadastro... tenta de novo? 😅");
       }
     }
   };
@@ -92,18 +106,17 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
   return (
     <div
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('https://storage.googleapis.com/images-etherium/NERD%20LOG.%20(1).png')" }}
+      style={{
+        backgroundImage:
+          "url('https://storage.googleapis.com/images-etherium/NERD%20LOG.%20(1).png')",
+      }}
     >
       <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="relative z-10 p-8 rounded-xl shadow-lg backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 border border-gray-200 border-opacity-20 text-white w-96 max-h-[90vh] overflow-y-auto">
         <h2 className="text-3xl font-bold text-center mb-6">Registro</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="text-red-400 text-center">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-red-400 text-center">{error}</div>}
           <div className="relative">
             <input
               type="text"
@@ -120,7 +133,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Nome
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F464;</span>
+            <span className="absolute right-4 top-3 text-gray-400">
+              &#x1F464;
+            </span>
           </div>
 
           <div className="relative">
@@ -139,7 +154,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Apelido
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F3AD;</span>
+            <span className="absolute right-4 top-3 text-gray-400">
+              &#x1F3AD;
+            </span>
           </div>
 
           <div className="relative">
@@ -157,7 +174,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Data de Nascimento
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F4C5;</span>
+            <span className="absolute right-4 top-3 text-gray-400">
+              &#x1F4C5;
+            </span>
           </div>
 
           <div className="relative">
@@ -176,7 +195,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Email
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x2709;</span>
+            <span className="absolute right-4 top-3 text-gray-400">
+              &#x2709;
+            </span>
           </div>
 
           <div className="relative">
@@ -195,7 +216,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
             >
               Senha
             </label>
-            <span className="absolute right-4 top-3 text-gray-400">&#x1F512;</span>
+            <span className="absolute right-4 top-3 text-gray-400">
+              &#x1F512;
+            </span>
           </div>
 
           <div className="flex gap-3 mt-8">
@@ -216,8 +239,12 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
         </form>
 
         <p className="text-center text-sm mt-6">
-          Já tem uma conta?{' '}
-          <button type="button" onClick={onCancel} className="text-purple-400 hover:underline focus:outline-none">
+          Já tem uma conta?{" "}
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-purple-400 hover:underline focus:outline-none"
+          >
             Fazer Login
           </button>
         </p>
