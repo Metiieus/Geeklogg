@@ -205,21 +205,25 @@ Que tipo de recomendação você gostaria? Posso sugerir algo baseado no que voc
 🎯 **Seus padrões:**`;
 
     if (averageRating > 7) {
-      analysis += "\n• Você é criterioso - avalia bem acima da média!";
+      analysis +=
+        "\n• 👑 **Crítico Lendário** - Vossa exigência é digna de um mestre!";
     } else if (averageRating > 5) {
-      analysis += "\n• Você tem gostos equilibrados nas avaliações";
+      analysis +=
+        "\n• ⚖️ **Avaliador Equilibrado** - Vossa sabedoria pondera com justiça!";
     }
 
     if (recentlyCompleted.length > 0) {
-      analysis += `\n• Recentemente completou: ${recentlyCompleted.map((item) => item.title).join(", ")}`;
+      analysis += `\n• 🏆 **Conquistas Recentes**: ${recentlyCompleted.map((item) => item.title).join(", ")}`;
     }
 
-    analysis += `\n\n💡 **Recomendações baseadas no seu perfil:**
-• Continue explorando ${favoriteTypes[0] || "novos gêneros"}
-• Experimente títulos com rating similar ao que você gosta
-• Considere expandir para outros tipos de mídia
+    analysis += `\n\n## ⚡ **Missões Destinadas para Vós:**
+• 🎯 Continue dominando ${favoriteTypes[0] || "novos reinos"}
+• 🌟 Busque obras com poder similar ao vosso padrão
+• 🗺️ Explore territórios inexplorados
 
-🎮 *Quer recomendações específicas? Me pergunte!*`;
+**Que vossa jornada seja épica!** ⚔️
+
+*Archivius, o Guardião do GeekLog* 🏆`;
 
     return analysis;
   }
