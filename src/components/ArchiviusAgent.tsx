@@ -108,9 +108,9 @@ export const ArchiviusAgent: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {/* Avatar do Archivius */}
+          {/* Avatar do Archivius - responsivo */}
           <div
-            className={`w-14 h-14 rounded-full overflow-hidden border-2 ${
+            className={`w-12 sm:w-14 h-12 sm:h-14 rounded-full overflow-hidden border-2 ${
               isPremium ? "border-cyan-400/50" : "border-gray-600/50"
             }`}
           >
