@@ -129,7 +129,7 @@ export const ArchiviusAgent: React.FC = () => {
               <div
                 className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-400" : "bg-orange-400"}`}
               />
-              <span className="text-gray-300 text-sm">
+              <span className="text-gray-100 text-sm">
                 {isPremium ? "Online" : "Premium"}
               </span>
             </div>
