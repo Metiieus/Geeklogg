@@ -67,6 +67,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 movies: [],
               },
               defaultLibrarySort: "updatedAt",
+              isPremium: false,
+              premiumExpiresAt: undefined,
             };
             setProfile(normalizedProfile);
           } else if (db) {
