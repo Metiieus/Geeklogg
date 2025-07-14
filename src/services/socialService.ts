@@ -11,31 +11,57 @@ import {
 export async function searchUsers(query: string): Promise<UserProfile[]> {
   console.log("🔍 Buscando usuários:", { query });
 
+  if (!query.trim()) {
+    console.log("❌ Query vazia, retornando lista vazia");
+    return [];
+  }
+
   try {
-    if (!query.trim()) {
-      console.log("❌ Query vazia, retornando lista vazia");
-      return [];
+    console.log("📋 Tentando buscar usuários no banco...");
+
+    // Primeiro tentar buscar usuários
+    const users = await database.getCollection<any>(["users"]);
+    console.log("✅ Dados brutos encontrados:", users.length);
+
+    if (users.length === 0) {
+      console.log("⚠️ Nenhum usuário encontrado no banco, usando mock data");
+      throw new Error("No users found");
     }
 
-    console.log("📋 Tentando buscar usuários no banco...");
-    const users = await database.getCollection<UserProfile>(["users"]);
-    console.log("✅ Usuários encontrados no banco:", users.length);
-
-    const filteredUsers = users
-      .map((doc) => ({ ...doc.data, id: doc.id }))
-      .filter(
-        (user) =>
-          user.name?.toLowerCase().includes(query.toLowerCase()) ||
-          user.bio?.toLowerCase().includes(query.toLowerCase()),
-      )
+    // Mapear e filtrar usuários
+    const mappedUsers = users
+      .map((doc) => {
+        const data = doc.data;
+        return {
+          id: doc.id,
+          uid: data.uid || doc.id,
+          name: data.name || data.nome || "Usuário Anônimo",
+          bio: data.bio || "",
+          avatar: data.avatar,
+          email: data.email,
+          followers: data.followers || [],
+          following: data.following || [],
+          postsCount: data.postsCount || 0,
+          reviewsCount: data.reviewsCount || 0,
+        } as UserProfile;
+      })
+      .filter((user) => {
+        const nameMatch = user.name
+          ?.toLowerCase()
+          .includes(query.toLowerCase());
+        const bioMatch = user.bio?.toLowerCase().includes(query.toLowerCase());
+        return nameMatch || bioMatch;
+      })
       .slice(0, 20);
 
-    console.log("🎯 Usuários filtrados:", filteredUsers.length);
-    return filteredUsers;
+    console.log("🎯 Usuários filtrados:", mappedUsers.length);
+    return mappedUsers;
   } catch (error) {
     console.error("❌ Erro na busca do banco, usando dados mock:", error);
-    console.log("🎭 Mock user search for demo mode");
-    return [
+    console.log("🎭 Retornando dados mock para demo");
+
+    // Retornar dados mock que correspondem à busca
+    const mockUsers = [
       {
         id: "demo-user-1",
         name: "Demo Friend 1",
