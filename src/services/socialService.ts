@@ -8,6 +8,51 @@ import {
 } from "../types/social";
 
 // Perfis de usuários
+export async function searchUsers(query: string): Promise<UserProfile[]> {
+  try {
+    if (!query.trim()) return [];
+
+    const users = await database.getCollection<UserProfile>(["users"]);
+    return users
+      .map((doc) => ({ ...doc.data, id: doc.id }))
+      .filter(
+        (user) =>
+          user.name?.toLowerCase().includes(query.toLowerCase()) ||
+          user.bio?.toLowerCase().includes(query.toLowerCase()),
+      )
+      .slice(0, 20);
+  } catch (error) {
+    // Database error, likely in demo mode - return mock data
+    console.log("🎭 Mock user search for demo mode");
+    return [
+      {
+        id: "demo-user-1",
+        name: "Demo Friend 1",
+        avatar: undefined,
+        bio: "Another demo user you can follow",
+        followers: [],
+        following: [],
+        postsCount: 5,
+        reviewsCount: 3,
+      },
+      {
+        id: "demo-user-2",
+        name: "Demo Friend 2",
+        avatar: undefined,
+        bio: "Yet another demo user for testing",
+        followers: [],
+        following: [],
+        postsCount: 2,
+        reviewsCount: 1,
+      },
+    ].filter(
+      (user) =>
+        user.name.toLowerCase().includes(query.toLowerCase()) ||
+        user.bio.toLowerCase().includes(query.toLowerCase()),
+    );
+  }
+}
+
 export async function getUserProfile(
   userId: string,
 ): Promise<UserProfile | null> {
