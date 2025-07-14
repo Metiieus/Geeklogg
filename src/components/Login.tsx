@@ -157,10 +157,19 @@ export const Login: React.FC = () => {
             {/* Login Button - responsivo */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-cyan-500 to-pink-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-cyan-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 flex items-center justify-center gap-2 group text-sm sm:text-base"
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 flex items-center justify-center gap-2 group text-sm sm:text-base ${
+                isLoading
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600"
+              } text-white`}
             >
-              <LogIn className="w-4 sm:w-5 h-4 sm:h-5 group-hover:rotate-12 transition-transform" />
-              Entrar
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <LogIn className="w-4 sm:w-5 h-4 sm:h-5 group-hover:rotate-12 transition-transform" />
+              )}
+              {isLoading ? "Entrando..." : "Entrar"}
             </button>
           </form>
 
