@@ -1,5 +1,5 @@
 // Serviço para integração com OpenAI API
-// Para usar em produção, adicione sua API key nas variáveis de ambiente
+// Para usar em produ��ão, adicione sua API key nas variáveis de ambiente
 
 interface OpenAIMessage {
   role: "system" | "user" | "assistant";
@@ -72,8 +72,8 @@ Seja conciso, impactante e use emojis temáticos.`,
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
           messages,
-          max_tokens: 350,
-          temperature: 0.7,
+          max_tokens: 250,
+          temperature: 0.8,
         }),
       });
 
@@ -106,7 +106,7 @@ Seja conciso, impactante e use emojis temáticos.`,
         '🎮 Baseado no seu perfil, recomendo "The Witcher 3: Wild Hunt" - um RPG épico com uma história incrível!',
         '⚔️ Que tal experimentar "Hades"? É um roguelike indie fantástico com combate dinâmico!',
         '🌆 Sugiro "Cyberpunk 2077" se você gosta de RPGs futurísticos com mundo aberto!',
-        '�� Para algo relaxante, "Stardew Valley" é perfeito - farming e relacionamentos!',
+        '🌱 Para algo relaxante, "Stardew Valley" é perfeito - farming e relacionamentos!',
       ];
       return gameResponses[Math.floor(Math.random() * gameResponses.length)];
     }
