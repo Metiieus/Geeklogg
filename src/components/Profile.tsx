@@ -229,7 +229,7 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
             <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold overflow-hidden">
               {displayAvatar ? (
                 <img
@@ -242,7 +242,7 @@ const Profile: React.FC = () => {
               )}
             </div>
 
-            <div className="text-center sm:text-left">
+            <div className="text-center sm:text-left flex-1">
               <h2 className="text-xl sm:text-2xl font-semibold text-white">
                 {displayName}
               </h2>
