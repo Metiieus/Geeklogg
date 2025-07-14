@@ -1,26 +1,27 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { Sidebar } from './components/Sidebar';
-import { MobileNav } from './components/MobileNav';
-const Dashboard = lazy(() => import('./components/Dashboard'));
-const Library = lazy(() => import('./components/Library'));
-const Reviews = lazy(() => import('./components/Reviews'));
-const Timeline = lazy(() => import('./components/Timeline'));
-const Statistics = lazy(() => import('./components/Statistics'));
-const Settings = lazy(() => import('./components/Settings'));
-const Profile = lazy(() => import('./components/Profile'));
-import { SocialFeed } from './components/SocialFeed';
-import ErrorBoundary from './components/ErrorBoundary';
-import { Login } from './components/Login';
-import { getMedias } from './services/mediaService';
-import { getReviews } from './services/reviewService';
-import { getMilestones } from './services/milestoneService';
-import { getSettings } from './services/settingsService';
-import { AppProvider } from './context/AppContext';
-import { useAuth } from './context/AuthContext';
-import { checkAchievements } from './services/achievementService';
+import React, { useState, useEffect, Suspense, lazy } from "react";
+import { Sidebar } from "./components/Sidebar";
+import { MobileNav } from "./components/MobileNav";
+const Dashboard = lazy(() => import("./components/Dashboard"));
+const Library = lazy(() => import("./components/Library"));
+const Reviews = lazy(() => import("./components/Reviews"));
+const Timeline = lazy(() => import("./components/Timeline"));
+const Statistics = lazy(() => import("./components/Statistics"));
+const Settings = lazy(() => import("./components/Settings"));
+const Profile = lazy(() => import("./components/Profile"));
+import { SocialFeed } from "./components/SocialFeed";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { Login } from "./components/Login";
+import { ArchiviusAgent } from "./components/ArchiviusAgent";
+import { getMedias } from "./services/mediaService";
+import { getReviews } from "./services/reviewService";
+import { getMilestones } from "./services/milestoneService";
+import { getSettings } from "./services/settingsService";
+import { AppProvider } from "./context/AppContext";
+import { useAuth } from "./context/AuthContext";
+import { checkAchievements } from "./services/achievementService";
 
-export type MediaType = 'games' | 'anime' | 'series' | 'books' | 'movies';
-export type Status = 'completed' | 'in-progress' | 'dropped' | 'planned';
+export type MediaType = "games" | "anime" | "series" | "books" | "movies";
+export type Status = "completed" | "in-progress" | "dropped" | "planned";
 
 export interface MediaItem {
   id: string;
@@ -81,29 +82,37 @@ export interface UserSettings {
   defaultLibrarySort: string;
 }
 
-export type ActivePage = 'dashboard' | 'library' | 'reviews' | 'timeline' | 'statistics' | 'profile' | 'settings' | 'social';
+export type ActivePage =
+  | "dashboard"
+  | "library"
+  | "reviews"
+  | "timeline"
+  | "statistics"
+  | "profile"
+  | "settings"
+  | "social";
 
 function App() {
   const { user, loading } = useAuth();
-  const [activePage, setActivePage] = useState<ActivePage>('dashboard');
+  const [activePage, setActivePage] = useState<ActivePage>("dashboard");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [settings, setSettings] = useState<UserSettings>({
-    name: 'Usuário',
-    bio: '',
+    name: "Usuário",
+    bio: "",
     favorites: {
       characters: [],
       games: [],
-      movies: []
+      movies: [],
     },
-    theme: 'dark',
-    defaultLibrarySort: 'updatedAt'
+    theme: "dark",
+    defaultLibrarySort: "updatedAt",
   });
 
   useEffect(() => {
     if (!user) return;
-    
+
     const loadData = async () => {
       const [mItems, revs, miles, prefs] = await Promise.all([
         getMedias(),
@@ -117,35 +126,44 @@ function App() {
       if (prefs) {
         // Ensure favorites structure is properly initialized
         const normalizedSettings = {
-          name: prefs.name || 'Usuário',
-          bio: prefs.bio || '',
-          defaultLibrarySort: prefs.defaultLibrarySort || 'updatedAt',
+          name: prefs.name || "Usuário",
+          bio: prefs.bio || "",
+          defaultLibrarySort: prefs.defaultLibrarySort || "updatedAt",
           favorites: {
-            characters: Array.isArray(prefs.favorites?.characters) ? prefs.favorites.characters : [],
-            games: Array.isArray(prefs.favorites?.games) ? prefs.favorites.games : [],
-            movies: Array.isArray(prefs.favorites?.movies) ? prefs.favorites.movies : []
-          }
+            characters: Array.isArray(prefs.favorites?.characters)
+              ? prefs.favorites.characters
+              : [],
+            games: Array.isArray(prefs.favorites?.games)
+              ? prefs.favorites.games
+              : [],
+            movies: Array.isArray(prefs.favorites?.movies)
+              ? prefs.favorites.movies
+              : [],
+          },
         };
-        console.log('⚙️ Configurações carregadas:', normalizedSettings);
+        console.log("��️ Configurações carregadas:", normalizedSettings);
         setSettings(normalizedSettings);
       }
-      
+
       // Verificar conquistas após carregar os dados
       if (mItems.length > 0 || revs.length > 0 || prefs) {
         try {
-          const newAchievements = await checkAchievements(mItems, revs, prefs || settings);
+          const newAchievements = await checkAchievements(
+            mItems,
+            revs,
+            prefs || settings,
+          );
           if (newAchievements.length > 0) {
-            console.log('🏆 Novas conquistas desbloqueadas:', newAchievements);
+            console.log("🏆 Novas conquistas desbloqueadas:", newAchievements);
           }
         } catch (error) {
-          console.error('Erro ao verificar conquistas:', error);
+          console.error("Erro ao verificar conquistas:", error);
         }
       }
     };
-    
+
     loadData();
   }, [user]);
-
 
   const contextValue = {
     mediaItems,
@@ -157,7 +175,7 @@ function App() {
     settings,
     setSettings,
     activePage,
-    setActivePage
+    setActivePage,
   };
 
   if (loading) {
@@ -170,21 +188,21 @@ function App() {
 
   const renderPage = () => {
     switch (activePage) {
-      case 'dashboard':
+      case "dashboard":
         return <Dashboard />;
-      case 'library':
+      case "library":
         return <Library />;
-      case 'reviews':
+      case "reviews":
         return <Reviews />;
-      case 'timeline':
+      case "timeline":
         return <Timeline />;
-      case 'statistics':
+      case "statistics":
         return <Statistics />;
-      case 'profile':
+      case "profile":
         return <Profile />;
-      case 'settings':
+      case "settings":
         return <Settings />;
-      case 'social':
+      case "social":
         return <SocialFeed />;
       default:
         return <Dashboard />;
@@ -198,7 +216,13 @@ function App() {
           <Sidebar />
           <main className="flex-1 sm:ml-20 pb-16 sm:pb-0">
             <ErrorBoundary>
-              <Suspense fallback={<div className="p-6 text-center text-white">Carregando...</div>}>
+              <Suspense
+                fallback={
+                  <div className="p-6 text-center text-white">
+                    Carregando...
+                  </div>
+                }
+              >
                 <div className="p-6" key={activePage}>
                   {renderPage()}
                 </div>
