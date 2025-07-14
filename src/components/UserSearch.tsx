@@ -82,6 +82,26 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
       {loading && (
         <div className="text-center py-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+          <p className="text-slate-400 text-sm mt-2">Buscando usuários...</p>
+        </div>
+      )}
+
+      {!loading && query.length >= 2 && users.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-slate-400">
+            Nenhum usuário encontrado para "{query}"
+          </p>
+          <p className="text-slate-500 text-sm mt-1">
+            Tente buscar por nome ou biografia
+          </p>
+        </div>
+      )}
+
+      {!loading && query.length > 0 && query.length < 2 && (
+        <div className="text-center py-4">
+          <p className="text-slate-400 text-sm">
+            Digite pelo menos 2 caracteres para buscar
+          </p>
         </div>
       )}
 
