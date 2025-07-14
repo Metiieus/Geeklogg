@@ -1,5 +1,5 @@
 import type { Review } from '../App';
-import { getUserId, removeUndefinedFields } from './utils';
+import { getUserId, removeUndefinedFields, sanitizeStrings } from './utils';
 import { database } from './database';
 import { storageClient } from './storageClient';
 
@@ -17,8 +17,9 @@ export async function addReview(data: AddReviewData): Promise<Review> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
+  const sanitized = sanitizeStrings(rest as Record<string, any>);
   const toSave: Omit<Review, 'id'> = removeUndefinedFields({
-    ...rest,
+    ...sanitized,
     isFavorite: rest.isFavorite ?? false,
     createdAt: now,
     updatedAt: now
@@ -48,7 +49,7 @@ export async function updateReview(id: string, data: UpdateReviewData): Promise<
   const uid = getUserId();
   const now = new Date().toISOString();
   const toUpdate: Record<string, unknown> = removeUndefinedFields({
-    ...data,
+    ...sanitizeStrings(data as Record<string, any>),
     updatedAt: now
   });
   delete (toUpdate as { imageFile?: File }).imageFile;

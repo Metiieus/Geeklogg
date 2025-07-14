@@ -1,5 +1,5 @@
 import type { MediaItem } from '../App';
-import { getUserId, removeUndefinedFields } from './utils';
+import { getUserId, removeUndefinedFields, sanitizeStrings } from './utils';
 import { database } from './database';
 import { storageClient } from './storageClient';
 
@@ -17,8 +17,9 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { coverFile, ...rest } = data;
+  const sanitized = sanitizeStrings(rest as Record<string, any>);
   const toSave: Omit<MediaItem, 'id'> = removeUndefinedFields({
-    ...(rest as Omit<MediaItem, 'id'>),
+    ...(sanitized as Omit<MediaItem, 'id'>),
     createdAt: now,
     updatedAt: now
   });
@@ -47,7 +48,7 @@ export async function updateMedia(id: string, data: UpdateMediaData): Promise<{ 
   const uid = getUserId();
   const now = new Date().toISOString();
   const toUpdate: Record<string, unknown> = removeUndefinedFields({
-    ...data,
+    ...sanitizeStrings(data as Record<string, any>),
     updatedAt: now
   });
   delete (toUpdate as { coverFile?: File }).coverFile;

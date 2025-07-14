@@ -1,5 +1,5 @@
 import type { Milestone } from '../App';
-import { getUserId, removeUndefinedFields } from './utils';
+import { getUserId, removeUndefinedFields, sanitizeStrings } from './utils';
 import { database } from './database';
 import { storageClient } from './storageClient';
 
@@ -21,7 +21,7 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
 
   // Montar e limpar o objeto
   let toSave: Omit<Milestone, 'id'> = {
-    ...rest,
+    ...sanitizeStrings(rest as Record<string, any>),
     createdAt: now
   };
 
@@ -54,7 +54,9 @@ export async function updateMilestone(id: string, data: UpdateMilestoneData): Pr
   const uid = getUserId();
   const { imageFile, ...rest } = data;
 
-  const toUpdate = removeUndefinedFields(rest);
+  const toUpdate = removeUndefinedFields(
+    sanitizeStrings(rest as Record<string, any>),
+  );
 
   await database.set(['users', uid, 'milestones', id], toUpdate, { merge: true });
   console.log('📝 Marco atualizado no Firestore:', id);
