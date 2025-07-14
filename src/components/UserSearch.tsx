@@ -111,7 +111,13 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
               onClick={() => onUserSelect(user)}
             >
               <h3 className="text-white font-medium">{user.name}</h3>
-              {user.bio && <p className="text-slate-400 text-sm">{user.bio}</p>}
+              {user.bio && (
+                <TruncatedBio
+                  bio={user.bio}
+                  maxLength={150}
+                  className="text-slate-400 text-sm"
+                />
+              )}
               <div className="flex items-center gap-4 text-xs text-slate-500 mt-1">
                 <span className="flex items-center gap-1">
                   <Users size={12} />
