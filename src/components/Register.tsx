@@ -184,7 +184,6 @@ export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
         <h2 className="text-3xl font-bold text-center mb-6">Registro</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {error && <div className="text-red-400 text-center">{error}</div>}
           <div className="relative">
             <input
               type="text"
