@@ -26,19 +26,19 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900/20 to-pink-900/20 flex items-center justify-center overflow-hidden">
-      {/* Elementos geométricos decorativos */}
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900/20 to-pink-900/20 flex items-center justify-center overflow-hidden px-4 py-6">
+      {/* Elementos geométricos decorativos - responsivos */}
       <div className="absolute inset-0">
-        {/* Círculos com blur */}
-        <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-purple-500/20 rounded-full blur-xl"></div>
+        {/* Círculos com blur - ajustados para mobile */}
+        <div className="absolute top-20 left-4 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-4 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 sm:w-48 h-24 sm:h-48 bg-purple-500/20 rounded-full blur-xl"></div>
 
-        {/* Quadrados rotacionados */}
-        <div className="absolute top-10 right-10 w-16 h-16 bg-cyan-400/30 rotate-45"></div>
-        <div className="absolute bottom-10 left-10 w-12 h-12 bg-pink-400/25 rotate-12"></div>
-        <div className="absolute top-1/3 left-10 w-8 h-8 bg-purple-400/40 -rotate-45"></div>
-        <div className="absolute bottom-1/3 right-10 w-12 h-12 bg-indigo-400/25 -rotate-12"></div>
+        {/* Quadrados rotacionados - responsivos */}
+        <div className="absolute top-10 right-4 sm:right-10 w-8 sm:w-16 h-8 sm:h-16 bg-cyan-400/30 rotate-45"></div>
+        <div className="absolute bottom-10 left-4 sm:left-10 w-6 sm:w-12 h-6 sm:h-12 bg-pink-400/25 rotate-12"></div>
+        <div className="absolute top-1/3 left-4 sm:left-10 w-4 sm:w-8 h-4 sm:h-8 bg-purple-400/40 -rotate-45"></div>
+        <div className="absolute bottom-1/3 right-4 sm:right-10 w-6 sm:w-12 h-6 sm:h-12 bg-indigo-400/25 -rotate-12"></div>
       </div>
 
       {/* Watermark */}
