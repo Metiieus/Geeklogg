@@ -223,7 +223,7 @@ const Sidebar: React.FC = () => {
               onClick={logout}
               className="group w-full flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 border border-transparent hover:border-red-500/30"
             >
-              <div className="flex items-center justify-center w-6 h-6 text-gray-400 group-hover:text-red-400">
+              <div className="flex items-center justify-center w-6 h-6 text-gray-200 group-hover:text-red-400">
                 <LogOut size={20} />
               </div>
               {isExpanded && (
