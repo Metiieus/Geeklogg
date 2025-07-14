@@ -131,10 +131,8 @@ Seja conciso, impactante e use emojis temáticos.`,
 
     // Resposta padrão
     const defaultResponses = [
-      "🎯 Como seu assistente Archivius, posso te ajudar com sugestões de games, filmes, animes e séries! O que você tem interesse?",
-      "✨ Estou aqui para dar as melhores recomendações baseadas no seu perfil! Me conte o que você está procurando!",
-      "🌟 Precisa de sugestões de entretenimento? Posso te ajudar a descobrir seu próximo game ou filme favorito!",
-      "🎮🎬 Vamos encontrar algo incrível para você! Me fale sobre seus gostos e preferências!",
+      "# 🧙‍♂️ Saudações, Guardião do Entretenimento!\n\n## ⚔️ **Missão**: *O Despertar da Jornada Épica*\n\nVejo que buscas novas aventuras! Como Archivius, estou aqui para transformar teus desejos em missões épicas.\n\n🎯 Que tipo de conquista almeja hoje?\n\n*Archivius, o Guardião do GeekLog* ✨",
+      "# 🌟 Herói dos Mundos Infinitos!\n\n## 🎭 **Missão**: *A Busca pela Obra Perfeita*\n\nTua sede por descobertas me impressiona! Que tal embarcarmos numa jornada para encontrar tua próxima obsessão?\n\n⚡ Me conte sobre teus gostos!\n\n*Archivius, o Guardião do GeekLog* 🏆",
     ];
 
     return defaultResponses[
@@ -185,7 +183,7 @@ Que tipo de recomendação você gostaria? Posso sugerir algo baseado no que voc
 
   private getProfileAnalysis(context: any): string {
     if (!context) {
-      return "��� Para fazer uma análise detalhada, preciso que você tenha alguns itens em sua biblioteca primeiro!";
+      return "📊 Para fazer uma análise detalhada, preciso que você tenha alguns itens em sua biblioteca primeiro!";
     }
 
     const {
