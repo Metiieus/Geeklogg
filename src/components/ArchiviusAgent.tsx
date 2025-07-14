@@ -74,7 +74,7 @@ export const ArchiviusAgent: React.FC = () => {
       console.error("Erro ao obter resposta da IA:", error);
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Desculpe, ocorreu um erro. Tente novamente em alguns instantes! ����",
+        text: "Desculpe, ocorreu um erro. Tente novamente em alguns instantes! 🤖",
         isUser: false,
         timestamp: new Date(),
       };
@@ -173,8 +173,8 @@ export const ArchiviusAgent: React.FC = () => {
               <div
                 className={`p-4 border-b ${
                   isPremium
-                    ? "bg-gradient-to-r from-purple-500 to-blue-600"
-                    : "bg-gradient-to-r from-gray-500 to-gray-600"
+                    ? "bg-gradient-to-r from-cyan-500 to-pink-500"
+                    : "bg-gradient-to-r from-gray-600 to-gray-700"
                 }`}
               >
                 <div className="flex items-center justify-between">
