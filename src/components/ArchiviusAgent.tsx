@@ -409,10 +409,10 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantida
                             Sugestões rápidas:
                           </p>
                           {[
-                            "Baseado no que já joguei, o que recomenda?",
-                            "Sugira algo diferente do que costumo assistir",
-                            "Qual seria meu próximo jogo favorito?",
-                            "Analise meus padrões de avaliação",
+                            "🏰 Forje uma missão baseada nas minhas conquistas",
+                            "🌟 Revele segredos de reinos inexplorados",
+                            "⚔️ Qual seria minha próxima aventura épica?",
+                            "🔮 Desvende os mistérios do meu perfil",
                           ].map((suggestion, index) => (
                             <button
                               key={index}
