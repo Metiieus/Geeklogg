@@ -92,8 +92,9 @@ export const storageClient = {
       await uploadBytes(storageRef, file);
       return getDownloadURL(storageRef);
     } catch (error: any) {
+      console.error("Erro no upload (raw):", error);
       const storageError = getStorageErrorMessage(error);
-      console.error("Erro no upload:", storageError);
+      console.error("Erro no upload (processado):", storageError);
       throw new Error(storageError.friendlyMessage);
     }
   },
