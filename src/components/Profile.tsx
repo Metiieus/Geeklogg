@@ -92,11 +92,11 @@ const Profile: React.FC = () => {
                 "_blank",
               )
             }
-            className="group bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+            className="group bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
           >
-            <Crown className="w-5 h-5 group-hover:animate-bounce" />
+            <Crown className="w-4 sm:w-5 h-4 sm:h-5 group-hover:animate-bounce" />
             Assinar Premium
-            <Star className="w-4 h-4" />
+            <Star className="w-3 sm:w-4 h-3 sm:h-4" />
           </button>
         )}
         {profile?.isPremium && (
