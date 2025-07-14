@@ -173,7 +173,7 @@ export const ArchiviusAgent: React.FC = () => {
             >
               {/* Header */}
               <div
-                className={`p-4 border-b border-cyan-500/20 ${
+                className={`p-3 sm:p-4 border-b border-cyan-500/20 ${
                   isPremium
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500"
                     : "bg-gradient-to-r from-gray-600 to-gray-700"
