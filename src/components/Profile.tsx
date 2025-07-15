@@ -274,22 +274,22 @@ const Profile: React.FC = () => {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-              <div className="bg-slate-800 p-4 rounded-xl w-full">
-                <h4 className="text-white font-medium mb-2 text-center">
+              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
+                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
                   Personagens
                 </h4>
                 {renderCards(settings.favorites.characters)}
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl w-full">
-                <h4 className="text-white font-medium mb-2 text-center">
+              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
+                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
                   Jogos
                 </h4>
                 {renderCards(settings.favorites.games)}
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl w-full">
-                <h4 className="text-white font-medium mb-2 text-center">
+              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
+                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
                   Filmes
                 </h4>
                 {renderCards(settings.favorites.movies)}
