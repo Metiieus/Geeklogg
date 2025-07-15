@@ -3,11 +3,7 @@
 
 export const ARCHIVIUS_CONFIG = {
   // Emails com acesso exclusivo ao Archivius épico (fase beta)
-  authorizedEmails: [
-    "demo@example.com",
-    // Adicione seu email real aqui para ter acesso:
-    // 'seu-email@gmail.com',
-  ],
+  authorizedEmails: ["demo@example.com", "matheusn148@gmail.com"],
 
   // Configurações adicionais
   betaPhase: true,
