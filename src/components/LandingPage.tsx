@@ -24,11 +24,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       {/* Header */}
-      <header className="relative z-50 px-6 py-4">
+      <header className="relative z-50 px-4 sm:px-6 py-4">
         <nav className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center"
               style={{
                 backgroundImage:
                   "url(https://cdn.builder.io/api/v1/image/assets%2F7ba5873022eb4101ad2e05f96b2ac3d8%2F085f9520579a491c9159bed1a5a044b9)",
@@ -38,7 +38,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               }}
             />
             <span
-              className="text-2xl font-bold bg-clip-text text-transparent"
+              className="text-lg sm:text-2xl font-bold bg-clip-text text-transparent"
               style={{
                 backgroundColor: "#5192c0",
                 backgroundRepeat: "no-repeat",
@@ -49,58 +49,58 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               GeekLog
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               onClick={onLogin}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400 transition-colors"
+              className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400 transition-colors text-sm sm:text-base"
             >
-              <LogIn size={18} />
-              <span>Login</span>
+              <LogIn size={16} className="sm:w-[18px] sm:h-[18px]" />
+              <span className="hidden sm:inline">Login</span>
             </button>
             <button
               onClick={onRegister}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 transition-all"
+              className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 transition-all text-sm sm:text-base"
             >
-              <UserPlus size={18} />
-              <span>Cadastre-se</span>
+              <UserPlus size={16} className="sm:w-[18px] sm:h-[18px]" />
+              <span className="hidden sm:inline">Cadastre-se</span>
             </button>
           </div>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 py-20">
+      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-20">
         {/* Background Elements */}
         <div
           className="absolute inset-0 overflow-hidden"
           style={{ color: "rgba(139, 87, 42, 1)" }}
         >
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
-          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
-          <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute top-20 left-5 sm:left-10 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute top-40 right-10 sm:right-20 w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute bottom-40 left-1/4 w-40 h-40 sm:w-64 sm:h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
 
           {/* Polygonal Elements */}
-          <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
-          <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
-          <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
+          <div className="absolute top-32 right-16 sm:right-32 w-8 h-8 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
+          <div className="absolute bottom-32 left-10 sm:left-20 w-6 h-6 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
+          <div className="absolute top-1/2 right-5 sm:right-10 w-4 h-4 sm:w-8 sm:h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
         </div>
 
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <div
-              className="inline-block p-3 rounded-2xl backdrop-blur-sm mb-6"
+              className="inline-block p-2 sm:p-3 rounded-2xl backdrop-blur-sm mb-4 sm:mb-6"
               style={{ border: "1px solid rgba(255, 255, 255, 0)" }}
             >
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2F7ba5873022eb4101ad2e05f96b2ac3d8%2Fbd81ba3a237e40ffa01e2bae2f67765f"
                 alt="GeekLog Logo"
-                className="object-contain mx-auto"
-                style={{ width: "827px", height: "330px" }}
+                className="object-contain mx-auto w-full max-w-[300px] h-auto sm:max-w-[400px] md:max-w-[600px] lg:max-w-[827px]"
+                style={{ maxHeight: "200px" }}
               />
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 leading-tight px-2">
             <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
               Viva sua jornada geek
             </span>
@@ -108,25 +108,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <span className="text-white">com estilo e inteligência</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
             O diário definitivo para gamers, leitores e nerds. Registre suas
             aventuras, descubra novos mundos e deixe nossa IA guiar sua próxima
             missão épica.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
             <button
               onClick={onRegister}
-              className="group px-8 py-4 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-lg font-semibold text-lg hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
+              className="group w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-lg font-semibold text-base sm:text-lg hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
             >
-              <span className="flex items-center space-x-2">
-                <Zap size={20} />
+              <span className="flex items-center justify-center space-x-2">
+                <Zap size={18} className="sm:w-5 sm:h-5" />
                 <span>Comece AGORA</span>
               </span>
             </button>
             <button
               onClick={onLogin}
-              className="px-8 py-4 border border-cyan-400/50 rounded-lg font-semibold text-lg hover:border-cyan-400 hover:bg-cyan-400/10 transition-all"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border border-cyan-400/50 rounded-lg font-semibold text-base sm:text-lg hover:border-cyan-400 hover:bg-cyan-400/10 transition-all"
             >
               Já tenho conta
             </button>
