@@ -575,7 +575,7 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
         </div>
       )}
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Achievement Image */}
         <div
           className={`relative w-20 h-20 mx-auto mb-4 rounded-full border-2 overflow-hidden ${rarity.border}`}
