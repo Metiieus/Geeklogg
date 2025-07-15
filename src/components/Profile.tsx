@@ -147,14 +147,14 @@ const Profile: React.FC = () => {
         <div className="space-y-6">
           {/* Premium Status Card */}
           <div
-            className={`p-6 rounded-2xl border-2 ${
+            className={`p-4 sm:p-6 rounded-2xl border-2 overflow-hidden ${
               profile?.isPremium
                 ? "bg-gradient-to-br from-cyan-900/50 to-pink-900/50 border-cyan-500/50"
                 : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-cyan-500/30"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                 <div
                   className={`w-16 h-16 rounded-full flex items-center justify-center ${
                     profile?.isPremium
