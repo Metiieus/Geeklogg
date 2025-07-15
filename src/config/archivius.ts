@@ -38,6 +38,7 @@ export const addAuthorizedEmail = (email: string): void => {
   const normalizedEmail = email.toLowerCase();
   if (!ARCHIVIUS_CONFIG.authorizedEmails.includes(normalizedEmail)) {
     ARCHIVIUS_CONFIG.authorizedEmails.push(normalizedEmail);
-    console.log("✅ Email adicionado à lista de acesso:", normalizedEmail);
+    // Log seguro: não expor emails em produção
+    console.log("✅ Novo email autorizado adicionado à lista de acesso");
   }
 };
