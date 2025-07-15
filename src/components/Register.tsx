@@ -11,7 +11,7 @@ interface RegisterProps {
   onLogin?: () => void;
 }
 
-export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
+export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
   const [formData, setFormData] = useState({
     nome: "",
     apelido: "",
