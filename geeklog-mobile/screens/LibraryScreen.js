@@ -16,6 +16,7 @@ const LibraryScreen = () => {
   const { mediaItems } = useAppContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const filteredItems = mediaItems.filter((item) => {
     const matchesSearch = item.title
