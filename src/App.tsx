@@ -11,6 +11,8 @@ const Profile = lazy(() => import("./components/Profile"));
 import { SocialFeed } from "./components/SocialFeed";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Login } from "./components/Login";
+import { Register } from "./components/Register";
+import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
@@ -95,9 +97,12 @@ export type ActivePage =
   | "settings"
   | "social";
 
+type ViewMode = "landing" | "login" | "register";
+
 function App() {
   const { user, loading } = useAuth();
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
+  const [currentView, setCurrentView] = useState<ViewMode>("landing");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -188,7 +193,24 @@ function App() {
   if (!user) {
     return (
       <ToastProvider>
-        <Login />
+        {currentView === "landing" && (
+          <LandingPage
+            onLogin={() => setCurrentView("login")}
+            onRegister={() => setCurrentView("register")}
+          />
+        )}
+        {currentView === "login" && (
+          <Login
+            onCancel={() => setCurrentView("landing")}
+            onRegister={() => setCurrentView("register")}
+          />
+        )}
+        {currentView === "register" && (
+          <Register
+            onCancel={() => setCurrentView("landing")}
+            onLogin={() => setCurrentView("login")}
+          />
+        )}
       </ToastProvider>
     );
   }

@@ -3,11 +3,7 @@
 
 export const ARCHIVIUS_CONFIG = {
   // Emails com acesso exclusivo ao Archivius épico (fase beta)
-  authorizedEmails: [
-    "demo@example.com",
-    // Adicione seu email real aqui para ter acesso:
-    // 'seu-email@gmail.com',
-  ],
+  authorizedEmails: ["demo@example.com", "matheusn148@gmail.com"],
 
   // Configurações adicionais
   betaPhase: true,
@@ -42,6 +38,7 @@ export const addAuthorizedEmail = (email: string): void => {
   const normalizedEmail = email.toLowerCase();
   if (!ARCHIVIUS_CONFIG.authorizedEmails.includes(normalizedEmail)) {
     ARCHIVIUS_CONFIG.authorizedEmails.push(normalizedEmail);
-    console.log("✅ Email adicionado à lista de acesso:", normalizedEmail);
+    // Log seguro: não expor emails em produção
+    console.log("✅ Novo email autorizado adicionado à lista de acesso");
   }
 };

@@ -3,6 +3,7 @@ import { Save, X, Upload, AlertCircle } from "lucide-react";
 import { UserSettings } from "../../App";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
+import { sanitizeText } from "../../utils/sanitizer";
 
 interface EditProfileModalProps {
   profile: UserSettings;
@@ -83,9 +84,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <input
               type="text"
               value={local.name}
-              onChange={(e) =>
-                setLocal((prev) => ({ ...prev, name: e.target.value }))
-              }
+              onChange={(e) => {
+                const sanitizedName = sanitizeText(e.target.value, 100);
+                setLocal((prev) => ({ ...prev, name: sanitizedName }));
+              }}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Seu nome"
             />
@@ -209,9 +211,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </label>
             <textarea
               value={local.bio}
-              onChange={(e) =>
-                setLocal((prev) => ({ ...prev, bio: e.target.value }))
-              }
+              onChange={(e) => {
+                const sanitizedBio = sanitizeText(e.target.value, 1000);
+                setLocal((prev) => ({ ...prev, bio: sanitizedBio }));
+              }}
               rows={4}
               maxLength={1000}
               className={`w-full px-4 py-3 bg-slate-700/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${
