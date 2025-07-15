@@ -657,7 +657,7 @@ const AchievementListItem: React.FC<AchievementListItemProps> = ({
 
   return (
     <motion.div
-      className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer group transition-all duration-300 ${
+      className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border cursor-pointer group transition-all duration-300 ${
         achievement.unlocked
           ? `bg-gradient-to-r from-slate-800/50 to-slate-900/50 ${rarity.border} shadow-lg`
           : "bg-slate-800/30 border-slate-600/50 hover:border-slate-500/70"
