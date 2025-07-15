@@ -36,9 +36,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 backgroundPosition: "center",
                 backgroundSize: "cover",
               }}
-            >
-              <BookOpen size={20} className="text-white" />
-            </div>
+            />
             <span
               className="text-2xl font-bold bg-clip-text text-transparent"
               style={{
