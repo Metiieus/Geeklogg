@@ -106,14 +106,14 @@ export const Login: React.FC = () => {
         <div className="bg-gray-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
           {/* Header com logo - responsivo */}
           <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-flex items-center justify-center mb-4">
+            <div className="flex items-center justify-center mb-6">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=150"
+                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=200"
                 alt="GeekLog"
-                className="w-28 sm:w-36 h-28 sm:h-36 object-contain"
+                className="w-40 sm:w-48 h-40 sm:h-48 object-contain"
               />
             </div>
-            <p className="text-gray-200 mt-2 text-sm sm:text-base">
+            <p className="text-gray-200 mt-3 text-sm sm:text-base">
               Entre na sua conta
             </p>
           </div>
