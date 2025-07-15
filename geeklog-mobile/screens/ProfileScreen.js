@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,15 +6,18 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../contexts/AuthContext";
 import { useAppContext } from "../contexts/AppContext";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const { logout, user } = useAuth();
-  const { settings } = useAppContext();
+  const { settings, stats, loading, loadUserData } = useAppContext();
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleLogout = () => {
     Alert.alert("Sair", "Tem certeza que deseja sair?", [
@@ -23,20 +26,95 @@ const ProfileScreen = () => {
     ]);
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await loadUserData();
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleEditProfile = () => {
+    Alert.alert("Editar Perfil", "Funcionalidade em desenvolvimento", [
+      { text: "OK" },
+    ]);
+  };
+
+  const handleFavorites = () => {
+    Alert.alert("Favoritos", "Funcionalidade em desenvolvimento", [
+      { text: "OK" },
+    ]);
+  };
+
+  const handleSettings = () => {
+    Alert.alert("Configurações", "Funcionalidade em desenvolvimento", [
+      { text: "OK" },
+    ]);
+  };
+
+  const handleHelp = () => {
+    Alert.alert("Ajuda", "Entre em contato conosco em support@geeklog.com", [
+      { text: "OK" },
+    ]);
+  };
+
+  const handleAbout = () => {
+    Alert.alert(
+      "Sobre o GeekLog",
+      "GeekLog v1.0.0\n\nSeu diário pessoal de entretenimento.\nAcompanhe jogos, livros, filmes e suas experiências.",
+      [{ text: "OK" }],
+    );
+  };
+
+  const handleSubscription = () => {
+    navigation.navigate("Subscription");
+  };
+
   const menuItems = [
-    { icon: "person", title: "Editar Perfil", onPress: () => {} },
-    { icon: "favorite", title: "Favoritos", onPress: () => {} },
-    { icon: "settings", title: "Configurações", onPress: () => {} },
-    { icon: "help", title: "Ajuda", onPress: () => {} },
-    { icon: "info", title: "Sobre", onPress: () => {} },
+    { icon: "person", title: "Editar Perfil", onPress: handleEditProfile },
+    { icon: "favorite", title: "Favoritos", onPress: handleFavorites },
+    {
+      icon: "star",
+      title: "Assinatura Premium",
+      onPress: handleSubscription,
+      isSpecial: true,
+    },
+    { icon: "settings", title: "Configurações", onPress: handleSettings },
+    { icon: "help", title: "Ajuda", onPress: handleHelp },
+    { icon: "info", title: "Sobre", onPress: handleAbout },
   ];
+
+  if (loading && !refreshing) {
+    return (
+      <LinearGradient
+        colors={["#0f172a", "#1e293b", "#334155"]}
+        style={[styles.container, styles.loadingContainer]}
+      >
+        <ActivityIndicator size="large" color="#06b6d4" />
+        <Text style={styles.loadingText}>Carregando perfil...</Text>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient
       colors={["#0f172a", "#1e293b", "#334155"]}
       style={styles.container}
     >
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={["#06b6d4"]}
+            tintColor="#06b6d4"
+          />
+        }
+      >
         {/* Profile Header */}
         <View style={styles.profileHeader}>
           <View style={styles.avatarContainer}>
@@ -50,19 +128,19 @@ const ProfileScreen = () => {
         {/* Stats */}
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{stats.games}</Text>
             <Text style={styles.statLabel}>Jogos</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{stats.books}</Text>
             <Text style={styles.statLabel}>Livros</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{stats.movies}</Text>
             <Text style={styles.statLabel}>Filmes</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{stats.reviews}</Text>
             <Text style={styles.statLabel}>Reviews</Text>
           </View>
         </View>
@@ -72,11 +150,25 @@ const ProfileScreen = () => {
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.menuItem}
+              style={[
+                styles.menuItem,
+                item.isSpecial && styles.premiumMenuItem,
+              ]}
               onPress={item.onPress}
             >
-              <MaterialIcons name={item.icon} size={24} color="#06b6d4" />
-              <Text style={styles.menuItemText}>{item.title}</Text>
+              <MaterialIcons
+                name={item.icon}
+                size={24}
+                color={item.isSpecial ? "#f59e0b" : "#06b6d4"}
+              />
+              <Text
+                style={[
+                  styles.menuItemText,
+                  item.isSpecial && styles.premiumMenuText,
+                ]}
+              >
+                {item.title}
+              </Text>
               <MaterialIcons name="chevron-right" size={24} color="#64748b" />
             </TouchableOpacity>
           ))}
@@ -94,6 +186,15 @@ const ProfileScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#94a3b8",
+    marginTop: 10,
+    fontSize: 16,
+  },
   scrollView: { flex: 1, paddingHorizontal: 20 },
   profileHeader: { alignItems: "center", paddingTop: 40, paddingBottom: 30 },
   avatarContainer: {
@@ -146,7 +247,15 @@ const styles = StyleSheet.create({
     borderColor: "rgba(100, 116, 139, 0.2)",
     gap: 12,
   },
+  premiumMenuItem: {
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: "rgba(245, 158, 11, 0.3)",
+  },
   menuItemText: { flex: 1, fontSize: 16, color: "#ffffff" },
+  premiumMenuText: {
+    color: "#f59e0b",
+    fontWeight: "600",
+  },
   logoutButton: {
     flexDirection: "row",
     alignItems: "center",

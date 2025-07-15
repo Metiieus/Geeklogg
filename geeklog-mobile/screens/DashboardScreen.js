@@ -5,16 +5,36 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
+  RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAppContext } from "../contexts/AppContext";
-
-const { width } = Dimensions.get("window");
+import { useResponsive } from "../hooks/useResponsive";
 
 const DashboardScreen = ({ navigation }) => {
-  const { mediaItems, reviews, milestones, settings } = useAppContext();
+  const {
+    mediaItems,
+    reviews,
+    milestones,
+    settings,
+    stats,
+    loading,
+    loadUserData,
+  } = useAppContext();
+  const responsive = useResponsive();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await loadUserData();
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -27,11 +47,12 @@ const DashboardScreen = ({ navigation }) => {
     if (mediaItems.length === 0) return null;
     return mediaItems.sort(
       (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        new Date(b.updatedAt || b.createdAt).getTime() -
+        new Date(a.updatedAt || a.createdAt).getTime(),
     )[0];
   };
 
-  const getStats = () => {
+  const getDetailedStats = () => {
     const totalHours = mediaItems.reduce(
       (sum, item) => sum + (item.hoursSpent || 0),
       0,
@@ -58,7 +79,7 @@ const DashboardScreen = ({ navigation }) => {
     };
 
     mediaItems.forEach((item) => {
-      counts[item.status]++;
+      counts[item.status] = (counts[item.status] || 0) + 1;
     });
 
     return counts;
@@ -75,8 +96,10 @@ const DashboardScreen = ({ navigation }) => {
   };
 
   const recentItem = getRecentItem();
-  const stats = getStats();
+  const detailedStats = getDetailedStats();
   const statusCounts = getStatusCounts();
+
+  const styles = createStyles(responsive);
 
   return (
     <LinearGradient
@@ -86,10 +109,18 @@ const DashboardScreen = ({ navigation }) => {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={["#06b6d4"]}
+            tintColor="#06b6d4"
+          />
+        }
       >
         {/* Header */}
         <View style={styles.header}>
-          <View>
+          <View style={styles.headerContent}>
             <Text style={styles.greeting}>
               {getGreeting()}, {settings.name || "Nerd"}
             </Text>
@@ -97,17 +128,46 @@ const DashboardScreen = ({ navigation }) => {
               Bem-vindo de volta à sua jornada nerd
             </Text>
           </View>
-          <Text style={styles.date}>
-            {new Date().toLocaleDateString("pt-BR")}
-          </Text>
+          <View style={styles.dateContainer}>
+            <Text style={styles.date}>
+              {new Date().toLocaleDateString("pt-BR")}
+            </Text>
+          </View>
+        </View>
+
+        {/* Quick Stats Overview */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Visão Geral</Text>
+          <View style={styles.quickStatsGrid}>
+            <View style={styles.quickStatCard}>
+              <Text style={styles.quickStatValue}>{stats.games}</Text>
+              <Text style={styles.quickStatLabel}>Jogos</Text>
+            </View>
+            <View style={styles.quickStatCard}>
+              <Text style={styles.quickStatValue}>{stats.books}</Text>
+              <Text style={styles.quickStatLabel}>Livros</Text>
+            </View>
+            <View style={styles.quickStatCard}>
+              <Text style={styles.quickStatValue}>{stats.movies}</Text>
+              <Text style={styles.quickStatLabel}>Filmes</Text>
+            </View>
+            <View style={styles.quickStatCard}>
+              <Text style={styles.quickStatValue}>{stats.reviews}</Text>
+              <Text style={styles.quickStatLabel}>Reviews</Text>
+            </View>
+          </View>
         </View>
 
         {/* Featured Content */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            <MaterialIcons name="star" size={20} color="#fbbf24" /> Atualizado
-            Recentemente
-          </Text>
+          <View style={styles.sectionHeader}>
+            <MaterialIcons
+              name="star"
+              size={responsive.fontSize.lg}
+              color="#fbbf24"
+            />
+            <Text style={styles.sectionTitle}>Atualizado Recentemente</Text>
+          </View>
 
           <View style={styles.featuredCard}>
             {recentItem ? (
@@ -115,18 +175,24 @@ const DashboardScreen = ({ navigation }) => {
                 <View style={styles.coverPlaceholder}>
                   <MaterialIcons
                     name="library-books"
-                    size={32}
+                    size={responsive.fontSize.xxl}
                     color="#64748b"
                   />
                 </View>
                 <View style={styles.recentItemInfo}>
-                  <Text style={styles.recentItemTitle}>{recentItem.title}</Text>
+                  <Text style={styles.recentItemTitle} numberOfLines={2}>
+                    {recentItem.title}
+                  </Text>
                   <Text style={styles.recentItemStatus}>
                     {getStatusLabel(recentItem.status)}
                   </Text>
                   {recentItem.rating && (
                     <View style={styles.ratingContainer}>
-                      <MaterialIcons name="star" size={16} color="#fbbf24" />
+                      <MaterialIcons
+                        name="star"
+                        size={responsive.fontSize.md}
+                        color="#fbbf24"
+                      />
                       <Text style={styles.ratingText}>
                         {recentItem.rating}/10
                       </Text>
@@ -136,7 +202,7 @@ const DashboardScreen = ({ navigation }) => {
                     <View style={styles.hoursContainer}>
                       <MaterialIcons
                         name="schedule"
-                        size={16}
+                        size={responsive.fontSize.md}
                         color="#06b6d4"
                       />
                       <Text style={styles.hoursText}>
@@ -148,6 +214,7 @@ const DashboardScreen = ({ navigation }) => {
               </View>
             ) : (
               <View style={styles.emptyState}>
+                <MaterialIcons name="library-books" size={48} color="#64748b" />
                 <Text style={styles.emptyText}>
                   Nenhum item na sua biblioteca ainda
                 </Text>
@@ -169,9 +236,9 @@ const DashboardScreen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Quick Stats */}
+        {/* Detailed Stats */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Estatísticas Rápidas</Text>
+          <Text style={styles.sectionTitle}>Estatísticas Detalhadas</Text>
           <View style={styles.statsGrid}>
             <View
               style={[
@@ -179,9 +246,13 @@ const DashboardScreen = ({ navigation }) => {
                 { backgroundColor: "rgba(6, 182, 212, 0.1)" },
               ]}
             >
-              <MaterialIcons name="schedule" size={24} color="#06b6d4" />
+              <MaterialIcons
+                name="schedule"
+                size={responsive.fontSize.xl}
+                color="#06b6d4"
+              />
               <Text style={styles.statValue}>
-                {stats.totalHours.toLocaleString()}
+                {detailedStats.totalHours.toLocaleString()}
               </Text>
               <Text style={styles.statLabel}>Total de Horas</Text>
             </View>
@@ -192,8 +263,12 @@ const DashboardScreen = ({ navigation }) => {
                 { backgroundColor: "rgba(34, 197, 94, 0.1)" },
               ]}
             >
-              <MaterialIcons name="trending-up" size={24} color="#22c55e" />
-              <Text style={styles.statValue}>{stats.completed}</Text>
+              <MaterialIcons
+                name="trending-up"
+                size={responsive.fontSize.xl}
+                color="#22c55e"
+              />
+              <Text style={styles.statValue}>{detailedStats.completed}</Text>
               <Text style={styles.statLabel}>Concluídos</Text>
             </View>
 
@@ -203,9 +278,13 @@ const DashboardScreen = ({ navigation }) => {
                 { backgroundColor: "rgba(251, 191, 36, 0.1)" },
               ]}
             >
-              <MaterialIcons name="star" size={24} color="#fbbf24" />
+              <MaterialIcons
+                name="star"
+                size={responsive.fontSize.xl}
+                color="#fbbf24"
+              />
               <Text style={styles.statValue}>
-                {stats.avgRating.toFixed(1)}/10
+                {detailedStats.avgRating.toFixed(1)}/10
               </Text>
               <Text style={styles.statLabel}>Nota Média</Text>
             </View>
@@ -214,7 +293,7 @@ const DashboardScreen = ({ navigation }) => {
 
         {/* Status Overview */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Visão Geral</Text>
+          <Text style={styles.sectionTitle}>Status dos Itens</Text>
           <View style={styles.statusGrid}>
             <View style={[styles.statusCard, { borderLeftColor: "#22c55e" }]}>
               <Text style={styles.statusValue}>{statusCounts.completed}</Text>
@@ -237,12 +316,16 @@ const DashboardScreen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Recent Activity */}
+        {/* Recent Milestones */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            <MaterialIcons name="event" size={20} color="#8b5cf6" /> Marcos
-            Recentes
-          </Text>
+          <View style={styles.sectionHeader}>
+            <MaterialIcons
+              name="event"
+              size={responsive.fontSize.lg}
+              color="#8b5cf6"
+            />
+            <Text style={styles.sectionTitle}>Marcos Recentes</Text>
+          </View>
 
           <View style={styles.milestonesCard}>
             {milestones.length > 0 ? (
@@ -252,7 +335,9 @@ const DashboardScreen = ({ navigation }) => {
                   <View style={styles.milestoneInfo}>
                     <Text style={styles.milestoneTitle}>{milestone.title}</Text>
                     <Text style={styles.milestoneDate}>
-                      {new Date(milestone.date).toLocaleDateString("pt-BR")}
+                      {new Date(
+                        milestone.date || milestone.createdAt,
+                      ).toLocaleDateString("pt-BR")}
                     </Text>
                   </View>
                 </View>
@@ -269,202 +354,286 @@ const DashboardScreen = ({ navigation }) => {
             )}
           </View>
         </View>
+
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Ações Rápidas</Text>
+          <View style={styles.quickActionsGrid}>
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              onPress={() => navigation.navigate("Library")}
+            >
+              <MaterialIcons
+                name="add"
+                size={responsive.fontSize.xl}
+                color="#06b6d4"
+              />
+              <Text style={styles.quickActionText}>Adicionar Item</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              onPress={() => navigation.navigate("Reviews")}
+            >
+              <MaterialIcons
+                name="rate-review"
+                size={responsive.fontSize.xl}
+                color="#ec4899"
+              />
+              <Text style={styles.quickActionText}>Nova Review</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </LinearGradient>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  header: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  greeting: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#94a3b8",
-  },
-  date: {
-    fontSize: 12,
-    color: "#94a3b8",
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginBottom: 16,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  featuredCard: {
-    backgroundColor: "rgba(30, 41, 59, 0.5)",
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "rgba(100, 116, 139, 0.2)",
-  },
-  recentItemContainer: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  coverPlaceholder: {
-    width: 60,
-    height: 80,
-    backgroundColor: "rgba(100, 116, 139, 0.2)",
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  recentItemInfo: {
-    flex: 1,
-    gap: 6,
-  },
-  recentItemTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
-  recentItemStatus: {
-    fontSize: 14,
-    color: "#94a3b8",
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  ratingText: {
-    fontSize: 14,
-    color: "#ffffff",
-  },
-  hoursContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  hoursText: {
-    fontSize: 14,
-    color: "#ffffff",
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  emptyText: {
-    color: "#94a3b8",
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  addButton: {
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-  gradientButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  addButtonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
-  statsGrid: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  statCard: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    gap: 8,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
-  statLabel: {
-    fontSize: 12,
-    color: "#94a3b8",
-    textAlign: "center",
-  },
-  statusGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  statusCard: {
-    width: (width - 52) / 2,
-    backgroundColor: "rgba(30, 41, 59, 0.3)",
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 4,
-  },
-  statusValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginBottom: 4,
-  },
-  statusLabel: {
-    fontSize: 14,
-    color: "#94a3b8",
-  },
-  milestonesCard: {
-    backgroundColor: "rgba(30, 41, 59, 0.5)",
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "rgba(100, 116, 139, 0.2)",
-  },
-  milestoneItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 8,
-  },
-  milestoneIcon: {
-    fontSize: 24,
-  },
-  milestoneInfo: {
-    flex: 1,
-  },
-  milestoneTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#ffffff",
-  },
-  milestoneDate: {
-    fontSize: 12,
-    color: "#94a3b8",
-  },
-  emptyMilestones: {
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  emptySubtext: {
-    fontSize: 12,
-    color: "#64748b",
-    marginTop: 4,
-  },
-});
+const createStyles = (responsive) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      paddingHorizontal: responsive.padding.md,
+    },
+    header: {
+      paddingTop: responsive.padding.lg,
+      paddingBottom: responsive.padding.lg,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+    },
+    headerContent: {
+      flex: 1,
+    },
+    greeting: {
+      fontSize: responsive.fontSize.xxl,
+      fontWeight: "bold",
+      color: "#ffffff",
+      marginBottom: responsive.spacing.xs,
+    },
+    subtitle: {
+      fontSize: responsive.fontSize.sm,
+      color: "#94a3b8",
+    },
+    dateContainer: {
+      marginLeft: responsive.spacing.md,
+    },
+    date: {
+      fontSize: responsive.fontSize.xs,
+      color: "#94a3b8",
+    },
+    section: {
+      marginBottom: responsive.spacing.xl,
+    },
+    sectionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: responsive.spacing.md,
+      gap: responsive.spacing.sm,
+    },
+    sectionTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: "bold",
+      color: "#ffffff",
+    },
+    quickStatsGrid: {
+      flexDirection: "row",
+      gap: responsive.spacing.sm,
+    },
+    quickStatCard: {
+      flex: 1,
+      backgroundColor: "rgba(30, 41, 59, 0.5)",
+      borderRadius: 12,
+      padding: responsive.padding.sm,
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: "rgba(100, 116, 139, 0.2)",
+    },
+    quickStatValue: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: "bold",
+      color: "#ffffff",
+      marginBottom: responsive.spacing.xs,
+    },
+    quickStatLabel: {
+      fontSize: responsive.fontSize.xs,
+      color: "#94a3b8",
+      textAlign: "center",
+    },
+    featuredCard: {
+      backgroundColor: "rgba(30, 41, 59, 0.5)",
+      borderRadius: 16,
+      padding: responsive.padding.md,
+      borderWidth: 1,
+      borderColor: "rgba(100, 116, 139, 0.2)",
+    },
+    recentItemContainer: {
+      flexDirection: "row",
+      gap: responsive.spacing.md,
+    },
+    coverPlaceholder: {
+      width: responsive.getResponsiveValue(60, 70, 80),
+      height: responsive.getResponsiveValue(80, 90, 100),
+      backgroundColor: "rgba(100, 116, 139, 0.2)",
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    recentItemInfo: {
+      flex: 1,
+      gap: responsive.spacing.xs,
+    },
+    recentItemTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: "bold",
+      color: "#ffffff",
+    },
+    recentItemStatus: {
+      fontSize: responsive.fontSize.sm,
+      color: "#94a3b8",
+    },
+    ratingContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: responsive.spacing.xs,
+    },
+    ratingText: {
+      fontSize: responsive.fontSize.sm,
+      color: "#ffffff",
+    },
+    hoursContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: responsive.spacing.xs,
+    },
+    hoursText: {
+      fontSize: responsive.fontSize.sm,
+      color: "#ffffff",
+    },
+    emptyState: {
+      alignItems: "center",
+      paddingVertical: responsive.padding.lg,
+    },
+    emptyText: {
+      color: "#94a3b8",
+      fontSize: responsive.fontSize.md,
+      marginVertical: responsive.spacing.md,
+      textAlign: "center",
+    },
+    addButton: {
+      borderRadius: 8,
+      overflow: "hidden",
+    },
+    gradientButton: {
+      paddingHorizontal: responsive.padding.md,
+      paddingVertical: responsive.padding.sm,
+    },
+    addButtonText: {
+      color: "#ffffff",
+      fontWeight: "bold",
+      fontSize: responsive.fontSize.sm,
+    },
+    statsGrid: {
+      flexDirection: responsive.isSmallDevice ? "column" : "row",
+      gap: responsive.spacing.sm,
+    },
+    statCard: {
+      flex: responsive.isSmallDevice ? undefined : 1,
+      padding: responsive.padding.md,
+      borderRadius: 12,
+      alignItems: "center",
+      gap: responsive.spacing.sm,
+    },
+    statValue: {
+      fontSize: responsive.fontSize.xl,
+      fontWeight: "bold",
+      color: "#ffffff",
+    },
+    statLabel: {
+      fontSize: responsive.fontSize.xs,
+      color: "#94a3b8",
+      textAlign: "center",
+    },
+    statusGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: responsive.spacing.sm,
+    },
+    statusCard: {
+      width: responsive.getItemWidth(2, responsive.spacing.sm),
+      backgroundColor: "rgba(30, 41, 59, 0.3)",
+      borderRadius: 12,
+      padding: responsive.padding.md,
+      borderLeftWidth: 4,
+    },
+    statusValue: {
+      fontSize: responsive.fontSize.xxl,
+      fontWeight: "bold",
+      color: "#ffffff",
+      marginBottom: responsive.spacing.xs,
+    },
+    statusLabel: {
+      fontSize: responsive.fontSize.sm,
+      color: "#94a3b8",
+    },
+    milestonesCard: {
+      backgroundColor: "rgba(30, 41, 59, 0.5)",
+      borderRadius: 16,
+      padding: responsive.padding.md,
+      borderWidth: 1,
+      borderColor: "rgba(100, 116, 139, 0.2)",
+    },
+    milestoneItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: responsive.spacing.sm,
+      paddingVertical: responsive.spacing.sm,
+    },
+    milestoneIcon: {
+      fontSize: responsive.fontSize.xl,
+    },
+    milestoneInfo: {
+      flex: 1,
+    },
+    milestoneTitle: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: "600",
+      color: "#ffffff",
+    },
+    milestoneDate: {
+      fontSize: responsive.fontSize.xs,
+      color: "#94a3b8",
+    },
+    emptyMilestones: {
+      alignItems: "center",
+      paddingVertical: responsive.padding.lg,
+    },
+    emptySubtext: {
+      fontSize: responsive.fontSize.xs,
+      color: "#64748b",
+      marginTop: responsive.spacing.xs,
+    },
+    quickActionsGrid: {
+      flexDirection: "row",
+      gap: responsive.spacing.sm,
+    },
+    quickActionCard: {
+      flex: 1,
+      backgroundColor: "rgba(30, 41, 59, 0.5)",
+      borderRadius: 12,
+      padding: responsive.padding.md,
+      alignItems: "center",
+      gap: responsive.spacing.sm,
+      borderWidth: 1,
+      borderColor: "rgba(100, 116, 139, 0.2)",
+    },
+    quickActionText: {
+      fontSize: responsive.fontSize.sm,
+      color: "#ffffff",
+      fontWeight: "600",
+    },
+  });
 
 export default DashboardScreen;
