@@ -173,11 +173,11 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8 overflow-x-hidden">
       {/* Progress Overview */}
       {progress && (
         <motion.div
-          className="bg-gradient-to-br from-slate-800/60 via-indigo-900/30 to-slate-900/60 backdrop-blur-lg rounded-3xl p-8 border border-cyan-500/20 shadow-2xl relative overflow-hidden"
+          className="bg-gradient-to-br from-slate-800/60 via-indigo-900/30 to-slate-900/60 backdrop-blur-lg rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-cyan-500/20 shadow-2xl relative overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -208,15 +208,15 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
           </div>
 
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                  <Trophy className="text-white" size={24} />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-6">
+              <h3 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                  <Trophy className="text-white" size={16} />
                 </div>
                 Central de Conquistas
               </h3>
               <motion.div className="text-right" whileHover={{ scale: 1.05 }}>
-                <p className="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                <p className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
                   {progress.totalUnlocked}/{progress.totalAvailable}
                 </p>
                 <p className="text-sm text-slate-400">Conquistas</p>
@@ -246,7 +246,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
             </div>
 
             {/* Category Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4">
               {Object.entries(progress.byCategory).map(
                 ([category, stats], index) => {
                   const IconComponent =
@@ -255,7 +255,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                   return (
                     <motion.div
                       key={category}
-                      className={`text-center p-5 rounded-2xl border backdrop-blur-sm relative overflow-hidden group cursor-pointer transition-all duration-300 ${
+                      className={`text-center p-3 sm:p-5 rounded-xl sm:rounded-2xl border backdrop-blur-sm relative overflow-hidden group cursor-pointer transition-all duration-300 ${
                         isSelected
                           ? `bg-gradient-to-br ${categoryColors[category as keyof typeof categoryColors]}/20 border-cyan-400/50 shadow-lg`
                           : "bg-gradient-to-br from-slate-800/40 to-slate-900/60 border-slate-600/30 hover:border-cyan-400/30"
@@ -270,20 +270,20 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <div
-                        className={`relative w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br ${categoryColors[category as keyof typeof categoryColors]} flex items-center justify-center shadow-lg`}
+                        className={`relative w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-2 sm:mb-3 rounded-full bg-gradient-to-br ${categoryColors[category as keyof typeof categoryColors]} flex items-center justify-center shadow-lg`}
                       >
                         <IconComponent
                           className="text-white drop-shadow"
-                          size={24}
+                          size={16}
                         />
                       </div>
-                      <p className="text-sm text-slate-200 capitalize font-semibold mb-2">
+                      <p className="text-xs sm:text-sm text-slate-200 capitalize font-semibold mb-1 sm:mb-2">
                         {categoryNames[category as keyof typeof categoryNames]}
                       </p>
-                      <p className="text-3xl font-bold text-white mb-2">
+                      <p className="text-xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
                         {stats.unlocked}
                       </p>
-                      <p className="text-xs text-slate-400 mb-3">
+                      <p className="text-xs text-slate-400 mb-2 sm:mb-3">
                         de {stats.total}
                       </p>
                       <div className="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
