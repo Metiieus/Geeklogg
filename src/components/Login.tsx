@@ -192,7 +192,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
           {/* Register Button - responsivo */}
           <button
-            onClick={() => setShowRegister(true)}
+            onClick={() => (onRegister ? onRegister() : setShowRegister(true))}
             className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base"
           >
             Criar nova conta
