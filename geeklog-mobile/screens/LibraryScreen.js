@@ -10,6 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAppContext } from "../contexts/AppContext";
+import AddMediaModal from "../modals/AddMediaModal";
 
 const LibraryScreen = () => {
   const { mediaItems } = useAppContext();
