@@ -86,25 +86,18 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900/20 to-pink-900/20 flex items-center justify-center overflow-hidden px-4 py-6">
-      {/* Elementos geométricos decorativos - responsivos */}
-      <div className="absolute inset-0">
-        {/* Círculos com blur - ajustados para mobile */}
-        <div className="absolute top-20 left-4 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-4 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 sm:w-48 h-24 sm:h-48 bg-purple-500/20 rounded-full blur-xl"></div>
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center overflow-hidden px-4 py-6 relative">
+      {/* Background Elements - mesmo padrão da Landing Page */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
 
-        {/* Quadrados rotacionados - responsivos */}
-        <div className="absolute top-10 right-4 sm:right-10 w-8 sm:w-16 h-8 sm:h-16 bg-cyan-400/30 rotate-45"></div>
-        <div className="absolute bottom-10 left-4 sm:left-10 w-6 sm:w-12 h-6 sm:h-12 bg-pink-400/25 rotate-12"></div>
-        <div className="absolute top-1/3 left-4 sm:left-10 w-4 sm:w-8 h-4 sm:h-8 bg-purple-400/40 -rotate-45"></div>
-        <div className="absolute bottom-1/3 right-4 sm:right-10 w-6 sm:w-12 h-6 sm:h-12 bg-indigo-400/25 -rotate-12"></div>
+        {/* Polygonal Elements */}
+        <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
+        <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
+        <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
       </div>
-
-      {/* Watermark */}
-      <span className="absolute top-2 right-4 text-xs text-cyan-400/60 select-none pointer-events-none">
-        By: Metieus
-      </span>
 
       {/* Login Card - responsivo */}
       <div className="relative z-10 w-full max-w-md mx-auto">
