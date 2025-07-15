@@ -3,89 +3,34 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Mock user for demo mode
-const mockUser = {
-  uid: "demo-user-123",
-  email: "demo@example.com",
-  displayName: "Demo User",
+// Firebase configuration
+// Você deve definir essas variáveis de ambiente no Expo
+const firebaseConfig = {
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "your_api_key_here",
+  authDomain:
+    process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+    "your_project.firebaseapp.com",
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || "your_project_id",
+  storageBucket:
+    process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+    "your_project.appspot.com",
+  messagingSenderId:
+    process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "your_app_id",
+  measurementId:
+    process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX",
 };
 
-// Mock authentication system
-const createMockAuth = () => {
-  let currentUser = null;
-  let authStateListeners = [];
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-  const mockAuth = {
-    get currentUser() {
-      return currentUser;
-    },
-    onAuthStateChanged: (callback) => {
-      authStateListeners.push(callback);
-      callback(currentUser);
-      return () => {
-        authStateListeners = authStateListeners.filter(
-          (listener) => listener !== callback,
-        );
-      };
-    },
-    signInWithEmailAndPassword: async (email, password) => {
-      console.log("🎭 Mock login for demo mode");
-      currentUser = { ...mockUser, email };
-      authStateListeners.forEach((listener) => listener(currentUser));
-      return { user: currentUser };
-    },
-    signOut: async () => {
-      console.log("🎭 Mock logout for demo mode");
-      currentUser = null;
-      authStateListeners.forEach((listener) => listener(null));
-    },
-    createUserWithEmailAndPassword: async (email, password) => {
-      console.log("🎭 Mock registration for demo mode");
-      currentUser = { ...mockUser, email };
-      authStateListeners.forEach((listener) => listener(currentUser));
-      return { user: currentUser };
-    },
-  };
+// Initialize Firebase Authentication and get a reference to the service
+export const auth = getAuth(app);
 
-  return mockAuth;
-};
+// Initialize Cloud Firestore and get a reference to the service
+export const db = getFirestore(app, "geeklog");
 
-// Mock Firestore
-const createMockDb = () => ({
-  collection: () => ({
-    doc: () => ({
-      get: async () => ({ exists: () => false, data: () => null }),
-      set: async () => console.log("🎭 Mock Firestore write for demo mode"),
-      update: async () => console.log("🎭 Mock Firestore update for demo mode"),
-      delete: async () => console.log("🎭 Mock Firestore delete for demo mode"),
-    }),
-    add: async () => ({ id: "mock-doc-id" }),
-    where: () => ({ get: async () => ({ docs: [] }) }),
-  }),
-});
+// Initialize Cloud Storage and get a reference to the service
+export const storage = getStorage(app);
 
-// Mock Storage
-const createMockStorage = () => ({
-  ref: (path) => ({
-    put: async (file) => {
-      console.log("🎭 Mock Storage upload for demo mode:", path);
-      return {
-        ref: {
-          getDownloadURL: async () => {
-            return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`;
-          },
-        },
-      };
-    },
-    delete: async () =>
-      console.log("🎭 Mock Storage delete for demo mode:", path),
-    getDownloadURL: async () =>
-      `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`,
-  }),
-});
-
-// Para demo, usamos mock services
-console.log("🎭 Using mock Firebase services for demo mode");
-export const auth = createMockAuth();
-export const db = createMockDb();
-export const storage = createMockStorage();
+export default app;
