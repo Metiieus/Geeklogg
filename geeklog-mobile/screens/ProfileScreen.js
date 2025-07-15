@@ -70,23 +70,7 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleSubscription = () => {
-    Alert.alert(
-      "Assinatura Premium",
-      "Desbloqueie recursos exclusivos com o GeekLog Premium!\n\n• Backup na nuvem\n• Estatísticas avançadas\n• Temas personalizados\n• Suporte prioritário",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Assinar",
-          onPress: () => {
-            Alert.alert(
-              "Em breve",
-              "A integração com o Stripe será implementada em breve!",
-              [{ text: "OK" }],
-            );
-          },
-        },
-      ],
-    );
+    navigation.navigate("Subscription");
   };
 
   const menuItems = [
