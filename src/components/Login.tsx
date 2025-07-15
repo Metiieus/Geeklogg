@@ -4,7 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
 
-export const Login: React.FC = () => {
+interface LoginProps {
+  onCancel?: () => void;
+  onRegister?: () => void;
+}
+
+export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
