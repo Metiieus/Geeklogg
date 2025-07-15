@@ -73,7 +73,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-6 py-20">
         {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="absolute inset-0 overflow-hidden"
+          style={{ color: "rgba(139, 87, 42, 1)" }}
+        >
           <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
           <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
           <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
