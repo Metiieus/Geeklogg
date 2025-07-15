@@ -472,12 +472,12 @@ const AchievementCategory: React.FC<AchievementCategoryProps> = ({
       <div
         className={`bg-gradient-to-r ${categoryColors[category as keyof typeof categoryColors]} p-4 sm:p-6`}
       >
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <IconComponent className="text-white" size={24} />
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <IconComponent className="text-white" size={20} />
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-white">
+            <h3 className="text-lg sm:text-2xl font-bold text-white">
               {categoryNames[category as keyof typeof categoryNames]}
             </h3>
             <p className="text-white/80">
