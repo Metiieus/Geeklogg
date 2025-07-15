@@ -94,9 +94,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               style={{ border: "1px solid rgba(255, 255, 255, 0)" }}
             >
               <img
-                src="https://cdn.builder.io/o/assets%2F53fb85410bed4449b8639be5961d64c4%2F87a559e7397a49c2a8d7403d3327a3c9?alt=media&token=75dd028d-c0cb-4b4d-96e1-b31a097ab25d&apiKey=53fb85410bed4449b8639be5961d64c4"
+                src="https://cdn.builder.io/api/v1/image/assets%2F7ba5873022eb4101ad2e05f96b2ac3d8%2Fbd81ba3a237e40ffa01e2bae2f67765f"
                 alt="GeekLog Logo"
-                className="w-24 h-24 object-contain mx-auto"
+                className="object-contain mx-auto"
+                style={{ width: "827px", height: "330px" }}
               />
             </div>
           </div>
