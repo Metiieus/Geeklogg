@@ -480,7 +480,7 @@ const AchievementCategory: React.FC<AchievementCategoryProps> = ({
             <h3 className="text-lg sm:text-2xl font-bold text-white">
               {categoryNames[category as keyof typeof categoryNames]}
             </h3>
-            <p className="text-white/80">
+            <p className="text-sm sm:text-base text-white/80">
               {achievements.filter((a) => a.unlocked).length} de{" "}
               {achievements.length} desbloqueadas
             </p>
