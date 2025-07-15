@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trophy, Crown, Star, Zap } from "lucide-react";
+import { Trophy, Crown, Star, Zap, LogOut } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
@@ -13,7 +13,7 @@ import { startCheckout } from "../services/stripeService";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, logout } = useAuth();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] =
@@ -36,14 +36,14 @@ const Profile: React.FC = () => {
   };
 
   const renderCards = (items: typeof settings.favorites.characters) => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
       {items.map((it) => {
         return (
           <div
             key={it.id}
-            className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50"
+            className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50 min-w-0"
           >
-            <div className="w-full h-20 sm:h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
+            <div className="w-full h-16 sm:h-20 bg-slate-700 rounded-md overflow-hidden mb-2">
               {it.image ? (
                 <img
                   src={it.image}
@@ -52,14 +52,24 @@ const Profile: React.FC = () => {
                 />
               ) : null}
             </div>
-            <p className="text-xs sm:text-sm text-white break-words">
+            <p
+              className="text-xs text-white break-words"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
               {it.name}
             </p>
           </div>
         );
       })}
       {items.length === 0 && (
-        <p className="text-slate-500 col-span-full">Nenhum item</p>
+        <p className="text-slate-500 col-span-full text-xs sm:text-sm">
+          Nenhum item
+        </p>
       )}
     </div>
   );
@@ -83,11 +93,22 @@ const Profile: React.FC = () => {
   const displayBio = settings.bio || profile?.bio || "Sem bio definida.";
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white">
-          Meu Perfil
-        </h1>
+        <div className="flex items-center justify-between w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            Meu Perfil
+          </h1>
+
+          {/* Botão de sair para mobile */}
+          <button
+            onClick={logout}
+            className="sm:hidden flex items-center gap-2 px-3 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors text-sm"
+          >
+            <LogOut size={16} />
+            Sair
+          </button>
+        </div>
         {!profile?.isPremium && (
           <button
             onClick={() => startCheckout()}
@@ -136,14 +157,14 @@ const Profile: React.FC = () => {
         <div className="space-y-6">
           {/* Premium Status Card */}
           <div
-            className={`p-6 rounded-2xl border-2 ${
+            className={`p-4 sm:p-6 rounded-2xl border-2 overflow-hidden ${
               profile?.isPremium
                 ? "bg-gradient-to-br from-cyan-900/50 to-pink-900/50 border-cyan-500/50"
                 : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-cyan-500/30"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                 <div
                   className={`w-16 h-16 rounded-full flex items-center justify-center ${
                     profile?.isPremium
@@ -153,13 +174,13 @@ const Profile: React.FC = () => {
                 >
                   <Crown className="w-8 h-8 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-lg sm:text-xl font-bold text-white">
                     {profile?.isPremium
                       ? "Premium Ativo"
                       : "Upgrade para Premium"}
                   </h3>
-                  <p className="text-gray-100">
+                  <p className="text-sm sm:text-base text-gray-100">
                     {profile?.isPremium
                       ? "Acesso completo a todas as funcionalidades"
                       : "Desbloqueie recursos exclusivos como o Archivius AI"}
@@ -169,9 +190,9 @@ const Profile: React.FC = () => {
               {!profile?.isPremium && (
                 <button
                   onClick={() => startCheckout()}
-                  className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                  className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
                 >
-                  <Zap className="w-5 h-5" />
+                  <Zap className="w-4 sm:w-5 h-4 sm:h-5" />
                   Assinar Agora
                 </button>
               )}
@@ -221,8 +242,8 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
-            <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold overflow-hidden">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full overflow-hidden">
+            <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold overflow-hidden flex-shrink-0">
               {displayAvatar ? (
                 <img
                   src={displayAvatar}
@@ -230,18 +251,18 @@ const Profile: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                displayName.charAt(0).toUpperCase()
+                (displayName || "?").charAt(0).toUpperCase()
               )}
             </div>
 
-            <div className="text-center sm:text-left flex-1">
-              <h2 className="text-xl sm:text-2xl font-semibold text-white">
+            <div className="text-center sm:text-left flex-1 min-w-0">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
                 {displayName}
               </h2>
               <TruncatedBio
                 bio={displayBio}
                 maxLength={400}
-                className="text-slate-400 text-sm sm:text-base"
+                className="text-slate-400 text-sm sm:text-base break-words"
               />
               <button
                 onClick={() => setEditProfile(true)}
@@ -263,22 +284,22 @@ const Profile: React.FC = () => {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-              <div className="bg-slate-800 p-4 rounded-xl w-full">
-                <h4 className="text-white font-medium mb-2 text-center">
+              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
+                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
                   Personagens
                 </h4>
                 {renderCards(settings.favorites.characters)}
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl w-full">
-                <h4 className="text-white font-medium mb-2 text-center">
+              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
+                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
                   Jogos
                 </h4>
                 {renderCards(settings.favorites.games)}
               </div>
 
-              <div className="bg-slate-800 p-4 rounded-xl w-full">
-                <h4 className="text-white font-medium mb-2 text-center">
+              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
+                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
                   Filmes
                 </h4>
                 {renderCards(settings.favorites.movies)}

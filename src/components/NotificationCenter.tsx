@@ -1,7 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, BellRing, Check, CheckCheck, X, Users, Star, BookOpen, Trophy } from 'lucide-react';
-import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../services/socialService';
-import { Notification } from '../types/social';
+import React, { useState, useEffect } from "react";
+import {
+  Bell,
+  BellRing,
+  Check,
+  CheckCheck,
+  X,
+  Users,
+  Star,
+  BookOpen,
+  Trophy,
+} from "lucide-react";
+import {
+  getNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "../services/socialService";
+import { Notification } from "../types/social";
 
 export const NotificationCenter: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -10,7 +24,7 @@ export const NotificationCenter: React.FC = () => {
 
   useEffect(() => {
     loadNotifications();
-    
+
     // Polling para novas notificações a cada 30 segundos
     const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
@@ -21,18 +35,18 @@ export const NotificationCenter: React.FC = () => {
       const notifs = await getNotifications();
       setNotifications(notifs);
     } catch (error) {
-      console.error('Erro ao carregar notificações:', error);
+      console.error("Erro ao carregar notificações:", error);
     }
   };
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await markNotificationAsRead(notificationId);
-      setNotifications(prev => 
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
       );
     } catch (error) {
-      console.error('Erro ao marcar como lida:', error);
+      console.error("Erro ao marcar como lida:", error);
     }
   };
 
@@ -40,21 +54,21 @@ export const NotificationCenter: React.FC = () => {
     setLoading(true);
     try {
       await markAllNotificationsAsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     } catch (error) {
-      console.error('Erro ao marcar todas como lidas:', error);
+      console.error("Erro ao marcar todas como lidas:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'new_follower':
+      case "new_follower":
         return <Users size={16} className="text-blue-400" />;
-      case 'activity_update':
+      case "activity_update":
         return <Star size={16} className="text-yellow-400" />;
       default:
         return <Bell size={16} className="text-slate-400" />;
@@ -64,9 +78,11 @@ export const NotificationCenter: React.FC = () => {
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
     const time = new Date(timestamp);
-    const diffInMinutes = Math.floor((now.getTime() - time.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Agora';
+    const diffInMinutes = Math.floor(
+      (now.getTime() - time.getTime()) / (1000 * 60),
+    );
+
+    if (diffInMinutes < 1) return "Agora";
     if (diffInMinutes < 60) return `${diffInMinutes}m`;
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
     return `${Math.floor(diffInMinutes / 1440)}d`;
@@ -84,11 +100,11 @@ export const NotificationCenter: React.FC = () => {
         ) : (
           <Bell className="text-slate-400" size={20} />
         )}
-        
+
         {unreadCount > 0 && (
           <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
             <span className="text-xs text-white font-bold">
-              {unreadCount > 9 ? '9+' : unreadCount}
+              {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           </div>
         )}
@@ -126,29 +142,35 @@ export const NotificationCenter: React.FC = () => {
                 <div
                   key={notification.id}
                   className={`p-4 border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${
-                    !notification.read ? 'bg-purple-500/5' : ''
+                    !notification.read ? "bg-purple-500/5" : ""
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {notification.fromUserAvatar ? (
-                        <img 
-                          src={notification.fromUserAvatar} 
-                          alt={notification.fromUserName} 
-                          className="w-full h-full object-cover" 
+                        <img
+                          src={notification.fromUserAvatar}
+                          alt={notification.fromUserName}
+                          className="w-full h-full object-cover"
                         />
                       ) : (
-                        notification.fromUserName.charAt(0).toUpperCase()
+                        (notification.fromUserName || "?")
+                          .charAt(0)
+                          .toUpperCase()
                       )}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <p className="text-white text-sm font-medium">{notification.title}</p>
-                          <p className="text-slate-300 text-sm">{notification.message}</p>
+                          <p className="text-white text-sm font-medium">
+                            {notification.title}
+                          </p>
+                          <p className="text-slate-300 text-sm">
+                            {notification.message}
+                          </p>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 ml-2">
                           <span className="text-xs text-slate-500">
                             {formatTimeAgo(notification.timestamp)}
@@ -163,11 +185,11 @@ export const NotificationCenter: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-1 mt-1">
                         {getNotificationIcon(notification.type)}
                         <span className="text-xs text-slate-500 capitalize">
-                          {notification.type.replace('_', ' ')}
+                          {notification.type.replace("_", " ")}
                         </span>
                       </div>
                     </div>
@@ -176,7 +198,10 @@ export const NotificationCenter: React.FC = () => {
               ))
             ) : (
               <div className="p-8 text-center">
-                <Bell size={48} className="mx-auto mb-4 text-slate-500 opacity-50" />
+                <Bell
+                  size={48}
+                  className="mx-auto mb-4 text-slate-500 opacity-50"
+                />
                 <p className="text-slate-400">Nenhuma notificação</p>
               </div>
             )}
