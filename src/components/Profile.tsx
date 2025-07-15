@@ -36,14 +36,14 @@ const Profile: React.FC = () => {
   };
 
   const renderCards = (items: typeof settings.favorites.characters) => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
       {items.map((it) => {
         return (
           <div
             key={it.id}
-            className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50"
+            className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50 min-w-0"
           >
-            <div className="w-full h-20 sm:h-28 bg-slate-700 rounded-md overflow-hidden mb-2">
+            <div className="w-full h-16 sm:h-20 bg-slate-700 rounded-md overflow-hidden mb-2">
               {it.image ? (
                 <img
                   src={it.image}
@@ -52,14 +52,16 @@ const Profile: React.FC = () => {
                 />
               ) : null}
             </div>
-            <p className="text-xs sm:text-sm text-white break-words">
+            <p className="text-xs text-white break-words line-clamp-2">
               {it.name}
             </p>
           </div>
         );
       })}
       {items.length === 0 && (
-        <p className="text-slate-500 col-span-full">Nenhum item</p>
+        <p className="text-slate-500 col-span-full text-xs sm:text-sm">
+          Nenhum item
+        </p>
       )}
     </div>
   );
