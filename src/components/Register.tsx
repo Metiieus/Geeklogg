@@ -320,14 +320,24 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             <div className="flex-1 border-t border-gray-700"></div>
           </div>
 
-          {/* Back to Login Button */}
-          <button
-            onClick={onCancel}
-            className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voltar ao login
-          </button>
+          {/* Navigation Buttons */}
+          <div className="space-y-3">
+            {onLogin && (
+              <button
+                onClick={onLogin}
+                className="w-full bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 text-cyan-400 py-3 px-4 rounded-lg font-semibold hover:from-cyan-500/30 hover:to-pink-500/30 hover:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
+              >
+                Já tenho conta
+              </button>
+            )}
+            <button
+              onClick={onCancel}
+              className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {onLogin ? "Voltar" : "Voltar ao login"}
+            </button>
+          </div>
 
           {/* Demo Info */}
           <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-cyan-500/20 rounded-lg">
