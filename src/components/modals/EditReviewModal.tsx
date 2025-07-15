@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { X, Save, Star } from 'lucide-react';
-import { useAppContext } from '../../context/AppContext';
-import { Review } from '../../App';
-import { updateReview } from '../../services/reviewService';
+import React, { useState } from "react";
+import { X, Save, Star } from "lucide-react";
+import { useAppContext } from "../../context/AppContext";
+import { Review } from "../../App";
+import { updateReview } from "../../services/reviewService";
+import { sanitizeText } from "../../utils/sanitizer";
 
 interface EditReviewModalProps {
   review: Review;
@@ -10,14 +11,18 @@ interface EditReviewModalProps {
   onSave: (review: Review) => void;
 }
 
-export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClose, onSave }) => {
+export const EditReviewModal: React.FC<EditReviewModalProps> = ({
+  review,
+  onClose,
+  onSave,
+}) => {
   const { mediaItems } = useAppContext();
   const [formData, setFormData] = useState({
     title: review.title,
     content: review.content,
     rating: review.rating,
     mediaId: review.mediaId,
-    isFavorite: review.isFavorite
+    isFavorite: review.isFavorite,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +50,14 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
   };
 
   const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Aplicar sanitização em campos de texto
+    if (
+      typeof value === "string" &&
+      (field === "content" || field === "title")
+    ) {
+      value = sanitizeText(value, field === "content" ? 5000 : 200);
+    }
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -54,7 +66,7 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Editar Resenha</h2>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
           >
@@ -63,7 +75,10 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]"
+        >
           {/* Media Selection */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -72,7 +87,7 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
             <select
               required
               value={formData.mediaId}
-              onChange={(e) => handleChange('mediaId', e.target.value)}
+              onChange={(e) => handleChange("mediaId", e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="">Selecione uma mídia</option>
@@ -93,7 +108,7 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
               type="text"
               required
               value={formData.title}
-              onChange={(e) => handleChange('title', e.target.value)}
+              onChange={(e) => handleChange("title", e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Digite o título da sua resenha"
             />
@@ -111,12 +126,20 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
                 max="10"
                 step="1"
                 value={formData.rating}
-                onChange={(e) => handleChange('rating', parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleChange("rating", parseInt(e.target.value))
+                }
                 className="flex-1"
               />
               <div className="flex items-center gap-1 min-w-[80px]">
-                <Star className="text-yellow-400" size={16} fill="currentColor" />
-                <span className="text-white font-medium">{formData.rating}/10</span>
+                <Star
+                  className="text-yellow-400"
+                  size={16}
+                  fill="currentColor"
+                />
+                <span className="text-white font-medium">
+                  {formData.rating}/10
+                </span>
               </div>
             </div>
           </div>
@@ -129,7 +152,7 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
             <textarea
               required
               value={formData.content}
-              onChange={(e) => handleChange('content', e.target.value)}
+              onChange={(e) => handleChange("content", e.target.value)}
               rows={8}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
               placeholder="Escreva sua resenha aqui..."
@@ -142,7 +165,7 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({ review, onClos
               type="checkbox"
               id="favorite"
               checked={formData.isFavorite}
-              onChange={(e) => handleChange('isFavorite', e.target.checked)}
+              onChange={(e) => handleChange("isFavorite", e.target.checked)}
               className="w-4 h-4 text-pink-500 bg-slate-700 border-slate-600 rounded focus:ring-pink-500"
             />
             <label htmlFor="favorite" className="text-slate-300">

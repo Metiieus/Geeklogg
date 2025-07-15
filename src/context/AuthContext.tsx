@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             const userSnap = await getDoc(userRef);
             if (userSnap.exists()) {
               const userData = userSnap.data();
-              console.log("📥 Dados do usuário carregados:", userData);
+              // Log seguro: console.log("📥 Dados do usuário carregados para UID:", currentUser.uid);
               // Normalize favorites data to ensure consistent structure
               const normalizedProfile: UserProfile = {
                 name:
@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 },
                 defaultLibrarySort: userData.defaultLibrarySort || "updatedAt",
               } as UserProfile;
-              console.log("✅ Perfil normalizado:", normalizedProfile);
+              // Log seguro: console.log("✅ Perfil normalizado para UID:", currentUser.uid);
               setProfile(normalizedProfile);
             } else {
               console.log("Perfil não encontrado no Firestore.");
@@ -149,7 +149,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await signInWithEmailAndPassword(auth, email, password);
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
+      // Log seguro de erro (sem exposição de credenciais)
+      console.error("Erro ao fazer login. Código:", error?.code || "unknown");
       throw error;
     }
   };

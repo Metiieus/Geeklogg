@@ -4,6 +4,7 @@ import { MediaItem, MediaType, Status } from "../../App";
 import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
+import { sanitizeText, sanitizeUrl, sanitizeTags } from "../../utils/sanitizer";
 
 interface AddMediaModalProps {
   onClose: () => void;
@@ -126,7 +127,20 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Aplicar sanitização baseada no tipo de campo
+    let sanitizedValue = value;
+
+    if (field === "externalLink") {
+      const validUrl = sanitizeUrl(value);
+      sanitizedValue = validUrl || value; // Manter valor original se inválido para feedback visual
+    } else if (field === "description" || field === "title") {
+      sanitizedValue = sanitizeText(
+        value,
+        field === "description" ? 1000 : 200,
+      );
+    }
+
+    setFormData((prev) => ({ ...prev, [field]: sanitizedValue }));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
