@@ -365,7 +365,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
             <div className="flex bg-slate-800/50 rounded-xl border border-slate-600/50 overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 transition-colors ${
+                className={`flex-1 sm:flex-none p-2 transition-colors ${
                   viewMode === "grid"
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500 text-white"
                     : "text-slate-300 hover:text-white hover:bg-slate-700/50"
