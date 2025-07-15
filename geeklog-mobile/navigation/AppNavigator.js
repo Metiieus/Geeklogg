@@ -13,6 +13,7 @@ import LibraryScreen from "../screens/LibraryScreen";
 import ReviewsScreen from "../screens/ReviewsScreen";
 import TimelineScreen from "../screens/TimelineScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import SubscriptionScreen from "../screens/SubscriptionScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,6 +93,23 @@ const MainTabs = () => {
   );
 };
 
+// Main app stack that includes tabs and modal screens
+const MainStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen
+        name="Subscription"
+        component={SubscriptionScreen}
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const AppNavigator = () => {
   const { user, loading } = useAuth();
 
@@ -101,7 +119,7 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      {user ? <MainTabs /> : <AuthStack />}
+      {user ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };
