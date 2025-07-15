@@ -189,7 +189,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
       {/* Register Card - responsivo */}
       <div className="relative z-10 w-full max-w-md mx-auto">
-        <div className="bg-gray-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
+        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl hover:border-cyan-400/50 transition-all duration-300">
           {/* Header com logo - responsivo */}
           <div className="text-center mb-6 sm:mb-8">
             <div className="flex items-center justify-center mb-4">
