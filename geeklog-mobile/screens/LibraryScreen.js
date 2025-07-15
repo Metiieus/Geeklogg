@@ -10,11 +10,13 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAppContext } from "../contexts/AppContext";
+import AddMediaModal from "../modals/AddMediaModal";
 
 const LibraryScreen = () => {
   const { mediaItems } = useAppContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const filteredItems = mediaItems.filter((item) => {
     const matchesSearch = item.title
@@ -148,7 +150,10 @@ const LibraryScreen = () => {
         </View>
 
         {/* Add Button */}
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setShowAddModal(true)}
+        >
           <LinearGradient
             colors={["#06b6d4", "#ec4899"]}
             style={styles.addButtonGradient}
@@ -158,6 +163,12 @@ const LibraryScreen = () => {
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Add Media Modal */}
+      <AddMediaModal
+        visible={showAddModal}
+        onClose={() => setShowAddModal(false)}
+      />
     </LinearGradient>
   );
 };
