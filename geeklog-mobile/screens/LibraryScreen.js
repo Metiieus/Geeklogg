@@ -163,6 +163,12 @@ const LibraryScreen = () => {
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Add Media Modal */}
+      <AddMediaModal
+        visible={showAddModal}
+        onClose={() => setShowAddModal(false)}
+      />
     </LinearGradient>
   );
 };
