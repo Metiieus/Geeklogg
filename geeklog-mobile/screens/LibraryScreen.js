@@ -150,7 +150,10 @@ const LibraryScreen = () => {
         </View>
 
         {/* Add Button */}
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setShowAddModal(true)}
+        >
           <LinearGradient
             colors={["#06b6d4", "#ec4899"]}
             style={styles.addButtonGradient}
