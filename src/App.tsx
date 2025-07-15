@@ -96,9 +96,12 @@ export type ActivePage =
   | "settings"
   | "social";
 
+type ViewMode = "landing" | "login" | "register";
+
 function App() {
   const { user, loading } = useAuth();
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
+  const [currentView, setCurrentView] = useState<ViewMode>("landing");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
