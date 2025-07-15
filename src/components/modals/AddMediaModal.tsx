@@ -4,6 +4,7 @@ import { MediaItem, MediaType, Status } from "../../App";
 import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
+import { sanitizeText, sanitizeUrl, sanitizeTags } from "../../utils/sanitizer";
 
 interface AddMediaModalProps {
   onClose: () => void;
