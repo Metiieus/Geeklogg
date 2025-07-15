@@ -25,7 +25,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       {/* Header */}
       <header className="relative z-50 px-6 py-4">
-        <nav className="max-w-7xl mx-auto flex justify-between items-center">
+        <nav className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
               <BookOpen size={20} className="text-white" />
@@ -57,14 +57,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <section className="relative min-h-screen flex items-center justify-center px-6 py-20">
         {/* Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
-          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
-          <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl hidden sm:block"></div>
+          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl hidden sm:block"></div>
+          <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl hidden sm:block"></div>
 
           {/* Polygonal Elements */}
-          <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
-          <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
-          <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
+          <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45 hidden sm:block"></div>
+          <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12 hidden sm:block"></div>
+          <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45 hidden sm:block"></div>
         </div>
 
         <div className="relative z-10 text-center max-w-4xl mx-auto">
@@ -78,7 +78,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight">
             <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
               Viva sua jornada geek
             </span>
@@ -95,7 +95,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
               onClick={onRegister}
-              className="group px-8 py-4 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-lg font-semibold text-lg hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
+              className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-lg font-semibold text-lg hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
             >
               <span className="flex items-center space-x-2">
                 <Zap size={20} />
@@ -104,7 +104,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </button>
             <button
               onClick={onLogin}
-              className="px-8 py-4 border border-cyan-400/50 rounded-lg font-semibold text-lg hover:border-cyan-400 hover:bg-cyan-400/10 transition-all"
+              className="w-full sm:w-auto px-8 py-4 border border-cyan-400/50 rounded-lg font-semibold text-lg hover:border-cyan-400 hover:bg-cyan-400/10 transition-all"
             >
               Já tenho conta
             </button>
@@ -127,7 +127,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
                 icon: BookOpen,
@@ -159,7 +159,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               },
             ].map((feature, index) => (
               <div key={index} className="group">
-                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transform transition-transform duration-300 hover:scale-105">
                   <div
                     className={`w-12 h-12 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
                   >
@@ -226,7 +226,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               },
             ].map((feature, index) => (
               <div key={index} className="group">
-                <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10">
+                <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10">
                   <div
                     className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
                   >
@@ -286,7 +286,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <button
               onClick={onRegister}
-              className="group px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-2xl hover:shadow-cyan-500/30"
+              className="group w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-2xl hover:shadow-cyan-500/30"
             >
               <span className="flex items-center space-x-3">
                 <Zap size={24} />
