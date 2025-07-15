@@ -193,7 +193,16 @@ function App() {
   if (!user) {
     return (
       <ToastProvider>
-        <Login />
+        {currentView === "landing" && (
+          <LandingPage
+            onLogin={() => setCurrentView("login")}
+            onRegister={() => setCurrentView("register")}
+          />
+        )}
+        {currentView === "login" && <Login />}
+        {currentView === "register" && (
+          <Register onCancel={() => setCurrentView("landing")} />
+        )}
       </ToastProvider>
     );
   }
