@@ -81,7 +81,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     }
   };
 
-  if (showRegister) {
+  if (showRegister && !onRegister) {
     return <Register onCancel={() => setShowRegister(false)} />;
   }
 
