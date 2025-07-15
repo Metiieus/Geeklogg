@@ -27,7 +27,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <header className="relative z-50 px-6 py-4">
         <nav className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{
+                backgroundImage:
+                  "url(https://cdn.builder.io/api/v1/image/assets%2F7ba5873022eb4101ad2e05f96b2ac3d8%2F085f9520579a491c9159bed1a5a044b9)",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
+            >
               <BookOpen size={20} className="text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
