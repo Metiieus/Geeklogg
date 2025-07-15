@@ -470,7 +470,7 @@ const AchievementCategory: React.FC<AchievementCategoryProps> = ({
     <div className="bg-gradient-to-br from-slate-800/60 via-indigo-950/40 to-slate-900/60 backdrop-blur-lg rounded-2xl border border-purple-500/20 overflow-hidden">
       {/* Category Header */}
       <div
-        className={`bg-gradient-to-r ${categoryColors[category as keyof typeof categoryColors]} p-6`}
+        className={`bg-gradient-to-r ${categoryColors[category as keyof typeof categoryColors]} p-4 sm:p-6`}
       >
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
