@@ -8,6 +8,7 @@ import { User, Mail, Lock, Calendar, UserPlus, ArrowLeft } from "lucide-react";
 
 interface RegisterProps {
   onCancel: () => void;
+  onLogin?: () => void;
 }
 
 export const Register: React.FC<RegisterProps> = ({ onCancel }) => {
