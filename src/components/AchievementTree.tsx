@@ -610,7 +610,7 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
         {/* Achievement Info */}
         <div className="text-center">
           <h4
-            className={`font-bold mb-2 ${achievement.unlocked ? "text-white" : "text-slate-400"}`}
+            className={`text-sm sm:text-base font-bold mb-2 ${achievement.unlocked ? "text-white" : "text-slate-400"}`}
           >
             {achievement.title}
           </h4>
