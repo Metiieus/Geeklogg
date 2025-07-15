@@ -11,6 +11,7 @@ const Profile = lazy(() => import("./components/Profile"));
 import { SocialFeed } from "./components/SocialFeed";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Login } from "./components/Login";
+import { Register } from "./components/Register";
 import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { getMedias } from "./services/mediaService";
