@@ -199,7 +199,12 @@ function App() {
             onRegister={() => setCurrentView("register")}
           />
         )}
-        {currentView === "login" && <Login />}
+        {currentView === "login" && (
+          <Login
+            onCancel={() => setCurrentView("landing")}
+            onRegister={() => setCurrentView("register")}
+          />
+        )}
         {currentView === "register" && (
           <Register onCancel={() => setCurrentView("landing")} />
         )}
