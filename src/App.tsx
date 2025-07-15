@@ -206,7 +206,10 @@ function App() {
           />
         )}
         {currentView === "register" && (
-          <Register onCancel={() => setCurrentView("landing")} />
+          <Register
+            onCancel={() => setCurrentView("landing")}
+            onLogin={() => setCurrentView("login")}
+          />
         )}
       </ToastProvider>
     );
