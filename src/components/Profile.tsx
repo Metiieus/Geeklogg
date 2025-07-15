@@ -52,7 +52,15 @@ const Profile: React.FC = () => {
                 />
               ) : null}
             </div>
-            <p className="text-xs text-white break-words line-clamp-2">
+            <p
+              className="text-xs text-white break-words"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
               {it.name}
             </p>
           </div>
