@@ -39,7 +39,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             >
               <BookOpen size={20} className="text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
+            <span
+              className="text-2xl font-bold bg-clip-text text-transparent"
+              style={{
+                backgroundColor: "#5192c0",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
+            >
               GeekLog
             </span>
           </div>
