@@ -271,12 +271,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             ))}
           </div>
 
-          <div className="text-center mt-16">
-            <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-cyan-400/30 rounded-3xl p-8 max-w-4xl mx-auto">
-              <p className="text-lg text-cyan-400 mb-4 font-semibold">
+          <div className="text-center mt-12 sm:mt-16">
+            <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-cyan-400/30 rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto">
+              <p className="text-base sm:text-lg text-cyan-400 mb-3 sm:mb-4 font-semibold">
                 ✨ Exemplo de Archivius IA
               </p>
-              <p className="text-xl text-gray-300 italic leading-relaxed">
+              <p className="text-lg sm:text-xl text-gray-300 italic leading-relaxed">
                 "Notei que você adora RPGs e leu 3 livros de fantasia este mês.
                 Que tal experimentar 'The Witcher 3' e depois ler os livros da
                 saga? Criei uma missão especial: 'Jornada Completa do Bruxo' -
@@ -288,42 +288,44 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 relative overflow-hidden">
+      <section className="py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20"></div>
-          <div className="absolute top-10 left-10 w-24 h-24 bg-gradient-to-r from-cyan-500/30 to-transparent rounded-full blur-xl"></div>
-          <div className="absolute bottom-10 right-10 w-32 h-32 bg-gradient-to-r from-pink-500/30 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute top-10 left-5 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-r from-cyan-500/30 to-transparent rounded-full blur-xl"></div>
+          <div className="absolute bottom-10 right-5 sm:right-10 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-r from-pink-500/30 to-transparent rounded-full blur-xl"></div>
 
           {/* More Polygonal Elements */}
-          <div className="absolute top-20 right-1/4 w-12 h-12 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-20 transform rotate-45"></div>
-          <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-25 transform -rotate-12"></div>
+          <div className="absolute top-20 right-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-20 transform rotate-45"></div>
+          <div className="absolute bottom-20 left-1/4 w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-25 transform -rotate-12"></div>
         </div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+          <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 px-4">
             <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
               Comece sua jornada épica
             </span>
           </h2>
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 leading-relaxed px-4">
             Junte-se a milhares de nerds que já transformaram suas experiências
             em aventuras organizadas
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4">
             <button
               onClick={onRegister}
-              className="group px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-2xl hover:shadow-cyan-500/30"
+              className="group w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-lg sm:text-xl hover:from-cyan-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-2xl hover:shadow-cyan-500/30"
             >
-              <span className="flex items-center space-x-3">
-                <Zap size={24} />
-                <span>COMECE AGORA - É GRÁTIS</span>
+              <span className="flex items-center justify-center space-x-2 sm:space-x-3">
+                <Zap size={20} className="sm:w-6 sm:h-6" />
+                <span className="text-sm sm:text-base lg:text-lg">
+                  COMECE AGORA - É GRÁTIS
+                </span>
               </span>
             </button>
           </div>
 
-          <p className="text-gray-500 mt-8 text-lg">
+          <p className="text-gray-500 mt-6 sm:mt-8 text-sm sm:text-base lg:text-lg px-4 leading-relaxed">
             ⚡ Cadastro em 30 segundos • 🎮 Sem cartão de crédito • 🚀 Comece a
             usar imediatamente
           </p>
@@ -331,17 +333,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-gray-800">
+      <footer className="py-8 sm:py-12 px-4 sm:px-6 border-t border-gray-800">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
-              <BookOpen size={20} className="text-white" />
+          <div className="flex items-center justify-center space-x-2 mb-3 sm:mb-4">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
+              <BookOpen size={16} className="sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
+            <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
               GeekLog
             </span>
           </div>
-          <p className="text-gray-500">
+          <p className="text-sm sm:text-base text-gray-500">
             © 2025 GeekLog. Feito com ❤️ para a comunidade geek.
           </p>
         </div>
