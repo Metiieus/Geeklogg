@@ -375,7 +375,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 transition-colors ${
+                className={`flex-1 sm:flex-none p-2 transition-colors ${
                   viewMode === "list"
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500 text-white"
                     : "text-slate-300 hover:text-white hover:bg-slate-700/50"
