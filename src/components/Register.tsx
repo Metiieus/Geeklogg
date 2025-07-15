@@ -325,7 +325,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             )}
             <button
               onClick={onCancel}
-              className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
+              className="w-full border border-gray-600/50 text-gray-300 py-3 px-4 rounded-lg font-semibold hover:border-gray-500 hover:bg-gray-600/10 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               {onLogin ? "Voltar" : "Voltar ao login"}
