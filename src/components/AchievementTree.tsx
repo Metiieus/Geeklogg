@@ -670,7 +670,7 @@ const AchievementListItem: React.FC<AchievementListItemProps> = ({
     >
       {/* Achievement Image */}
       <div
-        className={`relative w-16 h-16 rounded-full border-2 overflow-hidden flex-shrink-0 ${rarity.border}`}
+        className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 overflow-hidden flex-shrink-0 ${rarity.border}`}
       >
         <img
           src={achievement.image}
