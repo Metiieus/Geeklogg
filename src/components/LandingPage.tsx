@@ -314,7 +314,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </span>
           </div>
           <p className="text-gray-500">
-            © 2024 GeekLog. Feito com ❤️ para a comunidade geek.
+            © 2025 GeekLog. Feito com ❤️ para a comunidade geek.
           </p>
         </div>
       </footer>
