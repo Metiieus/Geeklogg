@@ -162,7 +162,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                profile.name.charAt(0).toUpperCase()
+                (profile.name || "?").charAt(0).toUpperCase()
               )}
             </div>
 

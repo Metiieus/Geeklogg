@@ -4,7 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
 
-export const Login: React.FC = () => {
+interface LoginProps {
+  onCancel?: () => void;
+  onRegister?: () => void;
+}
+
+export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
@@ -76,44 +81,47 @@ export const Login: React.FC = () => {
     }
   };
 
-  if (showRegister) {
+  if (showRegister && !onRegister) {
     return <Register onCancel={() => setShowRegister(false)} />;
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900/20 to-pink-900/20 flex items-center justify-center overflow-hidden px-4 py-6">
-      {/* Elementos geométricos decorativos - responsivos */}
-      <div className="absolute inset-0">
-        {/* Círculos com blur - ajustados para mobile */}
-        <div className="absolute top-20 left-4 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-4 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 sm:w-48 h-24 sm:h-48 bg-purple-500/20 rounded-full blur-xl"></div>
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center overflow-hidden px-4 py-6 relative">
+      {/* Background Elements - mesmo padrão da Landing Page */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
 
-        {/* Quadrados rotacionados - responsivos */}
-        <div className="absolute top-10 right-4 sm:right-10 w-8 sm:w-16 h-8 sm:h-16 bg-cyan-400/30 rotate-45"></div>
-        <div className="absolute bottom-10 left-4 sm:left-10 w-6 sm:w-12 h-6 sm:h-12 bg-pink-400/25 rotate-12"></div>
-        <div className="absolute top-1/3 left-4 sm:left-10 w-4 sm:w-8 h-4 sm:h-8 bg-purple-400/40 -rotate-45"></div>
-        <div className="absolute bottom-1/3 right-4 sm:right-10 w-6 sm:w-12 h-6 sm:h-12 bg-indigo-400/25 -rotate-12"></div>
+        {/* Polygonal Elements */}
+        <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
+        <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
+        <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
       </div>
-
-      {/* Watermark */}
-      <span className="absolute top-2 right-4 text-xs text-cyan-400/60 select-none pointer-events-none">
-        By: Metieus
-      </span>
 
       {/* Login Card - responsivo */}
       <div className="relative z-10 w-full max-w-md mx-auto">
-        <div className="bg-gray-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
+        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl hover:border-cyan-400/50 transition-all duration-300">
           {/* Header com logo - responsivo */}
           <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-flex items-center justify-center mb-4">
+            {onCancel && (
+              <div className="flex justify-start mb-4">
+                <button
+                  onClick={onCancel}
+                  className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
+                >
+                  ← Voltar
+                </button>
+              </div>
+            )}
+            <div className="flex items-center justify-center mb-6">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=150"
+                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=200"
                 alt="GeekLog"
-                className="w-28 sm:w-36 h-28 sm:h-36 object-contain"
+                className="w-40 sm:w-48 h-40 sm:h-48 object-contain"
               />
             </div>
-            <p className="text-gray-200 mt-2 text-sm sm:text-base">
+            <p className="text-gray-200 mt-3 text-sm sm:text-base">
               Entre na sua conta
             </p>
           </div>
@@ -177,8 +185,8 @@ export const Login: React.FC = () => {
 
           {/* Register Button - responsivo */}
           <button
-            onClick={() => setShowRegister(true)}
-            className="w-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-400 py-3 px-4 rounded-lg font-semibold hover:from-purple-500/30 hover:to-indigo-500/30 hover:border-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base"
+            onClick={() => (onRegister ? onRegister() : setShowRegister(true))}
+            className="w-full border border-cyan-400/50 rounded-lg text-cyan-400 py-3 px-4 font-semibold hover:border-cyan-400 hover:bg-cyan-400/10 transition-all duration-300 text-sm sm:text-base"
           >
             Criar nova conta
           </button>

@@ -141,7 +141,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                user.name.charAt(0).toUpperCase()
+                (user.name || "?").charAt(0).toUpperCase()
               )}
             </div>
 
