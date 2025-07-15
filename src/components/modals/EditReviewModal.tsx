@@ -50,6 +50,13 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({
   };
 
   const handleChange = (field: string, value: any) => {
+    // Aplicar sanitização em campos de texto
+    if (
+      typeof value === "string" &&
+      (field === "content" || field === "title")
+    ) {
+      value = sanitizeText(value, field === "content" ? 5000 : 200);
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
