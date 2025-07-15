@@ -135,21 +135,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 relative">
+      <section className="py-12 sm:py-20 px-4 sm:px-6 relative">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 px-4">
               <span className="bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
                 Suas aventuras, organizadas
               </span>
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4">
               Transforme suas experiências geek em uma jornada épica e bem
               documentada
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               {
                 icon: BookOpen,
@@ -181,16 +181,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               },
             ].map((feature, index) => (
               <div key={index} className="group">
-                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 sm:p-6 hover:border-cyan-400/50 transition-all duration-300 hover:transform hover:scale-105">
                   <div
-                    className={`w-12 h-12 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}
                   >
-                    <feature.icon size={24} className="text-white" />
+                    <feature.icon
+                      size={20}
+                      className="sm:w-6 sm:h-6 text-white"
+                    />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-white">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-white">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -201,29 +204,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* Companion IA Section */}
-      <section className="py-20 px-6 relative overflow-hidden">
+      <section className="py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-cyan-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-cyan-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-block p-4 bg-gradient-to-r from-cyan-500/20 to-pink-500/20 rounded-2xl backdrop-blur-sm border border-cyan-400/30 mb-6">
-              <Sparkles className="w-16 h-16 text-cyan-400" />
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-block p-3 sm:p-4 bg-gradient-to-r from-cyan-500/20 to-pink-500/20 rounded-2xl backdrop-blur-sm border border-cyan-400/30 mb-4 sm:mb-6">
+              <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-cyan-400" />
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
+            <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 px-4">
               <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
                 Conheça o Archivius IA
               </span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
               Seu assistente pessoal que entende seus gostos, analisa seu perfil
               e cria missões personalizadas para expandir seus horizontes geek
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 icon: Target,
@@ -248,16 +251,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               },
             ].map((feature, index) => (
               <div key={index} className="group">
-                <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10">
+                <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-6 sm:p-8 hover:border-cyan-400/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10">
                   <div
-                    className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
+                    className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform`}
                   >
-                    <feature.icon size={28} className="text-white" />
+                    <feature.icon
+                      size={24}
+                      className="sm:w-7 sm:h-7 text-white"
+                    />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-white">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-white">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-400 leading-relaxed text-lg">
+                  <p className="text-gray-400 leading-relaxed text-base sm:text-lg">
                     {feature.description}
                   </p>
                 </div>
