@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BookOpen,
   Gamepad2,
@@ -10,6 +10,8 @@ import {
   Clock,
   LogIn,
   UserPlus,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface LandingPageProps {
@@ -21,6 +23,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onLogin,
   onRegister,
 }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       {/* Header */}
@@ -34,7 +37,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               GeekLog
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="hidden sm:flex items-center space-x-4">
             <button
               onClick={onLogin}
               className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400 transition-colors"
@@ -50,7 +53,38 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <span>Cadastre-se</span>
             </button>
           </div>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="sm:hidden p-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400"
+            aria-label="Menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </nav>
+        {menuOpen && (
+          <div className="sm:hidden absolute top-full right-6 mt-2 w-40 bg-gray-800 rounded-xl border border-cyan-500/20 shadow-lg">
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onLogin();
+              }}
+              className="flex w-full items-center gap-2 px-4 py-2 hover:bg-gray-700 rounded-t-xl"
+            >
+              <LogIn size={18} />
+              <span>Login</span>
+            </button>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onRegister();
+              }}
+              className="flex w-full items-center gap-2 px-4 py-2 hover:bg-gray-700 rounded-b-xl"
+            >
+              <UserPlus size={18} />
+              <span>Cadastre-se</span>
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
