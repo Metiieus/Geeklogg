@@ -89,7 +89,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <div className="mb-8">
-            <div className="inline-block p-3 bg-gradient-to-r from-cyan-500/20 to-pink-500/20 rounded-2xl backdrop-blur-sm border border-cyan-400/30 mb-6">
+            <div
+              className="inline-block p-3 rounded-2xl backdrop-blur-sm mb-6"
+              style={{ border: "1px solid rgba(255, 255, 255, 0)" }}
+            >
               <img
                 src="https://cdn.builder.io/o/assets%2F53fb85410bed4449b8639be5961d64c4%2F87a559e7397a49c2a8d7403d3327a3c9?alt=media&token=75dd028d-c0cb-4b4d-96e1-b31a097ab25d&apiKey=53fb85410bed4449b8639be5961d64c4"
                 alt="GeekLog Logo"
