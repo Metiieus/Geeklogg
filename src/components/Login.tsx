@@ -111,6 +111,16 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
         <div className="bg-gray-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-6 sm:p-8 shadow-2xl">
           {/* Header com logo - responsivo */}
           <div className="text-center mb-6 sm:mb-8">
+            {onCancel && (
+              <div className="flex justify-start mb-4">
+                <button
+                  onClick={onCancel}
+                  className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
+                >
+                  ← Voltar
+                </button>
+              </div>
+            )}
             <div className="flex items-center justify-center mb-6">
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=200"
