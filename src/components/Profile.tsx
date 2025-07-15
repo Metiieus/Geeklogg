@@ -230,7 +230,7 @@ const Profile: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                displayName.charAt(0).toUpperCase()
+                (displayName || "?").charAt(0).toUpperCase()
               )}
             </div>
 
