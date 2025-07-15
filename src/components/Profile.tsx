@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trophy, Crown, Star, Zap } from "lucide-react";
+import { Trophy, Crown, Star, Zap, LogOut } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
