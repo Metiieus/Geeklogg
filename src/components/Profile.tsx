@@ -13,7 +13,7 @@ import { startCheckout } from "../services/stripeService";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, logout } = useAuth();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] =
