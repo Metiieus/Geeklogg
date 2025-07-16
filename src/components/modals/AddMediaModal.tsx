@@ -221,7 +221,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]"
+          className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-140px)] sm:max-h-[calc(90vh-100px)]"
         >
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -234,7 +234,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                 required
                 value={formData.title}
                 onChange={(e) => handleChange("title", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                 placeholder="Digite o título da mídia"
               />
             </div>
@@ -246,7 +246,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
               <select
                 value={formData.type}
                 onChange={(e) => handleChange("type", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
               >
                 {Object.entries(mediaTypeLabels).map(([key, label]) => (
                   <option key={key} value={key}>
