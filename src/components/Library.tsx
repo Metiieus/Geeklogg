@@ -205,7 +205,15 @@ const Library: React.FC = () => {
           {/* Sort */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) =>
+              setSortBy(
+                e.target.value as
+                  | "title"
+                  | "rating"
+                  | "hoursSpent"
+                  | "updatedAt",
+              )
+            }
             className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="updatedAt">Recentes</option>
