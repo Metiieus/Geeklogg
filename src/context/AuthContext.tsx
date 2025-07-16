@@ -95,12 +95,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               // Log seguro: console.log("✅ Perfil normalizado para UID:", currentUser.uid);
               setProfile(normalizedProfile);
             } else {
-              console.log("Perfil não encontrado no Firestore.");
-              setProfile(null);
+              // Criar perfil padrão para novos usuários
+              const defaultProfile: UserProfile = {
+                name:
+                  currentUser.displayName ||
+                  currentUser.email?.split("@")[0] ||
+                  "Usuário",
+                avatar: undefined,
+                bio: "",
+                favorites: {
+                  characters: [],
+                  games: [],
+                  movies: [],
+                },
+                defaultLibrarySort: "updatedAt",
+                isPremium: false,
+                premiumExpiresAt: undefined,
+              };
+              setProfile(defaultProfile);
             }
           } else {
-            console.log("Firestore não disponível.");
-            setProfile(null);
+            // Fallback para modo temporário sem Firestore
+            const tempProfile: UserProfile = {
+              name:
+                currentUser.displayName ||
+                currentUser.email?.split("@")[0] ||
+                "Usuário",
+              avatar: undefined,
+              bio: "Perfil temporário - Configure o Firebase para sincronização",
+              favorites: {
+                characters: [],
+                games: [],
+                movies: [],
+              },
+              defaultLibrarySort: "updatedAt",
+              isPremium: false,
+              premiumExpiresAt: undefined,
+            };
+            setProfile(tempProfile);
           }
         } catch (error) {
           console.error("Erro ao buscar perfil no Firestore:", error);
