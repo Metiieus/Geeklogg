@@ -148,6 +148,21 @@ const Library: React.FC = () => {
     setEditingItem(null);
   };
 
+  const handleExternalResultSelect = (result: ExternalMediaResult) => {
+    setSelectedExternalResult(result);
+    setShowAddOptions(false);
+  };
+
+  const handleManualAdd = () => {
+    setShowAddModal(true);
+    setShowAddOptions(false);
+  };
+
+  const handleAddFromSearch = (newItem: MediaItem) => {
+    setMediaItems([...mediaItems, newItem]);
+    setSelectedExternalResult(null);
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
       {/* Header */}
