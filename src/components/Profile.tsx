@@ -409,7 +409,10 @@ const Profile: React.FC = () => {
                     {!notification.read && (
                       <button
                         onClick={async () => {
-                          await markNotificationAsRead(notification.id);
+                          await markNotificationAsRead(
+                            user?.uid || "",
+                            notification.id,
+                          );
                           loadNotifications();
                         }}
                         className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors"
