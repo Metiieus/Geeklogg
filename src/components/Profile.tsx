@@ -45,6 +45,24 @@ const Profile: React.FC = () => {
     setEditFav(false);
   };
 
+  const loadNotifications = async () => {
+    if (activeTab !== "notifications") return;
+    setLoadingNotifications(true);
+    try {
+      const userNotifications = await getNotifications();
+      setNotifications(userNotifications);
+    } catch (error) {
+      console.error("Erro ao carregar notificações:", error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  // Carregar notificações quando a aba for selecionada
+  useEffect(() => {
+    loadNotifications();
+  }, [activeTab]);
+
   const renderCards = (items: typeof settings.favorites.characters) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
       {items.map((it) => {
