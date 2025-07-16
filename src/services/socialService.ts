@@ -87,7 +87,8 @@ export async function updateUserProfile(
     const uid = getUserId();
     await database.update(["users", uid], profile);
   } catch (error) {
-    console.log("🎭 Mock profile update for demo mode");
+    console.error("Erro ao atualizar perfil:", error);
+    throw error;
   }
 }
 
@@ -114,7 +115,8 @@ export async function followUser(targetUserId: string): Promise<void> {
       actionUserId: uid,
     });
   } catch (error) {
-    console.log("🎭 Mock follow action for demo mode");
+    console.error("Erro ao seguir usuário:", error);
+    throw error;
   }
 }
 
@@ -136,7 +138,8 @@ export async function unfollowUser(targetUserId: string): Promise<void> {
     );
     await database.update(["users", targetUserId], { followers });
   } catch (error) {
-    console.log("🎭 Mock unfollow action for demo mode");
+    console.error("Erro ao parar de seguir usuário:", error);
+    throw error;
   }
 }
 
@@ -173,26 +176,8 @@ export async function getFollowingActivities(): Promise<UserActivity[]> {
       )
       .slice(0, 50);
   } catch (error) {
-    // Database error, likely in demo mode - return mock data
-    console.log("🎭 Database error, returning mock activities for demo mode");
-    return [
-      {
-        id: "activity1",
-        userId: "demo-user-123",
-        type: "review",
-        content: "Demo user reviewed a great game!",
-        timestamp: new Date().toISOString(),
-        metadata: { title: "Demo Game", rating: 5 },
-      },
-      {
-        id: "activity2",
-        userId: "demo-user-123",
-        type: "milestone",
-        content: "Demo user reached a new milestone!",
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
-        metadata: { title: "First Review" },
-      },
-    ];
+    console.error("Erro ao buscar atividades:", error);
+    return [];
   }
 }
 
