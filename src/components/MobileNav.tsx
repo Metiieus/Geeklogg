@@ -56,7 +56,7 @@ export const MobileNav: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
 
   return (
-    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50">
+    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
       {/* Background com blur e gradiente */}
       <div className="bg-gray-900/95 backdrop-blur-xl border-t border-cyan-500/20">
         {/* Elementos decorativos */}
@@ -65,21 +65,21 @@ export const MobileNav: React.FC = () => {
           <div className="absolute top-0 right-1/4 w-20 h-20 bg-pink-500/10 rounded-full blur-xl"></div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-around py-2">
+        <div className="relative z-10 flex items-center justify-around py-2 px-2 safe-area-inset-bottom">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActivePage(item.id)}
               className={`flex flex-col items-center justify-center min-w-0 flex-1 py-2 px-1 transition-all duration-300 ${
-                activePage === item.id ? "scale-110" : "hover:scale-105"
+                activePage === item.id ? "scale-110" : "active:scale-95"
               }`}
             >
               {/* Container do ícone com efeito ativo */}
               <div
-                className={`relative flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300 ${
+                className={`relative flex items-center justify-center w-9 sm:w-10 h-9 sm:h-10 rounded-xl transition-all duration-300 ${
                   activePage === item.id
                     ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
-                    : "hover:bg-gray-800/50"
+                    : "active:bg-gray-800/50"
                 }`}
               >
                 <div
@@ -100,7 +100,7 @@ export const MobileNav: React.FC = () => {
 
               {/* Label */}
               <span
-                className={`text-xs mt-1 font-medium transition-colors truncate ${
+                className={`text-xs mt-1 font-medium transition-colors truncate max-w-full ${
                   activePage === item.id ? "text-white" : "text-gray-200"
                 }`}
               >

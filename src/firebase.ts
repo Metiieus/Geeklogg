@@ -7,10 +7,14 @@ import { getStorage } from "firebase/storage";
 const hasValidFirebaseConfig = () => {
   const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
   const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+  const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+  const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
 
   return (
     apiKey &&
     projectId &&
+    authDomain &&
+    storageBucket &&
     !apiKey.includes("your_") &&
     !apiKey.includes("Demo") &&
     !projectId.includes("your_") &&
@@ -31,27 +35,18 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Mock user for demo mode
-const mockUser = {
-  uid: "demo-user-123",
-  email: "demo@example.com",
-  displayName: "Demo User",
-};
-
-// Mock authentication system
+// Mock services for when Firebase is not configured
 const createMockAuth = () => {
   let currentUser: any = null;
   let authStateListeners: Array<(user: any) => void> = [];
 
-  const mockAuth = {
+  return {
     get currentUser() {
       return currentUser;
     },
     onAuthStateChanged: (callback: (user: any) => void) => {
       authStateListeners.push(callback);
-      // Immediately call with current user
       callback(currentUser);
-      // Return unsubscribe function
       return () => {
         authStateListeners = authStateListeners.filter(
           (listener) => listener !== callback,
@@ -59,70 +54,85 @@ const createMockAuth = () => {
       };
     },
     signInWithEmailAndPassword: async (email: string, password: string) => {
-      console.log("🎭 Mock login for demo mode");
-      currentUser = { ...mockUser, email };
+      console.log(
+        "⚠️ Usando autenticação temporária - Configure o Firebase para funcionalidade completa",
+      );
+      currentUser = {
+        uid: "temp-user",
+        email,
+        displayName: email.split("@")[0],
+      };
+      authStateListeners.forEach((listener) => listener(currentUser));
+      return { user: currentUser };
+    },
+    createUserWithEmailAndPassword: async (email: string, password: string) => {
+      console.log(
+        "⚠️ Usando registro temporário - Configure o Firebase para funcionalidade completa",
+      );
+      currentUser = {
+        uid: "temp-user",
+        email,
+        displayName: email.split("@")[0],
+      };
       authStateListeners.forEach((listener) => listener(currentUser));
       return { user: currentUser };
     },
     signOut: async () => {
-      console.log("🎭 Mock logout for demo mode");
       currentUser = null;
       authStateListeners.forEach((listener) => listener(null));
     },
-    createUserWithEmailAndPassword: async (email: string, password: string) => {
-      console.log("🎭 Mock registration for demo mode");
-      currentUser = { ...mockUser, email };
-      authStateListeners.forEach((listener) => listener(currentUser));
-      return { user: currentUser };
-    },
   };
-
-  return mockAuth;
 };
 
-// Mock Firestore
 const createMockDb = () => ({
   collection: () => ({
     doc: () => ({
       get: async () => ({ exists: () => false, data: () => null }),
-      set: async () => console.log("🎭 Mock Firestore write for demo mode"),
-      update: async () => console.log("🎭 Mock Firestore update for demo mode"),
-      delete: async () => console.log("🎭 Mock Firestore delete for demo mode"),
+      set: async () =>
+        console.log(
+          "⚠️ Dados temporários - Configure o Firebase para persistência real",
+        ),
+      update: async () =>
+        console.log(
+          "⚠️ Dados temporários - Configure o Firebase para persistência real",
+        ),
+      delete: async () =>
+        console.log(
+          "⚠️ Dados temporários - Configure o Firebase para persistência real",
+        ),
     }),
-    add: async () => ({ id: "mock-doc-id" }),
+    add: async () => ({ id: "temp-doc-id" }),
     where: () => ({ get: async () => ({ docs: [] }) }),
   }),
 });
 
-// Mock Storage
 const createMockStorage = () => ({
   ref: (path: string) => ({
     put: async (file: File | Blob) => {
-      console.log("🎭 Mock Storage upload for demo mode:", path);
+      console.log(
+        "⚠️ Upload temporário - Configure o Firebase para storage real",
+      );
       return {
         ref: {
           getDownloadURL: async () => {
-            // Retorna uma URL mock mas válida para imagens
-            return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`;
+            return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Temp Image")}`;
           },
         },
       };
     },
-    delete: async () =>
-      console.log("🎭 Mock Storage delete for demo mode:", path),
+    delete: async () => console.log("⚠️ Storage temporário"),
     getDownloadURL: async () =>
-      `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`,
+      `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Temp Image")}`,
   }),
   uploadBytes: async (ref: any, file: File | Blob) => {
-    console.log("🎭 Mock uploadBytes for demo mode");
+    console.log("⚠️ Upload temporário");
     return {};
   },
   getDownloadURL: async (ref: any) => {
-    console.log("🎭 Mock getDownloadURL for demo mode");
-    return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Demo Image")}`;
+    return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Temp Image")}`;
   },
   deleteObject: async (ref: any) => {
-    console.log("🎭 Mock deleteObject for demo mode");
+    console.log("⚠️ Storage temporário");
   },
 });
 
@@ -140,11 +150,24 @@ if (hasValidFirebaseConfig()) {
     console.log("✅ Firebase initialized successfully");
   } catch (error) {
     console.warn("Firebase initialization failed:", error);
+    console.warn("🔄 Usando serviços temporários...");
+    auth = createMockAuth();
+    db = createMockDb();
+    storage = createMockStorage();
   }
 } else {
   console.warn(
-    "🎭 Firebase not configured - using mock services for demo mode",
+    "⚠️ Firebase não configurado - usando serviços temporários\n\n" +
+      "Para funcionalidade completa, configure as variáveis de ambiente:\n" +
+      "VITE_FIREBASE_API_KEY=sua_api_key\n" +
+      "VITE_FIREBASE_AUTH_DOMAIN=seu_dominio\n" +
+      "VITE_FIREBASE_PROJECT_ID=seu_project_id\n" +
+      "VITE_FIREBASE_STORAGE_BUCKET=seu_storage_bucket\n" +
+      "VITE_FIREBASE_MESSAGING_SENDER_ID=seu_sender_id\n" +
+      "VITE_FIREBASE_APP_ID=seu_app_id\n\n" +
+      "Copie o arquivo .env.example para .env e preencha com suas credenciais.",
   );
+
   auth = createMockAuth();
   db = createMockDb();
   storage = createMockStorage();

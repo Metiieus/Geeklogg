@@ -25,8 +25,10 @@ class OpenAIService {
 
   async sendMessage(userMessage: string, context?: any): Promise<string> {
     if (!this.apiKey) {
-      console.log("🤖 Archivius: Usando modo demo (API key não configurada)");
-      // Fallback para demo - simulação de resposta da IA
+      console.log(
+        "🤖 Archivius: API key não configurada - usando respostas estáticas",
+      );
+      // Fallback quando API key não está configurada
       return this.getMockResponse(userMessage, context);
     }
 
