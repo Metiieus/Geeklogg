@@ -1,0 +1,110 @@
+/* Melhorias de responsividade mobile para GeekLog */
+
+/* Garantir que elementos não quebrem em mobile */
+* {
+  box-sizing: border-box;
+}
+
+/* Melhorar touch targets para mobile */
+@media (max-width: 640px) {
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="file"],
+  label[for],
+  select,
+  .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Botões pequenos em mobile */
+  button:not(.btn-large) {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  /* Inputs responsivos */
+  input,
+  textarea,
+  select {
+    padding: 12px 16px;
+    font-size: 16px; /* Evita zoom no iOS */
+    border-radius: 8px;
+  }
+
+  /* Modal adjustments */
+  .modal-content {
+    margin: 8px;
+    max-height: calc(100vh - 16px);
+    border-radius: 12px;
+  }
+
+  /* Grid responsivo */
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* Text truncation para mobile */
+  .mobile-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Spacing mobile-friendly */
+  .mobile-spacing {
+    padding: 12px;
+    margin: 8px 0;
+  }
+
+  /* Safe area para notch */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Melhorias para landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-nav {
+    padding: 8px 12px;
+  }
+
+  .modal-content {
+    max-height: calc(100vh - 20px);
+  }
+}
+
+/* Hover states apenas em dispositivos que suportam */
+@media (hover: hover) and (pointer: fine) {
+  .hover-effects:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+  }
+}
+
+/* Focus visible para acessibilidade */
+*:focus-visible {
+  outline: 2px solid #06b6d4;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Prevent text size adjust em iOS */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+}
