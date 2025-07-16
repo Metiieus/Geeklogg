@@ -16,11 +16,6 @@ import { db } from "../firebase";
  * without touching the rest of the application.
  */
 
-// Mock data storage for demo mode
-const mockData = new Map<string, any>();
-
-const isMockMode = () => !db || typeof db.collection === "function";
-
 export const database = {
   async add(path: string[], data: unknown) {
     if (isMockMode()) {
