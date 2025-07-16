@@ -368,14 +368,10 @@ const Library: React.FC = () => {
               <div className="md:hidden flex justify-center mt-2">
                 <button
                   onClick={() => setEditingItem(item)}
-                  className="text-slate-400 hover:text-white transition-colors"
+                  className="text-slate-400 hover:text-white transition-colors p-1"
                   title="Opções"
                 >
-                  <div className="flex gap-1">
-                    <div className="w-1 h-1 bg-current rounded-full"></div>
-                    <div className="w-1 h-1 bg-current rounded-full"></div>
-                    <div className="w-1 h-1 bg-current rounded-full"></div>
-                  </div>
+                  <MoreHorizontal size={16} />
                 </button>
               </div>
             </div>
