@@ -458,6 +458,30 @@ const Library: React.FC = () => {
         </div>
       )}
 
+      {/* Add Media Options Modal */}
+      {showAddOptions && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full p-6 animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                Adicionar Nova Mídia
+              </h2>
+              <button
+                onClick={() => setShowAddOptions(false)}
+                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <X className="text-slate-400" size={20} />
+              </button>
+            </div>
+
+            <AddMediaOptions
+              onExternalResultSelect={handleExternalResultSelect}
+              onManualAdd={handleManualAdd}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Add Media Modal */}
       {showAddModal && (
         <AddMediaModal
@@ -466,6 +490,15 @@ const Library: React.FC = () => {
             setMediaItems([...mediaItems, newItem]);
             setShowAddModal(false);
           }}
+        />
+      )}
+
+      {/* Add Media From Search Modal */}
+      {selectedExternalResult && (
+        <AddMediaFromSearchModal
+          externalResult={selectedExternalResult}
+          onClose={() => setSelectedExternalResult(null)}
+          onSave={handleAddFromSearch}
         />
       )}
 
