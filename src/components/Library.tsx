@@ -165,32 +165,33 @@ const Library: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
             Biblioteca
           </h1>
-          <p className="text-slate-400 text-sm md:text-base hidden md:block">
+          <p className="text-slate-400 text-sm md:text-base hidden sm:block">
             Sua coleção pessoal de jogos, anime, séries, livros e filmes
           </p>
         </div>
         <button
           onClick={() => setShowAddOptions(true)}
-          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 md:px-6 py-2 md:py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-1 md:gap-2"
+          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 sm:px-4 md:px-6 py-2 md:py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-1 md:gap-2 self-start sm:self-auto"
         >
-          <Plus size={18} />
+          <Plus size={16} sm:size={18} />
+          <span className="hidden sm:inline md:hidden">Adicionar</span>
           <span className="hidden md:inline">Adicionar Mídia</span>
-          <span className="md:hidden">Adicionar</span>
+          <span className="sm:hidden">+</span>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-slate-700/50">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {/* Search */}
-          <div className="relative col-span-2 md:col-span-1">
+          <div className="relative col-span-1 sm:col-span-2 md:col-span-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               size={16}
@@ -200,7 +201,7 @@ const Library: React.FC = () => {
               placeholder="Buscar..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -210,7 +211,7 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedType(e.target.value as MediaType | "all")
             }
-            className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="all">Tipo</option>
             {Object.entries(mediaTypeLabels).map(([key, label]) => (
@@ -226,7 +227,7 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedStatus(e.target.value as Status | "all")
             }
-            className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="all">Status</option>
             <option value="completed">Concluído</option>
@@ -247,7 +248,7 @@ const Library: React.FC = () => {
                   | "updatedAt",
               )
             }
-            className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="updatedAt">Recentes</option>
             <option value="title">A-Z</option>
@@ -262,8 +263,8 @@ const Library: React.FC = () => {
         <p>{filteredAndSortedItems.length} itens</p>
       </div>
 
-      {/* Media Grid - Layout tipo Skoob para mobile */}
-      <div className="grid grid-cols-3 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 animate-fade-in">
+      {/* Media Grid - Layout responsivo */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 animate-fade-in">
         {filteredAndSortedItems.map((item) => {
           console.log("Library item", item);
           return (

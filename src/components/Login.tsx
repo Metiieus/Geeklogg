@@ -86,47 +86,48 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center overflow-hidden px-4 py-6 relative">
-      {/* Background Elements - mesmo padrão da Landing Page */}
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center overflow-hidden px-4 py-4 sm:py-6 relative">
+      {/* Background Elements - responsivos */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
-        <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
-        <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
+        {/* Mobile: elementos menores */}
+        <div className="absolute top-10 sm:top-20 left-5 sm:left-10 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-32 sm:w-48 h-32 sm:h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 sm:bottom-40 left-1/4 w-40 sm:w-64 h-40 sm:h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
 
-        {/* Polygonal Elements */}
-        <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
-        <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
-        <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
+        {/* Polygonal Elements - apenas em desktop */}
+        <div className="hidden sm:block absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
+        <div className="hidden sm:block absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
+        <div className="absolute top-1/2 right-5 sm:right-10 w-6 sm:w-8 h-6 sm:h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
       </div>
 
       {/* Login Card - responsivo */}
       <div className="relative z-10 w-full max-w-md mx-auto">
-        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl hover:border-cyan-400/50 transition-all duration-300">
+        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl hover:border-cyan-400/50 transition-all duration-300">
           {/* Header com logo - responsivo */}
-          <div className="text-center mb-6 sm:mb-8">
+          <div className="text-center mb-4 sm:mb-6 md:mb-8">
             {onCancel && (
-              <div className="flex justify-start mb-4">
+              <div className="flex justify-start mb-3 sm:mb-4">
                 <button
                   onClick={onCancel}
-                  className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
+                  className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors text-sm active:scale-95"
                 >
                   ← Voltar
                 </button>
               </div>
             )}
-            <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-4 sm:mb-6">
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=200"
                 alt="GeekLog"
-                className="w-40 sm:w-48 h-40 sm:h-48 object-contain"
+                className="w-32 sm:w-40 md:w-48 h-32 sm:h-40 md:h-48 object-contain"
               />
             </div>
-            <p className="text-gray-200 mt-3 text-sm sm:text-base">
+            <p className="text-gray-200 mt-2 sm:mt-3 text-sm sm:text-base">
               Entre na sua conta
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Email Input - responsivo */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -177,9 +178,9 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
           </form>
 
           {/* Divider */}
-          <div className="my-6 flex items-center">
+          <div className="my-4 sm:my-6 flex items-center">
             <div className="flex-1 border-t border-gray-700"></div>
-            <span className="px-4 text-gray-200 text-sm">ou</span>
+            <span className="px-3 sm:px-4 text-gray-200 text-sm">ou</span>
             <div className="flex-1 border-t border-gray-700"></div>
           </div>
 
@@ -190,14 +191,6 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
           >
             Criar nova conta
           </button>
-
-          {/* Demo Info - responsivo */}
-          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-cyan-500/20 rounded-lg">
-            <p className="text-xs text-cyan-400 text-center">
-              💡 <strong>Modo Demo:</strong> Use qualquer email/senha para
-              entrar
-            </p>
-          </div>
         </div>
       </div>
     </div>

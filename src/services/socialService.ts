@@ -69,86 +69,14 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
   }
 }
 
-// Função para retornar usuários mock filtrados por query
-function getMockUsers(query: string): UserProfile[] {
-  console.log("🎭 Retornando dados mock para demo");
-
-  const mockUsers: UserProfile[] = [
-    {
-      id: "demo-user-1",
-      uid: "demo-user-1",
-      name: "Alex GameMaster",
-      avatar: undefined,
-      bio: "Gamer apaixonado por RPGs e aventuras épicas",
-      email: "alex@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 15,
-      reviewsCount: 8,
-    },
-    {
-      id: "demo-user-2",
-      uid: "demo-user-2",
-      name: "Luna AnimeWatcher",
-      avatar: undefined,
-      bio: "Otaku de carteirinha, sempre em busca do próximo anime incrível",
-      email: "luna@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 22,
-      reviewsCount: 12,
-    },
-    {
-      id: "demo-user-3",
-      uid: "demo-user-3",
-      name: "Marcus Bookworm",
-      avatar: undefined,
-      bio: "Leitor voraz, especialmente ficção científica e fantasia",
-      email: "marcus@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 8,
-      reviewsCount: 15,
-    },
-    {
-      id: "demo-user-4",
-      uid: "demo-user-4",
-      name: "Sophie CinemaLover",
-      avatar: undefined,
-      bio: "Cinéfila apaixonada por filmes independentes e clássicos",
-      email: "sophie@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 12,
-      reviewsCount: 20,
-    },
-  ].filter(
-    (user) =>
-      user.name.toLowerCase().includes(query.toLowerCase()) ||
-      user.bio?.toLowerCase().includes(query.toLowerCase()),
-  );
-
-  console.log("🎭 Mock users filtered:", mockUsers.length);
-  return mockUsers;
-}
-
 export async function getUserProfile(
   userId: string,
 ): Promise<UserProfile | null> {
   try {
     return await database.getDocument<UserProfile>(["users", userId]);
   } catch (error) {
-    console.log("🎭 Mock user profile for demo mode");
-    return {
-      id: userId,
-      name: "Demo User",
-      avatar: undefined,
-      bio: "This is a demo profile.",
-      followers: [],
-      following: [],
-      postsCount: 0,
-      reviewsCount: 0,
-    };
+    console.error("Erro ao buscar perfil do usuário:", error);
+    return null;
   }
 }
 
@@ -159,7 +87,8 @@ export async function updateUserProfile(
     const uid = getUserId();
     await database.update(["users", uid], profile);
   } catch (error) {
-    console.log("🎭 Mock profile update for demo mode");
+    console.error("Erro ao atualizar perfil:", error);
+    throw error;
   }
 }
 
@@ -186,7 +115,8 @@ export async function followUser(targetUserId: string): Promise<void> {
       actionUserId: uid,
     });
   } catch (error) {
-    console.log("🎭 Mock follow action for demo mode");
+    console.error("Erro ao seguir usuário:", error);
+    throw error;
   }
 }
 
@@ -208,7 +138,8 @@ export async function unfollowUser(targetUserId: string): Promise<void> {
     );
     await database.update(["users", targetUserId], { followers });
   } catch (error) {
-    console.log("🎭 Mock unfollow action for demo mode");
+    console.error("Erro ao parar de seguir usuário:", error);
+    throw error;
   }
 }
 
@@ -245,26 +176,8 @@ export async function getFollowingActivities(): Promise<UserActivity[]> {
       )
       .slice(0, 50);
   } catch (error) {
-    // Database error, likely in demo mode - return mock data
-    console.log("🎭 Database error, returning mock activities for demo mode");
-    return [
-      {
-        id: "activity1",
-        userId: "demo-user-123",
-        type: "review",
-        content: "Demo user reviewed a great game!",
-        timestamp: new Date().toISOString(),
-        metadata: { title: "Demo Game", rating: 5 },
-      },
-      {
-        id: "activity2",
-        userId: "demo-user-123",
-        type: "milestone",
-        content: "Demo user reached a new milestone!",
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
-        metadata: { title: "First Review" },
-      },
-    ];
+    console.error("Erro ao buscar atividades:", error);
+    return [];
   }
 }
 
@@ -282,7 +195,8 @@ export async function createNotification(
     };
     await database.add(["users", userId, "notifications"], notificationData);
   } catch (error) {
-    console.log("🎭 Mock notification creation for demo mode");
+    console.error("Erro ao criar notificação:", error);
+    throw error;
   }
 }
 
@@ -302,7 +216,7 @@ export async function getUserNotifications(
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
   } catch (error) {
-    console.log("🎭 Mock notifications for demo mode");
+    console.error("Erro ao buscar notificações:", error);
     return [];
   }
 }
@@ -316,7 +230,8 @@ export async function markNotificationAsRead(
       read: true,
     });
   } catch (error) {
-    console.log("🎭 Mock notification mark as read for demo mode");
+    console.error("Erro ao marcar notificação como lida:", error);
+    throw error;
   }
 }
 
@@ -343,7 +258,8 @@ export async function sendFollowRequest(targetUserId: string): Promise<void> {
       actionUserId: uid,
     });
   } catch (error) {
-    console.log("🎭 Mock follow request for demo mode");
+    console.error("Erro ao enviar solicitação:", error);
+    throw error;
   }
 }
 
@@ -365,7 +281,8 @@ export async function respondToFollowRequest(
       }
     }
   } catch (error) {
-    console.log("🎭 Mock follow request response for demo mode");
+    console.error("Erro ao responder solicitação:", error);
+    throw error;
   }
 }
 
@@ -384,7 +301,7 @@ export async function getPendingFollowRequests(
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
   } catch (error) {
-    console.log("🎭 Mock follow requests for demo mode");
+    console.error("Erro ao buscar solicitações:", error);
     return [];
   }
 }

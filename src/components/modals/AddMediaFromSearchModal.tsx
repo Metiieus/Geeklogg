@@ -272,12 +272,12 @@ export const AddMediaFromSearchModal: React.FC<
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-4xl w-full max-h-[90vh] overflow-hidden animate-slide-up">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-slate-700 max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-bold text-white">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <h2 className="text-lg sm:text-2xl font-bold text-white">
               Adicionar à Biblioteca
             </h2>
             {isLoadingDetails && (
@@ -295,13 +295,13 @@ export const AddMediaFromSearchModal: React.FC<
           </button>
         </div>
 
-        <div className="flex">
-          {/* Preview da mídia - sidebar */}
-          <div className="w-80 p-6 border-r border-slate-700 bg-slate-800/50">
+        <div className="flex flex-col lg:flex-row">
+          {/* Preview da mídia - sidebar responsiva */}
+          <div className="lg:w-80 p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-slate-700 bg-slate-800/50">
             <div className="space-y-4">
               {/* Imagem de capa */}
               <div className="relative">
-                <div className="w-full h-72 bg-slate-700 rounded-lg overflow-hidden">
+                <div className="w-full h-48 sm:h-64 lg:h-72 bg-slate-700 rounded-lg overflow-hidden">
                   {formData.coverPreview ? (
                     <img
                       src={formData.coverPreview}
@@ -332,31 +332,31 @@ export const AddMediaFromSearchModal: React.FC<
               </div>
 
               {/* Informações da busca */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-white text-lg">
+              <div className="space-y-2 sm:space-y-3">
+                <h3 className="font-bold text-white text-base sm:text-lg line-clamp-2">
                   {externalResult.title}
                 </h3>
 
                 {externalResult.year && (
-                  <div className="flex items-center gap-2 text-slate-400">
-                    <Calendar size={16} />
+                  <div className="flex items-center gap-2 text-slate-400 text-sm">
+                    <Calendar size={14} sm:size={16} />
                     <span>{externalResult.year}</span>
                   </div>
                 )}
 
                 {externalResult.authors &&
                   externalResult.authors.length > 0 && (
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <Users size={16} />
-                      <span>
+                    <div className="flex items-center gap-2 text-slate-400 text-sm">
+                      <Users size={14} sm:size={16} />
+                      <span className="truncate">
                         {externalResult.authors.slice(0, 2).join(", ")}
                       </span>
                     </div>
                   )}
 
                 {externalResult.pageCount && (
-                  <div className="flex items-center gap-2 text-slate-400">
-                    <Book size={16} />
+                  <div className="flex items-center gap-2 text-slate-400 text-sm">
+                    <Book size={14} sm:size={16} />
                     <span>{externalResult.pageCount} páginas</span>
                   </div>
                 )}
@@ -396,7 +396,7 @@ export const AddMediaFromSearchModal: React.FC<
           <div className="flex-1">
             <form
               onSubmit={handleSubmit}
-              className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]"
+              className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-180px)] sm:max-h-[calc(90vh-100px)]"
             >
               {/* Informações básicas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
