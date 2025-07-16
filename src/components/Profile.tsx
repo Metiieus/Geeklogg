@@ -7,6 +7,12 @@ import { AchievementModal } from "./AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
+import {
+  getNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "../services/socialService";
+import { Notification } from "../types/social";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import { startCheckout } from "../services/stripeService";
@@ -21,6 +27,8 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "info" | "achievements" | "notifications"
   >("info");
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   const saveProfile = async (newSettings: typeof settings) => {
     console.log("💾 Salvando perfil:", newSettings);
