@@ -136,19 +136,20 @@ const Library: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Biblioteca de Mídia
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+            Biblioteca
           </h1>
-          <p className="text-slate-400">
+          <p className="text-slate-400 text-sm md:text-base hidden md:block">
             Sua coleção pessoal de jogos, anime, séries, livros e filmes
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2"
+          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 md:px-6 py-2 md:py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-1 md:gap-2"
         >
-          <Plus size={20} />
-          Adicionar Mídia
+          <Plus size={18} />
+          <span className="hidden md:inline">Adicionar Mídia</span>
+          <span className="md:hidden">Adicionar</span>
         </button>
       </div>
 
