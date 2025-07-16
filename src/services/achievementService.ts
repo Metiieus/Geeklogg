@@ -208,7 +208,7 @@ export async function checkAchievements(
 
     return newlyUnlocked;
   } catch (error) {
-    console.log("🎭 Mock achievement check for demo mode");
+    console.error("Erro ao verificar conquistas:", error);
     return [];
   }
 }
