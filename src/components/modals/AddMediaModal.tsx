@@ -17,6 +17,7 @@ const mediaTypeLabels = {
   series: "Séries",
   books: "Livros",
   movies: "Filmes",
+  dorama: "Doramas",
 };
 
 export const AddMediaModal: React.FC<AddMediaModalProps> = ({
