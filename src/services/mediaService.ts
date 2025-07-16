@@ -16,41 +16,56 @@ export async function getMedias(): Promise<MediaItem[]> {
 export interface AddMediaData
   extends Omit<MediaItem, "id" | "createdAt" | "updatedAt" | "cover"> {
   coverFile?: File;
+  cover?: string; // URL externa da imagem
 }
 
 export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   const uid = getUserId();
   const now = new Date().toISOString();
-  const { coverFile, ...rest } = data;
+  const { coverFile, cover: externalCoverUrl, ...rest } = data;
   const sanitized = sanitizeStrings(rest as Record<string, any>);
   const toSave: Omit<MediaItem, "id"> = removeUndefinedFields({
     ...(sanitized as Omit<MediaItem, "id">),
     createdAt: now,
     updatedAt: now,
+    // Se há URL externa e não há arquivo para upload, usar a URL externa
+    ...(externalCoverUrl && !coverFile && { cover: externalCoverUrl }),
   });
   const docRef = await database.add(["users", uid, "medias"], toSave);
   console.log("📝 Mídia criada no Firestore com ID:", docRef.id);
 
-  let coverUrl: string | undefined;
+  let finalCoverUrl: string | undefined = externalCoverUrl;
+
+  // Upload de arquivo tem prioridade sobre URL externa
   if (coverFile instanceof File) {
     try {
-      coverUrl = await storageClient.upload(`media/${docRef.id}`, coverFile);
+      finalCoverUrl = await storageClient.upload(
+        `media/${docRef.id}`,
+        coverFile,
+      );
       await database.update(["users", uid, "medias", docRef.id], {
-        cover: coverUrl,
+        cover: finalCoverUrl,
       });
-      console.log("✅ URL da imagem salva no documento.");
+      console.log("✅ URL da imagem de upload salva no documento.");
     } catch (err) {
       console.error("Erro ao fazer upload da imagem", err);
-      // Re-lançar o erro para que seja tratado pelo componente
-      throw err;
+      // Se falhar o upload mas há URL externa, usar a externa
+      if (externalCoverUrl) {
+        console.log("⚠️ Usando imagem externa devido a falha no upload");
+        finalCoverUrl = externalCoverUrl;
+      } else {
+        // Re-lançar o erro apenas se não há fallback
+        throw err;
+      }
     }
   }
 
-  return { id: docRef.id, ...toSave, cover: coverUrl };
+  return { id: docRef.id, ...toSave, cover: finalCoverUrl };
 }
 
 export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
   coverFile?: File;
+  // Não precisamos de cover?: string aqui pois UpdateMediaData já herda cover de MediaItem
 }
 
 export async function updateMedia(
