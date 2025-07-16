@@ -352,6 +352,77 @@ const Profile: React.FC = () => {
       {activeTab === "achievements" && (
         <AchievementTree onAchievementClick={setSelectedAchievement} />
       )}
+
+      {/* Notifications Tab */}
+      {activeTab === "notifications" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-white">Notificações</h3>
+            <button
+              onClick={async () => {
+                await markAllNotificationsAsRead();
+                loadNotifications();
+              }}
+              className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
+            >
+              Marcar todas como lidas
+            </button>
+          </div>
+
+          {loadingNotifications ? (
+            <div className="text-center text-slate-400 py-8">
+              <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+              Carregando notificações...
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="text-center text-slate-400 py-8">
+              <Bell size={48} className="mx-auto mb-2 opacity-50" />
+              <p>Nenhuma notificação encontrada</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-4 rounded-lg border transition-all ${
+                    notification.read
+                      ? "bg-slate-800/50 border-slate-700/50"
+                      : "bg-purple-900/20 border-purple-500/30"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="text-white font-medium mb-1">
+                        {notification.title}
+                      </p>
+                      <p className="text-slate-300 text-sm mb-2">
+                        {notification.message}
+                      </p>
+                      <p className="text-slate-400 text-xs">
+                        {new Date(notification.createdAt).toLocaleString(
+                          "pt-BR",
+                        )}
+                      </p>
+                    </div>
+                    {!notification.read && (
+                      <button
+                        onClick={async () => {
+                          await markNotificationAsRead(notification.id);
+                          loadNotifications();
+                        }}
+                        className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors"
+                        title="Marcar como lida"
+                      >
+                        <Bell size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {editProfile && (
         <EditProfileModal
           profile={settings}
