@@ -451,7 +451,7 @@ const Library: React.FC = () => {
             Tente ajustar sua busca ou filtros
           </p>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => setShowAddOptions(true)}
             className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200"
           >
             Adicionar Primeiro Item
