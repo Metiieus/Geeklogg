@@ -8,11 +8,15 @@ import {
   Edit,
   Trash2,
   MoreHorizontal,
+  X,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { MediaType, MediaItem, Status } from "../App";
 import { AddMediaModal } from "./modals/AddMediaModal";
 import { EditMediaModal } from "./modals/EditMediaModal";
+import { AddMediaFromSearchModal } from "./modals/AddMediaFromSearchModal";
+import { AddMediaOptions } from "./AddMediaOptions";
+import { ExternalMediaResult } from "../services/externalMediaService";
 import { deleteMedia } from "../services/mediaService";
 
 const mediaTypeColors = {
@@ -51,6 +55,9 @@ const Library: React.FC = () => {
     "title" | "rating" | "hoursSpent" | "updatedAt"
   >("updatedAt");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddOptions, setShowAddOptions] = useState(false);
+  const [selectedExternalResult, setSelectedExternalResult] =
+    useState<ExternalMediaResult | null>(null);
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
 
   const filteredAndSortedItems = useMemo(() => {
@@ -142,6 +149,21 @@ const Library: React.FC = () => {
     setEditingItem(null);
   };
 
+  const handleExternalResultSelect = (result: ExternalMediaResult) => {
+    setSelectedExternalResult(result);
+    setShowAddOptions(false);
+  };
+
+  const handleManualAdd = () => {
+    setShowAddModal(true);
+    setShowAddOptions(false);
+  };
+
+  const handleAddFromSearch = (newItem: MediaItem) => {
+    setMediaItems([...mediaItems, newItem]);
+    setSelectedExternalResult(null);
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
       {/* Header */}
@@ -155,7 +177,7 @@ const Library: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => setShowAddOptions(true)}
           className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 md:px-6 py-2 md:py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-1 md:gap-2"
         >
           <Plus size={18} />
@@ -429,11 +451,35 @@ const Library: React.FC = () => {
             Tente ajustar sua busca ou filtros
           </p>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => setShowAddOptions(true)}
             className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-200"
           >
             Adicionar Primeiro Item
           </button>
+        </div>
+      )}
+
+      {/* Add Media Options Modal */}
+      {showAddOptions && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full p-6 animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                Adicionar Nova Mídia
+              </h2>
+              <button
+                onClick={() => setShowAddOptions(false)}
+                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <X className="text-slate-400" size={20} />
+              </button>
+            </div>
+
+            <AddMediaOptions
+              onExternalResultSelect={handleExternalResultSelect}
+              onManualAdd={handleManualAdd}
+            />
+          </div>
         </div>
       )}
 
@@ -445,6 +491,15 @@ const Library: React.FC = () => {
             setMediaItems([...mediaItems, newItem]);
             setShowAddModal(false);
           }}
+        />
+      )}
+
+      {/* Add Media From Search Modal */}
+      {selectedExternalResult && (
+        <AddMediaFromSearchModal
+          externalResult={selectedExternalResult}
+          onClose={() => setSelectedExternalResult(null)}
+          onSave={handleAddFromSearch}
         />
       )}
 
