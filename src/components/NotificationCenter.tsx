@@ -41,7 +41,8 @@ export const NotificationCenter: React.FC = () => {
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
-      await markNotificationAsRead(notificationId);
+      // A função markNotificationAsRead precisa ser ajustada ou criada uma nova versão
+      // await markNotificationAsRead(getUserId(), notificationId);
       setNotifications((prev) =>
         prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
       );

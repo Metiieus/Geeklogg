@@ -255,7 +255,7 @@ const Dashboard: React.FC = () => {
                   key={milestone.id}
                   className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg"
                 >
-                  <div className="text-xl sm:text-2xl flex-shrink-0">
+                  <div className="text-xl sm:text-2xl flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center overflow-hidden">
                     {milestone.icon}
                   </div>
                   <div className="flex-1 min-w-0">
