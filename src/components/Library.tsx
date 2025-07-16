@@ -156,17 +156,17 @@ const Library: React.FC = () => {
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-slate-700/50">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           {/* Search */}
-          <div className="relative">
+          <div className="relative col-span-2 md:col-span-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-              size={18}
+              size={16}
             />
             <input
               type="text"
-              placeholder="Buscar títulos, tags..."
+              placeholder="Buscar..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-9 pr-3 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -176,9 +176,9 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedType(e.target.value as MediaType | "all")
             }
-            className="px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="all">Todos os Tipos</option>
+            <option value="all">Tipo</option>
             {Object.entries(mediaTypeLabels).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
@@ -192,11 +192,11 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedStatus(e.target.value as Status | "all")
             }
-            className="px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="all">Todos os Status</option>
+            <option value="all">Status</option>
             <option value="completed">Concluído</option>
-            <option value="in-progress">Em Progresso</option>
+            <option value="in-progress">Progresso</option>
             <option value="dropped">Abandonado</option>
             <option value="planned">Planejado</option>
           </select>
@@ -205,12 +205,12 @@ const Library: React.FC = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-2 md:px-4 py-1.5 md:py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="updatedAt">Recém Atualizados</option>
-            <option value="title">Título A-Z</option>
-            <option value="rating">Melhor Avaliados</option>
-            <option value="hoursSpent">Mais Horas</option>
+            <option value="updatedAt">Recentes</option>
+            <option value="title">A-Z</option>
+            <option value="rating">Avaliação</option>
+            <option value="hoursSpent">Horas</option>
           </select>
         </div>
       </div>
