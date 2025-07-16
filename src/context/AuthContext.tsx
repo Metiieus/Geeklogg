@@ -51,24 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(currentUser);
       if (currentUser) {
         try {
-                    const normalizedProfile: UserProfile = {
-            name:
-              currentUser.displayName ||
-              currentUser.email?.split("@")[0] ||
-              "Usuário",
-            avatar: undefined,
-            bio: "",
-            favorites: {
-              characters: [],
-              games: [],
-              movies: [],
-            },
-            defaultLibrarySort: "updatedAt",
-            isPremium: false,
-              premiumExpiresAt: undefined,
-            };
-            setProfile(normalizedProfile);
-          } else if (db) {
+          if (db) {
             // Real Firestore
             const userRef = doc(db, "users", currentUser.uid);
             const userSnap = await getDoc(userRef);
@@ -137,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-            await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       // Log seguro de erro (sem exposição de credenciais)
       console.error("Erro ao fazer login. Código:", error?.code || "unknown");
@@ -151,7 +134,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-        await signOut(auth);
+    await signOut(auth);
     setProfile(null);
   };
 
