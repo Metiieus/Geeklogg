@@ -21,6 +21,7 @@ const mediaTypeColors = {
   series: "from-purple-500 to-violet-500",
   books: "from-green-500 to-emerald-500",
   movies: "from-yellow-500 to-orange-500",
+  dorama: "from-red-500 to-pink-500",
 };
 
 const mediaTypeLabels = {
@@ -29,6 +30,16 @@ const mediaTypeLabels = {
   series: "Séries",
   books: "Livros",
   movies: "Filmes",
+  dorama: "Doramas",
+};
+
+const bookmarkColors = {
+  games: "bg-blue-500",
+  anime: "bg-pink-500",
+  series: "bg-purple-500",
+  books: "bg-green-500",
+  movies: "bg-yellow-500",
+  dorama: "bg-red-500",
 };
 
 const Library: React.FC = () => {
