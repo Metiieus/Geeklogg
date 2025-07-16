@@ -120,22 +120,11 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
       console.log("🚀 Iniciando cadastro...");
 
-      let userCredential;
-      // Check if we're using mock auth (demo mode)
-      if (typeof auth.createUserWithEmailAndPassword === "function") {
-        // Mock auth - use the mock function
-        userCredential = await auth.createUserWithEmailAndPassword(
-          formData.email.trim(),
-          formData.senha,
-        );
-      } else {
-        // Real Firebase auth
-        userCredential = await createUserWithEmailAndPassword(
-          auth,
-          formData.email.trim(),
-          formData.senha,
-        );
-      }
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email.trim(),
+        formData.senha,
+      );
 
       const user = userCredential.user;
       console.log("✅ Usuário criado com UID:", user.uid);
