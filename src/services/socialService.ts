@@ -195,7 +195,8 @@ export async function createNotification(
     };
     await database.add(["users", userId, "notifications"], notificationData);
   } catch (error) {
-    console.log("🎭 Mock notification creation for demo mode");
+    console.error("Erro ao criar notificação:", error);
+    throw error;
   }
 }
 
@@ -215,7 +216,7 @@ export async function getUserNotifications(
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
   } catch (error) {
-    console.log("🎭 Mock notifications for demo mode");
+    console.error("Erro ao buscar notificações:", error);
     return [];
   }
 }
@@ -229,7 +230,8 @@ export async function markNotificationAsRead(
       read: true,
     });
   } catch (error) {
-    console.log("🎭 Mock notification mark as read for demo mode");
+    console.error("Erro ao marcar notificação como lida:", error);
+    throw error;
   }
 }
 
@@ -256,7 +258,8 @@ export async function sendFollowRequest(targetUserId: string): Promise<void> {
       actionUserId: uid,
     });
   } catch (error) {
-    console.log("🎭 Mock follow request for demo mode");
+    console.error("Erro ao enviar solicitação:", error);
+    throw error;
   }
 }
 
@@ -278,7 +281,8 @@ export async function respondToFollowRequest(
       }
     }
   } catch (error) {
-    console.log("🎭 Mock follow request response for demo mode");
+    console.error("Erro ao responder solicitação:", error);
+    throw error;
   }
 }
 
@@ -297,7 +301,7 @@ export async function getPendingFollowRequests(
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
   } catch (error) {
-    console.log("🎭 Mock follow requests for demo mode");
+    console.error("Erro ao buscar solicitações:", error);
     return [];
   }
 }
