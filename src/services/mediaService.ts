@@ -65,6 +65,7 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
 
 export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
   coverFile?: File;
+  // Não precisamos de cover?: string aqui pois UpdateMediaData já herda cover de MediaItem
 }
 
 export async function updateMedia(
