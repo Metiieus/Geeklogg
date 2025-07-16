@@ -51,23 +51,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(currentUser);
       if (currentUser) {
         try {
-          // Check if we're using mock Firestore (demo mode)
-          if (db && typeof db.collection === "function") {
-            console.log("🎭 Using mock user profile for demo mode");
-            const normalizedProfile: UserProfile = {
-              name:
-                currentUser.displayName ||
-                currentUser.email?.split("@")[0] ||
-                "Demo User",
-              avatar: undefined,
-              bio: "This is a demo profile using mock authentication.",
-              favorites: {
-                characters: [],
-                games: [],
-                movies: [],
-              },
-              defaultLibrarySort: "updatedAt",
-              isPremium: false,
+                    const normalizedProfile: UserProfile = {
+            name:
+              currentUser.displayName ||
+              currentUser.email?.split("@")[0] ||
+              "Usuário",
+            avatar: undefined,
+            bio: "",
+            favorites: {
+              characters: [],
+              games: [],
+              movies: [],
+            },
+            defaultLibrarySort: "updatedAt",
+            isPremium: false,
               premiumExpiresAt: undefined,
             };
             setProfile(normalizedProfile);
@@ -140,14 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      // Check if we're using mock auth (demo mode)
-      if (typeof auth.signInWithEmailAndPassword === "function") {
-        // Mock auth - use the mock function
-        await auth.signInWithEmailAndPassword(email, password);
-      } else {
-        // Real Firebase auth
-        await signInWithEmailAndPassword(auth, email, password);
-      }
+            await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       // Log seguro de erro (sem exposição de credenciais)
       console.error("Erro ao fazer login. Código:", error?.code || "unknown");
@@ -161,14 +151,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    // Check if we're using mock auth (demo mode)
-    if (typeof auth.signOut === "function") {
-      // Mock auth - use the mock function
-      await auth.signOut();
-    } else {
-      // Real Firebase auth
-      await signOut(auth);
-    }
+        await signOut(auth);
     setProfile(null);
   };
 
