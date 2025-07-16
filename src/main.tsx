@@ -5,7 +5,7 @@ import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 
 // Inicializar proteções de segurança
-import "./utils/consoleProtection";
+// import "./utils/consoleProtection"; // Desabilitado para debug
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
