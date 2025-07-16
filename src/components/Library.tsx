@@ -264,9 +264,25 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Bookmark indicator no canto superior esquerdo - igual Skoob */}
-                  <div className="absolute top-0 left-0 w-6 h-8 md:w-8 md:h-10 bg-blue-500 rounded-br-lg shadow-lg">
-                    <div className="absolute bottom-0 left-0 w-0 h-0 border-l-[6px] md:border-l-[8px] border-l-transparent border-r-[6px] md:border-r-[8px] border-r-transparent border-b-[4px] md:border-b-[6px] border-b-blue-600"></div>
+                  {/* Bookmark indicator no canto superior esquerdo - cores por categoria */}
+                  <div
+                    className={`absolute top-0 left-0 w-6 h-8 md:w-8 md:h-10 ${bookmarkColors[item.type]} rounded-br-lg shadow-lg`}
+                  >
+                    <div
+                      className={`absolute bottom-0 left-0 w-0 h-0 border-l-[6px] md:border-l-[8px] border-l-transparent border-r-[6px] md:border-r-[8px] border-r-transparent border-b-[4px] md:border-b-[6px] ${
+                        item.type === "games"
+                          ? "border-b-blue-600"
+                          : item.type === "anime"
+                            ? "border-b-pink-600"
+                            : item.type === "series"
+                              ? "border-b-purple-600"
+                              : item.type === "books"
+                                ? "border-b-green-600"
+                                : item.type === "movies"
+                                  ? "border-b-yellow-600"
+                                  : "border-b-red-600"
+                      }`}
+                    ></div>
                   </div>
 
                   {/* Progress indicator para livros - igual Skoob */}
