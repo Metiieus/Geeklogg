@@ -16,6 +16,7 @@ export async function getMedias(): Promise<MediaItem[]> {
 export interface AddMediaData
   extends Omit<MediaItem, "id" | "createdAt" | "updatedAt" | "cover"> {
   coverFile?: File;
+  cover?: string; // URL externa da imagem
 }
 
 export async function addMedia(data: AddMediaData): Promise<MediaItem> {
