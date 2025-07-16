@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Trophy, Crown, Star, Zap, LogOut } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Trophy, Crown, Star, Zap, LogOut, Bell } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
@@ -7,6 +7,12 @@ import { AchievementModal } from "./AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
+import {
+  getNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "../services/socialService";
+import { Notification } from "../types/social";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import { startCheckout } from "../services/stripeService";
@@ -18,7 +24,11 @@ const Profile: React.FC = () => {
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] =
     useState<AchievementNode | null>(null);
-  const [activeTab, setActiveTab] = useState<"info" | "achievements">("info");
+  const [activeTab, setActiveTab] = useState<
+    "info" | "achievements" | "notifications"
+  >("info");
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   const saveProfile = async (newSettings: typeof settings) => {
     console.log("💾 Salvando perfil:", newSettings);
@@ -34,6 +44,26 @@ const Profile: React.FC = () => {
     await saveSettings(updated);
     setEditFav(false);
   };
+
+  const loadNotifications = useCallback(async () => {
+    if (activeTab !== "notifications") return;
+    setLoadingNotifications(true);
+    try {
+      const userNotifications = await getNotifications();
+      setNotifications(userNotifications);
+    } catch (error) {
+      console.error("Erro ao carregar notificações:", error);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  }, [activeTab]);
+
+  // Carregar notificações quando a aba for selecionada
+  useEffect(() => {
+    if (activeTab === "notifications") {
+      loadNotifications();
+    }
+  }, [activeTab, loadNotifications]);
 
   const renderCards = (items: typeof settings.favorites.characters) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
@@ -150,6 +180,17 @@ const Profile: React.FC = () => {
         >
           <Trophy size={16} />
           Conquistas
+        </button>
+        <button
+          onClick={() => setActiveTab("notifications")}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            activeTab === "notifications"
+              ? "bg-purple-600 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Bell size={16} />
+          Notificações
         </button>
       </div>
       {/* Tab Content */}
@@ -312,6 +353,80 @@ const Profile: React.FC = () => {
       {/* Achievements Tab */}
       {activeTab === "achievements" && (
         <AchievementTree onAchievementClick={setSelectedAchievement} />
+      )}
+
+      {/* Notifications Tab */}
+      {activeTab === "notifications" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-white">Notificações</h3>
+            <button
+              onClick={async () => {
+                await markAllNotificationsAsRead();
+                loadNotifications();
+              }}
+              className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
+            >
+              Marcar todas como lidas
+            </button>
+          </div>
+
+          {loadingNotifications ? (
+            <div className="text-center text-slate-400 py-8">
+              <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+              Carregando notificações...
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="text-center text-slate-400 py-8">
+              <Bell size={48} className="mx-auto mb-2 opacity-50" />
+              <p>Nenhuma notificação encontrada</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-4 rounded-lg border transition-all ${
+                    notification.read
+                      ? "bg-slate-800/50 border-slate-700/50"
+                      : "bg-purple-900/20 border-purple-500/30"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="text-white font-medium mb-1">
+                        {notification.title}
+                      </p>
+                      <p className="text-slate-300 text-sm mb-2">
+                        {notification.message}
+                      </p>
+                      <p className="text-slate-400 text-xs">
+                        {new Date(notification.createdAt).toLocaleString(
+                          "pt-BR",
+                        )}
+                      </p>
+                    </div>
+                    {!notification.read && (
+                      <button
+                        onClick={async () => {
+                          await markNotificationAsRead(
+                            user?.uid || "",
+                            notification.id,
+                          );
+                          loadNotifications();
+                        }}
+                        className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors"
+                        title="Marcar como lida"
+                      >
+                        <Bell size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       )}
       {editProfile && (
         <EditProfileModal

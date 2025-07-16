@@ -319,7 +319,7 @@ const Library: React.FC = () => {
                   )}
 
                   {/* Overlay with actions - só aparece no desktop */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 md:flex hidden items-center justify-center gap-2">
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 md:flex hidden items-center justify-center gap-2 overflow-hidden">
                     <button
                       onClick={() => setEditingItem(item)}
                       className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110 animate-bounce"
@@ -389,7 +389,7 @@ const Library: React.FC = () => {
                         <div
                           className="h-full bg-green-500"
                           style={{
-                            width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%`,
+                            width: `${Math.max(0, Math.min(((item.currentPage || 0) / (item.totalPages || 1)) * 100, 100))}%`,
                           }}
                         />
                       </div>

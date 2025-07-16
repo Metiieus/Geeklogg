@@ -305,3 +305,34 @@ export async function getPendingFollowRequests(
     return [];
   }
 }
+
+// Funções simplificadas de notificação
+export async function markAllNotificationsAsRead(): Promise<void> {
+  try {
+    const userId = getUserId();
+    // Por enquanto, implementação simplificada
+    console.log("Marcando todas as notificações como lidas para:", userId);
+  } catch (error) {
+    console.error("Erro ao marcar todas as notificações como lidas:", error);
+  }
+}
+
+// Notificações
+export async function getNotifications(): Promise<Notification[]> {
+  try {
+    const userId = getUserId();
+    const notifications = await database.getCollection<Notification>([
+      "notifications",
+    ]);
+    return notifications
+      .map((doc) => ({ ...doc.data, id: doc.id }))
+      .filter((notif) => notif.toUserId === userId)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+  } catch (error) {
+    console.error("Erro ao buscar notificações:", error);
+    return [];
+  }
+}
