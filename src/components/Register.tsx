@@ -331,14 +331,6 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
               {onLogin ? "Voltar" : "Voltar ao login"}
             </button>
           </div>
-
-          {/* Demo Info */}
-          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-cyan-500/20 rounded-lg">
-            <p className="text-xs text-cyan-400 text-center">
-              💡 <strong>Modo Demo:</strong> Use qualquer email/senha para
-              registrar
-            </p>
-          </div>
         </div>
       </div>
     </div>
