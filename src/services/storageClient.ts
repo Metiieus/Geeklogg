@@ -4,7 +4,6 @@ import { getUserId } from "./utils";
 /**
  * Thin wrapper around Firebase Storage operations. By routing all calls
  * through this file it becomes easier to swap the storage provider later.
- * Funciona tanto com Firebase real quanto com mock storage para demo.
  */
 
 export interface StorageError {

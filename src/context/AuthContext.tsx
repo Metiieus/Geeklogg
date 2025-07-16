@@ -51,27 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(currentUser);
       if (currentUser) {
         try {
-          // Check if we're using mock Firestore (demo mode)
-          if (db && typeof db.collection === "function") {
-            console.log("🎭 Using mock user profile for demo mode");
-            const normalizedProfile: UserProfile = {
-              name:
-                currentUser.displayName ||
-                currentUser.email?.split("@")[0] ||
-                "Demo User",
-              avatar: undefined,
-              bio: "This is a demo profile using mock authentication.",
-              favorites: {
-                characters: [],
-                games: [],
-                movies: [],
-              },
-              defaultLibrarySort: "updatedAt",
-              isPremium: false,
-              premiumExpiresAt: undefined,
-            };
-            setProfile(normalizedProfile);
-          } else if (db) {
+          if (db) {
             // Real Firestore
             const userRef = doc(db, "users", currentUser.uid);
             const userSnap = await getDoc(userRef);
@@ -115,12 +95,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               // Log seguro: console.log("✅ Perfil normalizado para UID:", currentUser.uid);
               setProfile(normalizedProfile);
             } else {
-              console.log("Perfil não encontrado no Firestore.");
-              setProfile(null);
+              // Criar perfil padrão para novos usuários
+              const defaultProfile: UserProfile = {
+                name:
+                  currentUser.displayName ||
+                  currentUser.email?.split("@")[0] ||
+                  "Usuário",
+                avatar: undefined,
+                bio: "",
+                favorites: {
+                  characters: [],
+                  games: [],
+                  movies: [],
+                },
+                defaultLibrarySort: "updatedAt",
+                isPremium: false,
+                premiumExpiresAt: undefined,
+              };
+              setProfile(defaultProfile);
             }
           } else {
-            console.log("Firestore não disponível.");
-            setProfile(null);
+            // Fallback para modo temporário sem Firestore
+            const tempProfile: UserProfile = {
+              name:
+                currentUser.displayName ||
+                currentUser.email?.split("@")[0] ||
+                "Usuário",
+              avatar: undefined,
+              bio: "Perfil temporário - Configure o Firebase para sincronização",
+              favorites: {
+                characters: [],
+                games: [],
+                movies: [],
+              },
+              defaultLibrarySort: "updatedAt",
+              isPremium: false,
+              premiumExpiresAt: undefined,
+            };
+            setProfile(tempProfile);
           }
         } catch (error) {
           console.error("Erro ao buscar perfil no Firestore:", error);
@@ -140,14 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     try {
-      // Check if we're using mock auth (demo mode)
-      if (typeof auth.signInWithEmailAndPassword === "function") {
-        // Mock auth - use the mock function
-        await auth.signInWithEmailAndPassword(email, password);
-      } else {
-        // Real Firebase auth
-        await signInWithEmailAndPassword(auth, email, password);
-      }
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       // Log seguro de erro (sem exposição de credenciais)
       console.error("Erro ao fazer login. Código:", error?.code || "unknown");
@@ -161,14 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    // Check if we're using mock auth (demo mode)
-    if (typeof auth.signOut === "function") {
-      // Mock auth - use the mock function
-      await auth.signOut();
-    } else {
-      // Real Firebase auth
-      await signOut(auth);
-    }
+    await signOut(auth);
     setProfile(null);
   };
 
