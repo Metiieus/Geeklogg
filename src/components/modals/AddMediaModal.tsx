@@ -234,7 +234,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                 required
                 value={formData.title}
                 onChange={(e) => handleChange("title", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                 placeholder="Digite o título da mídia"
               />
             </div>
@@ -246,7 +246,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
               <select
                 value={formData.type}
                 onChange={(e) => handleChange("type", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
               >
                 {Object.entries(mediaTypeLabels).map(([key, label]) => (
                   <option key={key} value={key}>
