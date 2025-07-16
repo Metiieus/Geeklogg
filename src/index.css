@@ -1,6 +1,6 @@
+/* Melhorias de responsividade mobile */
+@import "./mobile-improvements.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Melhorias de responsividade mobile */
-@import "./mobile-improvements.css";
