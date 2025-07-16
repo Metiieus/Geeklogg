@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Edit,
   Trash2,
+  MoreHorizontal,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { MediaType, MediaItem, Status } from "../App";
