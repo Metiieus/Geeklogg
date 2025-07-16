@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Trophy, Crown, Star, Zap, LogOut, Bell } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
@@ -45,7 +45,7 @@ const Profile: React.FC = () => {
     setEditFav(false);
   };
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     if (activeTab !== "notifications") return;
     setLoadingNotifications(true);
     try {
@@ -56,7 +56,7 @@ const Profile: React.FC = () => {
     } finally {
       setLoadingNotifications(false);
     }
-  };
+  }, [activeTab]);
 
   // Carregar notificações quando a aba for selecionada
   useEffect(() => {
