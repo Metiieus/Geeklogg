@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trophy, Crown, Star, Zap, LogOut } from "lucide-react";
+import { Trophy, Crown, Star, Zap, LogOut, Bell } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
@@ -18,7 +18,9 @@ const Profile: React.FC = () => {
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] =
     useState<AchievementNode | null>(null);
-  const [activeTab, setActiveTab] = useState<"info" | "achievements">("info");
+  const [activeTab, setActiveTab] = useState<
+    "info" | "achievements" | "notifications"
+  >("info");
 
   const saveProfile = async (newSettings: typeof settings) => {
     console.log("💾 Salvando perfil:", newSettings);
@@ -150,6 +152,17 @@ const Profile: React.FC = () => {
         >
           <Trophy size={16} />
           Conquistas
+        </button>
+        <button
+          onClick={() => setActiveTab("notifications")}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            activeTab === "notifications"
+              ? "bg-purple-600 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Bell size={16} />
+          Notificações
         </button>
       </div>
       {/* Tab Content */}
