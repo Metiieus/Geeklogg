@@ -221,7 +221,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto max-h-[calc(95vh-140px)] sm:max-h-[calc(90vh-100px)]"
+          className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto overflow-x-hidden max-h-[calc(95vh-140px)] sm:max-h-[calc(90vh-100px)]"
         >
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -438,7 +438,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                 </label>
               </div>
               {formData.coverPreview && (
-                <div className="mt-3">
+                <div className="mt-3 overflow-hidden">
                   <img
                     src={formData.coverPreview}
                     alt="Preview"
