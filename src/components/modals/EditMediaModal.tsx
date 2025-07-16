@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { X, Save, Upload } from 'lucide-react';
-import { MediaItem, MediaType, Status } from '../../App';
-import { updateMedia } from '../../services/mediaService';
+import React, { useState } from "react";
+import { X, Save, Upload } from "lucide-react";
+import { MediaItem, MediaType, Status } from "../../App";
+import { updateMedia } from "../../services/mediaService";
 
 interface EditMediaModalProps {
   item: MediaItem;
@@ -10,30 +10,35 @@ interface EditMediaModalProps {
 }
 
 const mediaTypeLabels = {
-  games: 'Jogos',
-  anime: 'Anime',
-  series: 'Séries',
-  books: 'Livros',
-  movies: 'Filmes'
+  games: "Jogos",
+  anime: "Anime",
+  series: "Séries",
+  books: "Livros",
+  movies: "Filmes",
+  dorama: "Doramas",
 };
 
-export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, onSave }) => {
+export const EditMediaModal: React.FC<EditMediaModalProps> = ({
+  item,
+  onClose,
+  onSave,
+}) => {
   const [formData, setFormData] = useState({
     title: item.title,
     type: item.type,
     status: item.status,
-    rating: item.rating?.toString() || '',
-    hoursSpent: item.hoursSpent?.toString() || '',
-    totalPages: item.totalPages?.toString() || '',
-    currentPage: item.currentPage?.toString() || '',
-    startDate: item.startDate || '',
-    endDate: item.endDate || '',
-    platform: item.platform || '',
-    tags: item.tags.join(', '),
-    externalLink: item.externalLink || '',
-    coverPreview: item.cover || '',
+    rating: item.rating?.toString() || "",
+    hoursSpent: item.hoursSpent?.toString() || "",
+    totalPages: item.totalPages?.toString() || "",
+    currentPage: item.currentPage?.toString() || "",
+    startDate: item.startDate || "",
+    endDate: item.endDate || "",
+    platform: item.platform || "",
+    tags: item.tags.join(", "),
+    externalLink: item.externalLink || "",
+    coverPreview: item.cover || "",
     coverFile: undefined as File | undefined,
-    description: item.description || ''
+    description: item.description || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,16 +49,25 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       type: formData.type,
       status: formData.status,
       rating: formData.rating ? parseInt(formData.rating) : undefined,
-      hoursSpent: formData.hoursSpent ? parseFloat(formData.hoursSpent) : undefined,
-      totalPages: formData.totalPages ? parseInt(formData.totalPages) : undefined,
-      currentPage: formData.currentPage ? parseInt(formData.currentPage) : undefined,
+      hoursSpent: formData.hoursSpent
+        ? parseFloat(formData.hoursSpent)
+        : undefined,
+      totalPages: formData.totalPages
+        ? parseInt(formData.totalPages)
+        : undefined,
+      currentPage: formData.currentPage
+        ? parseInt(formData.currentPage)
+        : undefined,
       startDate: formData.startDate || undefined,
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+      tags: formData.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0),
       externalLink: formData.externalLink || undefined,
       description: formData.description || undefined,
-      coverFile: formData.coverFile
+      coverFile: formData.coverFile,
     });
 
     const updatedItem: MediaItem = {
@@ -62,24 +76,33 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       type: formData.type,
       status: formData.status,
       rating: formData.rating ? parseInt(formData.rating) : undefined,
-      hoursSpent: formData.hoursSpent ? parseFloat(formData.hoursSpent) : undefined,
-      totalPages: formData.totalPages ? parseInt(formData.totalPages) : undefined,
-      currentPage: formData.currentPage ? parseInt(formData.currentPage) : undefined,
+      hoursSpent: formData.hoursSpent
+        ? parseFloat(formData.hoursSpent)
+        : undefined,
+      totalPages: formData.totalPages
+        ? parseInt(formData.totalPages)
+        : undefined,
+      currentPage: formData.currentPage
+        ? parseInt(formData.currentPage)
+        : undefined,
       startDate: formData.startDate || undefined,
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
+      tags: formData.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0),
       externalLink: formData.externalLink || undefined,
       cover: updateRes.cover ?? item.cover,
       description: formData.description || undefined,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     onSave(updatedItem);
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +111,11 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
-        setFormData(prev => ({ ...prev, coverPreview: result, coverFile: file }));
+        setFormData((prev) => ({
+          ...prev,
+          coverPreview: result,
+          coverFile: file,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -100,7 +127,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Editar Mídia</h2>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
           >
@@ -109,7 +136,10 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]"
+        >
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -120,7 +150,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
                 type="text"
                 required
                 value={formData.title}
-                onChange={(e) => handleChange('title', e.target.value)}
+                onChange={(e) => handleChange("title", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Digite o título da mídia"
               />
@@ -132,11 +162,13 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               </label>
               <select
                 value={formData.type}
-                onChange={(e) => handleChange('type', e.target.value)}
+                onChange={(e) => handleChange("type", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 {Object.entries(mediaTypeLabels).map(([key, label]) => (
-                  <option key={key} value={key}>{label}</option>
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -149,7 +181,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => handleChange('status', e.target.value)}
+                onChange={(e) => handleChange("status", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="planned">Planejado</option>
@@ -166,7 +198,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               <input
                 type="text"
                 value={formData.platform}
-                onChange={(e) => handleChange('platform', e.target.value)}
+                onChange={(e) => handleChange("platform", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="Steam, Netflix, etc."
               />
@@ -185,7 +217,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
                 max="10"
                 step="0.1"
                 value={formData.rating}
-                onChange={(e) => handleChange('rating', e.target.value)}
+                onChange={(e) => handleChange("rating", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="8.5"
               />
@@ -200,14 +232,14 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
                 min="0"
                 step="0.5"
                 value={formData.hoursSpent}
-                onChange={(e) => handleChange('hoursSpent', e.target.value)}
+                onChange={(e) => handleChange("hoursSpent", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="25.5"
               />
             </div>
           </div>
 
-          {formData.type === 'books' && (
+          {formData.type === "books" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -217,7 +249,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
                   type="number"
                   min="1"
                   value={formData.totalPages}
-                  onChange={(e) => handleChange('totalPages', e.target.value)}
+                  onChange={(e) => handleChange("totalPages", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   placeholder="350"
                 />
@@ -230,7 +262,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
                   type="number"
                   min="0"
                   value={formData.currentPage}
-                  onChange={(e) => handleChange('currentPage', e.target.value)}
+                  onChange={(e) => handleChange("currentPage", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   placeholder="42"
                 />
@@ -247,7 +279,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               <input
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => handleChange('startDate', e.target.value)}
+                onChange={(e) => handleChange("startDate", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
@@ -259,7 +291,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
               <input
                 type="date"
                 value={formData.endDate}
-                onChange={(e) => handleChange('endDate', e.target.value)}
+                onChange={(e) => handleChange("endDate", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
@@ -273,7 +305,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
             <input
               type="text"
               value={formData.tags}
-              onChange={(e) => handleChange('tags', e.target.value)}
+              onChange={(e) => handleChange("tags", e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
             />
@@ -287,7 +319,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
             <input
               type="url"
               value={formData.externalLink}
-              onChange={(e) => handleChange('externalLink', e.target.value)}
+              onChange={(e) => handleChange("externalLink", e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="https://store.steampowered.com/..."
             />
@@ -330,7 +362,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({ item, onClose, o
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
+              onChange={(e) => handleChange("description", e.target.value)}
               rows={3}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
               placeholder="Breve descrição ou notas..."
