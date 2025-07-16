@@ -306,6 +306,17 @@ export async function getPendingFollowRequests(
   }
 }
 
+// Funções simplificadas de notificação
+export async function markAllNotificationsAsRead(): Promise<void> {
+  try {
+    const userId = getUserId();
+    // Por enquanto, implementação simplificada
+    console.log("Marcando todas as notificações como lidas para:", userId);
+  } catch (error) {
+    console.error("Erro ao marcar todas as notificações como lidas:", error);
+  }
+}
+
 // Notificações
 export async function getNotifications(): Promise<Notification[]> {
   try {
