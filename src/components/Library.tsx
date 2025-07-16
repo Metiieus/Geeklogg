@@ -13,6 +13,9 @@ import { useAppContext } from "../context/AppContext";
 import { MediaType, MediaItem, Status } from "../App";
 import { AddMediaModal } from "./modals/AddMediaModal";
 import { EditMediaModal } from "./modals/EditMediaModal";
+import { AddMediaFromSearchModal } from "./modals/AddMediaFromSearchModal";
+import { AddMediaOptions } from "./AddMediaOptions";
+import { ExternalMediaResult } from "../services/externalMediaService";
 import { deleteMedia } from "../services/mediaService";
 
 const mediaTypeColors = {
@@ -51,6 +54,9 @@ const Library: React.FC = () => {
     "title" | "rating" | "hoursSpent" | "updatedAt"
   >("updatedAt");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddOptions, setShowAddOptions] = useState(false);
+  const [selectedExternalResult, setSelectedExternalResult] =
+    useState<ExternalMediaResult | null>(null);
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
 
   const filteredAndSortedItems = useMemo(() => {
@@ -155,7 +161,7 @@ const Library: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => setShowAddOptions(true)}
           className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 md:px-6 py-2 md:py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-1 md:gap-2"
         >
           <Plus size={18} />
