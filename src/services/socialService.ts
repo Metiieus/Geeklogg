@@ -305,3 +305,76 @@ export async function getPendingFollowRequests(
     return [];
   }
 }
+
+// Notificações
+export async function getNotifications(): Promise<Notification[]> {
+  try {
+    const userId = getUserId();
+    const notifications = await database.getCollection<Notification>([
+      "notifications",
+    ]);
+    return notifications
+      .map((doc) => ({ ...doc.data, id: doc.id }))
+      .filter((notif) => notif.toUserId === userId)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+  } catch (error) {
+    console.error("Erro ao buscar notificações:", error);
+    return [];
+  }
+}
+
+export async function markNotificationAsRead(
+  notificationId: string,
+): Promise<void> {
+  try {
+    await database.updateDocument(["notifications", notificationId], {
+      read: true,
+      readAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Erro ao marcar notificação como lida:", error);
+  }
+}
+
+export async function markAllNotificationsAsRead(): Promise<void> {
+  try {
+    const userId = getUserId();
+    const notifications = await getNotifications();
+    const unreadNotifications = notifications.filter((notif) => !notif.read);
+
+    const updatePromises = unreadNotifications.map((notif) =>
+      markNotificationAsRead(notif.id),
+    );
+
+    await Promise.all(updatePromises);
+  } catch (error) {
+    console.error("Erro ao marcar todas as notificações como lidas:", error);
+  }
+}
+
+export async function createNotification(
+  toUserId: string,
+  title: string,
+  message: string,
+  type: string = "general",
+  fromUserId?: string,
+): Promise<void> {
+  try {
+    const notification: Omit<Notification, "id"> = {
+      toUserId,
+      fromUserId: fromUserId || getUserId(),
+      title,
+      message,
+      type,
+      read: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    await database.addDocument(["notifications"], notification);
+  } catch (error) {
+    console.error("Erro ao criar notificação:", error);
+  }
+}
