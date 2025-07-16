@@ -60,7 +60,9 @@ const Profile: React.FC = () => {
 
   // Carregar notificações quando a aba for selecionada
   useEffect(() => {
-    loadNotifications();
+    if (activeTab === "notifications") {
+      loadNotifications();
+    }
   }, [activeTab]);
 
   const renderCards = (items: typeof settings.favorites.characters) => (
