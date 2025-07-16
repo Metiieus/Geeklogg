@@ -15,6 +15,7 @@ import { Register } from "./components/Register";
 import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
+import { NotificationCenter } from "./components/NotificationCenter";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
 import { getMilestones } from "./services/milestoneService";
@@ -287,6 +288,7 @@ function App() {
           <MobileNav />
           <ArchiviusAgent />
           <FirebaseWarning />
+          <NotificationCenter />
         </div>
       </AppProvider>
     </ToastProvider>

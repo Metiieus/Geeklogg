@@ -94,7 +94,7 @@ const Sidebar: React.FC = () => {
               <img
                 src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=80"
                 alt="GeekLog"
-                className="w-12 sm:w-16 h-12 sm:h-16 object-contain"
+                className="w-12 sm:w-16 h-12 sm:h-16 object-contain object-cover"
               />
               {isPremium && (
                 <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">

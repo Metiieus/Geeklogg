@@ -39,10 +39,16 @@ const navItems: NavItem[] = [
     gradient: "from-purple-400 to-indigo-500",
   },
   {
+    id: "timeline",
+    icon: <Clock size={20} />,
+    label: "Jornada",
+    gradient: "from-indigo-400 to-cyan-500",
+  },
+  {
     id: "social",
     icon: <Users size={20} />,
     label: "Social",
-    gradient: "from-indigo-400 to-cyan-500",
+    gradient: "from-pink-400 to-purple-500",
   },
   {
     id: "profile",
