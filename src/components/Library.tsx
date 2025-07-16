@@ -153,8 +153,8 @@ const Library: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-slate-700/50">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           {/* Search */}
           <div className="relative">
             <Search
