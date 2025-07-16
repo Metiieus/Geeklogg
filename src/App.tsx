@@ -23,7 +23,13 @@ import { useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 import { checkAchievements } from "./services/achievementService";
 
-export type MediaType = "games" | "anime" | "series" | "books" | "movies";
+export type MediaType =
+  | "games"
+  | "anime"
+  | "series"
+  | "books"
+  | "movies"
+  | "dorama";
 export type Status = "completed" | "in-progress" | "dropped" | "planned";
 
 export interface MediaItem {
