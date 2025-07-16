@@ -18,22 +18,8 @@ export async function getUserAchievements(): Promise<UserAchievement[]> {
     ]);
     return snap.map((d) => ({ ...d.data, id: d.id }));
   } catch (error) {
-    console.log("🎭 Returning mock achievements for demo mode");
-    // Retornar algumas conquistas mock para demonstração
-    return [
-      {
-        id: "mock-achievement-1",
-        achievementId: "first-review",
-        unlockedAt: new Date().toISOString(),
-        userId: "demo-user-123",
-      },
-      {
-        id: "mock-achievement-2",
-        achievementId: "library-starter",
-        unlockedAt: new Date(Date.now() - 86400000).toISOString(),
-        userId: "demo-user-123",
-      },
-    ];
+    console.error("Erro ao buscar conquistas:", error);
+    return [];
   }
 }
 
@@ -54,7 +40,8 @@ export async function unlockAchievement(achievementId: string): Promise<void> {
     await database.add(["users", uid, "achievements"], userAchievement);
     console.log("🏆 Conquista desbloqueada:", achievement.title);
   } catch (error) {
-    console.log("🎭 Mock achievement unlock for demo mode:", achievementId);
+    console.error("Erro ao desbloquear conquista:", error);
+    throw error;
   }
 }
 
