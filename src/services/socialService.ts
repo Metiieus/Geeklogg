@@ -69,86 +69,14 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
   }
 }
 
-// Função para retornar usuários mock filtrados por query
-function getMockUsers(query: string): UserProfile[] {
-  console.log("🎭 Retornando dados mock para demo");
-
-  const mockUsers: UserProfile[] = [
-    {
-      id: "demo-user-1",
-      uid: "demo-user-1",
-      name: "Alex GameMaster",
-      avatar: undefined,
-      bio: "Gamer apaixonado por RPGs e aventuras épicas",
-      email: "alex@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 15,
-      reviewsCount: 8,
-    },
-    {
-      id: "demo-user-2",
-      uid: "demo-user-2",
-      name: "Luna AnimeWatcher",
-      avatar: undefined,
-      bio: "Otaku de carteirinha, sempre em busca do próximo anime incrível",
-      email: "luna@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 22,
-      reviewsCount: 12,
-    },
-    {
-      id: "demo-user-3",
-      uid: "demo-user-3",
-      name: "Marcus Bookworm",
-      avatar: undefined,
-      bio: "Leitor voraz, especialmente ficção científica e fantasia",
-      email: "marcus@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 8,
-      reviewsCount: 15,
-    },
-    {
-      id: "demo-user-4",
-      uid: "demo-user-4",
-      name: "Sophie CinemaLover",
-      avatar: undefined,
-      bio: "Cinéfila apaixonada por filmes independentes e clássicos",
-      email: "sophie@demo.com",
-      followers: [],
-      following: [],
-      postsCount: 12,
-      reviewsCount: 20,
-    },
-  ].filter(
-    (user) =>
-      user.name.toLowerCase().includes(query.toLowerCase()) ||
-      user.bio?.toLowerCase().includes(query.toLowerCase()),
-  );
-
-  console.log("🎭 Mock users filtered:", mockUsers.length);
-  return mockUsers;
-}
-
 export async function getUserProfile(
   userId: string,
 ): Promise<UserProfile | null> {
   try {
     return await database.getDocument<UserProfile>(["users", userId]);
   } catch (error) {
-    console.log("🎭 Mock user profile for demo mode");
-    return {
-      id: userId,
-      name: "Demo User",
-      avatar: undefined,
-      bio: "This is a demo profile.",
-      followers: [],
-      following: [],
-      postsCount: 0,
-      reviewsCount: 0,
-    };
+    console.error("Erro ao buscar perfil do usuário:", error);
+    return null;
   }
 }
 
