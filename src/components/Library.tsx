@@ -8,6 +8,7 @@ import {
   Edit,
   Trash2,
   MoreHorizontal,
+  X,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { MediaType, MediaItem, Status } from "../App";
