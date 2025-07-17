@@ -1,10 +1,16 @@
 import http from 'http';
 import { URLSearchParams } from 'url';
+import { initializeApp as initAdminApp, applicationDefault } from 'firebase-admin/app';
+import { getFirestore as getAdminFirestore } from 'firebase-admin/firestore';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 const priceId = process.env.STRIPE_PRICE_ID;
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+// Initialize Firebase Admin for webhook updates
+const adminApp = initAdminApp({ credential: applicationDefault() });
+const adminDb = getAdminFirestore(adminApp);
 
 if (!stripeSecret || !priceId) {
   console.error('Stripe environment variables missing');
@@ -77,12 +83,28 @@ function handleWebhook(req, res) {
       return res.end();
     }
 
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object;
-      const uid = session.client_reference_id;
-      // TODO: update Firestore users/{uid} with subscription info using admin SDK
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const uid = session.client_reference_id;
+    try {
+      await adminDb
+        .collection('users')
+        .doc(uid)
+        .set(
+          {
+            plano: {
+              status: 'ativo',
+              tipo: 'premium',
+              stripeId: session.subscription,
+            },
+          },
+          { merge: true },
+        );
       console.log('Subscription active for', uid);
+    } catch (err) {
+      console.error('Failed to update subscription for', uid, err);
     }
+  }
 
     res.writeHead(200);
     res.end();

@@ -8,7 +8,23 @@ export async function startCheckout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ uid: user?.uid, email: user?.email }),
     });
-    const data = await res.json();
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('Checkout request failed', res.status, text);
+      return;
+    }
+
+    let data: any = {};
+    const raw = await res.text();
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch (e) {
+        console.error('Invalid JSON response from checkout');
+      }
+    }
+
     if (data.url) {
       window.location.href = data.url;
     } else {
