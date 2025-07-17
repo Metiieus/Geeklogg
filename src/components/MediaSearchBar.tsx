@@ -189,19 +189,20 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
   return (
     <div ref={searchRef} className="relative w-full max-w-2xl">
       {/* Seletor de tipo de mídia */}
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
         {mediaTypeOptions.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
             onClick={() => onTypeChange(value)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg whitespace-nowrap transition-all text-sm ${
               selectedType === value
                 ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg"
                 : "bg-slate-700/50 text-slate-300 hover:bg-slate-700 hover:text-white"
             }`}
           >
-            <Icon size={16} />
-            {label}
+            <Icon size={14} className="sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">{label}</span>
+            <span className="sm:hidden">{label.charAt(0)}</span>
           </button>
         ))}
       </div>
@@ -209,8 +210,11 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       {/* Barra de busca */}
       <div className="relative">
         <div className="relative flex items-center">
-          <div className="absolute left-4 text-slate-400">
-            {React.createElement(getTypeIcon(selectedType), { size: 20 })}
+          <div className="absolute left-3 sm:left-4 text-slate-400">
+            {React.createElement(getTypeIcon(selectedType), {
+              size: 18,
+              className: "sm:w-5 sm:h-5",
+            })}
           </div>
 
           <input
@@ -222,10 +226,10 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
               if (results.length > 0) setIsOpen(true);
             }}
             placeholder={placeholder}
-            className="w-full pl-12 pr-12 py-4 bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+            className="w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-sm sm:text-base bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
           />
 
-          <div className="absolute right-4 flex items-center gap-2">
+          <div className="absolute right-3 sm:right-4 flex items-center gap-2">
             {isLoading && (
               <div className="w-5 h-5 border-2 border-slate-400 border-t-purple-500 rounded-full animate-spin" />
             )}
@@ -233,9 +237,9 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
             {query && !isLoading && (
               <button
                 onClick={handleClearSearch}
-                className="p-1 hover:bg-slate-700 rounded-full transition-colors"
+                className="p-1 sm:p-2 hover:bg-slate-700 rounded-full transition-colors touch-target"
               >
-                <X className="text-slate-400 hover:text-white" size={16} />
+                <X className="text-slate-400 hover:text-white" size={14} />
               </button>
             )}
           </div>
@@ -243,7 +247,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
         {/* Dropdown de resultados */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl max-h-96 overflow-y-auto z-50 animate-slide-up">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl max-h-80 sm:max-h-96 overflow-y-auto z-50 animate-slide-up">
             {hasError ? (
               <div className="flex items-center gap-3 p-4 text-red-400">
                 <AlertCircle size={20} />
@@ -261,10 +265,10 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
                   <button
                     key={`${result.source}-${result.id}`}
                     onClick={() => handleResultClick(result)}
-                    className="w-full flex items-start gap-4 p-4 hover:bg-slate-700/50 transition-colors text-left"
+                    className="w-full flex items-start gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-slate-700/50 transition-colors text-left"
                   >
                     {/* Imagem da capa */}
-                    <div className="flex-shrink-0 w-12 h-16 bg-slate-700 rounded overflow-hidden">
+                    <div className="flex-shrink-0 w-10 h-12 sm:w-12 sm:h-16 bg-slate-700 rounded overflow-hidden">
                       {result.image ? (
                         <img
                           src={result.image}
@@ -278,8 +282,8 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           {React.createElement(getTypeIcon(selectedType), {
-                            size: 20,
-                            className: "text-slate-500",
+                            size: 16,
+                            className: "text-slate-500 sm:w-5 sm:h-5",
                           })}
                         </div>
                       )}
@@ -287,18 +291,18 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
                     {/* Informações */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-white truncate">
+                      <h3 className="font-semibold text-white truncate text-sm sm:text-base">
                         {result.title}
                       </h3>
 
                       {formatResultSubtitle(result) && (
-                        <p className="text-sm text-slate-400 truncate mt-1">
+                        <p className="text-xs sm:text-sm text-slate-400 truncate mt-1">
                           {formatResultSubtitle(result)}
                         </p>
                       )}
 
                       {result.description && (
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-1 sm:line-clamp-2">
                           {result.description.slice(0, 120)}
                           {result.description.length > 120 ? "..." : ""}
                         </p>
