@@ -99,7 +99,7 @@ export const NotificationCenter: React.FC = () => {
       {/* Notification Bell */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 hover:bg-slate-700 rounded-lg transition-colors"
+        className="relative p-2 sm:p-3 hover:bg-slate-700 rounded-lg transition-colors touch-target"
       >
         {unreadCount > 0 ? (
           <BellRing className="text-yellow-400" size={20} />
@@ -118,23 +118,25 @@ export const NotificationCenter: React.FC = () => {
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-50 animate-slide-down">
+        <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-50 animate-slide-down">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-slate-700">
-            <h3 className="text-white font-semibold">Notificações</h3>
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-slate-700">
+            <h3 className="text-white font-semibold text-sm sm:text-base">
+              Notificações
+            </h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
                   disabled={loading}
-                  className="text-xs text-purple-400 hover:text-purple-300 disabled:opacity-50"
+                  className="text-xs text-purple-400 hover:text-purple-300 disabled:opacity-50 touch-target"
                 >
                   <CheckCheck size={16} />
                 </button>
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white touch-target"
               >
                 <X size={16} />
               </button>
@@ -142,17 +144,17 @@ export const NotificationCenter: React.FC = () => {
           </div>
 
           {/* Notifications List */}
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-80 sm:max-h-96 overflow-y-auto">
             {notifications.length > 0 ? (
               notifications.slice(0, 10).map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${
+                  className={`p-3 sm:p-4 border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${
                     !notification.read ? "bg-purple-500/5" : ""
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {notification.fromUserAvatar ? (
                         <img
                           src={notification.fromUserAvatar}
@@ -169,22 +171,22 @@ export const NotificationCenter: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <p className="text-white text-sm font-medium">
+                          <p className="text-white text-xs sm:text-sm font-medium line-clamp-1">
                             {notification.title}
                           </p>
-                          <p className="text-slate-300 text-sm">
+                          <p className="text-slate-300 text-xs sm:text-sm line-clamp-2">
                             {notification.message}
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-2 ml-2">
+                        <div className="flex items-center gap-1 sm:gap-2 ml-1 sm:ml-2">
                           <span className="text-xs text-slate-500">
                             {formatTimeAgo(notification.timestamp)}
                           </span>
                           {!notification.read && (
                             <button
                               onClick={() => handleMarkAsRead(notification.id)}
-                              className="text-purple-400 hover:text-purple-300"
+                              className="text-purple-400 hover:text-purple-300 touch-target"
                             >
                               <Check size={14} />
                             </button>
@@ -203,19 +205,21 @@ export const NotificationCenter: React.FC = () => {
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center">
+              <div className="p-6 sm:p-8 text-center">
                 <Bell
-                  size={48}
-                  className="mx-auto mb-4 text-slate-500 opacity-50"
+                  size={40}
+                  className="mx-auto mb-3 sm:mb-4 text-slate-500 opacity-50"
                 />
-                <p className="text-slate-400">Nenhuma notificação</p>
+                <p className="text-slate-400 text-sm sm:text-base">
+                  Nenhuma notificação
+                </p>
               </div>
             )}
           </div>
 
           {notifications.length > 10 && (
             <div className="p-3 text-center border-t border-slate-700">
-              <button className="text-purple-400 hover:text-purple-300 text-sm">
+              <button className="text-purple-400 hover:text-purple-300 text-xs sm:text-sm touch-target">
                 Ver todas as notificações
               </button>
             </div>
