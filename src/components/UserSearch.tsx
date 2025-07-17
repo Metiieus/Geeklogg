@@ -154,7 +154,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
                 <TruncatedBio
                   bio={user.bio}
                   maxLength={150}
-                  className="text-slate-400 text-sm"
+                  className="text-slate-400 text-xs sm:text-sm"
                 />
               )}
               <div className="flex items-center gap-4 text-xs text-slate-500 mt-1">
