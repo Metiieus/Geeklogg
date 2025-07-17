@@ -1,41 +1,25 @@
-import { auth } from "../firebase";
-import type { UserSettings } from "../App";
-import { storageClient } from "./storageClient";
-import { database } from "./database";
-import { removeUndefinedFields, sanitizeStrings } from "./utils";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-function getUserId(): string {
-  if (!auth) throw new Error("Firebase auth não inicializado");
-  const uid = auth.currentUser?.uid;
-  if (!uid) throw new Error("Usuário não autenticado");
-  return uid;
-}
+// Firebase configuration is loaded from environment variables
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
 
-export async function getSettings(): Promise<UserSettings | null> {
-  const uid = getUserId();
-  const snap = await database.getDocument<UserSettings>([
-    "users",
-    uid,
-    "settings",
-    "profile",
-  ]);
-  return snap;
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-export async function saveSettings(data: UserSettings): Promise<void> {
-  const uid = getUserId();
-  const cleaned = removeUndefinedFields(
-    sanitizeStrings(data as Record<string, any>),
-  );
-  await database.set(["users", uid, "settings", "profile"], cleaned, {
-    merge: true,
-  });
-}
+// Initialize Firebase services
+export const auth = getAuth(app);
+export const db = getFirestore(app, "geeklog");
+export const storage = getStorage(app);
 
-export async function backupUserData(data: unknown): Promise<void> {
-  const timestamp = Date.now();
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
-  await storageClient.upload(`backups/${timestamp}.json`, blob);
-}
+console.log("✅ Firebase initialized successfully");
