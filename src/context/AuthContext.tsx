@@ -1,204 +1,176 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  User,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { auth, db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { FavoriteItem } from "../App";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-export interface UserProfile {
-  name: string;
-  avatar?: string;
-  bio?: string;
-  favorites: {
-    characters: FavoriteItem[];
-    games: FavoriteItem[];
-    movies: FavoriteItem[];
-  };
-  defaultLibrarySort: string;
-  plano?: {
-    status: string;
-    tipo: string;
-    expiraEm?: string;
-    stripeId?: string;
-  };
-  isPremium?: boolean;
-}
-
-interface AuthContextType {
-  user: User | null;
-  profile: UserProfile | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!auth) {
-      console.warn("Firebase auth not initialized");
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        try {
-          if (db) {
-            // Real Firestore
-            const userRef = doc(db, "users", currentUser.uid);
-            const userSnap = await getDoc(userRef);
-            if (userSnap.exists()) {
-              const userData = userSnap.data();
-              // Log seguro: console.log("📥 Dados do usuário carregados para UID:", currentUser.uid);
-              // Normalize favorites data to ensure consistent structure
-              const planData = userData.plano || {
-                status: "inativo",
-                tipo: "free",
-                expiraEm: undefined,
-                stripeId: undefined,
-              };
-
-              const normalizedProfile: UserProfile = {
-                name:
-                  userData.nome ||
-                  userData.name ||
-                  userData.apelido ||
-                  "Usuário",
-                avatar: userData.avatar,
-                bio: userData.bio || "",
-                favorites: {
-                  characters: Array.isArray(userData.favorites?.characters)
-                    ? userData.favorites.characters.map((item: any) =>
-                        typeof item === "string"
-                          ? { id: Math.random().toString(), name: item }
-                          : item,
-                      )
-                    : [],
-                  games: Array.isArray(userData.favorites?.games)
-                    ? userData.favorites.games.map((item: any) =>
-                        typeof item === "string"
-                          ? { id: Math.random().toString(), name: item }
-                          : item,
-                      )
-                    : [],
-                  movies: Array.isArray(userData.favorites?.movies)
-                    ? userData.favorites.movies.map((item: any) =>
-                        typeof item === "string"
-                          ? { id: Math.random().toString(), name: item }
-                          : item,
-                      )
-                    : [],
-                },
-                defaultLibrarySort: userData.defaultLibrarySort || "updatedAt",
-                plano: planData,
-                isPremium:
-                  planData.status === "ativo" &&
-                  planData.tipo === "premium" &&
-                  (!planData.expiraEm ||
-                    new Date(planData.expiraEm).getTime() > Date.now()),
-              } as UserProfile;
-              // Log seguro: console.log("✅ Perfil normalizado para UID:", currentUser.uid);
-              setProfile(normalizedProfile);
-            } else {
-              // Criar perfil padrão para novos usuários
-              const defaultProfile: UserProfile = {
-                name:
-                  currentUser.displayName ||
-                  currentUser.email?.split("@")[0] ||
-                  "Usuário",
-                avatar: undefined,
-                bio: "",
-                favorites: {
-                  characters: [],
-                  games: [],
-                  movies: [],
-                },
-                defaultLibrarySort: "updatedAt",
-                plano: { status: "inativo", tipo: "free" },
-                isPremium: false,
-              };
-              setProfile(defaultProfile);
-            }
-          } else {
-            // Fallback para modo temporário sem Firestore
-            const tempProfile: UserProfile = {
-              name:
-                currentUser.displayName ||
-                currentUser.email?.split("@")[0] ||
-                "Usuário",
-              avatar: undefined,
-              bio: "Perfil temporário - Configure o Firebase para sincronização",
-              favorites: {
-                characters: [],
-                games: [],
-                movies: [],
-              },
-              defaultLibrarySort: "updatedAt",
-              plano: { status: "inativo", tipo: "free" },
-              isPremium: false,
-            };
-            setProfile(tempProfile);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar perfil no Firestore:", error);
-          setProfile(null);
-        }
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const login = async (email: string, password: string) => {
-    if (!auth) {
-      throw new Error("Firebase auth not initialized");
-    }
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      // Log seguro de erro (sem exposição de credenciais)
-      console.error("Erro ao fazer login. Código:", error?.code || "unknown");
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    if (!auth) {
-      console.warn("Firebase auth not initialized");
-      return;
-    }
-
-    await signOut(auth);
-    setProfile(null);
-  };
+// Check if Firebase configuration is valid
+const hasValidFirebaseConfig = () => {
+  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+  const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+  const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    apiKey &&
+    projectId &&
+    authDomain &&
+    storageBucket &&
+    !apiKey.includes("your_") &&
+    !apiKey.includes("Demo") &&
+    !projectId.includes("your_") &&
+    !projectId.includes("demo-")
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+// Firebase configuration is loaded from environment variables to keep
+// secrets out of the repository. Vite exposes variables prefixed with
+// `VITE_` to the client side.
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
+
+// Mock services for when Firebase is not configured
+const createMockAuth = () => {
+  let currentUser: any = null;
+  let authStateListeners: Array<(user: any) => void> = [];
+
+  return {
+    get currentUser() {
+      return currentUser;
+    },
+    onAuthStateChanged: (callback: (user: any) => void) => {
+      authStateListeners.push(callback);
+      callback(currentUser);
+      return () => {
+        authStateListeners = authStateListeners.filter(
+          (listener) => listener !== callback,
+        );
+      };
+    },
+    signInWithEmailAndPassword: async (email: string, password: string) => {
+      console.log(
+        "⚠️ Usando autenticação temporária - Configure o Firebase para funcionalidade completa",
+      );
+      currentUser = {
+        uid: "temp-user",
+        email,
+        displayName: email.split("@")[0],
+      };
+      authStateListeners.forEach((listener) => listener(currentUser));
+      return { user: currentUser };
+    },
+    createUserWithEmailAndPassword: async (email: string, password: string) => {
+      console.log(
+        "⚠️ Usando registro temporário - Configure o Firebase para funcionalidade completa",
+      );
+      currentUser = {
+        uid: "temp-user",
+        email,
+        displayName: email.split("@")[0],
+      };
+      authStateListeners.forEach((listener) => listener(currentUser));
+      return { user: currentUser };
+    },
+    signOut: async () => {
+      currentUser = null;
+      authStateListeners.forEach((listener) => listener(null));
+    },
+  };
+};
+
+const createMockDb = () => ({
+  collection: () => ({
+    doc: () => ({
+      get: async () => ({ exists: () => false, data: () => null }),
+      set: async () =>
+        console.log(
+          "⚠️ Dados temporários - Configure o Firebase para persistência real",
+        ),
+      update: async () =>
+        console.log(
+          "⚠️ Dados temporários - Configure o Firebase para persistência real",
+        ),
+      delete: async () =>
+        console.log(
+          "⚠️ Dados temporários - Configure o Firebase para persistência real",
+        ),
+    }),
+    add: async () => ({ id: "temp-doc-id" }),
+    where: () => ({ get: async () => ({ docs: [] }) }),
+  }),
+});
+
+const createMockStorage = () => ({
+  ref: (path: string) => ({
+    put: async (file: File | Blob) => {
+      console.log(
+        "⚠️ Upload temporário - Configure o Firebase para storage real",
+      );
+      return {
+        ref: {
+          getDownloadURL: async () => {
+            return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Temp Image")}`;
+          },
+        },
+      };
+    },
+    delete: async () => console.log("⚠️ Storage temporário"),
+    getDownloadURL: async () =>
+      `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Temp Image")}`,
+  }),
+  uploadBytes: async (ref: any, file: File | Blob) => {
+    console.log("⚠️ Upload temporário");
+    return {};
+  },
+  getDownloadURL: async (ref: any) => {
+    return `https://via.placeholder.com/300x400/6366f1/ffffff?text=${encodeURIComponent("Temp Image")}`;
+  },
+  deleteObject: async (ref: any) => {
+    console.log("⚠️ Storage temporário");
+  },
+});
+
+let app: any = null;
+let auth: any = null;
+let db: any = null;
+let storage: any = null;
+
+if (hasValidFirebaseConfig()) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+    console.log("✅ Firebase initialized successfully");
+  } catch (error) {
+    console.warn("Firebase initialization failed:", error);
+    console.warn("🔄 Usando serviços temporários...");
+    auth = createMockAuth();
+    db = createMockDb();
+    storage = createMockStorage();
+  }
+} else {
+  console.warn(
+    "⚠️ Firebase não configurado - usando serviços temporários\n\n" +
+      "Para funcionalidade completa, configure as variáveis de ambiente:\n" +
+      "VITE_FIREBASE_API_KEY=sua_api_key\n" +
+      "VITE_FIREBASE_AUTH_DOMAIN=seu_dominio\n" +
+      "VITE_FIREBASE_PROJECT_ID=seu_project_id\n" +
+      "VITE_FIREBASE_STORAGE_BUCKET=seu_storage_bucket\n" +
+      "VITE_FIREBASE_MESSAGING_SENDER_ID=seu_sender_id\n" +
+      "VITE_FIREBASE_APP_ID=seu_app_id\n\n" +
+      "Copie o arquivo .env.example para .env e preencha com suas credenciais.",
+  );
+
+  auth = createMockAuth();
+  db = createMockDb();
+  storage = createMockStorage();
+}
+
+export { auth, db, storage };
