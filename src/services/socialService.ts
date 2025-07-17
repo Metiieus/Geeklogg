@@ -36,9 +36,19 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
     }
 
     // Mapear e filtrar usuários
-    const mappedUsers = users
-      .map((doc) => {
+    const mappedUsers = await Promise.all(
+      users.map(async (doc) => {
         const data = doc.data;
+        const followers = await database.getCollection<any>([
+          "users",
+          doc.id,
+          "followers",
+        ]);
+        const following = await database.getCollection<any>([
+          "users",
+          doc.id,
+          "following",
+        ]);
         return {
           id: doc.id,
           uid: data.uid || doc.id,
@@ -46,23 +56,26 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
           bio: data.bio || "",
           avatar: data.avatar,
           email: data.email,
-          followers: data.followers || [],
-          following: data.following || [],
+          followers: followers.map((f) => f.id),
+          following: following.map((f) => f.id),
           postsCount: data.postsCount || 0,
           reviewsCount: data.reviewsCount || 0,
         } as UserProfile;
-      })
-      .filter((user) => {
+      }),
+    );
+
+    const filtered = mappedUsers.filter((user) => {
         const nameMatch = user.name
           ?.toLowerCase()
           .includes(query.toLowerCase());
         const bioMatch = user.bio?.toLowerCase().includes(query.toLowerCase());
         return nameMatch || bioMatch;
-      })
-      .slice(0, 20);
+      });
 
-    console.log("🎯 Usuários filtrados:", mappedUsers.length);
-    return mappedUsers;
+    const result = filtered.slice(0, 20);
+
+    console.log("🎯 Usuários filtrados:", result.length);
+    return result;
   } catch (error) {
     console.error("❌ Erro na busca do banco, usando dados mock:", error);
     return getMockUsers(query);
@@ -73,7 +86,17 @@ export async function getUserProfile(
   userId: string,
 ): Promise<UserProfile | null> {
   try {
-    return await database.getDocument<UserProfile>(["users", userId]);
+    const data = await database.getDocument<UserProfile>(["users", userId]);
+    if (!data) return null;
+    const [followers, following] = await Promise.all([
+      database.getCollection<any>(["users", userId, "followers"]),
+      database.getCollection<any>(["users", userId, "following"]),
+    ]);
+    return {
+      ...data,
+      followers: followers.map((f) => f.id),
+      following: following.map((f) => f.id),
+    } as UserProfile;
   } catch (error) {
     console.error("Erro ao buscar perfil do usuário:", error);
     return null;
@@ -96,23 +119,24 @@ export async function updateUserProfile(
 export async function followUser(targetUserId: string): Promise<void> {
   try {
     const uid = getUserId();
+    await database.set(
+      ["users", uid, "following", targetUserId],
+      { createdAt: new Date().toISOString() },
+    );
+    await database.set(
+      ["users", targetUserId, "followers", uid],
+      { createdAt: new Date().toISOString() },
+    );
 
-    // Adicionar à lista de seguindo do usuário atual
     const currentProfile = await getUserProfile(uid);
-    const following = [...(currentProfile?.following || []), targetUserId];
-    await database.update(["users", uid], { following });
 
-    // Adicionar à lista de seguidores do usuário alvo
-    const targetProfile = await getUserProfile(targetUserId);
-    const followers = [...(targetProfile?.followers || []), uid];
-    await database.update(["users", targetUserId], { followers });
-
-    // Criar notificação
     await createNotification(targetUserId, {
-      type: "follow",
+      type: "new_follower",
       title: "Novo seguidor",
       message: `${currentProfile?.name || "Alguém"} começou a seguir você`,
-      actionUserId: uid,
+      fromUserId: uid,
+      fromUserName: currentProfile?.name || "Alguém",
+      fromUserAvatar: currentProfile?.avatar,
     });
   } catch (error) {
     console.error("Erro ao seguir usuário:", error);
@@ -123,20 +147,8 @@ export async function followUser(targetUserId: string): Promise<void> {
 export async function unfollowUser(targetUserId: string): Promise<void> {
   try {
     const uid = getUserId();
-
-    // Remover da lista de seguindo do usuário atual
-    const currentProfile = await getUserProfile(uid);
-    const following = (currentProfile?.following || []).filter(
-      (id) => id !== targetUserId,
-    );
-    await database.update(["users", uid], { following });
-
-    // Remover da lista de seguidores do usuário alvo
-    const targetProfile = await getUserProfile(targetUserId);
-    const followers = (targetProfile?.followers || []).filter(
-      (id) => id !== uid,
-    );
-    await database.update(["users", targetUserId], { followers });
+    await database.delete(["users", uid, "following", targetUserId]);
+    await database.delete(["users", targetUserId, "followers", uid]);
   } catch (error) {
     console.error("Erro ao parar de seguir usuário:", error);
     throw error;
@@ -148,8 +160,13 @@ export async function isFollowing(
   targetUserId: string,
 ): Promise<boolean> {
   try {
-    const profile = await getUserProfile(userId);
-    return profile?.following?.includes(targetUserId) || false;
+    const doc = await database.getDocument<any>([
+      "users",
+      userId,
+      "following",
+      targetUserId,
+    ]);
+    return !!doc;
   } catch (error) {
     return false;
   }
@@ -159,8 +176,12 @@ export async function isFollowing(
 export async function getFollowingActivities(): Promise<UserActivity[]> {
   try {
     const uid = getUserId();
-    const profile = await getUserProfile(uid);
-    const following = profile?.following || [];
+    const followingDocs = await database.getCollection<any>([
+      "users",
+      uid,
+      "following",
+    ]);
+    const following = followingDocs.map((d) => d.id);
 
     if (following.length === 0) return [];
 
@@ -255,7 +276,9 @@ export async function sendFollowRequest(targetUserId: string): Promise<void> {
       type: "follow_request",
       title: "Solicitação de amizade",
       message: `${currentProfile?.name || "Alguém"} quer ser seu amigo`,
-      actionUserId: uid,
+      fromUserId: uid,
+      fromUserName: currentProfile?.name || "Alguém",
+      fromUserAvatar: currentProfile?.avatar,
     });
   } catch (error) {
     console.error("Erro ao enviar solicitação:", error);

@@ -11,13 +11,15 @@ import {
   Trophy,
 } from "lucide-react";
 import {
-  getNotifications,
+  getUserNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "../services/socialService";
 import { Notification } from "../types/social";
+import { useAuth } from "../context/AuthContext";
 
 export const NotificationCenter: React.FC = () => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +34,8 @@ export const NotificationCenter: React.FC = () => {
 
   const loadNotifications = async () => {
     try {
-      const notifs = await getNotifications();
+      if (!user) return;
+      const notifs = await getUserNotifications(user.uid);
       setNotifications(notifs);
     } catch (error) {
       console.error("Erro ao carregar notificações:", error);
@@ -71,6 +74,8 @@ export const NotificationCenter: React.FC = () => {
         return <Users size={16} className="text-blue-400" />;
       case "activity_update":
         return <Star size={16} className="text-yellow-400" />;
+      case "follow_request":
+        return <Users size={16} className="text-purple-400" />;
       default:
         return <Bell size={16} className="text-slate-400" />;
     }
