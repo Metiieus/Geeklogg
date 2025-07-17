@@ -5,23 +5,20 @@ import { getStorage } from "firebase/storage";
 
 // Firebase configuration is loaded from environment variables
 const firebaseConfig = {
-      console.warn("⚠️ reCAPTCHA não disponível no modo temporário");
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
+};
 
-      return null;
 // Initialize Firebase
-    if (!db) {
-      throw new Error("Firestore não está inicializado");
-    }
-    },
 const app = initializeApp(firebaseConfig);
-    _initializeRecaptchaConfig: async () => {
 
-      console.warn("⚠️ reCAPTCHA não disponível no modo temporário");
 // Initialize Firebase services
-      return null;
 export const auth = getAuth(app);
-    },
-export const db = getFirestore(app, "geeklog");
+export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 console.log("✅ Firebase initialized successfully");
