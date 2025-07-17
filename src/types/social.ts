@@ -7,6 +7,13 @@ export interface UserProfile {
   followers: string[];
   following: string[];
   createdAt: string;
+  plano?: {
+    status: string;
+    tipo: string;
+    expiraEm?: string;
+    stripeId?: string;
+  };
+  isPremium?: boolean;
 }
 
 export interface UserActivity {
@@ -29,7 +36,7 @@ export interface Notification {
   fromUserId: string;
   fromUserName: string;
   fromUserAvatar?: string;
-  type: 'new_follower' | 'activity_update';
+  type: 'new_follower' | 'activity_update' | 'follow_request';
   title: string;
   message: string;
   read: boolean;
