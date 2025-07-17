@@ -1,46 +1,27 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  setDoc,
-  updateDoc,
-  getDoc,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-/**
- * Simple wrapper around Firestore. Having these functions isolated
- * allows replacing the implementation by another database in the future
- * without touching the rest of the application.
- */
+// Firebase configuration is loaded from environment variables
+const firebaseConfig = {
+      console.warn("⚠️ reCAPTCHA não disponível no modo temporário");
 
-export const database = {
-  async add(path: string[], data: unknown) {
-    const col = collection(db, ...path);
-    return addDoc(col, data);
-  },
+      return null;
+// Initialize Firebase
+    if (!db) {
+      throw new Error("Firestore não está inicializado");
+    }
+    },
+const app = initializeApp(firebaseConfig);
+    _initializeRecaptchaConfig: async () => {
 
-  async set(path: string[], data: unknown, opts?: { merge?: boolean }) {
-    return setDoc(doc(db, ...path), data, opts);
-  },
+      console.warn("⚠️ reCAPTCHA não disponível no modo temporário");
+// Initialize Firebase services
+      return null;
+export const auth = getAuth(app);
+    },
+export const db = getFirestore(app, "geeklog");
+export const storage = getStorage(app);
 
-  async update(path: string[], data: unknown) {
-    return updateDoc(doc(db, ...path), data);
-  },
-
-  async getCollection<T>(path: string[]): Promise<{ id: string; data: T }[]> {
-    const snap = await getDocs(collection(db, ...path));
-    return snap.docs.map((doc) => ({ id: doc.id, data: doc.data() as T }));
-  },
-
-  async getDocument<T>(path: string[]): Promise<T | null> {
-    const snap = await getDoc(doc(db, ...path));
-    return snap.exists() ? (snap.data() as T) : null;
-  },
-
-  async delete(path: string[]) {
-    return deleteDoc(doc(db, ...path));
-  },
-};
+console.log("✅ Firebase initialized successfully");

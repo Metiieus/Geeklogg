@@ -1,33 +1,32 @@
-import { auth } from "../firebase";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+// Firebase configuration is loaded from environment variables
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
+export const auth = getAuth(app);
+export const db = getFirestore(app, "geeklog");
+export const storage = getStorage(app);
+
+console.log("✅ Firebase initialized successfully");
 
 export function getUserId(): string {
-  if (!auth) throw new Error("Firebase auth não inicializado");
+  if (!auth) throw new Error("Firebase auth não está inicializado");
   const uid = auth.currentUser?.uid;
   if (!uid) throw new Error("Usuário não autenticado");
   return uid;
-}
-
-export function removeUndefinedFields<T extends Record<string, any>>(
-  obj: T,
-): T {
-  const cleanedEntries = Object.entries(obj).filter(([, v]) => v !== undefined);
-  return Object.fromEntries(cleanedEntries) as T;
-}
-
-export function sanitizeInput(value: string): string {
-  return value.replace(/[<>`"'\\]/g, "");
-}
-
-export function sanitizeStrings<T extends Record<string, any>>(obj: T): T {
-  for (const key in obj) {
-    const val = obj[key];
-    if (typeof val === "string") {
-      obj[key] = sanitizeInput(val) as T[keyof T];
-    } else if (Array.isArray(val)) {
-      obj[key] = val.map((v) =>
-        typeof v === "string" ? sanitizeInput(v) : v,
-      ) as T[keyof T];
-    }
-  }
-  return obj;
 }
