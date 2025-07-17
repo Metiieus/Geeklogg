@@ -1,6 +1,13 @@
+import { auth } from '../firebase';
+
 export async function startCheckout() {
   try {
-    const res = await fetch('/create-checkout-session', { method: 'POST' });
+    const user = auth.currentUser;
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid: user?.uid, email: user?.email }),
+    });
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
