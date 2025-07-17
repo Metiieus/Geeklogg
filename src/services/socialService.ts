@@ -208,13 +208,22 @@ export async function createNotification(
   notification: Omit<Notification, "id" | "userId" | "timestamp" | "read">,
 ): Promise<void> {
   try {
-    const notificationData = {
+    const notificationData: Record<string, unknown> = {
       ...notification,
       userId,
       timestamp: new Date().toISOString(),
       read: false,
     };
-    await database.add(["users", userId, "notifications"], notificationData);
+
+    Object.keys(notificationData).forEach((key) => {
+      if (notificationData[key] === undefined) delete notificationData[key];
+    });
+
+    await database.add([
+      "users",
+      userId,
+      "notifications",
+    ], notificationData);
   } catch (error) {
     console.error("Erro ao criar notificação:", error);
     throw error;
