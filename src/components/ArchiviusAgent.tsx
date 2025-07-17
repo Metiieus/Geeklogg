@@ -309,7 +309,7 @@ ${config.callToAction}
       {/* Modal de Chat */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:p-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 sm:items-end sm:justify-end">
             {/* Overlay */}
             <motion.div
               className="absolute inset-0 bg-black bg-opacity-20"
@@ -321,7 +321,7 @@ ${config.callToAction}
 
             {/* Chat Window - responsivo */}
             <motion.div
-              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-2xl shadow-2xl w-full sm:w-96 h-[80vh] sm:h-[500px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-md sm:w-96 h-[85vh] sm:h-[500px] max-h-[600px] overflow-hidden"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -337,7 +337,7 @@ ${config.callToAction}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full overflow-hidden border-2 border-white/20">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white/20">
                       <img
                         src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
                         alt="Archivius"
@@ -346,14 +346,14 @@ ${config.callToAction}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white text-sm sm:text-base">
+                        <h3 className="font-semibold text-white text-sm">
                           Archivius
                         </h3>
                         {isPremium && (
-                          <Crown className="w-3 sm:w-4 h-3 sm:h-4 text-cyan-300" />
+                          <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-300" />
                         )}
                         {hasRealAPI && (
-                          <span className="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full border border-green-500/30">
+                          <span className="text-xs bg-green-500/20 text-green-300 px-1 sm:px-2 py-0.5 rounded-full border border-green-500/30">
                             API Real
                           </span>
                         )}
@@ -362,7 +362,7 @@ ${config.callToAction}
                         <div
                           className={`w-2 h-2 rounded-full ${isPremium ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
                         />
-                        <span className="text-white text-sm opacity-90">
+                        <span className="text-white text-xs sm:text-sm opacity-90">
                           {isPremium
                             ? hasRealAPI
                               ? "API OpenAI"
@@ -376,28 +376,28 @@ ${config.callToAction}
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all"
+                    className="w-8 h-8 sm:w-9 sm:h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all touch-target"
                   >
-                    <X className="w-5 h-5 text-white" />
+                    <X className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </button>
                 </div>
               </div>
 
               {/* Messages - responsivo */}
               <div
-                className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-900/50"
-                style={{ height: "calc(100% - 140px)" }}
+                className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50"
+                style={{ height: "calc(100% - 130px)" }}
               >
                 {messages.length === 0 && (
-                  <div className="text-center text-gray-200 mt-4 sm:mt-8">
-                    <div className="w-12 sm:w-16 h-12 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full overflow-hidden border-2 border-cyan-400/50">
+                  <div className="text-center text-gray-200 mt-4">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 rounded-full overflow-hidden border-2 border-cyan-400/50">
                       <img
                         src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
                         alt="Archivius"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <p className="text-base sm:text-lg font-medium text-white">
+                    <p className="text-sm sm:text-base font-medium text-white">
                       🧙‍♂️ Archivius, o Guardião
                     </p>
                     <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
