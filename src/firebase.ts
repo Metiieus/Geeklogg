@@ -145,7 +145,7 @@ if (hasValidFirebaseConfig()) {
   try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    db = getFirestore(app, "geeklog");
+    db = getFirestore(app);
     storage = getStorage(app);
     console.log("✅ Firebase initialized successfully");
   } catch (error) {

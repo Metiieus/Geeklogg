@@ -154,10 +154,10 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
                 <TruncatedBio
                   bio={user.bio}
                   maxLength={150}
-                  className="text-slate-400 text-sm"
+                  className="text-slate-400 text-xs sm:text-sm"
                 />
               )}
-              <div className="flex items-center gap-4 text-xs text-slate-500 mt-1">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs text-slate-500 mt-1">
                 <span className="flex items-center gap-1">
                   <Users size={12} />
                   {user.followers?.length || 0} seguidores
@@ -168,7 +168,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
 
             <button
               onClick={() => handleFollow(user.uid)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg transition-colors text-xs sm:text-sm touch-target ${
                 followingStatus[user.uid]
                   ? "bg-green-600 hover:bg-green-700 text-white"
                   : "bg-purple-600 hover:bg-purple-700 text-white"
@@ -176,13 +176,15 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
             >
               {followingStatus[user.uid] ? (
                 <>
-                  <UserCheck size={16} />
-                  Seguindo
+                  <UserCheck size={14} className="sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Seguindo</span>
+                  <span className="sm:hidden">✓</span>
                 </>
               ) : (
                 <>
-                  <UserPlus size={16} />
-                  Seguir
+                  <UserPlus size={14} className="sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Seguir</span>
+                  <span className="sm:hidden">+</span>
                 </>
               )}
             </button>
