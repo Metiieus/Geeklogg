@@ -19,8 +19,13 @@ export interface UserProfile {
     movies: FavoriteItem[];
   };
   defaultLibrarySort: string;
+  plano?: {
+    status: string;
+    tipo: string;
+    expiraEm?: string;
+    stripeId?: string;
+  };
   isPremium?: boolean;
-  premiumExpiresAt?: string;
 }
 
 interface AuthContextType {
@@ -59,6 +64,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               const userData = userSnap.data();
               // Log seguro: console.log("📥 Dados do usuário carregados para UID:", currentUser.uid);
               // Normalize favorites data to ensure consistent structure
+              const planData = userData.plano || {
+                status: "inativo",
+                tipo: "free",
+                expiraEm: undefined,
+                stripeId: undefined,
+              };
+
               const normalizedProfile: UserProfile = {
                 name:
                   userData.nome ||
@@ -91,6 +103,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                     : [],
                 },
                 defaultLibrarySort: userData.defaultLibrarySort || "updatedAt",
+                plano: planData,
+                isPremium:
+                  planData.status === "ativo" &&
+                  planData.tipo === "premium" &&
+                  (!planData.expiraEm ||
+                    new Date(planData.expiraEm).getTime() > Date.now()),
               } as UserProfile;
               // Log seguro: console.log("✅ Perfil normalizado para UID:", currentUser.uid);
               setProfile(normalizedProfile);
@@ -109,8 +127,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                   movies: [],
                 },
                 defaultLibrarySort: "updatedAt",
+                plano: { status: "inativo", tipo: "free" },
                 isPremium: false,
-                premiumExpiresAt: undefined,
               };
               setProfile(defaultProfile);
             }
@@ -129,8 +147,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 movies: [],
               },
               defaultLibrarySort: "updatedAt",
+              plano: { status: "inativo", tipo: "free" },
               isPremium: false,
-              premiumExpiresAt: undefined,
             };
             setProfile(tempProfile);
           }
