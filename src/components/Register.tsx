@@ -20,26 +20,23 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
     senha: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { logout } = useAuth();
+  const { setUser } = useAuth();
   const { showError, showSuccess } = useToast();
 
-  const getErrorMessage = (error: any): string => {
-    const code = error?.code || error?.message || "";
+  const validateAge = (birthDate: string): boolean => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    const age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
 
-    switch (code) {
-      case "auth/email-already-in-use":
-        return "Este email já está em uso. Tente fazer login ou use outro email.";
-      case "auth/invalid-email":
-        return "Email inválido. Verifique o formato do email.";
-      case "auth/operation-not-allowed":
-        return "Registro desabilitado. Entre em contato com o suporte.";
-      case "auth/weak-password":
-        return "Senha muito fraca. Use pelo menos 6 caracteres.";
-      case "auth/network-request-failed":
-        return "Erro de conexão. Verifique sua internet e tente novamente.";
-      default:
-        return "Erro no registro. Tente novamente.";
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      return age - 1 >= 13;
     }
+
+    return age >= 13;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,91 +49,76 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validações
-    if (!formData.nome.trim()) {
-      showError("Nome obrigatório", "Por favor, insira seu nome completo");
-      return;
-    }
-
-    if (formData.nome.trim().length < 2) {
-      showError("Nome muito curto", "O nome deve ter pelo menos 2 caracteres");
-      return;
-    }
-
-    if (!formData.apelido.trim()) {
-      showError("Apelido obrigatório", "Por favor, insira um apelido");
-      return;
-    }
-
-    if (!formData.dataNascimento) {
-      showError("Data obrigatória", "Por favor, insira sua data de nascimento");
-      return;
-    }
-
-    // Validar idade mínima (13 anos)
-    const birthDate = new Date(formData.dataNascimento);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    if (age < 13) {
-      showError(
-        "Idade mínima",
-        "Você deve ter pelo menos 13 anos para se registrar",
-      );
-      return;
-    }
-
-    if (!formData.email.trim()) {
-      showError("Email obrigatório", "Por favor, insira seu email");
-      return;
-    }
-
-    if (!formData.email.includes("@")) {
-      showError("Email inválido", "Por favor, insira um email válido");
-      return;
-    }
-
-    if (!formData.senha.trim()) {
-      showError("Senha obrigatória", "Por favor, insira uma senha");
-      return;
-    }
-
-    if (formData.senha.length < 6) {
-      showError(
-        "Senha muito curta",
-        "A senha deve ter pelo menos 6 caracteres",
-      );
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      if (!auth || !db) {
-        throw new Error(
-          "Firebase não foi inicializado. Verifique sua configuração.",
+      // Validações
+      if (formData.senha.length < 6) {
+        showError(
+          "Senha muito curta",
+          "A senha deve ter pelo menos 6 caracteres",
         );
+        return;
       }
 
-      console.log("🚀 Iniciando cadastro...");
+      if (!validateAge(formData.dataNascimento)) {
+        showError(
+          "Idade mínima",
+          "Você precisa ter pelo menos 13 anos para se registrar",
+        );
+        return;
+      }
 
-      const userCredential = await createUserWithEmailAndPassword(
+      console.log("📝 Iniciando registro...");
+
+      // Criar conta no Firebase Auth
+      const { user } = await createUserWithEmailAndPassword(
         auth,
-        formData.email.trim(),
+        formData.email,
         formData.senha,
       );
 
-      const user = userCredential.user;
-      console.log("✅ Usuário criado com UID:", user.uid);
+      console.log("✅ Conta criada no Firebase Auth:", user.uid);
 
-      // Preparar os dados
+      // Preparar dados do usuário
       const userData = {
-        uid: user.uid,
-        nome: formData.nome.trim(),
-        apelido: formData.apelido.trim(),
-        dataNascimento: formData.dataNascimento,
-        email: formData.email.trim(),
+        name: formData.nome,
+        displayName: formData.apelido,
+        email: formData.email,
+        birthDate: formData.dataNascimento,
+        avatar: "",
+        bio: `Olá! Eu sou ${formData.apelido}, apaixonado(a) por cultura geek! 🚀`,
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        // Configurações padrões
+        theme: "dark",
+        notifications: {
+          email: true,
+          push: true,
+          achievements: true,
+          social: true,
+        },
+        privacy: {
+          profilePublic: true,
+          showProgress: true,
+          showFavorites: true,
+        },
+        // Inicializar favoritos vazios
+        favorites: {
+          characters: [],
+          games: [],
+          movies: [],
+        },
+        // Configurações padrão da biblioteca
+        defaultLibrarySort: "updatedAt",
+        // Estatísticas iniciais
+        stats: {
+          totalHours: 0,
+          totalCompleted: 0,
+          totalReviews: 0,
+          totalMilestones: 0,
+          averageRating: 0,
+        },
       };
 
       // Gravar os dados no Firestore
@@ -144,19 +126,30 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       await setDoc(doc(db, "users", user.uid), userData);
       console.log("🎉 Dados do usuário salvos com sucesso!");
 
+      // Atualizar o contexto de usuário
+      setUser(user);
+
       showSuccess(
-        "Registro conclu��do!",
-        "Conta criada com sucesso. Agora você pode fazer login.",
+        "Conta criada com sucesso!",
+        `Bem-vindo(a), ${formData.apelido}! 🎉`,
       );
 
-      // Deslogar o usuário após cadastro
-      await logout();
+      console.log("🚀 Registro concluído com sucesso!");
+    } catch (error: any) {
+      console.error("❌ Erro no registro:", error);
 
-      onCancel();
-    } catch (err: any) {
-      console.error("❌ Erro ao registrar usuário:", err);
-      const message = getErrorMessage(err);
-      showError("Erro no registro", message);
+      if (error.code === "auth/email-already-in-use") {
+        showError(
+          "Email já cadastrado",
+          "Este email já está sendo usado por outra conta",
+        );
+      } else if (error.code === "auth/weak-password") {
+        showError("Senha fraca", "Escolha uma senha mais forte");
+      } else if (error.code === "auth/invalid-email") {
+        showError("Email inválido", "Por favor, insira um email válido");
+      } else {
+        showError("Erro no registro", error.message || "Erro desconhecido");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -167,161 +160,156 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       {/* Background Elements - mesmo padrão da Landing Page */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl"></div>
-        <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
-        <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-gradient-to-r from-purple-500/15 to-transparent rounded-full blur-lg"></div>
 
-        {/* Polygonal Elements */}
-        <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45"></div>
-        <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12"></div>
-        <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45"></div>
+        {/* Geometric elements */}
+        <div className="absolute top-10 right-10 w-8 h-8 bg-cyan-400/25 rotate-45 opacity-60"></div>
+        <div className="absolute bottom-10 left-10 w-6 h-6 bg-pink-400/30 rotate-12 opacity-50"></div>
+        <div className="absolute top-1/3 left-10 w-4 h-4 bg-purple-400/35 -rotate-45 opacity-70"></div>
+        <div className="absolute bottom-1/3 right-10 w-8 h-8 bg-indigo-400/25 -rotate-12 opacity-55"></div>
       </div>
 
-      {/* Register Card - responsivo */}
-      <div className="relative z-10 w-full max-w-md mx-auto">
-        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl hover:border-cyan-400/50 transition-all duration-300">
-          {/* Header com logo - responsivo */}
-          <div className="text-center mb-6 sm:mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=200"
-                alt="GeekLog"
-                className="w-32 sm:w-40 h-32 sm:h-40 object-contain"
-              />
+      <div className="relative z-10 bg-gray-800/40 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-gray-700/50 w-full max-w-md">
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/25">
+            <UserPlus className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
+            GeekLog
+          </h1>
+          <p className="text-gray-200 mt-3 text-sm sm:text-base">
+            Crie sua conta
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Nome Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <User className="h-4 sm:h-5 w-4 sm:w-5 text-cyan-400" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
-              GeekLog
-            </h1>
-            <p className="text-gray-200 mt-3 text-sm sm:text-base">
-              Crie sua conta
-            </p>
+            <input
+              type="text"
+              name="nome"
+              value={formData.nome}
+              onChange={handleInputChange}
+              placeholder="Nome completo"
+              required
+              className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all text-sm sm:text-base"
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nome Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-4 sm:h-5 w-4 sm:w-5 text-cyan-400" />
-              </div>
-              <input
-                type="text"
-                name="nome"
-                value={formData.nome}
-                onChange={handleInputChange}
-                placeholder="Nome completo"
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all text-sm sm:text-base"
-              />
+          {/* Apelido Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <User className="h-4 sm:h-5 w-4 sm:w-5 text-purple-400" />
             </div>
-
-            {/* Apelido Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-4 sm:h-5 w-4 sm:w-5 text-purple-400" />
-              </div>
-              <input
-                type="text"
-                name="apelido"
-                value={formData.apelido}
-                onChange={handleInputChange}
-                placeholder="Apelido"
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Data de Nascimento Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Calendar className="h-4 sm:h-5 w-4 sm:w-5 text-pink-400" />
-              </div>
-              <input
-                type="date"
-                name="dataNascimento"
-                value={formData.dataNascimento}
-                onChange={handleInputChange}
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Email Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-4 sm:h-5 w-4 sm:w-5 text-indigo-400" />
-              </div>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Email"
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Password Input */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-4 sm:h-5 w-4 sm:w-5 text-pink-400" />
-              </div>
-              <input
-                type="password"
-                name="senha"
-                value={formData.senha}
-                onChange={handleInputChange}
-                placeholder="Senha (mín. 6 caracteres)"
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Register Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 flex items-center justify-center gap-2 group text-sm sm:text-base mt-6 ${
-                isLoading
-                  ? "bg-slate-600 cursor-not-allowed"
-                  : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600"
-              } text-white`}
-            >
-              {isLoading ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <UserPlus className="w-4 sm:w-5 h-4 sm:h-5 group-hover:scale-110 transition-transform" />
-              )}
-              {isLoading ? "Registrando..." : "Criar conta"}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="my-6 flex items-center">
-            <div className="flex-1 border-t border-gray-700"></div>
-            <span className="px-4 text-gray-200 text-sm">ou</span>
-            <div className="flex-1 border-t border-gray-700"></div>
+            <input
+              type="text"
+              name="apelido"
+              value={formData.apelido}
+              onChange={handleInputChange}
+              placeholder="Apelido"
+              required
+              className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base"
+            />
           </div>
 
-          {/* Navigation Buttons */}
-          <div className="space-y-3">
-            {onLogin && (
-              <button
-                onClick={onLogin}
-                className="w-full bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 text-cyan-400 py-3 px-4 rounded-lg font-semibold hover:from-cyan-500/30 hover:to-pink-500/30 hover:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
-              >
-                Já tenho conta
-              </button>
+          {/* Data de Nascimento Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Calendar className="h-4 sm:h-5 w-4 sm:w-5 text-pink-400" />
+            </div>
+            <input
+              type="date"
+              name="dataNascimento"
+              value={formData.dataNascimento}
+              onChange={handleInputChange}
+              required
+              className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base"
+            />
+          </div>
+
+          {/* Email Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Mail className="h-4 sm:h-5 w-4 sm:w-5 text-indigo-400" />
+            </div>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Email"
+              required
+              className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm sm:text-base"
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Lock className="h-4 sm:h-5 w-4 sm:w-5 text-pink-400" />
+            </div>
+            <input
+              type="password"
+              name="senha"
+              value={formData.senha}
+              onChange={handleInputChange}
+              placeholder="Senha (mín. 6 caracteres)"
+              required
+              className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base"
+            />
+          </div>
+
+          {/* Register Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-3 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 flex items-center justify-center gap-2 group text-sm sm:text-base mt-6 ${
+              isLoading
+                ? "bg-slate-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600"
+            } text-white`}
+          >
+            {isLoading ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <UserPlus className="w-4 sm:w-5 h-4 sm:h-5 group-hover:scale-110 transition-transform" />
             )}
+            {isLoading ? "Registrando..." : "Criar conta"}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="my-6 flex items-center">
+          <div className="flex-1 border-t border-gray-700"></div>
+          <span className="px-4 text-gray-200 text-sm">ou</span>
+          <div className="flex-1 border-t border-gray-700"></div>
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="space-y-3">
+          {onLogin && (
             <button
-              onClick={onCancel}
-              className="w-full border border-gray-600/50 text-gray-300 py-3 px-4 rounded-lg font-semibold hover:border-gray-500 hover:bg-gray-600/10 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
+              onClick={onLogin}
+              className="w-full bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 text-cyan-400 py-3 px-4 rounded-lg font-semibold hover:from-cyan-500/30 hover:to-pink-500/30 hover:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
             >
-              <ArrowLeft className="w-4 h-4" />
-              {onLogin ? "Voltar" : "Voltar ao login"}
+              Já tenho conta
             </button>
-          </div>
+          )}
+          <button
+            onClick={onCancel}
+            className="w-full border border-gray-600/50 text-gray-300 py-3 px-4 rounded-lg font-semibold hover:border-gray-500 hover:bg-gray-600/10 transition-all duration-300 text-sm sm:text-base flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {onLogin ? "Voltar" : "Voltar ao login"}
+          </button>
         </div>
       </div>
     </div>
   );
 };
+
+export default Register;

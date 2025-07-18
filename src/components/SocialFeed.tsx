@@ -217,3 +217,5 @@ export const SocialFeed: React.FC = () => {
     </div>
   );
 };
+
+export default SocialFeed;

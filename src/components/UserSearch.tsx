@@ -201,3 +201,5 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
     </div>
   );
 };
+
+export default UserSearch;

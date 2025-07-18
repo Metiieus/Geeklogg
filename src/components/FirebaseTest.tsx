@@ -69,3 +69,5 @@ export const FirebaseTest: React.FC = () => {
     </div>
   );
 };
+
+export default FirebaseTest;
