@@ -30,3 +30,28 @@ export function getUserId(): string {
   if (!uid) throw new Error("Usuário não autenticado");
   return uid;
 }
+
+export function removeUndefinedFields<T extends Record<string, any>>(obj: T): T {
+  const result = {} as T;
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      result[key as keyof T] = value;
+    }
+  }
+  return result;
+}
+
+export function sanitizeStrings(obj: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      // Basic sanitization - remove potentially harmful characters
+      result[key] = value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                        .replace(/javascript:/gi, '')
+                        .replace(/on\w+\s*=/gi, '');
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
