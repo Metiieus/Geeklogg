@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Firebase configuration is loaded from environment variables
+// Carrega configuração do Firebase das variáveis de ambiente
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -18,7 +18,7 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Validate Firebase configuration
+// Verifica se todas as variáveis obrigatórias estão definidas
 const requiredEnvVars = [
   "VITE_FIREBASE_API_KEY",
   "VITE_FIREBASE_AUTH_DOMAIN",
@@ -36,50 +36,38 @@ const missingVars = requiredEnvVars.filter((varName) => {
 });
 
 if (missingVars.length > 0) {
-  console.error(
-    "❌ Firebase configuration error: Missing or invalid environment variables:",
-    missingVars,
-  );
-  console.error(
-    "📝 Please check your .env file and ensure all Firebase variables are properly configured.",
-  );
-  console.error(
-    "🔧 Copy .env.example to .env and replace placeholder values with your actual Firebase credentials.",
-  );
+  console.error("❌ Firebase config incompleta:", missingVars);
+  console.warn("Verifique seu arquivo .env");
 }
 
-// Initialize Firebase
+// Inicializa o app Firebase
 export const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services with error handling
+// Autenticação
 export const auth = getAuth(app);
 
-// Initialize Firestore with offline support
+// Firestore com uso fixo do banco `geeklog`
 export const db = getFirestore(app, "geeklog");
 
-// Simple Firebase configuration
+// Configuração especial para DEV e produção
 if (import.meta.env.DEV) {
-  console.log("🔧 Development mode: Firebase initialized with basic settings");
+  console.log("🔧 Modo DEV: Firebase com suporte offline");
 
   enableIndexedDbPersistence(db)
-    .then(() => console.log("💾 Offline persistence enabled"))
-    .catch((err) => console.warn("⚠️ Persistence setup failed:", err));
+    .then(() => console.log("💾 Offline persistence habilitado"))
+    .catch((err) => console.warn("⚠️ Falha ao ativar persistence:", err));
 } else {
-  // Production: normal configuration
   enableNetwork(db).catch((err) =>
-    console.warn("Network enable warning:", err),
+    console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
   );
 }
 
+// Storage
 export const storage = getStorage(app);
 
-// Export app for use in other files
-export { app };
-
+// Mensagem final de status
 if (missingVars.length === 0) {
-  console.log("✅ Firebase initialized successfully");
+  console.log("✅ Firebase inicializado com sucesso");
 } else {
-  console.warn(
-    "⚠️ Firebase initialized with missing configuration - some features may not work",
-  );
+  console.warn("⚠️ Firebase inicializado com variáveis faltando");
 }
