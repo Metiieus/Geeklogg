@@ -16,6 +16,9 @@ import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
 import { NotificationCenter } from "./components/NotificationCenter";
+import { FirebaseTest } from "./components/FirebaseTest";
+import { FirebaseToggle } from "./components/FirebaseToggle";
+import { FirestoreInitializer } from "./components/FirestoreInitializer";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
 import { getMilestones } from "./services/milestoneService";
@@ -201,6 +204,9 @@ function App() {
   if (!user) {
     return (
       <ToastProvider>
+        <FirebaseTest />
+        <FirebaseToggle />
+        <FirestoreInitializer />
         {currentView === "landing" && (
           <LandingPage
             onLogin={() => setCurrentView("login")}

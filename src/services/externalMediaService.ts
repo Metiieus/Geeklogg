@@ -36,7 +36,8 @@ const GOOGLE_BOOKS_API_URL = "https://www.googleapis.com/books/v1/volumes";
 const TMDB_API_URL = "https://api.themoviedb.org/3";
 
 // Chaves das APIs (em produção, essas devem vir de variáveis de ambiente)
-const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || "demo_key";
+const TMDB_API_KEY =
+  import.meta.env.VITE_TMDB_API_KEY || "ff4f571701b6696898c90a6995891283";
 
 class ExternalMediaService {
   // Buscar livros no Google Books API

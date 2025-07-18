@@ -5,12 +5,16 @@ import { storageClient } from "./storageClient";
 
 export async function getMedias(): Promise<MediaItem[]> {
   const uid = getUserId();
+  if (!uid) {
+    console.warn("User not authenticated, returning empty media list");
+    return [];
+  }
   const snapshot = await database.getCollection<Omit<MediaItem, "id">>([
     "users",
     uid,
     "medias",
   ]);
-  return snapshot.map((d) => ({ id: d.id, ...d.data }));
+  return snapshot.map((d) => ({ id: d.id, ...(d.data || d) }));
 }
 
 export interface AddMediaData

@@ -402,11 +402,11 @@ const Library: React.FC = () => {
                   {/* Tags */}
                   {item.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-3">
-                      {item.tags.slice(0, 3).map((tag) => {
+                      {item.tags.slice(0, 3).map((tag, index) => {
                         console.log("Tag", tag);
                         return (
                           <span
-                            key={tag}
+                            key={`${item.id}-tag-${index}`}
                             className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
                           >
                             {tag}

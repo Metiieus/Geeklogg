@@ -16,7 +16,7 @@ export async function getUserAchievements(): Promise<UserAchievement[]> {
       uid,
       "achievements",
     ]);
-    return snap.map((d) => ({ ...d.data, id: d.id }));
+    return snap.map((d) => ({ ...(d.data || d), id: d.id }));
   } catch (error) {
     console.error("Erro ao buscar conquistas:", error);
     return [];

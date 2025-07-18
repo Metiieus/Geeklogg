@@ -7,6 +7,43 @@ import {
   FollowRequest,
 } from "../types/social";
 
+// Mock users function for fallback when database is empty
+function getMockUsers(query: string): UserProfile[] {
+  const mockUsers: UserProfile[] = [
+    {
+      id: "mock1",
+      uid: "mock1",
+      name: "Demo User",
+      bio: "This is a demo user account",
+      avatar: "",
+      email: "demo@example.com",
+      followers: [],
+      following: [],
+      postsCount: 0,
+      reviewsCount: 0,
+    },
+    {
+      id: "mock2",
+      uid: "mock2",
+      name: "Test User",
+      bio: "Another test user for demonstration",
+      avatar: "",
+      email: "test@example.com",
+      followers: [],
+      following: [],
+      postsCount: 0,
+      reviewsCount: 0,
+    },
+  ];
+
+  // Filter mock users based on query
+  return mockUsers.filter(
+    (user) =>
+      user.name.toLowerCase().includes(query.toLowerCase()) ||
+      user.bio.toLowerCase().includes(query.toLowerCase()),
+  );
+}
+
 // Perfis de usuários
 export async function searchUsers(query: string): Promise<UserProfile[]> {
   console.log("🔍 Buscando usuários:", { query });
@@ -38,7 +75,7 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
     // Mapear e filtrar usuários
     const mappedUsers = await Promise.all(
       users.map(async (doc) => {
-        const data = doc.data;
+        const data = doc.data || doc;
         const followers = await database.getCollection<any>([
           "users",
           doc.id,
@@ -65,12 +102,10 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
     );
 
     const filtered = mappedUsers.filter((user) => {
-        const nameMatch = user.name
-          ?.toLowerCase()
-          .includes(query.toLowerCase());
-        const bioMatch = user.bio?.toLowerCase().includes(query.toLowerCase());
-        return nameMatch || bioMatch;
-      });
+      const nameMatch = user.name?.toLowerCase().includes(query.toLowerCase());
+      const bioMatch = user.bio?.toLowerCase().includes(query.toLowerCase());
+      return nameMatch || bioMatch;
+    });
 
     const result = filtered.slice(0, 20);
 
@@ -119,14 +154,12 @@ export async function updateUserProfile(
 export async function followUser(targetUserId: string): Promise<void> {
   try {
     const uid = getUserId();
-    await database.set(
-      ["users", uid, "following", targetUserId],
-      { createdAt: new Date().toISOString() },
-    );
-    await database.set(
-      ["users", targetUserId, "followers", uid],
-      { createdAt: new Date().toISOString() },
-    );
+    await database.set(["users", uid, "following", targetUserId], {
+      createdAt: new Date().toISOString(),
+    });
+    await database.set(["users", targetUserId, "followers", uid], {
+      createdAt: new Date().toISOString(),
+    });
 
     const currentProfile = await getUserProfile(uid);
 
@@ -219,11 +252,7 @@ export async function createNotification(
       if (notificationData[key] === undefined) delete notificationData[key];
     });
 
-    await database.add([
-      "users",
-      userId,
-      "notifications",
-    ], notificationData);
+    await database.add(["users", userId, "notifications"], notificationData);
   } catch (error) {
     console.error("Erro ao criar notificação:", error);
     throw error;
