@@ -7,9 +7,10 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { app } from "../firebase";
 
 export async function initializeFirestoreData() {
-  const db = getFirestore();
+  const db = getFirestore(app, "geeklog");
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -138,7 +139,7 @@ export async function createTestData() {
 }
 
 export function debugFirestore() {
-  const db = getFirestore();
+  const db = getFirestore(app, "geeklog");
   const auth = getAuth();
   const user = auth.currentUser;
 
