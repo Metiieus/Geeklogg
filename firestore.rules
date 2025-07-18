@@ -2,9 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 👤 Perfis públicos: qualquer usuário autenticado pode visualizar, mas só o dono pode editar
+    // 👤 Perfis públicos: qualquer usuário autenticado pode visualizar e listar
     match /users/{userId} {
-      allow list, get: if request.auth != null; // pode buscar e ver perfis de outros
+      allow get, list: if request.auth != null;                  // ✅ permite buscar e listar
       allow update, delete: if request.auth.uid == userId;
       allow create: if request.auth.uid == userId;
     }
@@ -16,15 +16,15 @@ service cloud.firestore {
 
     // 📁 Atividades globais (feed público)
     match /activities/{docId} {
-      allow read: if request.auth != null;              // qualquer logado pode ver
-      allow create: if request.auth != null;            // qualquer logado pode registrar
-      allow update, delete: if false;                   // ninguém pode editar/deletar
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
     }
 
     // 🔔 Notificações globais (tipo anúncios)
     match /notifications/{docId} {
       allow read: if request.auth != null;
-      allow write: if false; // apenas via servidor/admin
+      allow write: if false;
     }
 
     // 📨 Solicitações de amizade / seguir
@@ -34,11 +34,11 @@ service cloud.firestore {
 
     // 📁 Seguidores e seguindo (em subcoleções de cada usuário)
     match /users/{userId}/followers/{docId} {
-      allow read, write: if request.auth.uid == userId; // só o dono pode gerenciar seguidores
+      allow read, write: if request.auth.uid == userId;
     }
 
     match /users/{userId}/following/{docId} {
-      allow read, write: if request.auth.uid == userId; // só o dono pode seguir/desseguir
+      allow read, write: if request.auth.uid == userId;
     }
 
     // 📁 Notificações pessoais
