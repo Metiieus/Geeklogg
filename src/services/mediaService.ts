@@ -36,7 +36,6 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
     ...(externalCoverUrl && !coverFile && { cover: externalCoverUrl }),
   });
   const docRef = await database.add(["users", uid, "medias"], toSave);
-  console.log("📝 Mídia criada no Firestore com ID:", docRef.id);
 
   let finalCoverUrl: string | undefined = externalCoverUrl;
 
@@ -50,12 +49,10 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
       await database.update(["users", uid, "medias", docRef.id], {
         cover: finalCoverUrl,
       });
-      console.log("✅ URL da imagem de upload salva no documento.");
     } catch (err) {
       console.error("Erro ao fazer upload da imagem", err);
       // Se falhar o upload mas há URL externa, usar a externa
       if (externalCoverUrl) {
-        console.log("⚠️ Usando imagem externa devido a falha no upload");
         finalCoverUrl = externalCoverUrl;
       } else {
         // Re-lançar o erro apenas se não há fallback
@@ -84,13 +81,12 @@ export async function updateMedia(
   });
   delete (toUpdate as { coverFile?: File }).coverFile;
   await database.set(["users", uid, "medias", id], toUpdate, { merge: true });
-  console.log("📝 Mídia atualizada no Firestore:", id);
+
   let coverUrl: string | undefined;
   if (data.coverFile instanceof File) {
     try {
       coverUrl = await storageClient.upload(`media/${id}`, data.coverFile);
       await database.update(["users", uid, "medias", id], { cover: coverUrl });
-      console.log("✅ Imagem de capa atualizada");
     } catch (err) {
       console.error("Erro ao atualizar imagem de capa", err);
     }

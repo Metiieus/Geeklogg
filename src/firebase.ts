@@ -51,11 +51,9 @@ export const db = getFirestore(app, "geeklog");
 
 // Configuração especial para DEV e produção
 if (import.meta.env.DEV) {
-  console.log("🔧 Modo DEV: Firebase com suporte offline");
-
-  enableIndexedDbPersistence(db)
-    .then(() => console.log("💾 Offline persistence habilitado"))
-    .catch((err) => console.warn("⚠️ Falha ao ativar persistence:", err));
+  enableIndexedDbPersistence(db).catch((err) =>
+    console.warn("⚠️ Falha ao ativar persistence:", err),
+  );
 } else {
   enableNetwork(db).catch((err) =>
     console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
@@ -66,8 +64,3 @@ if (import.meta.env.DEV) {
 export const storage = getStorage(app);
 
 // Mensagem final de status
-if (missingVars.length === 0) {
-  console.log("✅ Firebase inicializado com sucesso");
-} else {
-  console.warn("⚠️ Firebase inicializado com variáveis faltando");
-}
