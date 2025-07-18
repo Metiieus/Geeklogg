@@ -12,11 +12,22 @@ export const FirebaseTest: React.FC = () => {
         setStatus("🔍 Testing Firebase connection...");
 
         // Test 1: Check if auth is initialized
+        if (!auth.currentUser) {
+          setStatus(
+            "⚠️ User not authenticated - Firebase requires authentication",
+          );
+          setError("Please sign in to test Firestore connection");
+          return;
+        }
+
         setStatus("✅ Auth initialized, testing Firestore...");
 
-        // Test 2: Try to access a simple collection
-        const testCollection = collection(db, "test");
-        await getDocs(testCollection);
+        // Test 2: Try to access user's own collection (which has proper permissions)
+        const userCollection = collection(
+          db,
+          `users/${auth.currentUser.uid}/medias`,
+        );
+        await getDocs(userCollection);
 
         setStatus("✅ Firebase connection successful!");
         setError(null);
@@ -27,7 +38,14 @@ export const FirebaseTest: React.FC = () => {
       }
     };
 
-    testFirebase();
+    // Wait for auth state to be determined
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user !== undefined) {
+        testFirebase();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (

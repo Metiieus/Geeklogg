@@ -17,6 +17,15 @@ export const FirestoreInitializer: React.FC = () => {
     setSuccess(false);
 
     try {
+      // Check if user is authenticated first
+      const { getAuth } = await import("firebase/auth");
+      const auth = getAuth();
+
+      if (!auth.currentUser) {
+        setError("Usuário não autenticado. Faça login primeiro.");
+        return;
+      }
+
       const result = await initializeFirestore();
       if (result) {
         setSuccess(true);
@@ -35,7 +44,17 @@ export const FirestoreInitializer: React.FC = () => {
 
   const handleCreateTestData = async () => {
     setIsLoading(true);
+    setError(null);
     try {
+      // Check if user is authenticated first
+      const { getAuth } = await import("firebase/auth");
+      const auth = getAuth();
+
+      if (!auth.currentUser) {
+        setError("Usuário não autenticado. Faça login primeiro.");
+        return;
+      }
+
       await createTestData();
       setSuccess(true);
       setTimeout(() => {

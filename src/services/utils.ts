@@ -14,8 +14,12 @@ export function getUserId(): string | null {
 }
 
 export function removeUndefinedFields<T extends Record<string, any>>(
-  obj: T,
+  obj: T | null | undefined,
 ): T {
+  if (!obj || typeof obj !== "object") {
+    return {} as T;
+  }
+
   const result = {} as T;
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined) {

@@ -33,7 +33,11 @@ const Profile: React.FC = () => {
   const saveProfile = async (newSettings: typeof settings) => {
     console.log("💾 Salvando perfil:", newSettings);
     setSettings(newSettings);
-    await saveSettings(newSettings);
+    if (!user?.uid) {
+      console.error("Usuário não autenticado");
+      return;
+    }
+    await saveSettings(user.uid, newSettings);
     setEditProfile(false);
   };
 
@@ -41,7 +45,11 @@ const Profile: React.FC = () => {
     const updated = { ...settings, favorites: fav };
     console.log("💾 Salvando favoritos:", updated);
     setSettings(updated);
-    await saveSettings(updated);
+    if (!user?.uid) {
+      console.error("Usuário não autenticado");
+      return;
+    }
+    await saveSettings(user.uid, updated);
     setEditFav(false);
   };
 
