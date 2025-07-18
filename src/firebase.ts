@@ -31,7 +31,7 @@ const requiredEnvVars = [
 const missingVars = requiredEnvVars.filter((varName) => {
   const value = import.meta.env[varName];
   return (
-    !value || value.includes("your_") || value === "your_firebase_api_key_here"
+    !value || value.includes("your_") || value === "AIzaSyBIQIUNwk_wmMj5IprvMjlbJaitxofLk1M"
   );
 });
 
