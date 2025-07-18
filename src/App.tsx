@@ -16,7 +16,6 @@ import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
 import { NotificationCenter } from "./components/NotificationCenter";
-import { FirebaseTest } from "./components/FirebaseTest";
 import { FirestoreInitializer } from "./components/FirestoreInitializer";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
@@ -203,7 +202,6 @@ function App() {
   if (!user) {
     return (
       <ToastProvider>
-        <FirebaseTest />
         {import.meta.env.MODE !== "production" && <FirestoreInitializer />}
         {currentView === "landing" && (
           <LandingPage
