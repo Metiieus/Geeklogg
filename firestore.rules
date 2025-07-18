@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Permite o usuário acessar seu próprio documento
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Permite o usuário acessar qualquer subdocumento do seu perfil (ex: medias, reviews...)
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Atividades globais: só leitura por enquanto
+    match /activities/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null; // ou restrinja com regra mais específica
+    }
+
+    // Notificações globais: só leitura
+    match /notifications/{docId} {
+      allow read: if request.auth != null;
+    }
+
+    // Solicitações de amizade
+    match /followRequests/{docId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
