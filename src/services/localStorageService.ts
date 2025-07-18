@@ -2,7 +2,7 @@
 
 export const localStorageService = {
   // Get collection from localStorage
-  getCollection: (path: string): any[] => {
+  getCollection: (path: string | string[]): any[] => {
     try {
       const key = Array.isArray(path) ? path.join("/") : path;
       const data = localStorage.getItem(`firebase_${key}`);
@@ -14,7 +14,7 @@ export const localStorageService = {
   },
 
   // Get document from localStorage
-  getDocument: (path: string, docId?: string): any => {
+  getDocument: (path: string | string[], docId?: string): any => {
     try {
       const key = Array.isArray(path) ? path.join("/") : path;
       const fullKey = docId ? `${key}/${docId}` : key;
@@ -37,7 +37,7 @@ export const localStorageService = {
   },
 
   // Add document to localStorage
-  addDocument: (path: string, data: any): string => {
+  addDocument: (path: string | string[], data: any): string => {
     try {
       const key = Array.isArray(path) ? path.join("/") : path;
       const id = Date.now().toString();
@@ -66,7 +66,7 @@ export const localStorageService = {
   },
 
   // Update document in localStorage
-  updateDocument: (path: string, docId: string, data: any): void => {
+  updateDocument: (path: string | string[], docId: string, data: any): void => {
     try {
       const key = Array.isArray(path) ? path.join("/") : path;
       const docKey = `${key}/${docId}`;

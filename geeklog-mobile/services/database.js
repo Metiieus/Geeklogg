@@ -20,7 +20,8 @@ import { db } from "../firebase";
 export const database = {
   async add(path, data) {
     try {
-      const col = collection(db, ...path);
+      const segments = Array.isArray(path) ? path : path.split("/");
+      const col = collection(db, ...segments);
       return await addDoc(col, {
         ...data,
         createdAt: new Date(),
@@ -34,6 +35,7 @@ export const database = {
 
   async set(path, data, opts = {}) {
     try {
+      const segments = Array.isArray(path) ? path : path.split("/");
       const dataToSave = {
         ...data,
         updatedAt: new Date(),
@@ -43,7 +45,7 @@ export const database = {
         dataToSave.createdAt = new Date();
       }
 
-      return await setDoc(doc(db, ...path), dataToSave, opts);
+      return await setDoc(doc(db, ...segments), dataToSave, opts);
     } catch (error) {
       console.error("Database set error:", error);
       throw error;
@@ -52,7 +54,8 @@ export const database = {
 
   async update(path, data) {
     try {
-      return await updateDoc(doc(db, ...path), {
+      const segments = Array.isArray(path) ? path : path.split("/");
+      return await updateDoc(doc(db, ...segments), {
         ...data,
         updatedAt: new Date(),
       });
@@ -64,7 +67,8 @@ export const database = {
 
   async getCollection(path, filters = []) {
     try {
-      let q = collection(db, ...path);
+      const segments = Array.isArray(path) ? path : path.split("/");
+      let q = collection(db, ...segments);
 
       // Apply filters if provided
       if (filters.length > 0) {
@@ -99,7 +103,8 @@ export const database = {
 
   async getDocument(path) {
     try {
-      const snap = await getDoc(doc(db, ...path));
+      const segments = Array.isArray(path) ? path : path.split("/");
+      const snap = await getDoc(doc(db, ...segments));
       return snap.exists() ? { id: snap.id, ...snap.data() } : null;
     } catch (error) {
       console.error("Database getDocument error:", error);
@@ -109,7 +114,8 @@ export const database = {
 
   async delete(path) {
     try {
-      return await deleteDoc(doc(db, ...path));
+      const segments = Array.isArray(path) ? path : path.split("/");
+      return await deleteDoc(doc(db, ...segments));
     } catch (error) {
       console.error("Database delete error:", error);
       throw error;
