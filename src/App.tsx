@@ -157,7 +157,7 @@ function App() {
               : [],
           },
         };
-        console.log("⚙️ Configurações carregadas:", normalizedSettings);
+
         setSettings(normalizedSettings);
       }
 
@@ -169,7 +169,6 @@ function App() {
             prefs || settings,
           );
           if (newAchievements.length > 0) {
-            console.log("🏆 Novas conquistas desbloqueadas:", newAchievements);
           }
         } catch (error) {
           console.error("Erro ao verificar conquistas:", error);
