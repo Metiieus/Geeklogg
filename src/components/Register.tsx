@@ -78,8 +78,6 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
         formData.senha,
       );
 
-      console.log("✅ Conta criada no Firebase Auth:", user.uid);
-
       // Preparar dados do usuário
       const userData = {
         name: formData.nome,
@@ -122,9 +120,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       };
 
       // Gravar os dados no Firestore
-      console.log("✍️ Gravando dados no Firestore...");
       await setDoc(doc(db, "users", user.uid), userData);
-      console.log("🎉 Dados do usuário salvos com sucesso!");
 
       // Atualizar o contexto de usuário
       setUser(user);
