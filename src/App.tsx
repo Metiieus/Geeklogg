@@ -17,7 +17,6 @@ import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
 import { NotificationCenter } from "./components/NotificationCenter";
 import { FirebaseTest } from "./components/FirebaseTest";
-import { FirebaseToggle } from "./components/FirebaseToggle";
 import { FirestoreInitializer } from "./components/FirestoreInitializer";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
@@ -205,8 +204,7 @@ function App() {
     return (
       <ToastProvider>
         <FirebaseTest />
-        <FirebaseToggle />
-        <FirestoreInitializer />
+        {import.meta.env.MODE !== "production" && <FirestoreInitializer />}
         {currentView === "landing" && (
           <LandingPage
             onLogin={() => setCurrentView("login")}
@@ -252,17 +250,17 @@ function App() {
     }
   };
 
-  return (
-    <ToastProvider>
-      <AppProvider value={contextValue}>
-        {user && <FirestoreInitializer />}
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
-          {/* Elementos geométricos de fundo - responsivos */}
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Mobile: elementos menores e posicionamento ajustado */}
-            <div className="absolute top-10 sm:top-20 left-5 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
-            <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 sm:w-48 h-24 sm:h-48 bg-purple-500/15 rounded-full blur-xl"></div>
+ return (
+  <ToastProvider>
+    <AppProvider value={contextValue}>
+      {user && import.meta.env.MODE !== "production" && <FirestoreInitializer />}
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
+        {/* Elementos geométricos de fundo - responsivos */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Mobile: elementos menores e posicionamento ajustado */}
+          <div className="absolute top-10 sm:top-20 left-5 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
+          <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 sm:w-48 h-24 sm:h-48 bg-purple-500/15 rounded-full blur-xl"></div>
 
             {/* Gradientes adicionais para mais profundidade - apenas em desktop */}
             <div className="hidden sm:block absolute top-0 left-1/4 w-80 h-80 bg-gradient-to-br from-cyan-600/8 to-purple-600/8 rounded-full blur-3xl"></div>

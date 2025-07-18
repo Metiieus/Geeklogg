@@ -3,7 +3,6 @@ import { getAuth } from "firebase/auth";
 import {
   getFirestore,
   enableIndexedDbPersistence,
-  disableNetwork,
   enableNetwork,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -50,7 +49,7 @@ if (missingVars.length > 0) {
 }
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services with error handling
 export const auth = getAuth(app);
@@ -62,12 +61,9 @@ export const db = getFirestore(app, "geeklog");
 if (import.meta.env.DEV) {
   console.log("🔧 Development mode: Firebase initialized with basic settings");
 
-  // Only enable persistence if not using mock
-  if (localStorage.getItem("use_firebase_mock") === "false") {
-    enableIndexedDbPersistence(db)
-      .then(() => console.log("💾 Offline persistence enabled"))
-      .catch((err) => console.warn("⚠️ Persistence setup failed:", err));
-  }
+  enableIndexedDbPersistence(db)
+    .then(() => console.log("💾 Offline persistence enabled"))
+    .catch((err) => console.warn("⚠️ Persistence setup failed:", err));
 } else {
   // Production: normal configuration
   enableNetwork(db).catch((err) =>

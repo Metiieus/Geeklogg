@@ -1,6 +1,5 @@
 import { db, auth } from "../firebase";
 import { localStorageService } from "./localStorageService";
-import { mockDatabase } from "./mockDatabase";
 import {
   collection,
   doc,
@@ -19,15 +18,9 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-// Use mock database in development to avoid Firebase connectivity issues
-const useMockInDev =
-  import.meta.env.DEV && localStorage.getItem("use_firebase_mock") !== "false";
-
-export const database = useMockInDev
-  ? mockDatabase
-  : {
-      // Add a document to a collection
-      add: async (collectionPath: string | string[], data: any) => {
+export const database = {
+  // Add a document to a collection
+  add: async (collectionPath: string | string[], data: any) => {
         try {
           const pathStr = Array.isArray(collectionPath)
             ? collectionPath.join("/")
