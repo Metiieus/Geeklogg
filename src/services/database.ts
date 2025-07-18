@@ -45,23 +45,28 @@ export const database = {
       // Set a document with a specific ID
       set: async (
         collectionPath: string | string[],
-        docId: string,
+        docId: unknown,
         data: any,
         options?: any,
-      ) => {
+      ): Promise<string> => {
         try {
+          if (typeof docId !== "string" || docId.trim() === "") {
+            throw new Error("ID inválido");
+          }
+
           const pathStr = Array.isArray(collectionPath)
             ? collectionPath.join("/")
             : collectionPath;
+
           await setDoc(
-            doc(db, pathStr, docId),
+            doc(db, pathStr, docId as string),
             {
               ...data,
               updatedAt: serverTimestamp(),
             },
             options,
           );
-          return docId;
+          return docId as string;
         } catch (error) {
           console.error("Error setting document:", error);
           throw error;
