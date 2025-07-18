@@ -17,7 +17,6 @@ import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
 import { NotificationCenter } from "./components/NotificationCenter";
 import { FirebaseTest } from "./components/FirebaseTest";
-import { FirebaseToggle } from "./components/FirebaseToggle";
 import { FirestoreInitializer } from "./components/FirestoreInitializer";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
@@ -205,8 +204,7 @@ function App() {
     return (
       <ToastProvider>
         <FirebaseTest />
-        <FirebaseToggle />
-        <FirestoreInitializer />
+        {import.meta.env.MODE !== "production" && <FirestoreInitializer />}
         {currentView === "landing" && (
           <LandingPage
             onLogin={() => setCurrentView("login")}
@@ -255,7 +253,7 @@ function App() {
  return (
   <ToastProvider>
     <AppProvider value={contextValue}>
-      {user && <FirestoreInitializer />}
+      {user && import.meta.env.MODE !== "production" && <FirestoreInitializer />}
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
         {/* Elementos geométricos de fundo - responsivos */}
         <div className="absolute inset-0 overflow-hidden">
