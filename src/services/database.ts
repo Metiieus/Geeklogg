@@ -16,26 +16,31 @@ import {
   onSnapshot,
   Timestamp,
   serverTimestamp,
+  type DocumentReference,
 } from "firebase/firestore";
 
 export const database = {
   // Add a document to a collection
-  add: async (collectionPath: string | string[], data: any) => {
-        try {
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-          const docRef = await addDoc(collection(db, pathStr), {
-            ...data,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-          });
-          return docRef.id;
-        } catch (error) {
-          console.error("Error adding document:", error);
-          throw error;
-        }
-      },
+  add: async (
+    collectionPath: string | string[],
+    data: any,
+  ): Promise<DocumentReference> => {
+    try {
+      const pathStr = Array.isArray(collectionPath)
+        ? collectionPath.join("/")
+        : collectionPath;
+      const docRef = await addDoc(collection(db, pathStr), {
+        ...data,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      // Return full DocumentReference for consistency across services
+      return docRef;
+    } catch (error) {
+      console.error("Error adding document:", error);
+      throw error;
+    }
+  },
 
       // Set a document with a specific ID
       set: async (
