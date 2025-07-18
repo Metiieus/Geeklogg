@@ -2,30 +2,48 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Permite o usuário acessar seu próprio documento
+    // 👤 Perfis públicos: qualquer usuário autenticado pode visualizar, mas só o dono pode editar
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow list, get: if request.auth != null; // pode buscar e ver perfis de outros
+      allow update, delete: if request.auth.uid == userId;
+      allow create: if request.auth.uid == userId;
     }
 
-    // Permite o usuário acessar qualquer subdocumento do seu perfil (ex: medias, reviews...)
+    // 📁 Subcoleções privadas do usuário (medias, reviews, milestones, achievements, etc)
     match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth.uid == userId;
     }
 
-    // Atividades globais: só leitura por enquanto
+    // 📁 Atividades globais (feed público)
     match /activities/{docId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null; // ou restrinja com regra mais específica
+      allow read: if request.auth != null;              // qualquer logado pode ver
+      allow create: if request.auth != null;            // qualquer logado pode registrar
+      allow update, delete: if false;                   // ninguém pode editar/deletar
     }
 
-    // Notificações globais: só leitura
+    // 🔔 Notificações globais (tipo anúncios)
     match /notifications/{docId} {
       allow read: if request.auth != null;
+      allow write: if false; // apenas via servidor/admin
     }
 
-    // Solicitações de amizade
+    // 📨 Solicitações de amizade / seguir
     match /followRequests/{docId} {
       allow read, write: if request.auth != null;
+    }
+
+    // 📁 Seguidores e seguindo (em subcoleções de cada usuário)
+    match /users/{userId}/followers/{docId} {
+      allow read, write: if request.auth.uid == userId; // só o dono pode gerenciar seguidores
+    }
+
+    match /users/{userId}/following/{docId} {
+      allow read, write: if request.auth.uid == userId; // só o dono pode seguir/desseguir
+    }
+
+    // 📁 Notificações pessoais
+    match /users/{userId}/notifications/{docId} {
+      allow read, write: if request.auth.uid == userId;
     }
   }
 }
