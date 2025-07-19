@@ -44,3 +44,9 @@ export function sanitizeStrings(obj: Record<string, any>): Record<string, any> {
   }
   return result;
 }
+
+export function ensureValidId(id: unknown, message: string): asserts id is string {
+  if (!id || typeof id !== "string" || id.trim() === "") {
+    throw new Error(message);
+  }
+}

@@ -1,5 +1,5 @@
 import { database } from "./database";
-import { getUserId } from "./utils";
+import { getUserId, ensureValidId } from "./utils";
 import {
   UserProfile,
   UserActivity,
@@ -154,10 +154,12 @@ export async function updateUserProfile(
 export async function followUser(targetUserId: string): Promise<void> {
   try {
     const uid = getUserId();
-    await database.set(["users", uid, "following", targetUserId], {
+    ensureValidId(targetUserId, "ID do usuário alvo ausente ou inválido ao seguir");
+    ensureValidId(uid, "ID do usuário atual ausente ou inválido ao seguir");
+    await database.set(["users", uid, "following"], targetUserId, {
       createdAt: new Date().toISOString(),
     });
-    await database.set(["users", targetUserId, "followers", uid], {
+    await database.set(["users", targetUserId, "followers"], uid, {
       createdAt: new Date().toISOString(),
     });
 

@@ -1,5 +1,5 @@
 import type { Review } from "../App";
-import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
+import { getUserId, removeUndefinedFields, sanitizeStrings, ensureValidId } from "./utils";
 import { database } from "./database";
 import { storageClient } from "./storageClient";
 
@@ -42,7 +42,7 @@ export async function addReview(data: AddReviewData): Promise<Review> {
         `reviews/${docRef.id}`,
         imageFile,
       );
-      await database.update(["users", uid, "reviews", docRef.id], {
+      await database.update(["users", uid, "reviews"], docRef.id, {
         image: imageUrl,
       });
       console.log("✅ Imagem da review enviada");
@@ -63,6 +63,7 @@ export async function updateReview(
   id: string,
   data: UpdateReviewData,
 ): Promise<void> {
+  ensureValidId(id, "ID ausente ou inválido ao tentar atualizar review");
   const uid = getUserId();
   const now = new Date().toISOString();
   const toUpdate: Record<string, unknown> = removeUndefinedFields({
@@ -70,13 +71,13 @@ export async function updateReview(
     updatedAt: now,
   });
   delete (toUpdate as { imageFile?: File }).imageFile;
-  await database.set(["users", uid, "reviews", id], toUpdate, { merge: true });
+  await database.set(["users", uid, "reviews"], id, toUpdate, { merge: true });
   console.log("📝 Review atualizada:", id);
 
   if (data.imageFile instanceof File) {
     try {
       const url = await storageClient.upload(`reviews/${id}`, data.imageFile);
-      await database.update(["users", uid, "reviews", id], { image: url });
+      await database.update(["users", uid, "reviews"], id, { image: url });
       console.log("✅ Imagem da review atualizada");
     } catch (err) {
       console.error("Erro ao atualizar imagem da review", err);
