@@ -1,5 +1,5 @@
 import type { Milestone } from "../App";
-import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
+import { getUserId, removeUndefinedFields, sanitizeStrings, ensureValidId } from "./utils";
 import { database } from "./database";
 import { storageClient } from "./storageClient";
 
@@ -48,7 +48,7 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
         `milestones/${docRef.id}`,
         imageFile,
       );
-      await database.update(["users", uid, "milestones", docRef.id], {
+      await database.update(["users", uid, "milestones"], docRef.id, {
         image: imageUrl,
       });
     } catch (err) {
@@ -67,6 +67,7 @@ export async function updateMilestone(
   id: string,
   data: UpdateMilestoneData,
 ): Promise<void> {
+  ensureValidId(id, "ID ausente ou inválido ao tentar atualizar marco");
   const uid = getUserId();
   const { imageFile, ...rest } = data;
 
@@ -74,14 +75,14 @@ export async function updateMilestone(
     sanitizeStrings(rest as Record<string, any>),
   );
 
-  await database.set(["users", uid, "milestones", id], toUpdate, {
+  await database.set(["users", uid, "milestones"], id, toUpdate, {
     merge: true,
   });
 
   if (imageFile instanceof File) {
     try {
-      const url = await storageClient.upload(`milestones/${id}`, imageFile);
-      await database.update(["users", uid, "milestones", id], { image: url });
+        const url = await storageClient.upload(`milestones/${id}`, imageFile);
+        await database.update(["users", uid, "milestones"], id, { image: url });
     } catch (err) {
       console.error("❌ Erro ao atualizar imagem do marco", err);
     }
