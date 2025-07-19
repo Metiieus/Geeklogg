@@ -44,6 +44,11 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
+      alert("ID inválido");
+      return;
+    }
+
     const updateRes = await updateMedia(item.id, {
       title: formData.title,
       type: formData.type,
