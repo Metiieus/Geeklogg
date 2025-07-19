@@ -164,6 +164,14 @@ const Library: React.FC = () => {
     setSelectedExternalResult(null);
   };
 
+  const handleEditClick = (item: MediaItem) => {
+    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
+      alert("ID inválido");
+      return;
+    }
+    setEditingItem(item);
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
       {/* Header */}
@@ -321,7 +329,7 @@ const Library: React.FC = () => {
                   {/* Overlay with actions - só aparece no desktop */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 md:flex hidden items-center justify-center gap-2 overflow-hidden">
                     <button
-                      onClick={() => setEditingItem(item)}
+                      onClick={() => handleEditClick(item)}
                       className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110 animate-bounce"
                       title="Editar"
                     >
@@ -426,7 +434,7 @@ const Library: React.FC = () => {
               {/* Menu de 3 pontos abaixo da imagem - igual Skoob, só no mobile */}
               <div className="md:hidden flex justify-center mt-2">
                 <button
-                  onClick={() => setEditingItem(item)}
+                  onClick={() => handleEditClick(item)}
                   className="text-slate-400 hover:text-white transition-colors p-1"
                   title="Opções"
                 >
