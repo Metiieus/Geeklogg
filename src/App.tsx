@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Sidebar } from "./components/Sidebar";
-import { MobileNav } from "./components/MobileNav";
+import { MobileSidebar } from "./components/MobileSidebar";
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const Library = lazy(() => import("./components/Library"));
 const Reviews = lazy(() => import("./components/Reviews"));
