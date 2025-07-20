@@ -116,7 +116,7 @@ function App() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [settings, setSettings] = useState<UserSettings>({
+    const [settings, setSettings] = useState<UserSettings>({
     name: "Usuário",
     bio: "",
     favorites: {
@@ -127,6 +127,7 @@ function App() {
     theme: "dark",
     defaultLibrarySort: "updatedAt",
   });
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (!user) return;
