@@ -58,7 +58,9 @@ const Library: React.FC = () => {
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] =
     useState<ExternalMediaResult | null>(null);
-  const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
+    const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
 
   const filteredAndSortedItems = useMemo(() => {
     let filtered = mediaItems;
@@ -123,13 +125,20 @@ const Library: React.FC = () => {
     return labels[status];
   };
 
-  const handleDeleteItem = async (itemId: string) => {
-    const item = mediaItems.find((m) => m.id === itemId);
-    const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
+    const handleDeleteClick = (item: MediaItem) => {
+    setItemToDelete(item);
+    setShowDeleteModal(true);
+  };
 
-    if (confirm(confirmMessage)) {
-      await deleteMedia(itemId);
-      setMediaItems(mediaItems.filter((item) => item.id !== itemId));
+  const handleDeleteItem = async () => {
+    if (!itemToDelete) return;
+
+    try {
+      await deleteMedia(itemToDelete.id);
+      setMediaItems(mediaItems.filter((item) => item.id !== itemToDelete.id));
+      setShowDeleteModal(false);
+      setItemToDelete(null);
+
       // Feedback visual de sucesso
       const toast = document.createElement("div");
       toast.className =
@@ -137,7 +146,14 @@ const Library: React.FC = () => {
       toast.textContent = "✅ Item removido com sucesso!";
       document.body.appendChild(toast);
       setTimeout(() => document.body.removeChild(toast), 3000);
+    } catch (error) {
+      console.error('Erro ao excluir item:', error);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
   };
 
   const handleEditItem = (updatedItem: MediaItem) => {
@@ -172,10 +188,25 @@ const Library: React.FC = () => {
     setEditingItem(item);
   };
 
-  return (
-    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    return (
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in relative">
+      {/* Fragmentos animados no fundo */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute w-1 h-1 bg-cyan-400/20 rounded-full animate-pulse`}
+            style={{
+              left: `${(i % 4) * 25 + Math.random() * 20}%`,
+              top: `${Math.floor(i / 4) * 33 + Math.random() * 20}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${3 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+            {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
             Biblioteca
@@ -195,8 +226,8 @@ const Library: React.FC = () => {
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50">
+            {/* Filters */}
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {/* Search */}
           <div className="relative col-span-1 sm:col-span-2 md:col-span-1">
@@ -266,13 +297,13 @@ const Library: React.FC = () => {
         </div>
       </div>
 
-      {/* Results Count */}
-      <div className="flex items-center justify-between text-slate-400">
+            {/* Results Count */}
+      <div className="flex items-center justify-between text-slate-400 relative z-10">
         <p>{filteredAndSortedItems.length} itens</p>
       </div>
 
-      {/* Media Grid - Layout responsivo */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 animate-fade-in">
+            {/* Media Grid - Layout responsivo */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 animate-fade-in relative z-10">
         {filteredAndSortedItems.map((item) => {
           console.log("Library item", item);
           return (
@@ -346,8 +377,8 @@ const Library: React.FC = () => {
                         <ExternalLink size={16} className="text-white" />
                       </a>
                     )}
-                    <button
-                      onClick={() => handleDeleteItem(item.id)}
+                                        <button
+                      onClick={() => handleDeleteClick(item)}
                       className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-all duration-200 hover:scale-110 animate-wiggle"
                       title="Excluir"
                     >
@@ -510,6 +541,49 @@ const Library: React.FC = () => {
           onClose={() => setSelectedExternalResult(null)}
           onSave={handleAddFromSearch}
         />
+      )}
+
+            {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                <Trash2 className="text-red-400" size={32} />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-white text-center mb-4">
+              Excluir Item
+            </h2>
+
+            <p className="text-slate-300 text-center mb-2">
+              Tem certeza que deseja excluir
+            </p>
+            <p className="text-white font-semibold text-center mb-2">
+              "{itemToDelete?.title}"?
+            </p>
+            <p className="text-slate-400 text-sm text-center mb-8">
+              Esta ação não pode ser desfeita.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDelete}
+                className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteItem}
+                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                <Trash2 size={18} />
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Edit Media Modal */}
