@@ -17,9 +17,11 @@ import {
 } from "../services/socialService";
 import { Notification } from "../types/social";
 import { useAuth } from "../context/AuthContext";
+import { useAppContext } from "../context/AppContext";
 
 export const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
+  const { setActivePage, setSelectedUser } = useAppContext();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,7 +56,7 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
-  const handleMarkAllAsRead = async () => {
+    const handleMarkAllAsRead = async () => {
     setLoading(true);
     try {
       await markAllNotificationsAsRead();
@@ -64,6 +66,22 @@ export const NotificationCenter: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const navigateToUserProfile = (fromUserId: string, fromUserName: string, fromUserAvatar?: string) => {
+    const userProfile = {
+      uid: fromUserId,
+      name: fromUserName,
+      avatar: fromUserAvatar,
+      bio: '',
+      isPublic: true,
+      followers: [],
+      following: [],
+      createdAt: new Date().toISOString()
+    };
+    setSelectedUser(userProfile);
+    setActivePage("social");
+    setIsOpen(false);
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -154,7 +172,10 @@ export const NotificationCenter: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                        <div
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
+                      onClick={() => navigateToUserProfile(notification.fromUserId, notification.fromUserName, notification.fromUserAvatar)}
+                    >
                       {notification.fromUserAvatar ? (
                         <img
                           src={notification.fromUserAvatar}
