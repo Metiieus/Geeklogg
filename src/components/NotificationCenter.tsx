@@ -56,7 +56,7 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
-  const handleMarkAllAsRead = async () => {
+    const handleMarkAllAsRead = async () => {
     setLoading(true);
     try {
       await markAllNotificationsAsRead();
@@ -66,6 +66,22 @@ export const NotificationCenter: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const navigateToUserProfile = (fromUserId: string, fromUserName: string, fromUserAvatar?: string) => {
+    const userProfile = {
+      uid: fromUserId,
+      name: fromUserName,
+      avatar: fromUserAvatar,
+      bio: '',
+      isPublic: true,
+      followers: [],
+      following: [],
+      createdAt: new Date().toISOString()
+    };
+    setSelectedUser(userProfile);
+    setActivePage("social");
+    setIsOpen(false);
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
