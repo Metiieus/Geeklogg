@@ -7,8 +7,8 @@ import { UserActivity, UserProfile } from "../types/social";
 import { useAppContext } from "../context/AppContext";
 
 export const SocialFeed: React.FC = () => {
+  const { selectedUser, setSelectedUser } = useAppContext();
   const [activeTab, setActiveTab] = useState<"feed" | "search">("feed");
-  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [activities, setActivities] = useState<UserActivity[]>([]);
   const [loading, setLoading] = useState(true);
 
