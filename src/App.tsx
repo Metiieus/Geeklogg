@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Sidebar } from "./components/Sidebar";
-import { MobileNav } from "./components/MobileNav";
+import { MobileSidebar } from "./components/MobileSidebar";
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const Library = lazy(() => import("./components/Library"));
 const Reviews = lazy(() => import("./components/Reviews"));
@@ -265,7 +265,7 @@ function App() {
           </div>
           <div className="relative z-10 flex min-h-screen">
             <Sidebar />
-            <main className="flex-1 w-full sm:ml-20 pb-16 sm:pb-0 overflow-x-hidden">
+                        <main className="flex-1 w-full sm:ml-20 pt-16 sm:pt-0 pb-4 sm:pb-0 overflow-x-hidden">
               <ErrorBoundary>
                 <Suspense
                   fallback={
@@ -281,7 +281,7 @@ function App() {
               </ErrorBoundary>
             </main>
           </div>
-          <MobileNav />
+                    <MobileSidebar />
           <ArchiviusAgent />
           <FirebaseWarning />
           <NotificationCenter />

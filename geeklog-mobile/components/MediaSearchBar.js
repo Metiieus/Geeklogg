@@ -10,6 +10,9 @@ import {
   ActivityIndicator,
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ExternalMediaService } from "../services/externalMediaService";
@@ -194,8 +197,12 @@ const MediaSearchBar = ({ selectedType, onTypeChange, onResultSelect, placeholde
     </TouchableOpacity>
   );
 
-  return (
-    <View style={styles.container}>
+    return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
       {/* Media type selector */}
       <View style={styles.typeSelector}>
         <FlatList
@@ -250,6 +257,13 @@ const MediaSearchBar = ({ selectedType, onTypeChange, onResultSelect, placeholde
             placeholderTextColor="#64748b"
             returnKeyType="search"
             onSubmitEditing={() => performSearch(query, selectedType)}
+            onFocus={() => {
+              // Ensure results are visible when keyboard opens
+              if (results.length > 0) {
+                setIsVisible(true);
+              }
+            }}
+            blurOnSubmit={false}
           />
 
           <View style={styles.searchActions}>
@@ -268,7 +282,7 @@ const MediaSearchBar = ({ selectedType, onTypeChange, onResultSelect, placeholde
 
       {/* Search results */}
       {isVisible && (
-        <View style={styles.resultsContainer}>
+        <View style={[styles.resultsContainer, { maxHeight: Dimensions.get('window').height * 0.4 }]}>
           {hasError ? (
             <View style={styles.errorContainer}>
               <MaterialIcons name="error-outline" size={24} color="#ef4444" />
@@ -289,11 +303,13 @@ const MediaSearchBar = ({ selectedType, onTypeChange, onResultSelect, placeholde
               renderItem={renderResultItem}
               showsVerticalScrollIndicator={false}
               style={styles.resultsList}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
             />
           )}
         </View>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -365,13 +381,13 @@ const styles = StyleSheet.create({
   clearButton: {
     padding: 4,
   },
-  resultsContainer: {
-    flex: 1,
+    resultsContainer: {
     backgroundColor: "rgba(30, 41, 59, 0.5)",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(100, 116, 139, 0.3)",
     maxHeight: 400,
+    minHeight: 200,
   },
   errorContainer: {
     flexDirection: "row",

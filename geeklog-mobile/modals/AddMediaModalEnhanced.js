@@ -579,9 +579,12 @@ const styles = StyleSheet.create({
   saveButtonDisabled: {
     opacity: 0.5,
   },
-  content: {
+    content: {
     flex: 1,
     paddingHorizontal: 20,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   // Options view styles
   optionsContainer: {

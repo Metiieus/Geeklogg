@@ -8,7 +8,7 @@ import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
 import {
-  getNotifications,
+  getUserNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "../services/socialService";
@@ -57,7 +57,7 @@ const Profile: React.FC = () => {
     if (activeTab !== "notifications") return;
     setLoadingNotifications(true);
     try {
-      const userNotifications = await getNotifications();
+            const userNotifications = await getUserNotifications(user?.uid || "");
       setNotifications(userNotifications);
     } catch (error) {
       console.error("Erro ao carregar notificações:", error);
