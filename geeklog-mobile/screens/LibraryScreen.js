@@ -100,10 +100,10 @@ const LibraryScreen = () => {
         </View>
 
         {/* Search */}
-        <View style={styles.searchContainer}>
+                <View style={styles.searchContainer}>
           <MaterialIcons
             name="search"
-            size={20}
+            size={24}
             color="#64748b"
             style={styles.searchIcon}
           />
@@ -123,7 +123,7 @@ const LibraryScreen = () => {
           style={styles.filtersContainer}
         >
           {filters.map((filter) => (
-            <TouchableOpacity
+                        <TouchableOpacity
               key={filter.id}
               style={[
                 styles.filterChip,
@@ -133,7 +133,7 @@ const LibraryScreen = () => {
             >
               <MaterialIcons
                 name={filter.icon}
-                size={16}
+                size={20}
                 color={selectedFilter === filter.id ? "#ffffff" : "#94a3b8"}
               />
               <Text
@@ -153,11 +153,11 @@ const LibraryScreen = () => {
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <View key={item.id} style={styles.itemCard}>
-                <View style={styles.itemCover}>
+                                <View style={styles.itemCover}>
                   <MaterialIcons
-                    name="library-books"
-                    size={32}
-                    color="#64748b"
+                    name={getTypeIcon(item.type)}
+                    size={40}
+                    color={getTypeColor(item.type)}
                   />
                 </View>
                                 <View style={styles.itemInfo}>
@@ -166,9 +166,9 @@ const LibraryScreen = () => {
                   </Text>
                   <Text style={styles.itemType}>{item.type}</Text>
                   <View style={styles.itemMeta}>
-                    {item.rating && (
+                                        {item.rating && (
                       <View style={styles.ratingContainer}>
-                        <MaterialIcons name="star" size={14} color="#fbbf24" />
+                        <MaterialIcons name="star" size={16} color="#fbbf24" />
                         <Text style={styles.ratingText}>{item.rating}</Text>
                       </View>
                     )}
@@ -184,17 +184,17 @@ const LibraryScreen = () => {
                     </View>
                   </View>
                 </View>
-                <TouchableOpacity
+                                <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => handleDeletePress(item)}
                 >
-                  <MaterialIcons name="delete" size={20} color="#ef4444" />
+                  <MaterialIcons name="delete" size={22} color="#ef4444" />
                 </TouchableOpacity>
               </View>
             ))
           ) : (
-            <View style={styles.emptyState}>
-              <MaterialIcons name="library-books" size={64} color="#64748b" />
+                        <View style={styles.emptyState}>
+              <MaterialIcons name="library-books" size={80} color="#64748b" />
               <Text style={styles.emptyTitle}>Biblioteca vazia</Text>
               <Text style={styles.emptySubtitle}>
                 {searchQuery
@@ -214,7 +214,7 @@ const LibraryScreen = () => {
             colors={["#06b6d4", "#ec4899"]}
             style={styles.addButtonGradient}
           >
-            <MaterialIcons name="add" size={24} color="#ffffff" />
+                        <MaterialIcons name="add" size={28} color="#ffffff" />
             <Text style={styles.addButtonText}>Adicionar Item</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -329,7 +329,31 @@ const getStatusLabel = (status) => {
     dropped: "Abandonado",
     planned: "Planejado",
   };
-  return labels[status] || status;
+    return labels[status] || status;
+};
+
+const getTypeIcon = (type) => {
+  const icons = {
+    games: "sports-esports",
+    books: "library-books",
+    movies: "movie",
+    series: "tv",
+    anime: "animation",
+    dorama: "video-library",
+  };
+  return icons[type] || "library-books";
+};
+
+const getTypeColor = (type) => {
+  const colors = {
+    games: "#06b6d4",
+    books: "#22c55e",
+    movies: "#f59e0b",
+    series: "#8b5cf6",
+    anime: "#ec4899",
+    dorama: "#ef4444",
+  };
+  return colors[type] || "#64748b";
 };
 
 const styles = StyleSheet.create({
@@ -364,7 +388,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(100, 116, 139, 0.3)",
   },
-  searchIcon: {
+    searchIcon: {
     marginRight: 12,
   },
   searchInput: {
@@ -376,25 +400,27 @@ const styles = StyleSheet.create({
   filtersContainer: {
     marginBottom: 20,
   },
-  filterChip: {
+    filterChip: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
     marginRight: 12,
     borderRadius: 20,
     backgroundColor: "rgba(30, 41, 59, 0.5)",
     borderWidth: 1,
     borderColor: "rgba(100, 116, 139, 0.3)",
-    gap: 6,
+    gap: 8,
+    minHeight: 44,
   },
   filterChipActive: {
     backgroundColor: "#06b6d4",
     borderColor: "#06b6d4",
   },
-  filterText: {
-    fontSize: 14,
+    filterText: {
+    fontSize: 15,
     color: "#94a3b8",
+    fontWeight: "500",
   },
   filterTextActive: {
     color: "#ffffff",
@@ -412,13 +438,15 @@ const styles = StyleSheet.create({
     borderColor: "rgba(100, 116, 139, 0.2)",
     gap: 12,
   },
-  itemCover: {
-    width: 60,
-    height: 80,
+    itemCover: {
+    width: 70,
+    height: 90,
     backgroundColor: "rgba(100, 116, 139, 0.2)",
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(100, 116, 139, 0.3)",
   },
   itemInfo: {
     flex: 1,
@@ -445,9 +473,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  ratingText: {
-    fontSize: 12,
+    ratingText: {
+    fontSize: 14,
     color: "#ffffff",
+    fontWeight: "600",
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -494,15 +523,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  deleteButton: {
+    deleteButton: {
     position: "absolute",
     top: 12,
     right: 12,
-    padding: 8,
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderRadius: 20,
+    padding: 10,
+    backgroundColor: "rgba(239, 68, 68, 0.15)",
+    borderRadius: 22,
     borderWidth: 1,
-    borderColor: "rgba(239, 68, 68, 0.3)",
+    borderColor: "rgba(239, 68, 68, 0.4)",
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   fragmentsContainer: {
     position: "absolute",
