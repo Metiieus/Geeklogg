@@ -21,6 +21,7 @@ import { useAppContext } from "../context/AppContext";
 
 export const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
+  const { setActivePage, setSelectedUser } = useAppContext();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
