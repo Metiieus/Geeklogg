@@ -13,6 +13,7 @@ import LibraryScreen from "../screens/LibraryScreen";
 import ReviewsScreen from "../screens/ReviewsScreen";
 import TimelineScreen from "../screens/TimelineScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import SocialScreen from "../screens/SocialScreen";
 import SubscriptionScreen from "../screens/SubscriptionScreen";
 
 const Stack = createStackNavigator();
