@@ -172,7 +172,10 @@ export const NotificationCenter: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                        <div
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
+                      onClick={() => navigateToUserProfile(notification.fromUserId, notification.fromUserName, notification.fromUserAvatar)}
+                    >
                       {notification.fromUserAvatar ? (
                         <img
                           src={notification.fromUserAvatar}
