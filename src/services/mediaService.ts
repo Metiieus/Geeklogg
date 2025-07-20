@@ -53,6 +53,47 @@ export async function updateMedia(
   return { cover: coverUrl };
 }
 
+export async function addMedia(data: AddMediaData): Promise<MediaItem> {
+  const uid = getUserId();
+
+  if (!uid || typeof uid !== "string") {
+    throw new Error("Usuário não autenticado ou UID inválido");
+  }
+
+  const now = new Date().toISOString();
+  const { coverFile, ...mediaData } = data;
+
+  const sanitizedData = sanitizeStrings(mediaData as Record<string, any>);
+  const toSave: Omit<MediaItem, "id"> = removeUndefinedFields({
+    ...sanitizedData,
+    createdAt: now,
+    updatedAt: now,
+    tags: Array.isArray(sanitizedData.tags) ? sanitizedData.tags : []
+  });
+
+  // Add the media document
+  const docRef = await database.add(["users", uid, "medias"], toSave);
+  const mediaId = docRef.id;
+
+  let coverUrl: string | undefined;
+
+  // Upload cover image if provided
+  if (coverFile instanceof File) {
+    try {
+      coverUrl = await storageClient.upload(`media/${mediaId}`, coverFile);
+      await database.update(["users", uid, "medias", mediaId], { cover: coverUrl });
+    } catch (err) {
+      console.error("Erro ao fazer upload da capa:", err);
+    }
+  }
+
+  return {
+    id: mediaId,
+    ...toSave,
+    cover: coverUrl || toSave.cover
+  } as MediaItem;
+}
+
 export async function getMedias(): Promise<MediaItem[]> {
   const uid = getUserId();
 
