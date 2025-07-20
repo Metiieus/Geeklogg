@@ -8,6 +8,11 @@ export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
   coverFile?: File;
 }
 
+// Interface para adição de mídia
+export interface AddMediaData extends Omit<MediaItem, "id" | "createdAt" | "updatedAt"> {
+  coverFile?: File;
+}
+
 export async function updateMedia(
   id: string,
   data: UpdateMediaData,
@@ -46,6 +51,82 @@ export async function updateMedia(
   }
 
   return { cover: coverUrl };
+}
+
+export async function addMedia(data: AddMediaData): Promise<MediaItem> {
+  const uid = getUserId();
+
+  if (!uid || typeof uid !== "string") {
+    throw new Error("Usuário não autenticado ou UID inválido");
+  }
+
+  const now = new Date().toISOString();
+  const { coverFile, ...mediaData } = data;
+
+  const sanitizedData = sanitizeStrings(mediaData as Record<string, any>);
+  const toSave: Omit<MediaItem, "id"> = removeUndefinedFields({
+    ...sanitizedData,
+    createdAt: now,
+    updatedAt: now,
+    tags: Array.isArray(sanitizedData.tags) ? sanitizedData.tags : []
+  });
+
+  // Add the media document
+  const docRef = await database.add(["users", uid, "medias"], toSave);
+  const mediaId = docRef.id;
+
+  let coverUrl: string | undefined;
+
+  // Upload cover image if provided
+  if (coverFile instanceof File) {
+    try {
+      coverUrl = await storageClient.upload(`media/${mediaId}`, coverFile);
+      await database.update(["users", uid, "medias", mediaId], { cover: coverUrl });
+    } catch (err) {
+      console.error("Erro ao fazer upload da capa:", err);
+    }
+  }
+
+  return {
+    id: mediaId,
+    ...toSave,
+    cover: coverUrl || toSave.cover
+  } as MediaItem;
+}
+
+export async function getMedias(): Promise<MediaItem[]> {
+  const uid = getUserId();
+
+  if (!uid) {
+    console.warn("User not authenticated, returning empty array");
+    return [];
+  }
+
+  try {
+    const medias = await database.getCollection(["users", uid, "medias"]);
+    return medias.map(media => ({
+      id: media.id,
+      title: media.title || "",
+      cover: media.cover,
+      platform: media.platform,
+      status: media.status || "planned",
+      rating: media.rating,
+      hoursSpent: media.hoursSpent,
+      totalPages: media.totalPages,
+      currentPage: media.currentPage,
+      startDate: media.startDate,
+      endDate: media.endDate,
+      tags: Array.isArray(media.tags) ? media.tags : [],
+      externalLink: media.externalLink,
+      type: media.type || "games",
+      description: media.description,
+      createdAt: media.createdAt || new Date().toISOString(),
+      updatedAt: media.updatedAt || new Date().toISOString()
+    }));
+  } catch (error) {
+    console.error("Error fetching medias:", error);
+    return [];
+  }
 }
 
 export async function deleteMedia(id: string): Promise<void> {
