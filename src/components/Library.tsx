@@ -188,10 +188,25 @@ const Library: React.FC = () => {
     setEditingItem(item);
   };
 
-  return (
-    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    return (
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in relative">
+      {/* Fragmentos animados no fundo */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute w-1 h-1 bg-cyan-400/20 rounded-full animate-pulse`}
+            style={{
+              left: `${(i % 4) * 25 + Math.random() * 20}%`,
+              top: `${Math.floor(i / 4) * 33 + Math.random() * 20}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${3 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+            {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
             Biblioteca
@@ -211,8 +226,8 @@ const Library: React.FC = () => {
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50">
+            {/* Filters */}
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {/* Search */}
           <div className="relative col-span-1 sm:col-span-2 md:col-span-1">
@@ -282,13 +297,13 @@ const Library: React.FC = () => {
         </div>
       </div>
 
-      {/* Results Count */}
-      <div className="flex items-center justify-between text-slate-400">
+            {/* Results Count */}
+      <div className="flex items-center justify-between text-slate-400 relative z-10">
         <p>{filteredAndSortedItems.length} itens</p>
       </div>
 
-      {/* Media Grid - Layout responsivo */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 animate-fade-in">
+            {/* Media Grid - Layout responsivo */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 animate-fade-in relative z-10">
         {filteredAndSortedItems.map((item) => {
           console.log("Library item", item);
           return (
