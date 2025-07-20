@@ -4,6 +4,7 @@ import { UserSearch } from "./UserSearch";
 import { UserProfileView } from "./UserProfileView";
 import { getFollowingActivities } from "../services/socialService";
 import { UserActivity, UserProfile } from "../types/social";
+import { useAppContext } from "../context/AppContext";
 
 export const SocialFeed: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"feed" | "search">("feed");
