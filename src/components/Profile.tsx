@@ -8,7 +8,7 @@ import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
 import {
-  getNotifications,
+  getUserNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "../services/socialService";
