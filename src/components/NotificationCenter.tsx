@@ -17,6 +17,7 @@ import {
 } from "../services/socialService";
 import { Notification } from "../types/social";
 import { useAuth } from "../context/AuthContext";
+import { useAppContext } from "../context/AppContext";
 
 export const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
