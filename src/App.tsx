@@ -181,7 +181,7 @@ function App() {
     loadData();
   }, [user]);
 
-  const contextValue = {
+    const contextValue = {
     mediaItems,
     setMediaItems,
     reviews,
@@ -192,6 +192,8 @@ function App() {
     setSettings,
     activePage,
     setActivePage,
+    selectedUser,
+    setSelectedUser,
   };
 
   if (loading) {
