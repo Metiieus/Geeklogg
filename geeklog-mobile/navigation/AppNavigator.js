@@ -36,7 +36,7 @@ const MainTabs = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Dashboard") {
+                    if (route.name === "Dashboard") {
             iconName = "dashboard";
           } else if (route.name === "Library") {
             iconName = "library-books";
@@ -44,6 +44,8 @@ const MainTabs = () => {
             iconName = "rate-review";
           } else if (route.name === "Timeline") {
             iconName = "timeline";
+          } else if (route.name === "Social") {
+            iconName = "people";
           } else if (route.name === "Profile") {
             iconName = "person";
           }
