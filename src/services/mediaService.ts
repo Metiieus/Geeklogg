@@ -48,6 +48,41 @@ export async function updateMedia(
   return { cover: coverUrl };
 }
 
+export async function getMedias(): Promise<MediaItem[]> {
+  const uid = getUserId();
+
+  if (!uid) {
+    console.warn("User not authenticated, returning empty array");
+    return [];
+  }
+
+  try {
+    const medias = await database.getCollection(["users", uid, "medias"]);
+    return medias.map(media => ({
+      id: media.id,
+      title: media.title || "",
+      cover: media.cover,
+      platform: media.platform,
+      status: media.status || "planned",
+      rating: media.rating,
+      hoursSpent: media.hoursSpent,
+      totalPages: media.totalPages,
+      currentPage: media.currentPage,
+      startDate: media.startDate,
+      endDate: media.endDate,
+      tags: Array.isArray(media.tags) ? media.tags : [],
+      externalLink: media.externalLink,
+      type: media.type || "games",
+      description: media.description,
+      createdAt: media.createdAt || new Date().toISOString(),
+      updatedAt: media.updatedAt || new Date().toISOString()
+    }));
+  } catch (error) {
+    console.error("Error fetching medias:", error);
+    return [];
+  }
+}
+
 export async function deleteMedia(id: string): Promise<void> {
   const uid = getUserId();
   await database.delete(["users", uid, "medias", id]);
