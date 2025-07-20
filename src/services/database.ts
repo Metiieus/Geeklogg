@@ -20,7 +20,9 @@ import {
 } from "firebase/firestore";
 
 export const database = {
-  // Add a document to a collection
+  /* ------------------------------------------------------------------ *
+   * ADD – cria documento com ID gerado automaticamente
+   * ------------------------------------------------------------------ */
   add: async (
     collectionPath: string | string[],
     data: any,
@@ -29,12 +31,14 @@ export const database = {
       const pathStr = Array.isArray(collectionPath)
         ? collectionPath.join("/")
         : collectionPath;
+
       const docRef = await addDoc(collection(db, pathStr), {
         ...data,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      // Return full DocumentReference for consistency across services
+
+      // Retorna o DocumentReference completo (útil para pegar o ID gerado)
       return docRef;
     } catch (error) {
       console.error("Error adding document:", error);
@@ -42,330 +46,219 @@ export const database = {
     }
   },
 
-      // Set a document with a specific ID
-      set: async (
-        collectionPath: string | string[],
-        docId: unknown,
-        data: any,
-        options?: any,
-      ): Promise<string> => {
+  /* ------------------------------------------------------------------ *
+   * SET – cria/atualiza documento com ID explícito
+   * ------------------------------------------------------------------ */
+  set: async (
+    collectionPath: string | string[],
+    docId: unknown,
+    data: any,
+    options?: any,
+  ): Promise<string> => {
+    try {
+      if (typeof docId !== "string" || docId.trim() === "") {
+        throw new Error("ID inválido");
+      }
+
+      const pathStr = Array.isArray(collectionPath)
+        ? collectionPath.join("/")
+        : collectionPath;
+
+      await setDoc(
+        doc(db, pathStr, docId),
+        { ...data, updatedAt: serverTimestamp() },
+        options,
+      );
+
+      return docId;
+    } catch (error) {
+      console.error("Error setting document:", error);
+      throw error;
+    }
+  },
+
+  /* ------------------------------------------------------------------ *
+   * GET – obtém um único documento
+   * ------------------------------------------------------------------ */
+  get: async (collectionPath: string | string[], docId?: string) => {
+    try {
+      const pathStr = Array.isArray(collectionPath)
+        ? collectionPath.join("/")
+        : collectionPath;
+
+      // Protege documentos do usuário quando não autenticado
+      if ((pathStr.startsWith("users/") || pathStr === "users") && !auth.currentUser) {
+        console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
+        return { exists: () => false, data: () => null };
+      }
+
+      let docRef;
+      if (docId) {
+        docRef = doc(db, pathStr, docId);
+      } else {
+        // collectionPath pode já conter o ID
+        const parts = pathStr.split("/");
+        if (parts.length % 2 === 0) {
+          docRef = doc(db, pathStr);
+        } else {
+          throw new Error("Document ID ausente");
+        }
+      }
+
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists()
+        ? { id: docSnap.id, ...docSnap.data(), exists: () => true, data: () => docSnap.data() }
+        : { exists: () => false, data: () => null };
+    } catch (error: any) {
+      console.error("Error getting document:", error);
+      /* Tratamento de falhas de rede / permissão */
+      if (
+        error.code === "unavailable" ||
+        error.message?.includes("Failed to fetch") ||
+        error.message?.includes("offline") ||
+        error.code === "failed-precondition"
+      ) {
+        console.warn("🌐 Offline/unavailable – retornando documento nulo");
+        return { exists: () => false, data: () => null };
+      }
+      if (error.code === "permission-denied" || error.code === "unauthenticated") {
+        console.warn("🔒 Sem permissão / não autenticado – doc nulo");
+        return { exists: () => false, data: () => null };
+      }
+      if (import.meta.env.DEV) {
+        console.warn("🚧 DEV – suprimindo erro e retornando nulo");
+        return { exists: () => false, data: () => null };
+      }
+      throw error;
+    }
+  },
+
+  /* ------------------------------------------------------------------ *
+   * GET COLLECTION – lista documentos
+   * ------------------------------------------------------------------ */
+  getCollection: async (
+    collectionPath: string | string[],
+    queryOptions?: {
+      where?: { field: string; operator: any; value: any };
+      orderBy?: { field: string; direction?: "asc" | "desc" };
+      limit?: number;
+    },
+  ) => {
+    try {
+      const pathStr = Array.isArray(collectionPath)
+        ? collectionPath.join("/")
+        : collectionPath;
+
+      // Protege coleção /users quando não autenticado
+      if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth.currentUser) {
+        console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
+        return [];
+      }
+
+      let q = collection(db, pathStr);
+
+      if (queryOptions) {
+        const { where: w, orderBy: ob, limit: lim } = queryOptions;
+        if (w) q = query(q, where(w.field, w.operator, w.value));
+        if (ob) q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
+        if (lim) q = query(q, limit(lim));
+      }
+
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
+    } catch (error: any) {
+      console.error("Error getting collection:", error);
+
+      if (
+        error.code === "unavailable" ||
+        error.message?.includes("Failed to fetch") ||
+        error.message?.includes("offline") ||
+        error.code === "failed-precondition"
+      ) {
+        console.warn("🌐 Offline/unavailable – retornando []");
+        return [];
+      }
+
+      if (error.code === "permission-denied" || error.code === "unauthenticated") {
+        console.warn("🔒 Sem permissão / não autenticado – retornando []");
+        return [];
+      }
+
+      if (import.meta.env.DEV) {
+        console.warn("🚧 DEV – usando fallback localStorage");
         try {
-          if (typeof docId !== "string" || docId.trim() === "") {
-            throw new Error("ID inválido");
-          }
-
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-
-          await setDoc(
-            doc(db, pathStr, docId as string),
-            {
-              ...data,
-              updatedAt: serverTimestamp(),
-            },
-            options,
+          const fallback = localStorageService.getCollection(
+            Array.isArray(collectionPath) ? collectionPath.join("/") : collectionPath,
           );
-          return docId as string;
-        } catch (error) {
-          console.error("Error setting document:", error);
-          throw error;
+          return fallback.map((item: any) => ({ id: item.id ?? Date.now().toString(), ...item }));
+        } catch {
+          return [];
         }
-      },
+      }
+      throw error;
+    }
+  },
 
-      // Get a single document
-      get: async (collectionPath: string | string[], docId?: string) => {
-        try {
-          // Check authentication for user-specific documents
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-          if (pathStr.startsWith("users/") && !auth.currentUser) {
-            console.warn(
-              "Attempting to access user document without authentication:",
-              pathStr,
-            );
-            return { exists: () => false, data: () => null };
-          }
+  /* ------------------------------------------------------------------ */
+  update: async (collectionPath: string | string[], docId: string, data: any) => {
+    try {
+      const pathStr = Array.isArray(collectionPath)
+        ? collectionPath.join("/")
+        : collectionPath;
+      await updateDoc(doc(db, pathStr, docId), { ...data, updatedAt: serverTimestamp() });
+      return docId;
+    } catch (error) {
+      console.error("Error updating document:", error);
+      throw error;
+    }
+  },
 
-          let docRef;
-          if (docId) {
-            const pathStr = Array.isArray(collectionPath)
-              ? collectionPath.join("/")
-              : collectionPath;
-            docRef = doc(db, pathStr, docId);
-          } else if (Array.isArray(collectionPath)) {
-            // Handle case where path includes doc ID
-            const fullPath = collectionPath.join("/");
-            const parts = fullPath.split("/");
-            if (parts.length % 2 === 0) {
-              // Even number means we have doc path
-              docRef = doc(db, fullPath);
-            } else {
-              throw new Error("Invalid document path");
-            }
-          } else {
-            throw new Error("Document ID required for string collection path");
-          }
+  /* ------------------------------------------------------------------ */
+  delete: async (collectionPath: string | string[], docId: string) => {
+    try {
+      const pathStr = Array.isArray(collectionPath)
+        ? collectionPath.join("/")
+        : collectionPath;
+      await deleteDoc(doc(db, pathStr, docId));
+      return docId;
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      throw error;
+    }
+  },
 
-          const docSnap = await getDoc(docRef);
+  /* ------------------------------------------------------------------ */
+  listen: (
+    collectionPath: string | string[],
+    callback: (data: any[]) => void,
+    queryOptions?: {
+      where?: { field: string; operator: any; value: any };
+      orderBy?: { field: string; direction?: "asc" | "desc" };
+      limit?: number;
+    },
+  ) => {
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
+    let q = collection(db, pathStr);
 
-          if (docSnap.exists()) {
-            return {
-              id: docSnap.id,
-              ...docSnap.data(),
-              exists: () => true,
-              data: () => docSnap.data(),
-            };
-          } else {
-            return { exists: () => false, data: () => null };
-          }
-        } catch (error: any) {
-          console.error("Error getting document:", error);
+    if (queryOptions) {
+      const { where: w, orderBy: ob, limit: lim } = queryOptions;
+      if (w) q = query(q, where(w.field, w.operator, w.value));
+      if (ob) q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
+      if (lim) q = query(q, limit(lim));
+    }
 
-          // Handle specific Firebase errors gracefully
-          if (
-            error.code === "unavailable" ||
-            error.message.includes("Failed to fetch") ||
-            error.message.includes("offline") ||
-            error.code === "failed-precondition"
-          ) {
-            console.warn(
-              "🌐 Network/offline issue detected, returning null document",
-            );
-            return { exists: () => false, data: () => null };
-          }
+    return onSnapshot(q, (snap) =>
+      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    );
+  },
 
-          if (error.code === "permission-denied") {
-            console.warn("🔒 Permission denied, user may not be authenticated");
-            return { exists: () => false, data: () => null };
-          }
+  /* ------------------------------------------------------------------ */
+  getDocument: async (collectionPath: string | string[], docId?: string) =>
+    database.get(collectionPath, docId),
 
-          if (error.code === "unauthenticated") {
-            console.warn("🔐 User not authenticated, returning null document");
-            return { exists: () => false, data: () => null };
-          }
-
-          // For development, don't throw errors that break the app
-          if (import.meta.env.DEV) {
-            console.warn(
-              "🚧 Development mode: suppressing Firebase error, returning null document",
-            );
-            return { exists: () => false, data: () => null };
-          }
-
-          throw error;
-        }
-      },
-
-      // Get all documents from a collection
-      getCollection: async (
-        collectionPath: string | string[],
-        queryOptions?: any,
-      ) => {
-        try {
-          // Check if user is authenticated for user-specific collections
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-          if (pathStr.startsWith("users/") && !auth.currentUser) {
-            console.warn(
-              "Attempting to access user collection without authentication:",
-              pathStr,
-            );
-            return [];
-          }
-
-          let q = collection(db, pathStr);
-
-          if (queryOptions) {
-            const {
-              where: whereClause,
-              orderBy: orderByClause,
-              limit: limitClause,
-            } = queryOptions;
-
-            if (whereClause) {
-              q = query(
-                q,
-                where(
-                  whereClause.field,
-                  whereClause.operator,
-                  whereClause.value,
-                ),
-              );
-            }
-
-            if (orderByClause) {
-              q = query(
-                q,
-                orderBy(orderByClause.field, orderByClause.direction || "asc"),
-              );
-            }
-
-            if (limitClause) {
-              q = query(q, limit(limitClause));
-            }
-          }
-
-          const querySnapshot = await getDocs(q);
-          return querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            data: doc.data(),
-            ...doc.data(),
-          }));
-        } catch (error: any) {
-          console.error("Error getting collection:", error);
-
-          // Handle specific Firebase errors gracefully
-          if (
-            error.code === "unavailable" ||
-            error.message.includes("Failed to fetch") ||
-            error.message.includes("offline") ||
-            error.code === "failed-precondition"
-          ) {
-            console.warn(
-              "🌐 Network/offline issue detected, returning empty array",
-            );
-            return [];
-          }
-
-          if (error.code === "permission-denied") {
-            console.warn("🔒 Permission denied, user may not be authenticated");
-            return [];
-          }
-
-          if (error.code === "unauthenticated") {
-            console.warn("🔐 User not authenticated, returning empty array");
-            return [];
-          }
-
-          // For development, try localStorage fallback
-          if (import.meta.env.DEV) {
-            console.warn("🚧 Development mode: trying localStorage fallback");
-            try {
-              const fallbackData = localStorageService.getCollection(pathStr);
-              console.log(
-                "📂 Using localStorage fallback, found",
-                fallbackData.length,
-                "items",
-              );
-              return fallbackData.map((item) => ({
-                id: item.id || Date.now().toString(),
-                data: item,
-                ...item,
-              }));
-            } catch (fallbackError) {
-              console.warn("📂 localStorage fallback failed:", fallbackError);
-              return [];
-            }
-          }
-
-          throw error;
-        }
-      },
-
-      // Update a document
-      update: async (
-        collectionPath: string | string[],
-        docId: string,
-        data: any,
-      ) => {
-        try {
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-          const docRef = doc(db, pathStr, docId);
-          await updateDoc(docRef, {
-            ...data,
-            updatedAt: serverTimestamp(),
-          });
-          return docId;
-        } catch (error) {
-          console.error("Error updating document:", error);
-          throw error;
-        }
-      },
-
-      // Delete a document
-      delete: async (collectionPath: string | string[], docId: string) => {
-        try {
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-          await deleteDoc(doc(db, pathStr, docId));
-          return docId;
-        } catch (error) {
-          console.error("Error deleting document:", error);
-          throw error;
-        }
-      },
-
-      // Listen to real-time updates
-      listen: (
-        collectionPath: string | string[],
-        callback: (data: any[]) => void,
-        queryOptions?: any,
-      ) => {
-        try {
-          const pathStr = Array.isArray(collectionPath)
-            ? collectionPath.join("/")
-            : collectionPath;
-          let q = collection(db, pathStr);
-
-          if (queryOptions) {
-            const {
-              where: whereClause,
-              orderBy: orderByClause,
-              limit: limitClause,
-            } = queryOptions;
-
-            if (whereClause) {
-              q = query(
-                q,
-                where(
-                  whereClause.field,
-                  whereClause.operator,
-                  whereClause.value,
-                ),
-              );
-            }
-
-            if (orderByClause) {
-              q = query(
-                q,
-                orderBy(orderByClause.field, orderByClause.direction || "asc"),
-              );
-            }
-
-            if (limitClause) {
-              q = query(q, limit(limitClause));
-            }
-          }
-
-          return onSnapshot(q, (querySnapshot) => {
-            const data = querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              data: doc.data(),
-              ...doc.data(),
-            }));
-            callback(data);
-          });
-        } catch (error) {
-          console.error("Error setting up listener:", error);
-          throw error;
-        }
-      },
-
-      // Add getDocument method for socialService compatibility
-      getDocument: async (
-        collectionPath: string | string[],
-        docId?: string,
-      ) => {
-        return database.get(collectionPath, docId);
-      },
-
-      // Utility functions
-      timestamp: Timestamp,
-      serverTimestamp,
-    };
+  /* Utilitários */
+  timestamp: Timestamp,
+  serverTimestamp,
+};

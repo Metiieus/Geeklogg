@@ -2,48 +2,65 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 👤 Perfis públicos: qualquer usuário autenticado pode visualizar e listar
+    /* ------------------------------------------------------------------ *
+     * 👤 PERFIS PÚBLICOS
+     * ------------------------------------------------------------------ */
     match /users/{userId} {
-      allow get, list: if request.auth != null;                  // ✅ permite buscar e listar
-      allow update, delete: if request.auth.uid == userId;
-      allow create: if request.auth.uid == userId;
+      allow get, list : if request.auth != null;        // qualquer logado pode ver / listar perfis
+      allow create    : if request.auth.uid == userId;  // cria o próprio perfil
+      allow update,
+            delete    : if request.auth.uid == userId;  // só o dono edita / remove
     }
 
-    // 📁 Subcoleções privadas do usuário (medias, reviews, milestones, achievements, etc)
+    /* ------------------------------------------------------------------ *
+     * SUBCOLEÇÕES PRIVADAS DO USUÁRIO
+     * (medias, reviews, milestones, achievements, etc.)
+     * ------------------------------------------------------------------ */
     match /users/{userId}/{document=**} {
-      allow read, write: if request.auth.uid == userId;
+      allow read, write : if request.auth.uid == userId;   // somente o dono
     }
 
-    // 📁 Atividades globais (feed público)
-    match /activities/{docId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if false;
-    }
-
-    // 🔔 Notificações globais (tipo anúncios)
-    match /notifications/{docId} {
-      allow read: if request.auth != null;
-      allow write: if false;
-    }
-
-    // 📨 Solicitações de amizade / seguir
-    match /followRequests/{docId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // 📁 Seguidores e seguindo (em subcoleções de cada usuário)
+    /* ------------------------------------------------------------------ *
+     * SEGUIDORES / SEGUINDO  ➜ leitura pública (apenas logado)
+     * ------------------------------------------------------------------ */
     match /users/{userId}/followers/{docId} {
-      allow read, write: if request.auth.uid == userId;
+      allow read  : if request.auth != null;          // ✅ qualquer logado pode ver
+      allow write : if request.auth.uid == userId;    // gravação só do dono
     }
 
     match /users/{userId}/following/{docId} {
-      allow read, write: if request.auth.uid == userId;
+      allow read  : if request.auth != null;          // ✅ qualquer logado pode ver
+      allow write : if request.auth.uid == userId;    // gravação só do dono
     }
 
-    // 📁 Notificações pessoais
+    /* ------------------------------------------------------------------ *
+     * NOTIFICAÇÕES PESSOAIS
+     * ------------------------------------------------------------------ */
     match /users/{userId}/notifications/{docId} {
-      allow read, write: if request.auth.uid == userId;
+      allow read, write : if request.auth.uid == userId;
+    }
+
+    /* ------------------------------------------------------------------ *
+     * FEED DE ATIVIDADES GLOBAL
+     * ------------------------------------------------------------------ */
+    match /activities/{docId} {
+      allow read, create : if request.auth != null;   // todos logados podem ler/criar
+      allow update, delete : if false;                // ninguém edita/deleta
+    }
+
+    /* ------------------------------------------------------------------ *
+     * NOTIFICAÇÕES GLOBAIS (anúncios)
+     * ------------------------------------------------------------------ */
+    match /notifications/{docId} {
+      allow read : if request.auth != null;
+      allow write : if false;
+    }
+
+    /* ------------------------------------------------------------------ *
+     * SOLICITAÇÕES DE AMIZADE / SEGUIR
+     * ------------------------------------------------------------------ */
+    match /followRequests/{docId} {
+      allow read, write : if request.auth != null;
     }
   }
 }
