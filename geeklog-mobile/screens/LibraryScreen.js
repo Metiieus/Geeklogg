@@ -164,8 +164,8 @@ const LibraryScreen = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Add Media Modal */}
-      <AddMediaModal
+            {/* Add Media Modal */}
+      <AddMediaModalEnhanced
         visible={showAddModal}
         onClose={() => setShowAddModal(false)}
       />
