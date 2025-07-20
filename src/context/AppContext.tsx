@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { MediaItem, Review, Milestone, UserSettings, ActivePage } from '../App';
+import { UserProfile } from '../types/social';
 
 interface AppContextType {
   mediaItems: MediaItem[];
@@ -12,6 +13,8 @@ interface AppContextType {
   setSettings: (settings: UserSettings) => void;
   activePage: ActivePage;
   setActivePage: (page: ActivePage) => void;
+  selectedUser: UserProfile | null;
+  setSelectedUser: (user: UserProfile | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);

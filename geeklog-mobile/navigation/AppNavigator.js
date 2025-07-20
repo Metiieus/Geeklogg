@@ -13,6 +13,7 @@ import LibraryScreen from "../screens/LibraryScreen";
 import ReviewsScreen from "../screens/ReviewsScreen";
 import TimelineScreen from "../screens/TimelineScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import SocialScreen from "../screens/SocialScreen";
 import SubscriptionScreen from "../screens/SubscriptionScreen";
 
 const Stack = createStackNavigator();
@@ -35,7 +36,7 @@ const MainTabs = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Dashboard") {
+                    if (route.name === "Dashboard") {
             iconName = "dashboard";
           } else if (route.name === "Library") {
             iconName = "library-books";
@@ -43,6 +44,8 @@ const MainTabs = () => {
             iconName = "rate-review";
           } else if (route.name === "Timeline") {
             iconName = "timeline";
+          } else if (route.name === "Social") {
+            iconName = "people";
           } else if (route.name === "Profile") {
             iconName = "person";
           }
@@ -79,10 +82,15 @@ const MainTabs = () => {
         component={ReviewsScreen}
         options={{ title: "Reviews" }}
       />
-      <Tab.Screen
+            <Tab.Screen
         name="Timeline"
         component={TimelineScreen}
         options={{ title: "Timeline" }}
+      />
+      <Tab.Screen
+        name="Social"
+        component={SocialScreen}
+        options={{ title: "Social" }}
       />
       <Tab.Screen
         name="Profile"

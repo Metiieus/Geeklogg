@@ -25,6 +25,7 @@ import { AppProvider } from "./context/AppContext";
 import { useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 import { checkAchievements } from "./services/achievementService";
+import { UserProfile } from "./types/social";
 
 export type MediaType =
   | "games"
@@ -115,7 +116,7 @@ function App() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [settings, setSettings] = useState<UserSettings>({
+    const [settings, setSettings] = useState<UserSettings>({
     name: "Usuário",
     bio: "",
     favorites: {
@@ -126,6 +127,7 @@ function App() {
     theme: "dark",
     defaultLibrarySort: "updatedAt",
   });
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -179,7 +181,7 @@ function App() {
     loadData();
   }, [user]);
 
-  const contextValue = {
+    const contextValue = {
     mediaItems,
     setMediaItems,
     reviews,
@@ -190,6 +192,8 @@ function App() {
     setSettings,
     activePage,
     setActivePage,
+    selectedUser,
+    setSelectedUser,
   };
 
   if (loading) {
