@@ -10,11 +10,15 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  Dimensions,
+  SafeAreaView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useAppContext } from "../contexts/AppContext";
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const AddMediaModal = ({ visible, onClose }) => {
   const { addMediaItem } = useAppContext();
@@ -125,7 +129,7 @@ const AddMediaModal = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal
+        <Modal
       visible={visible}
       animationType="slide"
       presentationStyle="pageSheet"
@@ -135,6 +139,7 @@ const AddMediaModal = ({ visible, onClose }) => {
         colors={["#0f172a", "#1e293b", "#334155"]}
         style={styles.container}
       >
+        <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -379,7 +384,8 @@ const AddMediaModal = ({ visible, onClose }) => {
           </View>
 
           <View style={styles.bottomSpacing} />
-        </ScrollView>
+                </ScrollView>
+        </SafeAreaView>
       </LinearGradient>
     </Modal>
   );
@@ -389,37 +395,53 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
+  safeArea: {
+    flex: 1,
+  },
+    header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(100, 116, 139, 0.2)",
   },
-  closeButton: {
-    padding: 8,
+    closeButton: {
+    padding: 12,
+    margin: -4,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#ffffff",
   },
-  saveButton: {
-    padding: 8,
+    saveButton: {
+    padding: 12,
+    margin: -4,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   saveButtonDisabled: {
     opacity: 0.5,
   },
-  content: {
+    content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
-  coverContainer: {
+    coverContainer: {
     alignSelf: "center",
     marginVertical: 20,
+    minWidth: 44,
+    minHeight: 44,
   },
   coverImageContainer: {
     width: 120,
@@ -470,24 +492,25 @@ const styles = StyleSheet.create({
   inputGroup: {
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
+    label: {
+    fontSize: Math.max(16, screenWidth * 0.04),
     fontWeight: "600",
     color: "#ffffff",
     marginBottom: 8,
   },
-  input: {
+    input: {
     backgroundColor: "rgba(30, 41, 59, 0.5)",
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    fontSize: 16,
+    paddingVertical: Math.max(16, screenHeight * 0.02),
+    fontSize: Math.max(16, screenWidth * 0.04),
     color: "#ffffff",
     borderWidth: 1,
     borderColor: "rgba(100, 116, 139, 0.3)",
+    minHeight: 48,
   },
-  textArea: {
-    height: 100,
+    textArea: {
+    height: Math.max(100, screenHeight * 0.12),
     textAlignVertical: "top",
   },
   grid: {
@@ -495,26 +518,30 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 12,
   },
-  gridItem: {
+    gridItem: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width: "30%",
-    aspectRatio: 1,
+    width: Math.max((screenWidth - 64) / 3, 100),
+    height: Math.max((screenWidth - 64) / 3, 100),
+    minWidth: 88,
+    minHeight: 88,
     backgroundColor: "rgba(30, 41, 59, 0.5)",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(100, 116, 139, 0.3)",
-    gap: 8,
+    gap: 6,
+    marginBottom: 8,
   },
   gridItemActive: {
     backgroundColor: "#06b6d4",
     borderColor: "#06b6d4",
   },
-  gridItemText: {
-    fontSize: 12,
+    gridItemText: {
+    fontSize: Math.max(12, screenWidth * 0.03),
     color: "#94a3b8",
     textAlign: "center",
+    paddingHorizontal: 4,
   },
   gridItemTextActive: {
     color: "#ffffff",
@@ -527,11 +554,11 @@ const styles = StyleSheet.create({
   flex1: {
     flex: 1,
   },
-  spacer: {
-    width: 16,
+    spacer: {
+    width: Math.max(12, screenWidth * 0.03),
   },
-  bottomSpacing: {
-    height: 40,
+    bottomSpacing: {
+    height: Math.max(40, screenHeight * 0.08),
   },
 });
 
