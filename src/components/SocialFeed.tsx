@@ -137,9 +137,18 @@ export const SocialFeed: React.FC = () => {
                 className={`p-6 rounded-2xl border backdrop-blur-sm transition-all duration-300 hover:scale-105 ${getActivityColor(activity.type)}`}
               >
                 <div className="flex items-start gap-4">
-                                    <div
+                                                      <div
                     className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
-                    onClick={() => setSelectedUser({ uid: activity.userId, name: activity.userName, avatar: activity.userAvatar })}
+                    onClick={() => setSelectedUser({
+                      uid: activity.userId,
+                      name: activity.userName,
+                      avatar: activity.userAvatar,
+                      bio: '',
+                      isPublic: true,
+                      followers: [],
+                      following: [],
+                      createdAt: new Date().toISOString()
+                    })}
                   >
                     {activity.userAvatar ? (
                       <img
