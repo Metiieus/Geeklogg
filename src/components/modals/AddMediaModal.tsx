@@ -203,8 +203,8 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slide-up">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 animate-fade-in overflow-y-auto">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-slate-700 max-w-2xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">
@@ -219,9 +219,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         </div>
 
         {/* Form */}
-        <form
+                        <form
+          id="media-form"
           onSubmit={handleSubmit}
-          className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto overflow-x-hidden max-h-[calc(95vh-140px)] sm:max-h-[calc(90vh-100px)]"
+          className="flex-1 flex flex-col p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto overflow-x-hidden"
         >
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -463,19 +464,27 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             />
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-700">
+                    {/* Content wrapper */}
+          <div className="flex-1 space-y-4 sm:space-y-6">
+            {/* Form content here will be moved above */}
+          </div>
+        </form>
+
+        {/* Actions - Fixed at bottom */}
+        <div className="sticky bottom-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-4 sm:p-6 border-t border-slate-700">
+          <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 text-slate-300 hover:text-white transition-colors"
+              className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1"
             >
               Cancelar
             </button>
             <button
               type="submit"
+              form="media-form"
               disabled={isSaving || isUploading}
-              className={`px-6 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+              className={`w-full sm:w-auto px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 ${
                 isSaving || isUploading
                   ? "bg-slate-600 cursor-not-allowed"
                   : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25"
@@ -489,6 +498,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
               {isSaving ? "Salvando..." : "Salvar Mídia"}
             </button>
           </div>
+        </div>
         </form>
       </div>
     </div>
