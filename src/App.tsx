@@ -25,6 +25,7 @@ import { AppProvider } from "./context/AppContext";
 import { useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 import { checkAchievements } from "./services/achievementService";
+import { UserProfile } from "./types/social";
 
 export type MediaType =
   | "games"
