@@ -156,7 +156,10 @@ export const SocialFeed: React.FC = () => {
                       <span className="text-2xl">
                         {getActivityIcon(activity.type)}
                       </span>
-                      <span className="text-white font-medium">
+                                            <span
+                        className="text-white font-medium cursor-pointer hover:text-purple-300 transition-colors"
+                        onClick={() => setSelectedUser({ uid: activity.userId, name: activity.userName, avatar: activity.userAvatar })}
+                      >
                         {activity.userName}
                       </span>
                       <span className="text-slate-400">
