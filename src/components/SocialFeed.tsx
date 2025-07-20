@@ -166,9 +166,18 @@ export const SocialFeed: React.FC = () => {
                       <span className="text-2xl">
                         {getActivityIcon(activity.type)}
                       </span>
-                                            <span
+                                                                  <span
                         className="text-white font-medium cursor-pointer hover:text-purple-300 transition-colors"
-                        onClick={() => setSelectedUser({ uid: activity.userId, name: activity.userName, avatar: activity.userAvatar })}
+                        onClick={() => setSelectedUser({
+                          uid: activity.userId,
+                          name: activity.userName,
+                          avatar: activity.userAvatar,
+                          bio: '',
+                          isPublic: true,
+                          followers: [],
+                          following: [],
+                          createdAt: new Date().toISOString()
+                        })}
                       >
                         {activity.userName}
                       </span>
