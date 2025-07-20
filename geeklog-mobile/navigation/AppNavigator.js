@@ -82,10 +82,15 @@ const MainTabs = () => {
         component={ReviewsScreen}
         options={{ title: "Reviews" }}
       />
-      <Tab.Screen
+            <Tab.Screen
         name="Timeline"
         component={TimelineScreen}
         options={{ title: "Timeline" }}
+      />
+      <Tab.Screen
+        name="Social"
+        component={SocialScreen}
+        options={{ title: "Social" }}
       />
       <Tab.Screen
         name="Profile"
