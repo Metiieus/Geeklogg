@@ -8,6 +8,11 @@ export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
   coverFile?: File;
 }
 
+// Interface para adição de mídia
+export interface AddMediaData extends Omit<MediaItem, "id" | "createdAt" | "updatedAt"> {
+  coverFile?: File;
+}
+
 export async function updateMedia(
   id: string,
   data: UpdateMediaData,
