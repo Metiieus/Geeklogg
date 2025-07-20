@@ -281,7 +281,7 @@ function App() {
               </ErrorBoundary>
             </main>
           </div>
-          <MobileNav />
+                    <MobileSidebar />
           <ArchiviusAgent />
           <FirebaseWarning />
           <NotificationCenter />
