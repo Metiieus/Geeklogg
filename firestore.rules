@@ -20,19 +20,15 @@ service cloud.firestore {
       allow read, write : if request.auth.uid == userId;   // somente o dono
     }
 
-        /* ------------------------------------------------------------------ *
+            /* ------------------------------------------------------------------ *
      * SEGUIDORES / SEGUINDO  ➜ leitura pública (apenas logado)
      * ------------------------------------------------------------------ */
     match /users/{userId}/followers/{docId} {
-      allow read  : if request.auth != null;                    // ✅ qualquer logado pode ver
-      allow write : if request.auth.uid == userId ||            // dono pode editar
-                       request.auth.uid == docId;               // ou quem está seguindo
+      allow read, write : if request.auth != null;              // qualquer logado pode ver/editar
     }
 
     match /users/{userId}/following/{docId} {
-      allow read  : if request.auth != null;                    // ✅ qualquer logado pode ver
-      allow write : if request.auth.uid == userId ||            // dono pode editar
-                       request.auth.uid == docId;               // ou quem está sendo seguido
+      allow read, write : if request.auth != null;              // qualquer logado pode ver/editar
     }
 
     /* ------------------------------------------------------------------ *
