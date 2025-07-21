@@ -7,7 +7,7 @@ import {
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 
 const mercadoPagoAccessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || "APP_USR-5653582540014671-071813-7c2a1989c91d748fc96c2c61588137cd-182135011";
-const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const clientUrl = process.env.CLIENT_URL || "https://geeklog-26b2c.web.app";
 
 // Initialize MercadoPago
 let mercadopago = null;
