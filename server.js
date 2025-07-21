@@ -222,8 +222,9 @@ const server = http.createServer(async (req, res) => {
   res.end("Not Found");
 });
 
-const port = process.env.PORT || 4242;
-server.listen(port, () => {
+const port = process.env.PORT || 8080;
+server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   console.log(`MercadoPago configured: ${!!mercadopago}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
