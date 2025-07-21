@@ -105,6 +105,48 @@ const Settings: React.FC = () => {
         <p className="text-slate-400">Personalize sua experiência no NerdLog</p>
       </div>
 
+      {/* Premium Section */}
+      <div className="bg-gradient-to-br from-yellow-600/10 to-orange-600/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/30">
+        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+          <Crown className="text-yellow-400" size={20} />
+          GeekLog Premium
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="font-medium text-white mb-3">Recursos Premium</h3>
+            <ul className="space-y-2 text-slate-300 text-sm">
+              <li className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                Biblioteca ilimitada
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                Estatísticas avançadas
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                Temas personalizados
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                Backup na nuvem
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                Suporte prioritário
+              </li>
+            </ul>
+          </div>
+          <div className="flex flex-col justify-center">
+            <div className="text-center mb-4">
+              <div className="text-2xl font-bold text-white">R$ 19,99</div>
+              <div className="text-slate-400 text-sm">pagamento único</div>
+            </div>
+            <MercadoPagoButton className="w-full" />
+          </div>
+        </div>
+      </div>
+
       {/* Data Management */}
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
         <h2 className="text-xl font-semibold text-white mb-6">Configurações</h2>
