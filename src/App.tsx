@@ -209,7 +209,7 @@ function App() {
       <Router>
         <ToastProvider>
           <Routes>
-            <Route path="/premium/success" element={<PremiumSuccess />} />
+            <Route path="/premium/success" element={<PremiumSuccessPage />} />
             <Route path="/premium/failure" element={<PremiumFailure />} />
             <Route path="/premium/pending" element={<PremiumPending />} />
             <Route path="*" element={
@@ -268,7 +268,7 @@ function App() {
       <ToastProvider>
         <AppProvider value={contextValue}>
           <Routes>
-            <Route path="/premium/success" element={<PremiumSuccess />} />
+            <Route path="/premium/success" element={<PremiumSuccessPage />} />
             <Route path="/premium/failure" element={<PremiumFailure />} />
             <Route path="/premium/pending" element={<PremiumPending />} />
             <Route path="*" element={
