@@ -57,14 +57,16 @@ try {
 export { app, auth, db };
 
 // Configuração especial para DEV e produção
-if (import.meta.env.DEV) {
-  enableIndexedDbPersistence(db).catch((err) =>
-    console.warn("⚠️ Falha ao ativar persistence:", err),
-  );
-} else {
-  enableNetwork(db).catch((err) =>
-    console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
-  );
+if (db) {
+  if (import.meta.env.DEV) {
+    enableIndexedDbPersistence(db).catch((err) =>
+      console.warn("⚠️ Falha ao ativar persistence:", err),
+    );
+  } else {
+    enableNetwork(db).catch((err) =>
+      console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
+    );
+  }
 }
 
 // Storage
