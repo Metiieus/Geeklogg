@@ -232,26 +232,162 @@ const ReviewsScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollView: { flex: 1, paddingHorizontal: 20 },
-  header: { paddingTop: 20, paddingBottom: 40 },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginBottom: 4,
-  },
-  subtitle: { fontSize: 14, color: "#94a3b8" },
-  emptyState: { alignItems: "center", paddingVertical: 100 },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: { fontSize: 14, color: "#94a3b8" },
-});
+const createStyles = (responsive) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      paddingHorizontal: responsive.padding.md,
+    },
+    header: {
+      paddingTop: responsive.padding.lg,
+      paddingBottom: responsive.padding.md,
+    },
+    title: {
+      fontSize: responsive.fontSize.xxl,
+      fontWeight: "bold",
+      color: "#ffffff",
+      marginBottom: responsive.spacing.xs,
+    },
+    subtitle: {
+      fontSize: responsive.fontSize.sm,
+      color: "#94a3b8",
+    },
+    addButton: {
+      marginBottom: responsive.spacing.lg,
+      borderRadius: 12,
+      overflow: "hidden",
+    },
+    addButtonGradient: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: responsive.padding.md,
+      paddingHorizontal: responsive.padding.lg,
+      gap: responsive.spacing.sm,
+    },
+    addButtonText: {
+      fontSize: responsive.fontSize.md,
+      fontWeight: "bold",
+      color: "#ffffff",
+    },
+    reviewsList: {
+      gap: responsive.spacing.md,
+      paddingBottom: responsive.spacing.xl,
+    },
+    reviewCard: {
+      backgroundColor: "rgba(30, 41, 59, 0.5)",
+      borderRadius: 16,
+      padding: responsive.padding.md,
+      borderWidth: 1,
+      borderColor: "rgba(100, 116, 139, 0.2)",
+    },
+    reviewHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: responsive.spacing.md,
+    },
+    reviewTitleContainer: {
+      flex: 1,
+      marginRight: responsive.spacing.sm,
+    },
+    reviewTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: "bold",
+      color: "#ffffff",
+      marginBottom: responsive.spacing.xs,
+    },
+    reviewDate: {
+      fontSize: responsive.fontSize.xs,
+      color: "#94a3b8",
+    },
+    reviewActions: {
+      flexDirection: "row",
+      gap: responsive.spacing.sm,
+    },
+    favoriteButton: {
+      padding: responsive.padding.xs,
+      borderRadius: 8,
+      backgroundColor: "rgba(100, 116, 139, 0.1)",
+    },
+    moreButton: {
+      padding: responsive.padding.xs,
+      borderRadius: 8,
+      backgroundColor: "rgba(100, 116, 139, 0.1)",
+    },
+    ratingContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: responsive.spacing.sm,
+      marginBottom: responsive.spacing.md,
+    },
+    ratingLabel: {
+      fontSize: responsive.fontSize.sm,
+      color: "#94a3b8",
+    },
+    starsContainer: {
+      flexDirection: "row",
+      gap: 2,
+    },
+    ratingText: {
+      fontSize: responsive.fontSize.sm,
+      fontWeight: "600",
+      color: "#ffffff",
+    },
+    reviewContent: {
+      fontSize: responsive.fontSize.md,
+      color: "#e2e8f0",
+      lineHeight: responsive.fontSize.md * 1.5,
+      marginBottom: responsive.spacing.md,
+    },
+    reviewFooter: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    favoriteTag: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: responsive.spacing.xs,
+      backgroundColor: "rgba(239, 68, 68, 0.1)",
+      paddingHorizontal: responsive.padding.sm,
+      paddingVertical: responsive.padding.xs,
+      borderRadius: 6,
+    },
+    favoriteTagText: {
+      fontSize: responsive.fontSize.xs,
+      color: "#ef4444",
+      fontWeight: "600",
+    },
+    readMoreButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: responsive.spacing.xs,
+    },
+    readMoreText: {
+      fontSize: responsive.fontSize.sm,
+      color: "#06b6d4",
+      fontWeight: "600",
+    },
+    emptyState: {
+      alignItems: "center",
+      paddingVertical: responsive.padding.xxl,
+    },
+    emptyTitle: {
+      fontSize: responsive.fontSize.lg,
+      fontWeight: "bold",
+      color: "#ffffff",
+      marginTop: responsive.spacing.md,
+      marginBottom: responsive.spacing.sm,
+    },
+    emptySubtitle: {
+      fontSize: responsive.fontSize.sm,
+      color: "#94a3b8",
+      textAlign: "center",
+    },
+  });
 
 export default ReviewsScreen;
