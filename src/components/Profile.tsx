@@ -15,7 +15,7 @@ import {
 import { Notification } from "../types/social";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
-import { startCheckout } from "../services/stripeService";
+import MercadoPagoButton from "./MercadoPagoButton";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
@@ -148,14 +148,11 @@ const Profile: React.FC = () => {
           </button>
         </div>
         {!profile?.isPremium && (
-          <button
-            onClick={() => startCheckout()}
-            className="group bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
-          >
+          <MercadoPagoButton className="group bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center">
             <Crown className="w-4 sm:w-5 h-4 sm:h-5 group-hover:animate-bounce" />
             Assinar Premium
             <Star className="w-3 sm:w-4 h-3 sm:h-4" />
-          </button>
+          </MercadoPagoButton>
         )}
         {profile?.isPremium && (
           <div className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-3 sm:px-4 py-2 rounded-xl font-semibold flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center">
@@ -237,13 +234,10 @@ const Profile: React.FC = () => {
                 </div>
               </div>
               {!profile?.isPremium && (
-                <button
-                  onClick={() => startCheckout()}
-                  className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
-                >
+                <MercadoPagoButton className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center">
                   <Zap className="w-4 sm:w-5 h-4 sm:h-5" />
                   Assinar Agora
-                </button>
+                </MercadoPagoButton>
               )}
             </div>
 
