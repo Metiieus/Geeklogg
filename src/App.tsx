@@ -17,6 +17,9 @@ import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
 import { NotificationCenter } from "./components/NotificationCenter";
+import PremiumSuccess from "./components/PremiumSuccess";
+import PremiumFailure from "./components/PremiumFailure";
+import PremiumPending from "./components/PremiumPending";
 
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
