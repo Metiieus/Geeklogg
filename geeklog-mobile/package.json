@@ -26,7 +26,6 @@
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/stack": "^7.4.2",
-    "@stripe/stripe-react-native": "^0.40.1",
     "expo": "~53.0.17",
     "expo-image-picker": "^16.1.4",
     "expo-linear-gradient": "^14.1.5",
@@ -42,8 +41,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@capacitor/cli": "^7.4.2",
     "@capacitor/android": "^7.4.2",
+    "@capacitor/cli": "^7.4.2",
     "@capacitor/ios": "^7.4.2",
     "@types/react": "~19.0.10",
     "typescript": "~5.8.3",
