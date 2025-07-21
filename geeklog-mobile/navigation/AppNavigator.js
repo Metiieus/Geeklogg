@@ -12,6 +12,7 @@ import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
 import ReviewsScreen from "../screens/ReviewsScreen";
 import TimelineScreen from "../screens/TimelineScreen";
+import StatisticsScreen from "../screens/StatisticsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SocialScreen from "../screens/SocialScreen";
 import SubscriptionScreen from "../screens/SubscriptionScreen";
@@ -42,8 +43,10 @@ const MainTabs = () => {
             iconName = "library-books";
           } else if (route.name === "Reviews") {
             iconName = "rate-review";
-          } else if (route.name === "Timeline") {
+                    } else if (route.name === "Timeline") {
             iconName = "timeline";
+          } else if (route.name === "Statistics") {
+            iconName = "bar-chart";
           } else if (route.name === "Social") {
             iconName = "people";
           } else if (route.name === "Profile") {
@@ -82,10 +85,15 @@ const MainTabs = () => {
         component={ReviewsScreen}
         options={{ title: "Reviews" }}
       />
-            <Tab.Screen
+                        <Tab.Screen
         name="Timeline"
         component={TimelineScreen}
         options={{ title: "Timeline" }}
+      />
+      <Tab.Screen
+        name="Statistics"
+        component={StatisticsScreen}
+        options={{ title: "Estatísticas" }}
       />
       <Tab.Screen
         name="Social"
