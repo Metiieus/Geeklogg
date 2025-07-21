@@ -29,21 +29,81 @@ export interface CheckoutResponse {
   error?: string;
 }
 
+// Testa se o backend está acessível
+async function testBackendConnectivity(url: string): Promise<boolean> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+    const response = await fetch(`${url}/health`, {
+      method: 'GET',
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    return response.ok;
+  } catch (error) {
+    console.log(`Backend não acessível em: ${url}`, error);
+    return false;
+  }
+}
+
 export async function createPreference(): Promise<CheckoutResponse> {
   try {
     const user = auth.currentUser;
-    
+
     if (!user) {
       throw new Error('Usuário não está logado');
     }
 
     const apiUrl = getApiUrl();
-    
+    console.log('Tentando conectar com backend:', apiUrl);
+
+    // Testa conectividade primeiro
+    const isBackendAvailable = await testBackendConnectivity(apiUrl);
+
+    if (!isBackendAvailable) {
+      // Tenta localhost como fallback
+      const fallbackUrl = 'http://localhost:4242';
+      console.log('Tentando fallback:', fallbackUrl);
+
+      const isFallbackAvailable = await testBackendConnectivity(fallbackUrl);
+
+      if (!isFallbackAvailable) {
+        throw new Error('Backend não está acessível. Verifique se o servidor está rodando.');
+      }
+
+      // Usa o fallback
+      const response = await fetch(`${fallbackUrl}/api/create-preference`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          title: 'GeekLog Premium',
+          description: 'Assinatura Premium do GeekLog',
+          price: 19.99,
+          currency: 'BRL'
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        init_point: data.init_point,
+        preference_id: data.preference_id
+      };
+    }
+
+    // Backend principal está disponível
     const response = await fetch(`${apiUrl}/api/create-preference`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         uid: user.uid,
         email: user.email,
@@ -60,13 +120,13 @@ export async function createPreference(): Promise<CheckoutResponse> {
     }
 
     const data = await response.json();
-    
+
     return {
       success: true,
       init_point: data.init_point,
       preference_id: data.preference_id
     };
-    
+
   } catch (error) {
     console.error('Erro ao criar preferência:', error);
     return {
