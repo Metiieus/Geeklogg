@@ -11,13 +11,20 @@ const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
 // Initialize MercadoPago
 let mercadopago = null;
+console.log("MercadoPago Token:", mercadoPagoAccessToken ? "✅ Presente" : "❌ Missing");
+
 if (mercadoPagoAccessToken) {
-  const client = new MercadoPagoConfig({ 
-    accessToken: mercadoPagoAccessToken 
-  });
-  mercadopago = new Preference(client);
+  try {
+    const client = new MercadoPagoConfig({
+      accessToken: mercadoPagoAccessToken
+    });
+    mercadopago = new Preference(client);
+    console.log("✅ MercadoPago configurado com sucesso");
+  } catch (error) {
+    console.error("❌ Erro ao configurar MercadoPago:", error);
+  }
 } else {
-  console.error("MercadoPago access token missing");
+  console.error("❌ MercadoPago access token missing");
 }
 
 // Initialize Firebase Admin
