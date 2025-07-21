@@ -253,6 +253,17 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
+      {/* Debug Section */}
+      <div className="bg-gradient-to-br from-red-600/10 to-orange-600/10 backdrop-blur-sm rounded-2xl p-6 border border-red-500/30">
+        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+          🔧 Debug do Checkout
+        </h2>
+        <p className="text-slate-300 mb-4">
+          Use esta ferramenta para diagnosticar problemas de conectividade com o backend.
+        </p>
+        <DebugCheckout />
+      </div>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <button
