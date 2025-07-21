@@ -2,8 +2,17 @@ import { auth } from '../firebase';
 
 // Detecta automaticamente o ambiente
 const getApiUrl = () => {
-  const isDev = window.location.hostname === 'localhost';
-  return isDev ? 'http://localhost:4242' : 'https://geeklog-backend.your-domain.com';
+  const hostname = window.location.hostname;
+  const isDev = hostname === 'localhost' || hostname === '127.0.0.1';
+
+  if (isDev) {
+    return 'http://localhost:4242';
+  } else {
+    // Para ambiente hospedado, usa a mesma URL base mas porta 4242
+    // Ou use uma URL específica do seu backend em produção
+    const currentUrl = window.location.origin;
+    return currentUrl.replace(/:\d+/, ':4242');
+  }
 };
 
 export interface CheckoutResponse {
