@@ -65,15 +65,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return unsubscribe;
   }, []);
 
-  const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    }
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const register = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    }
     await createUserWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
+    if (!auth) {
+      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    }
     await signOut(auth);
   };
 
