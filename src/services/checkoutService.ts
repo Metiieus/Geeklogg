@@ -8,10 +8,17 @@ const getApiUrl = () => {
   if (isDev) {
     return 'http://localhost:4242';
   } else {
-    // Para ambiente hospedado, usa a mesma URL base mas porta 4242
-    // Ou use uma URL específica do seu backend em produção
-    const currentUrl = window.location.origin;
-    return currentUrl.replace(/:\d+/, ':4242');
+    // Para ambiente hospedado no Builder.io, vamos tentar várias opções
+    const currentOrigin = window.location.origin;
+
+    // Se estivermos no domínio do Builder.io, tenta usar a mesma URL mas porta 4242
+    if (hostname.includes('fly.dev') || hostname.includes('builder.io')) {
+      // Tenta usar HTTP na mesma porta para testar
+      return currentOrigin;
+    }
+
+    // Fallback para localhost em desenvolvimento
+    return 'http://localhost:4242';
   }
 };
 
