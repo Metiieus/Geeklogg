@@ -40,14 +40,21 @@ if (missingVars.length > 0) {
   console.warn("Verifique seu arquivo .env");
 }
 
-// Inicializa o app Firebase
-export const app = initializeApp(firebaseConfig);
+// Inicializa o app Firebase com tratamento de erro
+let app: any = null;
+let auth: any = null;
+let db: any = null;
 
-// Autenticação
-export const auth = getAuth(app);
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app, "geeklog");
+} catch (error) {
+  console.warn("⚠️ Firebase initialization failed:", error);
+  console.warn("App will run in offline mode. Please configure Firebase environment variables.");
+}
 
-// Firestore com uso fixo do banco `geeklog`
-export const db = getFirestore(app, "geeklog");
+export { app, auth, db };
 
 // Configuração especial para DEV e produção
 if (import.meta.env.DEV) {

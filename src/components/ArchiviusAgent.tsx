@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Send, Sparkles, Crown, Brain, Zap } from "lucide-react";
+import { Bot, X, Send, Sparkles, Crown, Brain, Zap, ChevronRight, Shuffle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
 import { openaiService } from "../services/openaiService";
+import { archiviusService } from "../services/archiviusService";
 import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
 
 interface Message {
@@ -14,9 +15,18 @@ interface Message {
   timestamp: Date;
 }
 
+interface SmartSuggestion {
+  id: string;
+  text: string;
+  emoji: string;
+  category: 'recommendation' | 'analysis' | 'discovery' | 'motivation';
+  prompt: string;
+  requiresContext: boolean;
+}
+
 export const ArchiviusAgent: React.FC = () => {
   const { profile } = useAuth();
-  const { mediaItems, reviews, settings } = useAppContext();
+  const { mediaItems, reviews, settings, milestones } = useAppContext();
   const { showSuccess, showError } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -24,6 +34,8 @@ export const ArchiviusAgent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [currentSuggestions, setCurrentSuggestions] = useState<SmartSuggestion[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Archivius épico restrito para contas autorizadas (fase beta)
@@ -31,32 +43,63 @@ export const ArchiviusAgent: React.FC = () => {
   const isPremium = isAuthorizedUser || profile?.isPremium;
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
-  // Inicializar com mensagem de boas-vindas personalizada
+  // Gerar contexto enriquecido para IA
+  const generateEnhancedUserContext = () => {
+    return archiviusService.generateEnhancedContext(mediaItems, reviews, settings, milestones || []);
+  };
+
+  // Carregar sugestões inteligentes
+  useEffect(() => {
+    if (isPremium && mediaItems.length > 0) {
+      const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
+      const suggestions = archiviusService.getSmartSuggestions(userAnalysis);
+      setCurrentSuggestions(suggestions);
+    }
+  }, [isPremium, mediaItems, reviews, settings]);
+
+  // Filtrar sugestões por categoria
+  const getFilteredSuggestions = () => {
+    if (selectedCategory === 'all') return currentSuggestions;
+    return currentSuggestions.filter(s => s.category === selectedCategory);
+  };
+
+  // Embaralhar sugestões
+  const shuffleSuggestions = () => {
+    const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
+    const newSuggestions = archiviusService.getSmartSuggestions(userAnalysis);
+    setCurrentSuggestions([...newSuggestions].sort(() => Math.random() - 0.5));
+  };
+
+  // Inicializar com mensagem de boas-vindas inteligente
   useEffect(() => {
     if (isOpen && !hasInitialized && isPremium) {
-      const userContext = generateUserContext();
+      const userContext = generateEnhancedUserContext();
+      const userAnalysis = userContext.userAnalysis;
+      
       const welcomeMessage: Message = {
         id: "welcome",
-        text: `# 🧙‍♂️ Saudações, ${settings.name || "Guardião"}!
+        text: `# 🧙‍♂️ Saudações, ${userAnalysis.personalityType} ${settings.name || "Guardião"}!
 
-**Sou Archivius, o Companion IA do GeekLog!** ⚔️
+**Sou Archivius, vosso Oráculo IA épico!** ⚔️
 
-## 📚 **Vossa Biblioteca Mística**
-Vejo que possuis **${userContext.totalMedia} pergaminhos** em vossa coleção!
+## 📊 **Análise Instantânea da Vossa Biblioteca**
+Detectei **${userContext.totalMedia} pergaminhos** em vossa coleção mística!
+Taxa de conclusão: **${userAnalysis.completionRate}%** (Verdadeiramente ${userAnalysis.completionRate > 70 ? 'impressionante' : 'em crescimento'}!)
 
-${
-  userContext.completedMedia > 0
-    ? `🏆 **Conquistas Épicas**: ${userContext.completedMedia} missões completadas ${userContext.favoriteTypes.length > 0 ? `nos domínios de **${userContext.favoriteTypes.join(", ")}**` : ""}. \n\n⚡ Posso decifrar os segredos do vosso perfil e forjar missões personalizadas!`
-    : "🌟 **Nova Jornada**: Quando adicionardes mais conquistas, poderei criar missões épicas baseadas em vossos gostos!"
-}
+## 🎯 **Vosso Perfil Único**
+• **Personalidade Geek**: ${userAnalysis.personalityType}
+• **Domínios Preferidos**: ${userAnalysis.dominantGenres.join(', ') || 'Ainda mapeando'}
+• **Padrão de Excelência**: ${userAnalysis.averageRating}⭐ de média
 
-## 🎯 **Comandos Místicos**
-• 🔮 "Analisar meu perfil" - Revelações arcanas
-• ⚔️ Pergunte sobre recomendações épicas
+## ⚔️ **Poderes Místicos Disponíveis**
+Uso **análise avançada de padrões** para criar recomendações que transcendem o comum. Minhas sugestões inteligentes consideram vosso histórico completo, personalidade geek e tendências ocultas!
 
-${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantidas!*" : "🤖 *Modo demo místico - Configure vossa API key para magia suprema!*"}
+## 🌟 **Comandos Épicos Prontos**
+Abaixo encontrareis missões pré-forjadas especialmente para vosso perfil único!
 
-**Que vossa jornada seja lendária!** ✨`,
+${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Magia suprema garantida!*" : "🤖 *Modo oráculo local - Inteligência aprimorada ativa!*"}
+
+**Que nossa jornada juntos seja verdadeiramente lendária!** ✨`,
         isUser: false,
         timestamp: new Date(),
       };
@@ -64,7 +107,7 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantida
       setMessages([welcomeMessage]);
       setHasInitialized(true);
     }
-  }, [isOpen, hasInitialized, isPremium, settings.name]);
+  }, [isOpen, hasInitialized, isPremium, settings.name, mediaItems.length]);
 
   // Reset quando fechar
   useEffect(() => {
@@ -81,44 +124,9 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Respostas mágicas garantida
     scrollToBottom();
   }, [messages]);
 
-  const generateUserContext = () => {
-    const completedMedia = mediaItems.filter(
-      (item) => item.status === "completed",
-    );
-    const favoriteGenres = settings.favorites;
-    const averageRating =
-      reviews.length > 0
-        ? reviews.reduce((sum, review) => sum + review.rating, 0) /
-          reviews.length
-        : 0;
-
-    return {
-      totalMedia: mediaItems.length,
-      completedMedia: completedMedia.length,
-      favoriteTypes: [...new Set(completedMedia.map((item) => item.type))],
-      averageRating: Math.round(averageRating * 10) / 10,
-      totalReviews: reviews.length,
-      favorites: favoriteGenres,
-      recentlyCompleted: completedMedia
-        .sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-        )
-        .slice(0, 3)
-        .map((item) => ({
-          title: item.title,
-          type: item.type,
-          rating: item.rating,
-        })),
-      preferences: {
-        name: settings.name,
-        bio: settings.bio,
-      },
-    };
-  };
-
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+  const handleSendMessage = async (customPrompt?: string) => {
+    const messageToSend = customPrompt || inputValue;
+    if (!messageToSend.trim()) return;
 
     if (!isPremium) {
       const config = ARCHIVIUS_CONFIG.upgradeMessage;
@@ -154,23 +162,23 @@ ${config.callToAction}
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: inputValue,
+      text: messageToSend,
       isUser: true,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
+    if (!customPrompt) setInputValue("");
     setIsLoading(true);
 
     try {
-      // Gerar contexto completo do usuário
-      const userContext = generateUserContext();
+      // Gerar contexto completo e enriquecido
+      const enhancedContext = generateEnhancedUserContext();
 
-      // Usar OpenAI service para gerar resposta com contexto
+      // Usar OpenAI service aprimorado para gerar resposta
       const aiResponseText = await openaiService.sendMessage(
-        inputValue,
-        userContext,
+        messageToSend,
+        enhancedContext,
       );
 
       const aiResponse: Message = {
@@ -183,18 +191,18 @@ ${config.callToAction}
 
       showSuccess(
         "Archivius respondeu!",
-        "Nova sugestão baseada no seu perfil",
+        "Análise épica baseada em seu perfil único",
       );
     } catch (error) {
       console.error("Erro ao obter resposta da IA:", error);
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Desculpe, ocorreu um erro. Tente novamente em alguns instantes! 🤖",
+        text: "🤖 Desculpe, ocorreu um erro em meus circuitos místicos. Tentai novamente em alguns instantes, valoroso guardião!",
         isUser: false,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorResponse]);
-      showError("Erro no Archivius", "Não foi possível obter resposta");
+      showError("Erro no Archivius", "Não foi possível obter resposta épica");
     }
 
     setIsLoading(false);
@@ -206,30 +214,30 @@ ${config.callToAction}
     setIsAnalyzing(true);
 
     try {
-      const userContext = generateUserContext();
+      const enhancedContext = generateEnhancedUserContext();
       const analysisPrompt =
-        "Faça uma análise completa do meu perfil de entretenimento e dê insights sobre meus gostos, padrões e 3 recomendações personalizadas.";
+        "Desvende os segredos ocultos do meu perfil geek. Faça uma análise profunda e revele padrões, tendências e insights únicos sobre meus hábitos de entretenimento que eu talvez não tenha percebido. Inclua recomendações estratégicas baseadas nesta análise.";
 
       const analysis = await openaiService.sendMessage(
         analysisPrompt,
-        userContext,
+        enhancedContext,
       );
 
       const analysisMessage: Message = {
         id: Date.now().toString(),
-        text: `🔍 **Análise do seu perfil:**\n\n${analysis}`,
+        text: analysis,
         isUser: false,
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, analysisMessage]);
       showSuccess(
-        "Análise completa!",
-        "Archivius analisou seu perfil de entretenimento",
+        "Análise épica completa!",
+        "Archivius revelou os segredos de vosso perfil",
       );
     } catch (error) {
       console.error("Erro na análise:", error);
-      showError("Erro na análise", "Não foi possível analisar seu perfil");
+      showError("Erro na análise mística", "Não foi possível analisar vosso perfil");
     }
 
     setIsAnalyzing(false);
@@ -240,6 +248,20 @@ ${config.callToAction}
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const categoryIcons: Record<string, string> = {
+    recommendation: "⚔️",
+    analysis: "🔍", 
+    discovery: "🗺️",
+    motivation: "🏆"
+  };
+
+  const categoryNames: Record<string, string> = {
+    recommendation: "Recomendações",
+    analysis: "Análises",
+    discovery: "Descobertas", 
+    motivation: "Desafios"
   };
 
   return (
@@ -283,11 +305,11 @@ ${config.callToAction}
                 className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-400" : "bg-orange-400"}`}
               />
               <span className="text-gray-100 text-sm">
-                {isPremium ? "Online" : "Premium"}
+                {isPremium ? "Oráculo Ativo" : "Premium"}
               </span>
               {isPremium && mediaItems.length > 0 && (
                 <span className="text-cyan-400 text-xs">
-                  • {mediaItems.length} itens
+                  • {currentSuggestions.length} sugestões
                 </span>
               )}
             </div>
@@ -321,7 +343,7 @@ ${config.callToAction}
 
             {/* Chat Window - responsivo */}
             <motion.div
-              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-md sm:w-96 h-[85vh] sm:h-[500px] max-h-[600px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-md sm:w-96 h-[85vh] sm:h-[600px] max-h-[700px] overflow-hidden"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -365,8 +387,8 @@ ${config.callToAction}
                         <span className="text-white text-xs sm:text-sm opacity-90">
                           {isPremium
                             ? hasRealAPI
-                              ? "API OpenAI"
-                              : "Modo Demo"
+                              ? "Oráculo Supremo"
+                              : "Modo Inteligente"
                             : isAuthorizedUser
                               ? "Premium Only"
                               : "Beta Exclusivo"}
@@ -386,7 +408,7 @@ ${config.callToAction}
               {/* Messages - responsivo */}
               <div
                 className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50"
-                style={{ height: "calc(100% - 130px)" }}
+                style={{ height: isPremium ? "calc(100% - 200px)" : "calc(100% - 130px)" }}
               >
                 {messages.length === 0 && (
                   <div className="text-center text-gray-200 mt-4">
@@ -398,17 +420,17 @@ ${config.callToAction}
                       />
                     </div>
                     <p className="text-sm sm:text-base font-medium text-white">
-                      🧙‍♂️ Archivius, o Guardião
+                      🧙‍♂️ Archivius, o Oráculo
                     </p>
                     <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
                       {isPremium
-                        ? "⚔️ Companion IA para missões épicas de entretenimento!"
-                        : "👑 Desperte os poderes premium para desbloquear magia suprema!"}
+                        ? "⚔️ Companion IA épico com análise avançada de padrões!"
+                        : "👑 Desperte os poderes premium para análises supremas!"}
                     </p>
 
                     {isPremium && (
                       <div className="space-y-3">
-                        {/* Botão de Análise de Perfil */}
+                        {/* Botão de Análise Épica */}
                         <button
                           onClick={handleAnalyzeProfile}
                           disabled={isAnalyzing}
@@ -417,39 +439,79 @@ ${config.callToAction}
                           {isAnalyzing ? (
                             <>
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              Analisando perfil...
+                              Revelando segredos...
                             </>
                           ) : (
                             <>
                               <Brain className="w-4 h-4" />
-                              Analisar meu perfil
+                              Revelar Segredos do Perfil
                             </>
                           )}
                         </button>
 
-                        <div className="border-t border-gray-600/30 pt-3">
-                          <p className="text-xs text-cyan-400 mb-2">
-                            Sugestões rápidas:
-                          </p>
-                          {[
-                            "🏰 Forje uma missão baseada nas minhas conquistas",
-                            "🌟 Revele segredos de reinos inexplorados",
-                            "⚔️ Qual seria minha próxima aventura épica?",
-                            "🔮 Desvende os mistérios do meu perfil",
-                          ].map((suggestion, index) => (
-                            <button
-                              key={index}
-                              onClick={() => {
-                                setInputValue(suggestion);
-                                setTimeout(() => handleSendMessage(), 100);
-                              }}
-                              className="block w-full text-left px-3 py-2 mb-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors"
-                            >
-                              <Zap className="w-3 h-3 inline mr-2 text-cyan-400" />
-                              {suggestion}
-                            </button>
-                          ))}
-                        </div>
+                        {/* Filtros de Categoria */}
+                        {currentSuggestions.length > 0 && (
+                          <div className="border-t border-gray-600/30 pt-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-xs text-cyan-400">
+                                Missões Épicas Personalizadas:
+                              </p>
+                              <button
+                                onClick={shuffleSuggestions}
+                                className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                                title="Embaralhar sugestões"
+                              >
+                                <Shuffle className="w-3 h-3" />
+                              </button>
+                            </div>
+                            
+                            {/* Seletor de categoria */}
+                            <div className="flex gap-1 mb-3 overflow-x-auto">
+                              <button
+                                onClick={() => setSelectedCategory('all')}
+                                className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+                                  selectedCategory === 'all'
+                                    ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50'
+                                    : 'bg-gray-700/50 text-gray-400 border border-gray-600/30'
+                                }`}
+                              >
+                                ✨ Todas
+                              </button>
+                              {Object.entries(categoryNames).map(([key, name]) => (
+                                <button
+                                  key={key}
+                                  onClick={() => setSelectedCategory(key)}
+                                  className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+                                    selectedCategory === key
+                                      ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50'
+                                      : 'bg-gray-700/50 text-gray-400 border border-gray-600/30'
+                                  }`}
+                                >
+                                  {categoryIcons[key]} {name}
+                                </button>
+                              ))}
+                            </div>
+
+                            {/* Sugestões Inteligentes */}
+                            <div className="space-y-2 max-h-40 overflow-y-auto">
+                              {getFilteredSuggestions().slice(0, 6).map((suggestion) => (
+                                <button
+                                  key={suggestion.id}
+                                  onClick={() => handleSendMessage(suggestion.prompt)}
+                                  className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors group"
+                                >
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-cyan-400 flex-shrink-0 mt-0.5">
+                                      {suggestion.emoji}
+                                    </span>
+                                    <span className="flex-1">{suggestion.text}</span>
+                                    <ChevronRight className="w-3 h-3 text-cyan-400/50 group-hover:text-cyan-400 transition-colors flex-shrink-0 mt-0.5" />
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -480,7 +542,7 @@ ${config.callToAction}
                           : "bg-gray-700/50 border border-gray-600/30 text-gray-100"
                       }`}
                     >
-                      <p className="text-sm">{message.text}</p>
+                      <div className="text-sm whitespace-pre-wrap">{message.text}</div>
                     </div>
                   </motion.div>
                 ))}
@@ -529,14 +591,14 @@ ${config.callToAction}
                     onKeyPress={handleKeyPress}
                     placeholder={
                       isPremium
-                        ? "Digite sua mensagem..."
+                        ? "Digite sua pergunta épica..."
                         : "Premium necessário..."
                     }
                     disabled={!isPremium}
                     className="flex-1 px-3 sm:px-4 py-2 bg-gray-900/50 border border-gray-600/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:bg-gray-800 disabled:cursor-not-allowed text-sm sm:text-base"
                   />
                   <button
-                    onClick={handleSendMessage}
+                    onClick={() => handleSendMessage()}
                     disabled={!isPremium || !inputValue.trim()}
                     className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full flex items-center justify-center hover:from-cyan-600 hover:to-pink-600 transition-colors disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
                   >

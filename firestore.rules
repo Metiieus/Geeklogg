@@ -20,17 +20,15 @@ service cloud.firestore {
       allow read, write : if request.auth.uid == userId;   // somente o dono
     }
 
-    /* ------------------------------------------------------------------ *
+            /* ------------------------------------------------------------------ *
      * SEGUIDORES / SEGUINDO  ➜ leitura pública (apenas logado)
      * ------------------------------------------------------------------ */
     match /users/{userId}/followers/{docId} {
-      allow read  : if request.auth != null;          // ✅ qualquer logado pode ver
-      allow write : if request.auth.uid == userId;    // gravação só do dono
+      allow read, write : if request.auth != null;              // qualquer logado pode ver/editar
     }
 
     match /users/{userId}/following/{docId} {
-      allow read  : if request.auth != null;          // ✅ qualquer logado pode ver
-      allow write : if request.auth.uid == userId;    // gravação só do dono
+      allow read, write : if request.auth != null;              // qualquer logado pode ver/editar
     }
 
     /* ------------------------------------------------------------------ *
@@ -40,12 +38,12 @@ service cloud.firestore {
       allow read, write : if request.auth.uid == userId;
     }
 
-    /* ------------------------------------------------------------------ *
+        /* ------------------------------------------------------------------ *
      * FEED DE ATIVIDADES GLOBAL
      * ------------------------------------------------------------------ */
     match /activities/{docId} {
-      allow read, create : if request.auth != null;   // todos logados podem ler/criar
-      allow update, delete : if false;                // ninguém edita/deleta
+      allow read, create : if request.auth != null;                    // todos logados podem ler/criar
+      allow update, delete : if request.auth.uid == resource.data.userId; // só o criador pode editar/deletar
     }
 
     /* ------------------------------------------------------------------ *
