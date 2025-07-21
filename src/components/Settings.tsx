@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Download, Upload, Trash2, Save } from "lucide-react";
+import { Download, Upload, Trash2, Save, Crown } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { saveSettings } from "../services/settingsService";
+import MercadoPagoButton from "./MercadoPagoButton";
 
 const Settings: React.FC = () => {
   const { settings, setSettings, mediaItems, reviews, milestones } =
