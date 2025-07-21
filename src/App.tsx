@@ -206,26 +206,37 @@ function App() {
 
   if (!user) {
     return (
-      <ToastProvider>
-        {currentView === "landing" && (
-          <LandingPage
-            onLogin={() => setCurrentView("login")}
-            onRegister={() => setCurrentView("register")}
-          />
-        )}
-        {currentView === "login" && (
-          <Login
-            onCancel={() => setCurrentView("landing")}
-            onRegister={() => setCurrentView("register")}
-          />
-        )}
-        {currentView === "register" && (
-          <Register
-            onCancel={() => setCurrentView("landing")}
-            onLogin={() => setCurrentView("login")}
-          />
-        )}
-      </ToastProvider>
+      <Router>
+        <ToastProvider>
+          <Routes>
+            <Route path="/premium/success" element={<PremiumSuccess />} />
+            <Route path="/premium/failure" element={<PremiumFailure />} />
+            <Route path="/premium/pending" element={<PremiumPending />} />
+            <Route path="*" element={
+              <>
+                {currentView === "landing" && (
+                  <LandingPage
+                    onLogin={() => setCurrentView("login")}
+                    onRegister={() => setCurrentView("register")}
+                  />
+                )}
+                {currentView === "login" && (
+                  <Login
+                    onCancel={() => setCurrentView("landing")}
+                    onRegister={() => setCurrentView("register")}
+                  />
+                )}
+                {currentView === "register" && (
+                  <Register
+                    onCancel={() => setCurrentView("landing")}
+                    onLogin={() => setCurrentView("login")}
+                  />
+                )}
+              </>
+            } />
+          </Routes>
+        </ToastProvider>
+      </Router>
     );
   }
 
