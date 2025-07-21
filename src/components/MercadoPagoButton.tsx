@@ -25,7 +25,11 @@ export default function MercadoPagoButton({
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4242/api/create-preference', {
+      // Detecta ambiente automaticamente
+      const isDev = window.location.hostname === 'localhost';
+      const apiUrl = isDev ? 'http://localhost:4242' : window.location.origin;
+
+      const response = await fetch(`${apiUrl}/api/create-preference`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
