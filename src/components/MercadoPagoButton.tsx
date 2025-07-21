@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { handleCheckout } from '../services/checkoutService';
 
 interface MercadoPagoButtonProps {
   className?: string;
   children?: React.ReactNode;
 }
 
-export default function MercadoPagoButton({ 
-  className = "", 
-  children = "Assinar Premium - R$ 19,99" 
+export default function MercadoPagoButton({
+  className = "",
+  children = "Assinar Premium - R$ 19,99"
 }: MercadoPagoButtonProps) {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -19,31 +20,15 @@ export default function MercadoPagoButton({
       return;
     }
 
-    setLoading(true);
-    
-    try {
-      const response = await fetch('http://localhost:4242/api/create-preference', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: user.uid,
-          email: user.email,
-        }),
-      });
+    if (loading) return;
 
-      const data = await response.json();
-      
-      if (data.init_point) {
-        // Redirect to MercadoPago checkout
-        window.location.href = data.init_point;
-      } else {
-        throw new Error('Failed to create payment preference');
-      }
+    setLoading(true);
+
+    try {
+      await handleCheckout();
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Erro ao processar pagamento. Tente novamente.');
+      // Error handling is already done in handleCheckout
     } finally {
       setLoading(false);
     }
