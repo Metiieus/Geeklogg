@@ -42,11 +42,17 @@ const navItems: NavItem[] = [
     label: "Reviews",
     gradient: "from-purple-400 to-indigo-500",
   },
-  {
+    {
     id: "timeline",
     icon: <Clock size={20} />,
     label: "Jornada",
     gradient: "from-indigo-400 to-cyan-500",
+  },
+  {
+    id: "statistics",
+    icon: <BarChart3 size={20} />,
+    label: "Estatísticas",
+    gradient: "from-cyan-400 to-pink-500",
   },
   {
     id: "social",
