@@ -329,7 +329,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-cyan-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
         </div>
 
-                <div className="max-w-7xl mx-auto relative z-10">
+                        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
