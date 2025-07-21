@@ -366,8 +366,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
               Seu assistente pessoal que entende seus gostos, analisa seu perfil
               e cria missões personalizadas para expandir seus horizontes geek
-            </p>
-          </div>
+                        </p>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
