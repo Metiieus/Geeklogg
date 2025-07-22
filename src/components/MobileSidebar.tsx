@@ -252,7 +252,7 @@ export const MobileSidebar: React.FC = () => {
             </div>
 
             {/* Footer Actions */}
-            <div className="px-4 py-6 border-t border-gray-700/50 space-y-2 safe-area-inset-bottom">
+            <div className="px-4 py-4 border-t border-gray-700/50 space-y-1 safe-area-inset-bottom">
               <button
                 onClick={() => setActivePage("settings")}
                 className="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gray-800/50 active:scale-95"
