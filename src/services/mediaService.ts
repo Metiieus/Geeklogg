@@ -2,6 +2,7 @@ import type { MediaItem } from "../App";
 import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
 import { database } from "./database";
 import { storageClient } from "./storageClient";
+import secureLog from "../utils/secureLogger";
 
 // Interface para atualização de mídia (exceto ID, que é passado separado)
 export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
@@ -149,6 +150,10 @@ export async function deleteMedia(id: string): Promise<void> {
   }
 
   await database.delete(["users", uid, "medias", id]);
-  console.log("🗑️ Documento de mídia removido:", id);
-  await storageClient.remove(`media/${id}`);
+  secureLog.info("🗑️ Documento de mídia removido", { id });
+  try {
+    await storageClient.remove(`media/${id}`);
+  } catch (error) {
+    secureLog.warn("Falha ao remover arquivo da mídia", error);
+  }
 }

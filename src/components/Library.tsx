@@ -1,23 +1,11 @@
-import React, { useState, useMemo } from "react";
-import {
-  Search,
-  Plus,
-  Star,
-  Clock,
-  ExternalLink,
-  Edit,
-  Trash2,
-  MoreHorizontal,
-  X,
-} from "lucide-react";
-import { useAppContext } from "../context/AppContext";
-import { MediaType, MediaItem, Status } from "../App";
-import { AddMediaModal } from "./modals/AddMediaModal";
-import { EditMediaModal } from "./modals/EditMediaModal";
-import { AddMediaFromSearchModal } from "./modals/AddMediaFromSearchModal";
-import { AddMediaOptions } from "./AddMediaOptions";
-import { ExternalMediaResult } from "../services/externalMediaService";
-import { deleteMedia } from "../services/mediaService";
+import React, { useState, useMemo } from 'react';
+import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
+import { MediaType, MediaItem, Status } from '../App';
+import { AddMediaModal } from './modals/AddMediaModal';
+import { EditMediaModal } from './modals/EditMediaModal';
+import { deleteMedia } from '../services/mediaService';
+import { useToast } from '../context/ToastContext';
 
 const mediaTypeColors = {
   games: "from-blue-500 to-cyan-500",
@@ -48,12 +36,11 @@ const bookmarkColors = {
 
 const Library: React.FC = () => {
   const { mediaItems, setMediaItems } = useAppContext();
-  const [selectedType, setSelectedType] = useState<MediaType | "all">("all");
-  const [selectedStatus, setSelectedStatus] = useState<Status | "all">("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<
-    "title" | "rating" | "hoursSpent" | "updatedAt"
-  >("updatedAt");
+  const { showError, showSuccess } = useToast();
+  const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
+  const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] =
@@ -125,56 +112,20 @@ const Library: React.FC = () => {
     return labels[status];
   };
 
-    const handleDeleteClick = (item: MediaItem) => {
-    setItemToDelete(item);
-    setShowDeleteModal(true);
-  };
+  const handleDeleteItem = async (itemId: string) => {
+    const item = mediaItems.find(m => m.id === itemId);
+    const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
 
-  const handleDeleteItem = async () => {
-    if (!itemToDelete) return;
-
-    // Validate that the item has a valid ID
-    if (!itemToDelete.id || typeof itemToDelete.id !== "string" || itemToDelete.id.trim() === "") {
-      console.error("Item selecionado não possui ID válido:", itemToDelete);
-      // Show error toast
-      const toast = document.createElement("div");
-      toast.className =
-        "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
-      toast.textContent = "❌ Erro: Item não possui ID válido";
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 3000);
-      return;
+    if (confirm(confirmMessage)) {
+      try {
+        await deleteMedia(itemId);
+        setMediaItems(mediaItems.filter(item => item.id !== itemId));
+        showSuccess('Item removido com sucesso!');
+      } catch (err: any) {
+        console.error('Erro ao excluir mídia', err);
+        showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
+      }
     }
-
-    try {
-      await deleteMedia(itemToDelete.id);
-      setMediaItems(mediaItems.filter((item) => item.id !== itemToDelete.id));
-      setShowDeleteModal(false);
-      setItemToDelete(null);
-
-      // Feedback visual de sucesso
-      const toast = document.createElement("div");
-      toast.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
-      toast.textContent = "✅ Item removido com sucesso!";
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 3000);
-    } catch (error) {
-      console.error('Erro ao excluir item:', error);
-
-      // Show error toast with specific error message
-      const toast = document.createElement("div");
-      toast.className =
-        "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
-      toast.textContent = `❌ Erro ao excluir: ${error instanceof Error ? error.message : 'Erro desconhecido'}`;
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 5000);
-    }
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    setItemToDelete(null);
   };
 
   const handleEditItem = (updatedItem: MediaItem) => {
@@ -323,60 +274,19 @@ const Library: React.FC = () => {
         <p>{filteredAndSortedItems.length} itens</p>
       </div>
 
-            {/* Media Grid - Layout responsivo */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 animate-fade-in relative z-10">
-        {filteredAndSortedItems.map((item) => {
-          console.log("Library item", item);
-          return (
-            <div key={item.id} className="group relative">
-              {/* Card Container */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
-                {/* Cover Image - Aspecto ajustado para mobile tipo Skoob */}
-                <div className="aspect-[3/4.5] bg-slate-700 relative overflow-hidden">
-                  {item.cover ? (
-                    <img
-                      src={item.cover}
-                      alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-500">
-                      <div
-                        className={`w-8 h-8 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`}
-                      />
-                    </div>
-                  )}
-
-                  {/* Bookmark indicator no canto superior esquerdo - cores por categoria */}
-                  <div
-                    className={`absolute top-0 left-0 w-6 h-8 md:w-8 md:h-10 ${bookmarkColors[item.type]} rounded-br-lg shadow-lg`}
-                  >
-                    <div
-                      className={`absolute bottom-0 left-0 w-0 h-0 border-l-[6px] md:border-l-[8px] border-l-transparent border-r-[6px] md:border-r-[8px] border-r-transparent border-b-[4px] md:border-b-[6px] ${
-                        item.type === "games"
-                          ? "border-b-blue-600"
-                          : item.type === "anime"
-                            ? "border-b-pink-600"
-                            : item.type === "series"
-                              ? "border-b-purple-600"
-                              : item.type === "books"
-                                ? "border-b-green-600"
-                                : item.type === "movies"
-                                  ? "border-b-yellow-600"
-                                  : "border-b-red-600"
-                      }`}
-                    ></div>
+      {/* Media Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+        {filteredAndSortedItems.map((item) => (
+          <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
+              {/* Cover Image */}
+              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
+                {item.cover ? (
+                  <img src={item.cover} alt={item.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-500">
+                    <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
                   </div>
-
-                  {/* Progress indicator para livros - igual Skoob */}
-                  {item.type === "books" && item.totalPages && (
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      {Math.round(
-                        ((item.currentPage || 0) / item.totalPages) * 100,
-                      )}
-                      %
-                    </div>
-                  )}
+                )}
 
                   {/* Overlay with actions - só aparece no desktop */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 md:flex hidden items-center justify-center gap-2 overflow-hidden">
@@ -459,43 +369,28 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Tags */}
-                  {item.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {item.tags.slice(0, 3).map((tag, index) => {
-                        console.log("Tag", tag);
-                        return (
-                          <span
-                            key={`${item.id}-tag-${index}`}
-                            className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        );
-                      })}
-                      {item.tags.length > 3 && (
-                        <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                          +{item.tags.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Menu de 3 pontos abaixo da imagem - igual Skoob, só no mobile */}
-              <div className="md:hidden flex justify-center mt-2">
-                <button
-                  onClick={() => handleEditClick(item)}
-                  className="text-slate-400 hover:text-white transition-colors p-1"
-                  title="Opções"
-                >
-                  <MoreHorizontal size={16} />
-                </button>
+                {/* Tags */}
+                {item.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {item.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {item.tags.length > 3 && (
+                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                        +{item.tags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );
-        })}
+        ))}
       </div>
 
       {/* Empty State */}
