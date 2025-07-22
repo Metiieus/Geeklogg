@@ -1,23 +1,35 @@
 import http from "http";
-import { URLSearchParams } from "url";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 import {
   initializeApp as initAdminApp,
   applicationDefault,
 } from "firebase-admin/app";
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY;
-const priceId = process.env.STRIPE_PRICE_ID;
-const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const mercadoPagoAccessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || "APP_USR-5653582540014671-071813-7c2a1989c91d748fc96c2c61588137cd-182135011";
+const clientUrl = process.env.CLIENT_URL || "https://geeklog-26b2c.web.app";
 
-// Initialize Firebase Admin for webhook updates
+// Initialize MercadoPago
+let mercadopago = null;
+console.log("MercadoPago Token:", mercadoPagoAccessToken ? "✅ Presente" : "❌ Missing");
+
+if (mercadoPagoAccessToken) {
+  try {
+    const client = new MercadoPagoConfig({
+      accessToken: mercadoPagoAccessToken
+    });
+    mercadopago = new Preference(client);
+    console.log("✅ MercadoPago configurado com sucesso");
+  } catch (error) {
+    console.error("❌ Erro ao configurar MercadoPago:", error);
+  }
+} else {
+  console.error("❌ MercadoPago access token missing");
+}
+
+// Initialize Firebase Admin
 const adminApp = initAdminApp({ credential: applicationDefault() });
 const adminDb = getAdminFirestore(adminApp);
-
-if (!stripeSecret || !priceId) {
-  console.error("Stripe environment variables missing");
-}
 
 function parseJson(req) {
   return new Promise((resolve, reject) => {
@@ -35,104 +47,156 @@ function parseJson(req) {
   });
 }
 
-async function createCheckoutSession(body, res) {
-  const params = new URLSearchParams({
-    mode: "subscription",
-    "payment_method_types[]": "card",
-    success_url: `${clientUrl}/premium/success`,
-    cancel_url: `${clientUrl}/premium/cancel`,
-    "line_items[0][price]": priceId,
-    "line_items[0][quantity]": "1",
-  });
-
-  if (body?.uid) params.append("client_reference_id", body.uid);
-  if (body?.email) params.append("customer_email", body.email);
-
-  try {
-    const response = await fetch(
-      "https://api.stripe.com/v1/checkout/sessions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${stripeSecret}`,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: params.toString(),
-      },
-    );
-    const data = await response.json();
-    res.writeHead(200, {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": clientUrl,
-    });
-    res.end(JSON.stringify({ url: data.url }));
-  } catch (err) {
-    console.error("Stripe error", err);
+async function createPreference(body, res) {
+  if (!mercadopago) {
     res.writeHead(500, {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": clientUrl,
+      "Access-Control-Allow-Origin": "*",
     });
-    res.end(JSON.stringify({ error: "Failed to create session" }));
+    return res.end(JSON.stringify({ error: "MercadoPago not configured" }));
+  }
+
+  try {
+    const preference = {
+      items: [
+        {
+          title: "GeekLog Premium",
+          description: "Assinatura Premium do GeekLog",
+          quantity: 1,
+          currency_id: "BRL",
+          unit_price: 19.99,
+        },
+      ],
+      external_reference: body?.uid || "",
+      payer: {
+        email: body?.email || "",
+      },
+      back_urls: {
+        success: `${clientUrl}/premium/success`,
+        failure: `${clientUrl}/premium/failure`,
+        pending: `${clientUrl}/premium/pending`,
+      },
+      auto_return: "approved",
+      notification_url: `${process.env.SERVER_URL || 'http://localhost:4242'}/api/webhook`,
+    };
+
+    const response = await mercadopago.create({ body: preference });
+    
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
+    res.end(JSON.stringify({ 
+      init_point: response.init_point,
+      preference_id: response.id 
+    }));
+  } catch (err) {
+    console.error("MercadoPago error", err);
+    res.writeHead(500, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
+    res.end(JSON.stringify({ error: "Failed to create preference" }));
   }
 }
 
-function handleWebhook(req, res) {
+async function handleWebhook(req, res) {
   const chunks = [];
   req.on("data", (c) => chunks.push(c));
   req.on("end", async () => {
-    const raw = Buffer.concat(chunks).toString();
-    let event;
     try {
-      event = JSON.parse(raw);
-    } catch (e) {
-      res.writeHead(400);
-      return res.end();
-    }
-
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      const uid = session.client_reference_id;
-      try {
-        await adminDb
-          .collection("users")
-          .doc(uid)
-          .set(
-            {
-              plano: {
-                status: "ativo",
-                tipo: "premium",
-                stripeId: session.subscription,
-              },
-            },
-            { merge: true },
-          );
-        console.log("Subscription active for", uid);
-      } catch (err) {
-        console.error("Failed to update subscription for", uid, err);
+      const body = JSON.parse(Buffer.concat(chunks).toString());
+      
+      // MercadoPago webhook for payment notifications
+      if (body.type === "payment") {
+        const paymentId = body.data.id;
+        
+        // Here you would verify the payment with MercadoPago API
+        // For now, we'll assume it's approved for testing
+        if (body.action === "payment.created" || body.action === "payment.updated") {
+          // Get payment details and update user
+          // This is a simplified version - in production, verify payment status
+          console.log("Payment notification received:", paymentId);
+        }
       }
+      
+      res.writeHead(200);
+      res.end("OK");
+    } catch (error) {
+      console.error("Webhook error:", error);
+      res.writeHead(400);
+      res.end("Bad Request");
     }
-
-    res.writeHead(200);
-    res.end();
   });
 }
 
-const server = http.createServer(async (req, res) => {
-  if (req.method === "OPTIONS") {
-    res.writeHead(204, {
-      "Access-Control-Allow-Origin": clientUrl,
-      "Access-Control-Allow-Methods": "POST,GET,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+async function updateUserPremium(req, res) {
+  try {
+    const body = await parseJson(req);
+    const { uid, paymentId } = body;
+    
+    if (!uid) {
+      res.writeHead(400, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      });
+      return res.end(JSON.stringify({ error: "UID required" }));
+    }
+
+    await adminDb
+      .collection("users")
+      .doc(uid)
+      .set(
+        {
+          plano: {
+            status: "ativo",
+            tipo: "premium",
+            mercadoPagoPaymentId: paymentId,
+            activatedAt: new Date(),
+          },
+        },
+        { merge: true },
+      );
+
+    console.log("Premium activated for user:", uid);
+    
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
     });
+    res.end(JSON.stringify({ success: true }));
+  } catch (err) {
+    console.error("Failed to update user premium:", err);
+    res.writeHead(500, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
+    res.end(JSON.stringify({ error: "Failed to update user" }));
+  }
+}
+
+const server = http.createServer(async (req, res) => {
+  // CORS headers for all requests
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST,GET,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, corsHeaders);
     return res.end();
   }
 
-  if (req.url === "/api/checkout" && req.method === "POST") {
+  if (req.url === "/api/create-preference" && req.method === "POST") {
     try {
       const body = await parseJson(req);
-      return createCheckoutSession(body, res);
+      return createPreference(body, res);
     } catch {
-      res.writeHead(400, { "Content-Type": "application/json" });
+      res.writeHead(400, { 
+        "Content-Type": "application/json",
+        ...corsHeaders 
+      });
       return res.end(JSON.stringify({ error: "Invalid JSON" }));
     }
   }
@@ -141,11 +205,26 @@ const server = http.createServer(async (req, res) => {
     return handleWebhook(req, res);
   }
 
-  res.writeHead(404);
-  res.end();
+  if (req.url === "/api/update-premium" && req.method === "POST") {
+    return updateUserPremium(req, res);
+  }
+
+  // Health check
+  if (req.url === "/health" && req.method === "GET") {
+    res.writeHead(200, { 
+      "Content-Type": "application/json",
+      ...corsHeaders 
+    });
+    return res.end(JSON.stringify({ status: "OK" }));
+  }
+
+  res.writeHead(404, corsHeaders);
+  res.end("Not Found");
 });
 
-const port = process.env.PORT || 4242;
-server.listen(port, () => {
+const port = process.env.PORT || 8080;
+server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
+  console.log(`MercadoPago configured: ${!!mercadopago}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });

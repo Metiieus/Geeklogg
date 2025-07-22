@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Sidebar } from "./components/Sidebar";
 import { MobileSidebar } from "./components/MobileSidebar";
 const Dashboard = lazy(() => import("./components/Dashboard"));
@@ -16,6 +17,9 @@ import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
 import { FirebaseWarning } from "./components/FirebaseWarning";
 import { NotificationCenter } from "./components/NotificationCenter";
+import PremiumSuccessPage from "./components/PremiumSuccessPage";
+import PremiumFailure from "./components/PremiumFailure";
+import PremiumPending from "./components/PremiumPending";
 
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
@@ -202,26 +206,37 @@ function App() {
 
   if (!user) {
     return (
-      <ToastProvider>
-        {currentView === "landing" && (
-          <LandingPage
-            onLogin={() => setCurrentView("login")}
-            onRegister={() => setCurrentView("register")}
-          />
-        )}
-        {currentView === "login" && (
-          <Login
-            onCancel={() => setCurrentView("landing")}
-            onRegister={() => setCurrentView("register")}
-          />
-        )}
-        {currentView === "register" && (
-          <Register
-            onCancel={() => setCurrentView("landing")}
-            onLogin={() => setCurrentView("login")}
-          />
-        )}
-      </ToastProvider>
+      <Router>
+        <ToastProvider>
+          <Routes>
+            <Route path="/premium/success" element={<PremiumSuccessPage />} />
+            <Route path="/premium/failure" element={<PremiumFailure />} />
+            <Route path="/premium/pending" element={<PremiumPending />} />
+            <Route path="*" element={
+              <>
+                {currentView === "landing" && (
+                  <LandingPage
+                    onLogin={() => setCurrentView("login")}
+                    onRegister={() => setCurrentView("register")}
+                  />
+                )}
+                {currentView === "login" && (
+                  <Login
+                    onCancel={() => setCurrentView("landing")}
+                    onRegister={() => setCurrentView("register")}
+                  />
+                )}
+                {currentView === "register" && (
+                  <Register
+                    onCancel={() => setCurrentView("landing")}
+                    onLogin={() => setCurrentView("login")}
+                  />
+                )}
+              </>
+            } />
+          </Routes>
+        </ToastProvider>
+      </Router>
     );
   }
 
@@ -249,9 +264,15 @@ function App() {
   };
 
   return (
-    <ToastProvider>
-      <AppProvider value={contextValue}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
+    <Router>
+      <ToastProvider>
+        <AppProvider value={contextValue}>
+          <Routes>
+            <Route path="/premium/success" element={<PremiumSuccessPage />} />
+            <Route path="/premium/failure" element={<PremiumFailure />} />
+            <Route path="/premium/pending" element={<PremiumPending />} />
+            <Route path="*" element={
+              <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-10 sm:top-20 left-5 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
             <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
@@ -285,9 +306,12 @@ function App() {
           <ArchiviusAgent />
           <FirebaseWarning />
           <NotificationCenter />
-        </div>
-      </AppProvider>
-    </ToastProvider>
+              </div>
+            } />
+          </Routes>
+        </AppProvider>
+      </ToastProvider>
+    </Router>
   );
 }
 

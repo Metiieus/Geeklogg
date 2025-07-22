@@ -65,7 +65,7 @@ const Settings: React.FC = () => {
         const toast = document.createElement("div");
         toast.className =
           "fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-        toast.textContent = "📥 Backup importado com sucesso!";
+        toast.textContent = "�� Backup importado com sucesso!";
         document.body.appendChild(toast);
         setTimeout(() => document.body.removeChild(toast), 3000);
       } catch (error) {

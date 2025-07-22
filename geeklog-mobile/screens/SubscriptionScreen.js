@@ -48,32 +48,39 @@ const SubscriptionScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      // For demo purposes, show alert about Stripe integration
-      Alert.alert(
-        "Integração Stripe",
-        "A integração com Stripe está configurada!\n\nPara ativar pagamentos reais:\n\n1. Configure suas chaves do Stripe no arquivo .env\n2. Implemente o backend para criar payment intents\n3. Configure webhook para confirmar pagamentos\n\nPor enquanto, esta é uma demonstração da interface.",
-        [
-          {
-            text: "Entendi",
-            onPress: () => {
-              // Simulate successful subscription
-              Alert.alert(
-                "Sucesso! 🎉",
-                "Bem-vindo ao GeekLog Premium!\n\nTodos os recursos premium foram desbloqueados.",
-                [
-                  {
-                    text: "Continuar",
-                    onPress: () => navigation.goBack(),
-                  },
-                ],
-              );
-            },
-          },
-        ],
-      );
+      // Use MercadoPago payment service
+      const result = await paymentService.processSubscriptionPayment(selectedPlan);
 
-      // In production, you would call:
-      // await paymentService.processSubscriptionPayment(selectedPlan);
+      if (result.success) {
+        Alert.alert(
+          "Redirecionando para Pagamento",
+          "Você será redirecionado para o MercadoPago para completar seu pagamento.",
+          [
+            {
+              text: "Continuar",
+              onPress: () => {
+                // Here you would open the checkout URL in WebView or external browser
+                console.log('Checkout URL:', result.checkoutUrl);
+                // For now, simulate success
+                Alert.alert(
+                  "Sucesso! 🎉",
+                  "Bem-vindo ao GeekLog Premium!\n\nTodos os recursos premium foram desbloqueados.",
+                  [
+                    {
+                      text: "Continuar",
+                      onPress: () => navigation.goBack(),
+                    },
+                  ],
+                );
+              },
+            },
+            {
+              text: "Cancelar",
+              style: "cancel",
+            },
+          ],
+        );
+      }
     } catch (error) {
       Alert.alert("Erro", "Falha ao processar pagamento. Tente novamente.");
       console.error("Subscription error:", error);

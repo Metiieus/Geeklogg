@@ -1,200 +1,154 @@
-import { initStripe, useStripe } from "@stripe/stripe-react-native";
+// MercadoPago Payment Service for React Native
+import { Alert } from 'react-native';
 
-// Initialize Stripe
-const STRIPE_PUBLISHABLE_KEY =
-  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_your_key_here";
+const MERCADO_PAGO_PUBLIC_KEY = process.env.EXPO_PUBLIC_MERCADO_PAGO_PUBLIC_KEY || "your_public_key_here";
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4242";
 
-// Initialize Stripe (call this in App.js)
-export const initializeStripe = async () => {
-  try {
-    await initStripe({
-      publishableKey: STRIPE_PUBLISHABLE_KEY,
-      merchantIdentifier: "merchant.com.geeklog.app", // Required for Apple Pay
-    });
-    console.log("✅ Stripe initialized successfully");
-  } catch (error) {
-    console.error("❌ Stripe initialization failed:", error);
-  }
-};
-
-// Payment service class
-export class PaymentService {
+class PaymentService {
   constructor() {
-    this.stripe = null;
+    this.initialized = true;
   }
 
-  // Set the stripe instance (called from components that use useStripe)
-  setStripe(stripeInstance) {
-    this.stripe = stripeInstance;
-  }
-
-  // Create payment intent on your backend
-  async createPaymentIntent(amount, currency = "brl") {
+  // Create payment preference
+  async createPayment(amount, currency = "BRL", description = "GeekLog Premium") {
     try {
-      // This should call your backend API
-      // For now, we'll simulate the response
-      const response = await fetch(
-        "https://your-backend.com/create-payment-intent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: amount * 100, // Stripe expects cents
-            currency,
-            metadata: {
-              app: "geeklog-mobile",
-              type: "subscription",
-            },
-          }),
+      const response = await fetch(`${API_BASE_URL}/api/create-preference`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to create payment intent");
-      }
+        body: JSON.stringify({
+          amount,
+          currency,
+          description,
+          uid: global.currentUser?.uid,
+          email: global.currentUser?.email,
+        }),
+      });
 
       const data = await response.json();
-      return data;
+      
+      if (data.init_point) {
+        return {
+          success: true,
+          checkoutUrl: data.init_point,
+          preferenceId: data.preference_id,
+        };
+      } else {
+        throw new Error('Failed to create payment preference');
+      }
     } catch (error) {
-      console.error("Error creating payment intent:", error);
+      console.error('Payment creation error:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  // Process one-time payment
+  async processOneTimePayment(amount, currency = "BRL") {
+    try {
+      const result = await this.createPayment(amount, currency, "GeekLog Premium - Pagamento Único");
+      
+      if (result.success) {
+        // In React Native, you would open the checkout URL in WebView or external browser
+        Alert.alert(
+          "Redirecionando para Pagamento",
+          "Você será redirecionado para o MercadoPago para completar o pagamento.",
+          [
+            {
+              text: "Continuar",
+              onPress: () => {
+                // Here you would navigate to WebView or open external browser
+                console.log('Open checkout URL:', result.checkoutUrl);
+              }
+            },
+            {
+              text: "Cancelar",
+              style: "cancel"
+            }
+          ]
+        );
+        
+        return result;
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error('One-time payment error:', error);
+      Alert.alert("Erro no Pagamento", error.message);
       throw error;
     }
   }
 
   // Process subscription payment
   async processSubscriptionPayment(planType = "premium") {
-    if (!this.stripe) {
-      throw new Error("Stripe not initialized");
-    }
-
     try {
-      // Define subscription plans
-      const plans = {
-        premium: {
-          amount: 9.99,
-          currency: "brl",
-          name: "GeekLog Premium",
-          description: "Acesso a recursos premium por 1 mês",
-        },
-      };
-
-      const plan = plans[planType];
-      if (!plan) {
-        throw new Error("Invalid plan type");
-      }
-
-      // For demo purposes, we'll show an alert
-      // In production, you would:
-      // 1. Create payment intent on your backend
-      // 2. Confirm payment with Stripe
-      // 3. Update user subscription status
-
-      return {
-        success: true,
-        message: "Pagamento processado com sucesso!",
-        plan: plan,
-      };
+      const amount = planType === "premium" ? 19.99 : 9.99;
+      const description = `GeekLog ${planType} - Assinatura`;
+      
+      return await this.processOneTimePayment(amount, "BRL");
     } catch (error) {
-      console.error("Payment processing error:", error);
+      console.error('Subscription payment error:', error);
+      Alert.alert("Erro na Assinatura", error.message);
       throw error;
     }
   }
 
-  // Handle payment with card
-  async handleCardPayment(paymentIntentClientSecret, billingDetails) {
-    if (!this.stripe) {
-      throw new Error("Stripe not initialized");
-    }
-
+  // Handle card payment (placeholder for future MercadoPago SDK integration)
+  async handleCardPayment(paymentData) {
     try {
-      const { error, paymentIntent } = await this.stripe.confirmPayment(
-        paymentIntentClientSecret,
-        {
-          paymentMethodType: "Card",
-          billingDetails,
-        },
-      );
-
-      if (error) {
-        console.error("Payment confirmation error:", error);
-        throw error;
-      }
-
-      return paymentIntent;
+      // This would integrate with MercadoPago SDK for React Native
+      // For now, redirect to web checkout
+      return await this.processOneTimePayment(paymentData.amount);
     } catch (error) {
-      console.error("Card payment error:", error);
+      console.error('Card payment error:', error);
       throw error;
     }
   }
 
-  // Handle Apple Pay (iOS only)
-  async handleApplePay(paymentIntentClientSecret, merchantName = "GeekLog") {
-    if (!this.stripe) {
-      throw new Error("Stripe not initialized");
-    }
-
+  // Update user premium status
+  async updateUserPremium(uid, paymentId) {
     try {
-      const { error } = await this.stripe.confirmApplePayPayment(
-        paymentIntentClientSecret,
-      );
-
-      if (error) {
-        console.error("Apple Pay error:", error);
-        throw error;
-      }
-
-      return { success: true };
-    } catch (error) {
-      console.error("Apple Pay error:", error);
-      throw error;
-    }
-  }
-
-  // Handle Google Pay (Android only)
-  async handleGooglePay(paymentIntentClientSecret) {
-    if (!this.stripe) {
-      throw new Error("Stripe not initialized");
-    }
-
-    try {
-      const { error } = await this.stripe.confirmGooglePayPayment(
-        paymentIntentClientSecret,
-        {
-          testEnv: __DEV__, // Use test environment in development
+      const response = await fetch(`${API_BASE_URL}/api/update-premium`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({ uid, paymentId }),
+      });
 
-      if (error) {
-        console.error("Google Pay error:", error);
-        throw error;
+      if (response.ok) {
+        return { success: true };
+      } else {
+        throw new Error('Failed to update premium status');
       }
-
-      return { success: true };
     } catch (error) {
-      console.error("Google Pay error:", error);
-      throw error;
+      console.error('Update premium error:', error);
+      return { success: false, error: error.message };
     }
   }
 }
 
-// Export singleton instance
+// Create singleton instance
 export const paymentService = new PaymentService();
 
 // Hook for using payment service in components
 export const usePaymentService = () => {
-  const stripe = useStripe();
-
-  React.useEffect(() => {
-    if (stripe) {
-      paymentService.setStripe(stripe);
-    }
-  }, [stripe]);
-
   return {
-    stripe,
     paymentService,
-    isReady: !!stripe,
+    isReady: true,
   };
+};
+
+// Initialize function (for compatibility)
+export const initializePayments = async () => {
+  try {
+    console.log("✅ MercadoPago payment service initialized");
+    return true;
+  } catch (error) {
+    console.error("❌ MercadoPago initialization failed:", error);
+    return false;
+  }
 };
