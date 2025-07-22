@@ -214,7 +214,7 @@ export const MobileSidebar: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => setActivePage(item.id)}
-                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ${
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${
                     activePage === item.id
                       ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105"
                       : "hover:bg-gray-800/50 active:scale-95"
