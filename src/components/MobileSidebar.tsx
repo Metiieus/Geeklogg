@@ -156,7 +156,7 @@ export const MobileSidebar: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`sm:hidden fixed top-0 left-0 bottom-0 z-50 w-80 transform transition-transform duration-300 ease-out ${
+        className={`sm:hidden fixed top-0 left-0 bottom-0 z-50 w-72 transform transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
