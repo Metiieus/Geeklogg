@@ -265,7 +265,7 @@ export const MobileSidebar: React.FC = () => {
 
               <button 
                 onClick={logout}
-                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 active:scale-95 border border-red-500/20"
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 active:scale-95 border border-red-500/20"
               >
                 <div className="p-2 rounded-lg bg-red-500/20">
                   <LogOut size={20} className="text-red-400" />
