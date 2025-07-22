@@ -1,62 +1,50 @@
-import http from "http";
-import { MercadoPagoConfig, Preference } from "mercadopago";
-import {
-  initializeApp as initAdminApp,
-  applicationDefault,
-} from "firebase-admin/app";
-import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
+// server.js
+import express from "express";
+import cors from "cors";
+import mercadopago from "mercadopago";
+import dotenv from "dotenv";
+import admin from "firebase-admin";
 
-const mercadoPagoAccessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || "APP_USR-5653582540014671-071813-7c2a1989c91d748fc96c2c61588137cd-182135011";
-const clientUrl = process.env.CLIENT_URL || "https://geeklog-26b2c.web.app";
+dotenv.config();
 
-// Initialize MercadoPago
-let mercadopago = null;
-console.log("MercadoPago Token:", mercadoPagoAccessToken ? "✅ Presente" : "❌ Missing");
-
-if (mercadoPagoAccessToken) {
-  try {
-    const client = new MercadoPagoConfig({
-      accessToken: mercadoPagoAccessToken
-    });
-    mercadopago = new Preference(client);
-    console.log("✅ MercadoPago configurado com sucesso");
-  } catch (error) {
-    console.error("❌ Erro ao configurar MercadoPago:", error);
-  }
-} else {
-  console.error("❌ MercadoPago access token missing");
+// --- 1) CONFIGURAÇÃO DO MERCADO PAGO ---
+if (!process.env.MP_ACCESS_TOKEN) {
+  console.error("❌ MERCADO_PAGO_ACCESS_TOKEN não definido em .env");
+  process.exit(1);
 }
+mercadopago.configure({
+  access_token: process.env.MP_ACCESS_TOKEN,
+});
+console.log("✅ MercadoPago configurado");
 
-// Initialize Firebase Admin
-const adminApp = initAdminApp({ credential: applicationDefault() });
-const adminDb = getAdminFirestore(adminApp);
-
-function parseJson(req) {
-  return new Promise((resolve, reject) => {
-    let data = "";
-    req.on("data", (chunk) => {
-      data += chunk;
-    });
-    req.on("end", () => {
-      try {
-        resolve(JSON.parse(data || "{}"));
-      } catch (err) {
-        reject(err);
-      }
-    });
-  });
+// --- 2) CONFIGURAÇÃO DO FIREBASE ADMIN ---
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  console.warn(
+    "⚠️ GOOGLE_APPLICATION_CREDENTIALS não definido. " +
+    "Webhook de ativação de plano poderá falhar."
+  );
 }
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+});
+const db = admin.firestore();
+console.log("✅ Firebase Admin inicializado");
 
-async function createPreference(body, res) {
-  if (!mercadopago) {
-    res.writeHead(500, {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    });
-    return res.end(JSON.stringify({ error: "MercadoPago not configured" }));
-  }
+// --- 3) APP & MIDDLEWARES ---
+const app = express();
+app.use(cors({ origin: process.env.CLIENT_URL || "*" }));
+app.use(express.json());
 
+// --- 4) ROTA: CREATE PREFERENCE ---
+app.post("/api/create-preference", async (req, res) => {
   try {
+    const { uid, email } = req.body;
+    if (!uid || !email) {
+      return res
+        .status(400)
+        .json({ error: "Parâmetros uid e email são obrigatórios" });
+    }
+
     const preference = {
       items: [
         {
@@ -64,86 +52,64 @@ async function createPreference(body, res) {
           description: "Assinatura Premium do GeekLog",
           quantity: 1,
           currency_id: "BRL",
-          unit_price: 19.99,
+          unit_price: 9.90, // Preço em Reais
+          picture_url: "https://example.com/logo.png", // URL da imagem do produto
         },
       ],
-      external_reference: body?.uid || "",
-      payer: {
-        email: body?.email || "",
-      },
+      external_reference: uid,
+      payer: { email },
       back_urls: {
-        success: `${clientUrl}/premium/success`,
-        failure: `${clientUrl}/premium/failure`,
-        pending: `${clientUrl}/premium/pending`,
+        success: `${process.env.CLIENT_URL}/premium/success`,
+        failure: `${process.env.CLIENT_URL}/premium/failure`,
+        pending: `${process.env.CLIENT_URL}/premium/pending`,
       },
       auto_return: "approved",
-      notification_url: `${process.env.SERVER_URL || 'http://localhost:4242'}/api/webhook`,
+      notification_url:
+        `${process.env.SERVER_URL || "http://localhost:4242"}/api/webhook`,
     };
 
-    const response = await mercadopago.create({ body: preference });
-    
-    res.writeHead(200, {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+    const { body } = await mercadopago.preferences.create(preference);
+    return res.json({
+      init_point: body.init_point,
+      preference_id: body.id,
     });
-    res.end(JSON.stringify({ 
-      init_point: response.init_point,
-      preference_id: response.id 
-    }));
-  } catch (err) {
-    console.error("MercadoPago error", err);
-    res.writeHead(500, {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    });
-    res.end(JSON.stringify({ error: "Failed to create preference" }));
+  } catch (err: any) {
+    console.error("🚨 /api/create-preference error:", err);
+    return res.status(500).json({ error: err.message || err.toString() });
   }
-}
+});
 
-async function handleWebhook(req, res) {
-  const chunks = [];
-  req.on("data", (c) => chunks.push(c));
-  req.on("end", async () => {
-    try {
-      const body = JSON.parse(Buffer.concat(chunks).toString());
-      
-      // MercadoPago webhook for payment notifications
-      if (body.type === "payment") {
-        const paymentId = body.data.id;
-        
-        // Here you would verify the payment with MercadoPago API
-        // For now, we'll assume it's approved for testing
-        if (body.action === "payment.created" || body.action === "payment.updated") {
-          // Get payment details and update user
-          // This is a simplified version - in production, verify payment status
-          console.log("Payment notification received:", paymentId);
-        }
-      }
-      
-      res.writeHead(200);
-      res.end("OK");
-    } catch (error) {
-      console.error("Webhook error:", error);
-      res.writeHead(400);
-      res.end("Bad Request");
-    }
-  });
-}
-
-async function updateUserPremium(req, res) {
+// --- 5) ROTA: WEBHOOK MP ---
+app.post("/api/webhook", async (req, res) => {
   try {
-    const body = await parseJson(req);
-    const { uid, paymentId } = body;
-    
-    if (!uid) {
-      res.writeHead(400, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      });
-      return res.end(JSON.stringify({ error: "UID required" }));
+    const mpBody = req.body;
+    console.log("🔔 Webhook MP recebido:", mpBody);
+
+    // Exemplo mínimo de tratamento
+    if (mpBody.type === "payment" && mpBody.data?.id) {
+      const payment = await mercadopago.payment.get(mpBody.data.id);
+      console.log("✅ Payment detail:", payment.body.status);
+      // Você pode atualizar o Firestore aqui, por ex. ativar premium se aprovado
     }
 
-    await adminDb
+    return res.sendStatus(200);
+  } catch (err) {
+    console.error("🚨 /api/webhook error:", err);
+    return res.sendStatus(400);
+  }
+});
+
+// --- 6) ROTA: ATUALIZAÇÃO DO PLANO NO FIRESTORE ---
+app.post("/api/update-premium", async (req, res) => {
+  try {
+    const { uid, preference_id } = req.body;
+    if (!uid || !preference_id) {
+      return res
+        .status(400)
+        .json({ error: "uid e preference_id são obrigatórios" });
+    }
+
+    await db
       .collection("users")
       .doc(uid)
       .set(
@@ -151,80 +117,27 @@ async function updateUserPremium(req, res) {
           plano: {
             status: "ativo",
             tipo: "premium",
-            mercadoPagoPaymentId: paymentId,
-            activatedAt: new Date(),
+            mercadoPagoPreferenceId: preference_id,
+            activatedAt: admin.firestore.FieldValue.serverTimestamp(),
           },
         },
-        { merge: true },
+        { merge: true }
       );
 
-    console.log("Premium activated for user:", uid);
-    
-    res.writeHead(200, {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    });
-    res.end(JSON.stringify({ success: true }));
+    console.log("🎉 Premium ativado para:", uid);
+    return res.json({ success: true });
   } catch (err) {
-    console.error("Failed to update user premium:", err);
-    res.writeHead(500, {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    });
-    res.end(JSON.stringify({ error: "Failed to update user" }));
+    console.error("🚨 /api/update-premium error:", err);
+    return res.status(500).json({ error: err.message || err.toString() });
   }
-}
-
-const server = http.createServer(async (req, res) => {
-  // CORS headers for all requests
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST,GET,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  };
-
-  if (req.method === "OPTIONS") {
-    res.writeHead(204, corsHeaders);
-    return res.end();
-  }
-
-  if (req.url === "/api/create-preference" && req.method === "POST") {
-    try {
-      const body = await parseJson(req);
-      return createPreference(body, res);
-    } catch {
-      res.writeHead(400, { 
-        "Content-Type": "application/json",
-        ...corsHeaders 
-      });
-      return res.end(JSON.stringify({ error: "Invalid JSON" }));
-    }
-  }
-
-  if (req.url === "/api/webhook" && req.method === "POST") {
-    return handleWebhook(req, res);
-  }
-
-  if (req.url === "/api/update-premium" && req.method === "POST") {
-    return updateUserPremium(req, res);
-  }
-
-  // Health check
-  if (req.url === "/health" && req.method === "GET") {
-    res.writeHead(200, { 
-      "Content-Type": "application/json",
-      ...corsHeaders 
-    });
-    return res.end(JSON.stringify({ status: "OK" }));
-  }
-
-  res.writeHead(404, corsHeaders);
-  res.end("Not Found");
 });
 
-const port = process.env.PORT || 8080;
-server.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on port ${port}`);
-  console.log(`MercadoPago configured: ${!!mercadopago}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+// --- 7) HEALTHCHECK & START SERVER ---
+app.get("/health", (_req, res) => {
+  res.json({ status: "OK" });
 });
+
+const PORT = process.env.PORT || 4242;
+app.listen(PORT, () =>
+  console.log(`🚀 Server rodando em http://localhost:${PORT}`)
+);
