@@ -5,6 +5,7 @@ import { MediaType, MediaItem, Status } from '../App';
 import { AddMediaModal } from './modals/AddMediaModal';
 import { EditMediaModal } from './modals/EditMediaModal';
 import { deleteMedia } from '../services/mediaService';
+import { useToast } from '../context/ToastContext';
 
 const mediaTypeColors = {
   games: 'from-blue-500 to-cyan-500',
@@ -24,6 +25,7 @@ const mediaTypeLabels = {
 
 const Library: React.FC = () => {
   const { mediaItems, setMediaItems } = useAppContext();
+  const { showError, showSuccess } = useToast();
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,16 +90,16 @@ const Library: React.FC = () => {
   const handleDeleteItem = async (itemId: string) => {
     const item = mediaItems.find(m => m.id === itemId);
     const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
-    
+
     if (confirm(confirmMessage)) {
-      await deleteMedia(itemId);
-      setMediaItems(mediaItems.filter(item => item.id !== itemId));
-      // Feedback visual de sucesso
-      const toast = document.createElement('div');
-      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up';
-      toast.textContent = '✅ Item removido com sucesso!';
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 3000);
+      try {
+        await deleteMedia(itemId);
+        setMediaItems(mediaItems.filter(item => item.id !== itemId));
+        showSuccess('Item removido com sucesso!');
+      } catch (err: any) {
+        console.error('Erro ao excluir mídia', err);
+        showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
+      }
     }
   };
 
@@ -186,10 +188,8 @@ const Library: React.FC = () => {
 
       {/* Media Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
-        {filteredAndSortedItems.map((item) => {
-          console.log('Library item', item);
-          return (
-            <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
+        {filteredAndSortedItems.map((item) => (
+          <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
               {/* Cover Image */}
               <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
                 {item.cover ? (
@@ -279,14 +279,14 @@ const Library: React.FC = () => {
                 {/* Tags */}
                 {item.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-3">
-                    {item.tags.slice(0, 3).map((tag) => {
-                      console.log('Tag', tag);
-                      return (
-                        <span key={tag} className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                          {tag}
-                        </span>
-                      );
-                    })}
+                    {item.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                     {item.tags.length > 3 && (
                       <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
                         +{item.tags.length - 3}
@@ -297,7 +297,7 @@ const Library: React.FC = () => {
               </div>
             </div>
           );
-        })}
+        ))}
       </div>
 
       {/* Empty State */}
