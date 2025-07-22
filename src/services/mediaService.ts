@@ -104,25 +104,34 @@ export async function getMedias(): Promise<MediaItem[]> {
 
   try {
     const medias = await database.getCollection(["users", uid, "medias"]);
-    return medias.map(media => ({
-      id: media.id,
-      title: media.title || "",
-      cover: media.cover,
-      platform: media.platform,
-      status: media.status || "planned",
-      rating: media.rating,
-      hoursSpent: media.hoursSpent,
-      totalPages: media.totalPages,
-      currentPage: media.currentPage,
-      startDate: media.startDate,
-      endDate: media.endDate,
-      tags: Array.isArray(media.tags) ? media.tags : [],
-      externalLink: media.externalLink,
-      type: media.type || "games",
-      description: media.description,
-      createdAt: media.createdAt || new Date().toISOString(),
-      updatedAt: media.updatedAt || new Date().toISOString()
-    }));
+    return medias
+      .filter(media => {
+        // Filter out any media items without valid IDs
+        const hasValidId = media.id && typeof media.id === "string" && media.id.trim() !== "";
+        if (!hasValidId) {
+          console.warn("Documento de mídia encontrado sem ID válido:", media);
+        }
+        return hasValidId;
+      })
+      .map(media => ({
+        id: media.id,
+        title: media.title || "",
+        cover: media.cover,
+        platform: media.platform,
+        status: media.status || "planned",
+        rating: media.rating,
+        hoursSpent: media.hoursSpent,
+        totalPages: media.totalPages,
+        currentPage: media.currentPage,
+        startDate: media.startDate,
+        endDate: media.endDate,
+        tags: Array.isArray(media.tags) ? media.tags : [],
+        externalLink: media.externalLink,
+        type: media.type || "games",
+        description: media.description,
+        createdAt: media.createdAt || new Date().toISOString(),
+        updatedAt: media.updatedAt || new Date().toISOString()
+      }));
   } catch (error) {
     console.error("Error fetching medias:", error);
     return [];
@@ -130,7 +139,15 @@ export async function getMedias(): Promise<MediaItem[]> {
 }
 
 export async function deleteMedia(id: string): Promise<void> {
+  if (!id || typeof id !== "string" || id.trim() === "") {
+    throw new Error("ID da mídia é obrigatório e deve ser uma string válida");
+  }
+
   const uid = getUserId();
+  if (!uid) {
+    throw new Error("Usuário não autenticado");
+  }
+
   await database.delete(["users", uid, "medias", id]);
   console.log("🗑️ Documento de mídia removido:", id);
   await storageClient.remove(`media/${id}`);

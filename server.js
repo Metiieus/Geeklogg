@@ -65,7 +65,7 @@ app.post("/api/create-preference", async (req, res) => {
       },
       auto_return: "approved",
       notification_url:
-        `${process.env.SERVER_URL || "http://localhost:4242"}/api/webhook`,
+        `${process.env.SERVER_URL || "http://localhost:8080"}/api/webhook`,
     };
 
     const { body } = await mercadopago.preferences.create(preference);
@@ -137,7 +137,7 @@ app.get("/health", (_req, res) => {
   res.json({ status: "OK" });
 });
 
-const PORT = process.env.PORT || 4242;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () =>
   console.log(`🚀 Server rodando em http://localhost:${PORT}`)
 );

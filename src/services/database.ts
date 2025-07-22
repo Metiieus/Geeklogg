@@ -216,9 +216,23 @@ export const database = {
   /* ------------------------------------------------------------------ */
   delete: async (collectionPath: string | string[], docId: string) => {
     try {
+      if (!docId || typeof docId !== "string" || docId.trim() === "") {
+        throw new Error("Document ID é obrigatório e deve ser uma string válida");
+      }
+
       const pathStr = Array.isArray(collectionPath)
         ? collectionPath.join("/")
         : collectionPath;
+
+      if (!pathStr || pathStr.trim() === "") {
+        throw new Error("Collection path é obrigatório");
+      }
+
+      // Validate that path doesn't contain undefined parts
+      if (pathStr.includes("undefined") || pathStr.includes("null")) {
+        throw new Error(`Collection path contém valores inválidos: ${pathStr}`);
+      }
+
       await deleteDoc(doc(db, pathStr, docId));
       return docId;
     } catch (error) {

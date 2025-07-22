@@ -133,6 +133,19 @@ const Library: React.FC = () => {
   const handleDeleteItem = async () => {
     if (!itemToDelete) return;
 
+    // Validate that the item has a valid ID
+    if (!itemToDelete.id || typeof itemToDelete.id !== "string" || itemToDelete.id.trim() === "") {
+      console.error("Item selecionado não possui ID válido:", itemToDelete);
+      // Show error toast
+      const toast = document.createElement("div");
+      toast.className =
+        "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+      toast.textContent = "❌ Erro: Item não possui ID válido";
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
+      return;
+    }
+
     try {
       await deleteMedia(itemToDelete.id);
       setMediaItems(mediaItems.filter((item) => item.id !== itemToDelete.id));
@@ -148,6 +161,14 @@ const Library: React.FC = () => {
       setTimeout(() => document.body.removeChild(toast), 3000);
     } catch (error) {
       console.error('Erro ao excluir item:', error);
+
+      // Show error toast with specific error message
+      const toast = document.createElement("div");
+      toast.className =
+        "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+      toast.textContent = `❌ Erro ao excluir: ${error instanceof Error ? error.message : 'Erro desconhecido'}`;
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 5000);
     }
   };
 
