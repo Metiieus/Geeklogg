@@ -209,7 +209,7 @@ export const MobileSidebar: React.FC = () => {
             </div>
 
             {/* Navigation Items */}
-            <div className="flex-1 px-4 py-6 space-y-2">
+            <div className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
               {navItems.map((item) => (
                 <button
                   key={item.id}
