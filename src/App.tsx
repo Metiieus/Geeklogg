@@ -15,7 +15,7 @@ import { Login } from "./components/Login";
 import { Register } from "./components/Register";
 import { LandingPage } from "./components/LandingPage";
 import { ArchiviusAgent } from "./components/ArchiviusAgent";
-import { FirebaseWarning } from "./components/FirebaseWarning";
+
 import { NotificationCenter } from "./components/NotificationCenter";
 import PremiumSuccessPage from "./components/PremiumSuccessPage";
 import PremiumFailure from "./components/PremiumFailure";
