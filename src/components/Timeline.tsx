@@ -104,7 +104,6 @@ const Timeline: React.FC = () => {
             <div className="absolute left-6 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-500 via-purple-500 to-cyan-500 opacity-30 animate-pulse" />
 
             {sortedMilestones.map((milestone, index) => {
-              console.log("Timeline milestone", milestone);
               return (
                 <div
                   key={milestone.id}
