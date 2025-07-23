@@ -336,26 +336,26 @@ const Library: React.FC = () => {
                   </div>
 
                   {/* Mobile Action Buttons - só aparece no mobile */}
-                  <div className="absolute top-2 right-2 md:hidden flex gap-1">
+                  <div className="absolute top-2 right-2 md:hidden flex gap-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditClick(item);
                       }}
-                      className="p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition-all duration-200 border border-white/20"
+                      className="p-2.5 bg-blue-500/80 backdrop-blur-sm rounded-full hover:bg-blue-500/90 active:scale-95 transition-all duration-200 border border-blue-400/30 shadow-lg"
                       title="Editar"
                     >
-                      <Edit size={14} className="text-white" />
+                      <Edit size={16} className="text-white drop-shadow-sm" />
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteClick(item);
                       }}
-                      className="p-2 bg-red-500/40 backdrop-blur-sm rounded-full hover:bg-red-500/60 transition-all duration-200 border border-red-300/20"
+                      className="p-2.5 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg"
                       title="Excluir"
                     >
-                      <Trash2 size={14} className="text-white" />
+                      <Trash2 size={16} className="text-white drop-shadow-sm" />
                     </button>
                   </div>
                 </div>
