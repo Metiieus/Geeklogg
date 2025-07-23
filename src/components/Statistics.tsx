@@ -119,7 +119,7 @@ const Statistics: React.FC = () => {
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-slide-up">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 animate-slide-up relative z-10">
         <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-blue-500/20 rounded-lg">
