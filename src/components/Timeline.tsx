@@ -20,6 +20,8 @@ const Timeline: React.FC = () => {
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(
     null,
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [milestoneToDelete, setMilestoneToDelete] = useState<Milestone | null>(null);
 
   const sortedMilestones = milestones.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
