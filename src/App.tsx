@@ -304,7 +304,6 @@ function App() {
           </div>
                     <MobileSidebar />
           <ArchiviusAgent />
-          <FirebaseWarning />
           <NotificationCenter />
               </div>
             } />
