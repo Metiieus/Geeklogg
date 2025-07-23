@@ -116,27 +116,21 @@ const Library: React.FC = () => {
   };
 
   const handleDeleteItem = useCallback(async (itemId: string) => {
-    console.log("🗑️ handleDeleteItem chamado com ID:", itemId, "Tipo:", typeof itemId);
-
     if (!itemId || typeof itemId !== "string" || itemId.trim() === "") {
-      console.error("❌ ID inválido recebido:", itemId);
       showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
       return;
     }
 
     const item = mediaItems.find(m => m.id === itemId);
-    console.log("📦 Item encontrado:", item);
-
     const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
 
     if (confirm(confirmMessage)) {
       try {
-        console.log("🔥 Chamando deleteMedia com ID:", itemId);
         await deleteMedia(itemId);
         setMediaItems(mediaItems.filter(item => item.id !== itemId));
         showSuccess('Item removido com sucesso!');
       } catch (err: any) {
-        console.error('❌ Erro ao excluir mídia', err);
+        console.error('Erro ao excluir mídia', err);
         showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
       }
     }
