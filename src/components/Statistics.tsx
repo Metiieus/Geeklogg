@@ -258,7 +258,6 @@ const Statistics: React.FC = () => {
           <div className="space-y-4">
             {mostPlayed.length > 0 ? (
               mostPlayed.map((item, index) => {
-                console.log('Most played', item);
                 return (
                 <div key={item.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
