@@ -70,7 +70,7 @@ const navItems: NavItem[] = [
 
 export const MobileSidebar: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
-  const { logout, user } = useAuth();
+  const { logout, user, profile } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   // Close sidebar when page changes
