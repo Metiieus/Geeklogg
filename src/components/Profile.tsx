@@ -128,6 +128,7 @@ const Profile: React.FC = () => {
   const displayName =
     settings.name || profile?.name || user.email?.split("@")[0] || "Usuário";
   const displayAvatar = settings.avatar || profile?.avatar;
+  const displayCover = settings.cover || profile?.cover;
   const displayBio = settings.bio || profile?.bio || "Sem bio definida.";
 
   return (
