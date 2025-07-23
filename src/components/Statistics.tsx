@@ -181,22 +181,22 @@ const Statistics: React.FC = () => {
                   <span className="text-white font-medium">{mediaTypeLabels[type as MediaType]}</span>
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-sm">Total</span>
-                    <span className="text-white font-medium">{stats.count}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">Total</span>
+                    <span className="text-white font-medium text-xs sm:text-sm">{stats.count}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-sm">Horas</span>
-                    <span className="text-white font-medium">{stats.hours.toFixed(1)}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">Horas</span>
+                    <span className="text-white font-medium text-xs sm:text-sm">{stats.hours.toFixed(1)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-sm">Concluídos</span>
-                    <span className="text-white font-medium">{stats.completed}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">✅</span>
+                    <span className="text-white font-medium text-xs sm:text-sm">{stats.completed}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-sm">Nota Média</span>
-                    <span className="text-white font-medium">{stats.avgRating.toFixed(1)}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">⭐</span>
+                    <span className="text-white font-medium text-xs sm:text-sm">{stats.avgRating.toFixed(1)}</span>
                   </div>
                 </div>
               </div>
