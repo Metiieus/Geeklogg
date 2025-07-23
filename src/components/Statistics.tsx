@@ -113,9 +113,9 @@ const Statistics: React.FC = () => {
         ))}
       </div>
       {/* Header */}
-      <div className="animate-slide-down">
-        <h1 className="text-3xl font-bold text-white mb-2">Estatísticas</h1>
-        <p className="text-slate-400">Insights sobre seu consumo de mídia e preferências</p>
+      <div className="animate-slide-down relative z-10">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">Estatísticas</h1>
+        <p className="text-slate-400 text-sm md:text-base">Insights sobre seu consumo de mídia e preferências</p>
       </div>
 
       {/* Overview Stats */}
