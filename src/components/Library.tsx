@@ -160,6 +160,24 @@ const Library: React.FC = () => {
     setEditingItem(item);
   };
 
+  const handleDeleteClick = (item: MediaItem) => {
+    setItemToDelete(item);
+    setShowDeleteModal(true);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (itemToDelete && itemToDelete.id) {
+      await handleDeleteItem(itemToDelete.id);
+      setShowDeleteModal(false);
+      setItemToDelete(null);
+    }
+  };
+
     return (
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in relative">
       {/* Fragmentos animados no fundo */}
@@ -316,6 +334,100 @@ const Library: React.FC = () => {
                       <Trash2 size={16} className="text-white" />
                     </button>
                   </div>
+
+                  {/* Mobile Action Buttons - só aparece no mobile */}
+                  <div className="absolute top-2 right-2 md:hidden flex gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditClick(item);
+                      }}
+                      className="p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition-all duration-200 border border-white/20"
+                      title="Editar"
+                    >
+                      <Edit size={14} className="text-white" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteClick(item);
+                      }}
+                      className="p-2 bg-red-500/40 backdrop-blur-sm rounded-full hover:bg-red-500/60 transition-all duration-200 border border-red-300/20"
+                      title="Excluir"
+                    >
+                      <Trash2 size={14} className="text-white" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mobile Content - aparece em telas pequenas */}
+                <div className="p-3 md:hidden">
+                  <h3 className="font-semibold text-white mb-2 text-sm line-clamp-2">
+                    {item.title}
+                  </h3>
+
+                  {/* Status */}
+                  <div
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-2`}
+                  >
+                    {getStatusLabel(item.status)}
+                  </div>
+
+                  {/* Stats - versão compacta para mobile */}
+                  <div className="flex items-center gap-3 text-xs">
+                    {item.rating && (
+                      <div className="flex items-center gap-1">
+                        <Star
+                          className="text-yellow-400"
+                          size={12}
+                          fill="currentColor"
+                        />
+                        <span className="text-white">{item.rating}</span>
+                      </div>
+                    )}
+                    {item.hoursSpent && (
+                      <div className="flex items-center gap-1">
+                        <Clock className="text-blue-400" size={12} />
+                        <span className="text-white">{item.hoursSpent}h</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Progress bar para livros - versão mobile */}
+                  {item.type === "books" && item.totalPages && (
+                    <div className="mt-2">
+                      <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-green-500"
+                          style={{
+                            width: `${Math.max(0, Math.min(((item.currentPage || 0) / (item.totalPages || 1)) * 100, 100))}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {item.currentPage || 0}/{item.totalPages} páginas
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Tags - versão compacta */}
+                  {item.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {item.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {item.tags.length > 2 && (
+                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                          +{item.tags.length - 2}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Desktop Content - só aparece em telas maiores */}
@@ -490,7 +602,7 @@ const Library: React.FC = () => {
                 Cancelar
               </button>
               <button
-                onClick={handleDeleteItem}
+                onClick={confirmDelete}
                 className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
               >
                 <Trash2 size={18} />
