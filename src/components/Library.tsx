@@ -128,29 +128,29 @@ const Library: React.FC = () => {
     }
   }, [mediaItems, setMediaItems, showSuccess, showError]);
 
-  const handleEditItem = (updatedItem: MediaItem) => {
+  const handleEditItem = useCallback((updatedItem: MediaItem) => {
     setMediaItems(
       mediaItems.map((item) =>
         item.id === updatedItem.id ? updatedItem : item,
       ),
     );
     setEditingItem(null);
-  };
+  }, [mediaItems, setMediaItems]);
 
-  const handleExternalResultSelect = (result: ExternalMediaResult) => {
+  const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
     setSelectedExternalResult(result);
     setShowAddOptions(false);
-  };
+  }, []);
 
-  const handleManualAdd = () => {
+  const handleManualAdd = useCallback(() => {
     setShowAddModal(true);
     setShowAddOptions(false);
-  };
+  }, []);
 
-  const handleAddFromSearch = (newItem: MediaItem) => {
+  const handleAddFromSearch = useCallback((newItem: MediaItem) => {
     setMediaItems([...mediaItems, newItem]);
     setSelectedExternalResult(null);
-  };
+  }, [mediaItems, setMediaItems]);
 
   const handleEditClick = (item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
@@ -202,7 +202,7 @@ const Library: React.FC = () => {
             Biblioteca
           </h1>
           <p className="text-slate-400 text-sm md:text-base hidden sm:block">
-            Sua coleção pessoal de jogos, anime, séries, livros e filmes
+            Sua cole��ão pessoal de jogos, anime, séries, livros e filmes
           </p>
         </div>
         <button
