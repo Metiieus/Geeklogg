@@ -234,6 +234,49 @@ const Timeline: React.FC = () => {
           onSave={handleEditMilestone}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                <Trash2 className="text-red-400" size={32} />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-white text-center mb-4">
+              Excluir Marco
+            </h2>
+
+            <p className="text-slate-300 text-center mb-2">
+              Tem certeza que deseja excluir o marco
+            </p>
+            <p className="text-white font-semibold text-center mb-2">
+              "{milestoneToDelete?.title}"?
+            </p>
+            <p className="text-slate-400 text-sm text-center mb-8">
+              Essa memória será perdida para sempre.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDelete}
+                className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                <Trash2 size={18} />
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
