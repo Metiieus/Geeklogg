@@ -1,0 +1,158 @@
+/* Otimizações específicas para a biblioteca no mobile */
+
+/* Melhorar performance do grid de mídia */
+@media (max-width: 768px) {
+  .media-grid {
+    contain: layout style paint;
+    transform: translateZ(0);
+  }
+  
+  .media-card {
+    contain: layout style paint;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  
+  /* Reduzir sombras complexas em mobile */
+  .media-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Simplificar gradientes em mobile */
+  .gradient-bg {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  }
+  
+  /* Otimizar imagens para mobile */
+  .media-cover img {
+    image-rendering: auto;
+    transform: none;
+    transition: none;
+  }
+  
+  /* Desabilitar animações complexas em mobile */
+  .animate-bounce,
+  .animate-wiggle,
+  .group-hover\:scale-110 {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  /* Melhorar performance de scroll */
+  .library-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto; /* Mais rápido que smooth em mobile */
+  }
+  
+  /* Otimizar botões flutuantes */
+  .floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 50;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  
+  /* Melhorar performance dos filtros */
+  .filter-container {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: none;
+    background: rgba(15, 23, 42, 0.95);
+  }
+  
+  /* Otimizar modals para mobile */
+  .modal-overlay {
+    backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  /* Reduzir blur effects */
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+    background: rgba(15, 23, 42, 0.8) !important;
+  }
+}
+
+/* Otimizações específicas para dispositivos com pouca memória */
+@media (max-width: 480px) {
+  /* Limitar número de elementos visíveis */
+  .media-grid {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  /* Simplificar ainda mais os estilos */
+  .border-slate-700\/50 {
+    border-color: #374151 !important;
+  }
+  
+  .bg-gradient-to-br {
+    background: #1e293b !important;
+  }
+  
+  /* Desabilitar todas as transições em dispositivos muito pequenos */
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Melhorar performance em landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .media-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  
+  .media-card {
+    aspect-ratio: 3/4;
+  }
+}
+
+/* Otimizações para touch */
+@media (pointer: coarse) {
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+  
+  /* Melhorar área de toque dos botões pequenos */
+  .mobile-action-button {
+    padding: 12px;
+    margin: 4px;
+  }
+  
+  /* Evitar hover states em touch */
+  .hover\:bg-slate-600\/50:hover {
+    background-color: initial !important;
+  }
+}
+
+/* Preload crítico para melhor performance */
+.critical-resource {
+  font-display: swap;
+  loading: eager;
+}
+
+/* Lazy loading otimizado */
+.lazy-load {
+  loading: lazy;
+  decoding: async;
+}
+
+/* Container queries para componentes responsivos */
+@container (max-width: 320px) {
+  .media-card {
+    padding: 0.5rem;
+  }
+  
+  .media-card h3 {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+}
