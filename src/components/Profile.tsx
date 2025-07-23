@@ -279,34 +279,69 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full overflow-hidden">
-            <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold overflow-hidden flex-shrink-0">
-              {displayAvatar ? (
-                <img
-                  src={displayAvatar}
-                  alt={displayName}
-                  className="w-full h-full object-cover"
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden w-full relative">
+            {/* Capa do perfil */}
+            <div className="h-32 sm:h-40 bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-500 relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="absolute inset-0 backdrop-blur-[1px]"></div>
+              {/* Padrão de partículas na capa */}
+              {[...Array(20)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1 h-1 bg-white/30 rounded-full animate-pulse"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${i * 0.2}s`,
+                    animationDuration: `${2 + Math.random()}s`,
+                  }}
                 />
-              ) : (
-                (displayName || "?").charAt(0).toUpperCase()
-              )}
+              ))}
             </div>
 
-            <div className="text-center sm:text-left flex-1 min-w-0">
-              <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
-                {displayName}
-              </h2>
-              <TruncatedBio
-                bio={displayBio}
-                maxLength={400}
-                className="text-slate-400 text-sm sm:text-base break-words"
-              />
-              <button
-                onClick={() => setEditProfile(true)}
-                className="mt-2 text-purple-400 hover:text-purple-300 text-sm"
-              >
-                Editar Perfil
-              </button>
+            <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 relative -mt-12">
+              {/* Avatar com moldura melhorada */}
+              <div className="relative">
+                <div className="w-24 sm:w-28 h-24 sm:h-28 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-1 flex-shrink-0">
+                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
+                    {displayAvatar ? (
+                      <img
+                        src={displayAvatar}
+                        alt={displayName}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <span className="text-white text-2xl sm:text-3xl font-bold">
+                        {(displayName || "?").charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {/* Badge premium/status */}
+                {profile?.isPremium && (
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center border-2 border-slate-900">
+                    <Crown className="w-4 h-4 text-white" />
+                  </div>
+                )}
+              </div>
+
+              <div className="text-center sm:text-left flex-1 min-w-0">
+                <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
+                  {displayName}
+                </h2>
+                <TruncatedBio
+                  bio={displayBio}
+                  maxLength={400}
+                  className="text-slate-400 text-sm sm:text-base break-words"
+                />
+                <button
+                  onClick={() => setEditProfile(true)}
+                  className="mt-2 text-purple-400 hover:text-purple-300 text-sm flex items-center gap-1"
+                >
+                  <Edit size={14} />
+                  Editar Perfil
+                </button>
+              </div>
             </div>
           </div>
 
