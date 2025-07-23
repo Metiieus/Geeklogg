@@ -120,15 +120,16 @@ const Statistics: React.FC = () => {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 animate-slide-up relative z-10">
-        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <Clock className="text-blue-400" size={20} />
+        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-blue-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg">
+              <Clock className="text-blue-400" size={16} />
             </div>
-            <span className="text-blue-400 font-medium">Total de Horas</span>
+            <span className="text-blue-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">Total de Horas</span>
+            <span className="text-blue-400 font-medium text-xs sm:hidden">Horas</span>
           </div>
-          <p className="text-3xl font-bold text-white">{totalStats.totalHours.toLocaleString()}</p>
-          <p className="text-slate-400 text-sm mt-1">Tempo investido</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStats.totalHours.toLocaleString()}</p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">Tempo investido</p>
         </div>
 
         <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
