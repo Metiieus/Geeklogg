@@ -277,12 +277,12 @@ const Library: React.FC = () => {
                   | "updatedAt",
               )
             }
-            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="updatedAt">Recentes</option>
-            <option value="title">A-Z</option>
-            <option value="rating">Avaliação</option>
-            <option value="hoursSpent">Horas</option>
+            <option value="updatedAt">🕐 Mais Recentes</option>
+            <option value="title">🔤 A-Z</option>
+            <option value="rating">⭐ Avaliação</option>
+            <option value="hoursSpent">⏱️ Mais Horas</option>
           </select>
         </div>
       </div>
