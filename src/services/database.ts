@@ -165,9 +165,7 @@ export const database = {
       }
 
       const snap = await getDocs(q);
-      const result = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
-      console.log("🗃️ Database getCollection result:", { path: pathStr, count: result.length, firstItem: result[0] });
-      return result;
+      return snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
     } catch (error: any) {
       console.error("Error getting collection:", error);
 
