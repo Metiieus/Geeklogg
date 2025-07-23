@@ -375,28 +375,30 @@ const Library: React.FC = () => {
 
                   {/* Stats - versão compacta para mobile */}
                   <div className="flex items-center justify-between text-xs">
-                    {item.rating && (
-                      <div className="flex items-center gap-1">
-                        <Star
-                          className="text-yellow-400"
-                          size={12}
-                          fill="currentColor"
-                        />
-                        <span className="text-white">{item.rating}</span>
-                      </div>
-                    )}
-                    {item.hoursSpent && (
-                      <div className="flex items-center gap-1">
-                        <Clock className="text-blue-400" size={12} />
-                        <span className="text-white">{item.hoursSpent}h</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {item.rating && (
+                        <div className="flex items-center gap-0.5">
+                          <Star
+                            className="text-yellow-400"
+                            size={10}
+                            fill="currentColor"
+                          />
+                          <span className="text-white text-xs">{item.rating}</span>
+                        </div>
+                      )}
+                      {item.hoursSpent && (
+                        <div className="flex items-center gap-0.5">
+                          <Clock className="text-blue-400" size={10} />
+                          <span className="text-white text-xs">{item.hoursSpent}h</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Progress bar para livros - versão mobile */}
                   {item.type === "books" && item.totalPages && (
-                    <div className="mt-2">
-                      <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div className="mt-1.5">
+                      <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-green-500"
                           style={{
@@ -404,8 +406,8 @@ const Library: React.FC = () => {
                           }}
                         />
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {item.currentPage || 0}/{item.totalPages} páginas
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {item.currentPage || 0}/{item.totalPages}
                       </p>
                     </div>
                   )}
