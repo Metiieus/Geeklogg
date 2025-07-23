@@ -20,6 +20,8 @@ const Reviews: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
 
   const filteredReviews = reviews.filter((review) => {
     const media = mediaItems.find((item) => item.id === review.mediaId);
