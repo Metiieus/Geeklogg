@@ -53,6 +53,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         ...profile,
         name: local.name.trim(),
         avatar: local.avatar || undefined,
+        cover: local.cover || undefined,
         bio: local.bio.trim(),
       });
       showSuccess("Perfil salvo!", "Suas informações foram atualizadas");
