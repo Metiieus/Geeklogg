@@ -361,20 +361,20 @@ const Library: React.FC = () => {
                 </div>
 
                 {/* Mobile Content - aparece em telas pequenas */}
-                <div className="p-3 md:hidden">
-                  <h3 className="font-semibold text-white mb-2 text-sm line-clamp-2">
+                <div className="p-2 sm:p-3 md:hidden">
+                  <h3 className="font-semibold text-white mb-1.5 text-xs sm:text-sm line-clamp-2 leading-tight">
                     {item.title}
                   </h3>
 
                   {/* Status */}
                   <div
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-2`}
+                    className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-1.5`}
                   >
-                    {getStatusLabel(item.status)}
+                    <span className="text-xs">{getStatusLabel(item.status)}</span>
                   </div>
 
                   {/* Stats - versão compacta para mobile */}
-                  <div className="flex items-center gap-3 text-xs">
+                  <div className="flex items-center justify-between text-xs">
                     {item.rating && (
                       <div className="flex items-center gap-1">
                         <Star
