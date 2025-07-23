@@ -20,6 +20,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [local, setLocal] = useState({
     name: profile?.name || "",
     avatar: profile?.avatar || "",
+    cover: profile?.cover || "",
     bio: profile?.bio || "",
   });
   const [isUploading, setIsUploading] = useState(false);
