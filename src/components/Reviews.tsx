@@ -32,20 +32,39 @@ const Reviews: React.FC = () => {
     );
   });
 
-  const handleDeleteReview = async (reviewId: string) => {
-    const review = reviews.find((r) => r.id === reviewId);
-    const confirmMessage = `Vai apagar a resenha "${review?.title}" mesmo? 📝\n\nTodo seu texto será perdido!`;
+  const handleDeleteClick = (review: Review) => {
+    setReviewToDelete(review);
+    setShowDeleteModal(true);
+  };
 
-    if (confirm(confirmMessage)) {
-      await deleteReview(reviewId);
-      setReviews(reviews.filter((review) => review.id !== reviewId));
-      // Feedback visual
-      const toast = document.createElement("div");
-      toast.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
-      toast.textContent = "✅ Resenha removida!";
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 3000);
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setReviewToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (reviewToDelete && reviewToDelete.id) {
+      try {
+        await deleteReview(reviewToDelete.id);
+        setReviews(reviews.filter((review) => review.id !== reviewToDelete.id));
+        // Feedback visual
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+        toast.textContent = "✅ Resenha removida!";
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      } catch (error) {
+        console.error('Erro ao excluir resenha:', error);
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+        toast.textContent = "❌ Erro ao remover resenha!";
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      }
+      setShowDeleteModal(false);
+      setReviewToDelete(null);
     }
   };
 
