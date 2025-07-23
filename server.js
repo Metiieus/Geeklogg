@@ -73,7 +73,7 @@ app.post("/api/create-preference", async (req, res) => {
       init_point: body.init_point,
       preference_id: body.id,
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error("🚨 /api/create-preference error:", err);
     return res.status(500).json({ error: err.message || err.toString() });
   }
