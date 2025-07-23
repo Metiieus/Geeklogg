@@ -282,22 +282,41 @@ const Profile: React.FC = () => {
           </div>
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden w-full relative">
             {/* Capa do perfil */}
-            <div className="h-32 sm:h-40 bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-500 relative overflow-hidden">
+            <div className="h-32 sm:h-40 relative overflow-hidden">
+              {displayCover ? (
+                <img
+                  src={displayCover}
+                  alt="Capa do perfil"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-500">
+                  {/* Padrão de partículas na capa */}
+                  {[...Array(20)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-1 h-1 bg-white/30 rounded-full animate-pulse"
+                      style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${i * 0.2}s`,
+                        animationDuration: `${2 + Math.random()}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
               <div className="absolute inset-0 bg-black/20"></div>
               <div className="absolute inset-0 backdrop-blur-[1px]"></div>
-              {/* Padrão de partículas na capa */}
-              {[...Array(20)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-1 h-1 bg-white/30 rounded-full animate-pulse"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${i * 0.2}s`,
-                    animationDuration: `${2 + Math.random()}s`,
-                  }}
-                />
-              ))}
+
+              {/* Botão de editar capa no mobile */}
+              <button
+                onClick={() => setEditProfile(true)}
+                className="absolute top-3 right-3 md:hidden p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition-all duration-200 border border-white/20"
+                title="Editar Perfil"
+              >
+                <Edit size={16} className="text-white" />
+              </button>
             </div>
 
             <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 relative -mt-12">
