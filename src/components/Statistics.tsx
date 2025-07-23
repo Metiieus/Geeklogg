@@ -173,7 +173,6 @@ const Statistics: React.FC = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 animate-fade-in">
           {Object.entries(mediaStats).map(([type, stats]) => {
-            console.log('Media stats', type, stats);
             const Icon = mediaTypeIcons[type as MediaType];
             return (
               <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:scale-105 transition-all duration-300 hover:shadow-lg`}>
