@@ -64,12 +64,16 @@ const LibraryScreen = () => {
   }, []);
 
   const handleDeletePress = (item) => {
+    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
+      Alert.alert('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      return;
+    }
     setItemToDelete(item);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
-    if (itemToDelete) {
+    if (itemToDelete && itemToDelete.id && typeof itemToDelete.id === "string" && itemToDelete.id.trim() !== "") {
       try {
         await deleteMediaItem(itemToDelete.id, itemToDelete.type);
         setShowDeleteModal(false);
@@ -78,6 +82,10 @@ const LibraryScreen = () => {
         console.error('Erro ao excluir item:', error);
         Alert.alert('Erro', 'Não foi possível excluir o item.');
       }
+    } else {
+      Alert.alert('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      setShowDeleteModal(false);
+      setItemToDelete(null);
     }
   };
 
