@@ -112,7 +112,7 @@ const Library: React.FC = () => {
     return labels[status];
   };
 
-  const handleDeleteItem = async (itemId: string) => {
+  const handleDeleteItem = useCallback(async (itemId: string) => {
     const item = mediaItems.find(m => m.id === itemId);
     const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
 
@@ -126,7 +126,7 @@ const Library: React.FC = () => {
         showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
       }
     }
-  };
+  }, [mediaItems, setMediaItems, showSuccess, showError]);
 
   const handleEditItem = (updatedItem: MediaItem) => {
     setMediaItems(
