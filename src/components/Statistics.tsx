@@ -132,37 +132,38 @@ const Statistics: React.FC = () => {
           <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">Tempo investido</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-green-500/20 rounded-lg">
-              <TrendingUp className="text-green-400" size={20} />
+        <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-green-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg">
+              <TrendingUp className="text-green-400" size={16} />
             </div>
-            <span className="text-green-400 font-medium">Concluídos</span>
+            <span className="text-green-400 font-medium text-xs sm:text-sm md:text-base">Concluídos</span>
           </div>
-          <p className="text-3xl font-bold text-white">{totalStats.totalCompleted}</p>
-          <p className="text-slate-400 text-sm mt-1">De {totalStats.totalItems} total</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStats.totalCompleted}</p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">De {totalStats.totalItems}</p>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-yellow-500/20 rounded-lg">
-              <Star className="text-yellow-400" size={20} />
+        <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-yellow-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-yellow-500/20 rounded-lg">
+              <Star className="text-yellow-400" size={16} />
             </div>
-            <span className="text-yellow-400 font-medium">Nota Média</span>
+            <span className="text-yellow-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">Nota Média</span>
+            <span className="text-yellow-400 font-medium text-xs sm:hidden">Nota</span>
           </div>
-          <p className="text-3xl font-bold text-white">{totalStats.avgRating.toFixed(1)}</p>
-          <p className="text-slate-400 text-sm mt-1">De 10</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStats.avgRating.toFixed(1)}</p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">De 10</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <BarChart3 className="text-purple-400" size={20} />
+        <div className="bg-gradient-to-br from-purple-500/10 to-violet-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-purple-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg">
+              <BarChart3 className="text-purple-400" size={16} />
             </div>
-            <span className="text-purple-400 font-medium">Resenhas</span>
+            <span className="text-purple-400 font-medium text-xs sm:text-sm md:text-base">Resenhas</span>
           </div>
-          <p className="text-3xl font-bold text-white">{reviews.length}</p>
-          <p className="text-slate-400 text-sm mt-1">Escritas</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{reviews.length}</p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">Escritas</p>
         </div>
       </div>
 
