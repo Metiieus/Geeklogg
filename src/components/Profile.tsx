@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Trophy, Crown, Star, Zap, LogOut, Bell } from "lucide-react";
+import { Trophy, Crown, Star, Zap, LogOut, Bell, Edit } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
