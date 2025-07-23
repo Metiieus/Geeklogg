@@ -220,17 +220,17 @@ const Library: React.FC = () => {
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50 relative z-10">
         <div className="flex flex-col space-y-3 sm:grid sm:grid-cols-2 md:grid-cols-4 sm:gap-3 md:gap-4 sm:space-y-0">
           {/* Search */}
-          <div className="relative col-span-1 sm:col-span-2 md:col-span-1">
+          <div className="relative sm:col-span-2 md:col-span-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               size={16}
             />
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder="Buscar por título ou tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-9 pr-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
