@@ -1,12 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2, X } from 'lucide-react';
+import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, MediaItem, Status } from '../App';
 import { AddMediaModal } from './modals/AddMediaModal';
-import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
 import { EditMediaModal } from './modals/EditMediaModal';
-import { AddMediaOptions } from './AddMediaOptions';
-import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
 import { useToast } from '../context/ToastContext';
 
