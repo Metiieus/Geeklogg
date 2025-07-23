@@ -104,47 +104,37 @@ export async function getMedias(): Promise<MediaItem[]> {
   }
 
   try {
-    console.log("🔍 Fetching medias for user:", uid);
     const medias = await database.getCollection(["users", uid, "medias"]);
-    console.log("📦 Raw medias from database:", medias);
-
-    const processedMedias = medias
+    return medias
       .filter(media => {
         // Filter out any media items without valid IDs
         const hasValidId = media.id && typeof media.id === "string" && media.id.trim() !== "";
         if (!hasValidId) {
-          console.warn("⚠️ Documento de mídia encontrado sem ID válido:", media);
+          console.warn("Documento de mídia encontrado sem ID válido:", media);
         }
         return hasValidId;
       })
-      .map(media => {
-        const processedMedia = {
-          id: media.id,
-          title: media.title || "",
-          cover: media.cover,
-          platform: media.platform,
-          status: media.status || "planned",
-          rating: media.rating,
-          hoursSpent: media.hoursSpent,
-          totalPages: media.totalPages,
-          currentPage: media.currentPage,
-          startDate: media.startDate,
-          endDate: media.endDate,
-          tags: Array.isArray(media.tags) ? media.tags : [],
-          externalLink: media.externalLink,
-          type: media.type || "games",
-          description: media.description,
-          createdAt: media.createdAt || new Date().toISOString(),
-          updatedAt: media.updatedAt || new Date().toISOString()
-        };
-        console.log("✅ Processed media item:", { id: processedMedia.id, title: processedMedia.title });
-        return processedMedia;
-      });
-
-    console.log("📋 Final processed medias count:", processedMedias.length);
-    return processedMedias;
+      .map(media => ({
+        id: media.id,
+        title: media.title || "",
+        cover: media.cover,
+        platform: media.platform,
+        status: media.status || "planned",
+        rating: media.rating,
+        hoursSpent: media.hoursSpent,
+        totalPages: media.totalPages,
+        currentPage: media.currentPage,
+        startDate: media.startDate,
+        endDate: media.endDate,
+        tags: Array.isArray(media.tags) ? media.tags : [],
+        externalLink: media.externalLink,
+        type: media.type || "games",
+        description: media.description,
+        createdAt: media.createdAt || new Date().toISOString(),
+        updatedAt: media.updatedAt || new Date().toISOString()
+      }));
   } catch (error) {
-    console.error("❌ Error fetching medias:", error);
+    console.error("Error fetching medias:", error);
     return [];
   }
 }
