@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, MediaItem, Status } from '../App';
@@ -112,7 +112,7 @@ const Library: React.FC = () => {
     return labels[status];
   };
 
-  const handleDeleteItem = async (itemId: string) => {
+  const handleDeleteItem = useCallback(async (itemId: string) => {
     const item = mediaItems.find(m => m.id === itemId);
     const confirmMessage = `Vai apagar "${item?.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
 
@@ -126,42 +126,60 @@ const Library: React.FC = () => {
         showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
       }
     }
-  };
+  }, [mediaItems, setMediaItems, showSuccess, showError]);
 
-  const handleEditItem = (updatedItem: MediaItem) => {
+  const handleEditItem = useCallback((updatedItem: MediaItem) => {
     setMediaItems(
       mediaItems.map((item) =>
         item.id === updatedItem.id ? updatedItem : item,
       ),
     );
     setEditingItem(null);
-  };
+  }, [mediaItems, setMediaItems]);
 
-  const handleExternalResultSelect = (result: ExternalMediaResult) => {
+  const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
     setSelectedExternalResult(result);
     setShowAddOptions(false);
-  };
+  }, []);
 
-  const handleManualAdd = () => {
+  const handleManualAdd = useCallback(() => {
     setShowAddModal(true);
     setShowAddOptions(false);
-  };
+  }, []);
 
-  const handleAddFromSearch = (newItem: MediaItem) => {
+  const handleAddFromSearch = useCallback((newItem: MediaItem) => {
     setMediaItems([...mediaItems, newItem]);
     setSelectedExternalResult(null);
-  };
+  }, [mediaItems, setMediaItems]);
 
-  const handleEditClick = (item: MediaItem) => {
+  const handleEditClick = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
       alert("ID inválido");
       return;
     }
     setEditingItem(item);
-  };
+  }, []);
+
+  const handleDeleteClick = useCallback((item: MediaItem) => {
+    setItemToDelete(item);
+    setShowDeleteModal(true);
+  }, []);
+
+  const cancelDelete = useCallback(() => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  }, []);
+
+  const confirmDelete = useCallback(async () => {
+    if (itemToDelete && itemToDelete.id) {
+      await handleDeleteItem(itemToDelete.id);
+      setShowDeleteModal(false);
+      setItemToDelete(null);
+    }
+  }, [itemToDelete, handleDeleteItem]);
 
     return (
-    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-fade-in relative">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-4 sm:space-y-6 animate-fade-in relative">
       {/* Fragmentos animados no fundo */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {[...Array(12)].map((_, i) => (
@@ -200,19 +218,19 @@ const Library: React.FC = () => {
 
             {/* Filters */}
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+        <div className="flex flex-col space-y-3 sm:grid sm:grid-cols-2 md:grid-cols-4 sm:gap-3 md:gap-4 sm:space-y-0">
           {/* Search */}
-          <div className="relative col-span-1 sm:col-span-2 md:col-span-1">
+          <div className="relative sm:col-span-2 md:col-span-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               size={16}
             />
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder="Buscar por título ou tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-9 pr-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
@@ -222,9 +240,9 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedType(e.target.value as MediaType | "all")
             }
-            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="all">Tipo</option>
+            <option value="all">Todos os Tipos</option>
             {Object.entries(mediaTypeLabels).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
@@ -238,13 +256,13 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedStatus(e.target.value as Status | "all")
             }
-            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="all">Status</option>
-            <option value="completed">Concluído</option>
-            <option value="in-progress">Progresso</option>
-            <option value="dropped">Abandonado</option>
-            <option value="planned">Planejado</option>
+            <option value="all">Todos os Status</option>
+            <option value="completed">✅ Concluído</option>
+            <option value="in-progress">⏳ Em Progresso</option>
+            <option value="dropped">❌ Abandonado</option>
+            <option value="planned">📅 Planejado</option>
           </select>
 
           {/* Sort */}
@@ -259,12 +277,12 @@ const Library: React.FC = () => {
                   | "updatedAt",
               )
             }
-            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="updatedAt">Recentes</option>
-            <option value="title">A-Z</option>
-            <option value="rating">Avaliação</option>
-            <option value="hoursSpent">Horas</option>
+            <option value="updatedAt">🕐 Mais Recentes</option>
+            <option value="title">🔤 A-Z</option>
+            <option value="rating">⭐ Avaliação</option>
+            <option value="hoursSpent">⏱️ Mais Horas</option>
           </select>
         </div>
       </div>
@@ -275,16 +293,16 @@ const Library: React.FC = () => {
       </div>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 animate-fade-in">
         {filteredAndSortedItems.map((item) => (
-          <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
+          <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
               {/* Cover Image */}
               <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
                 {item.cover ? (
                   <img src={item.cover} alt={item.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-500">
-                    <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
                   </div>
                 )}
 
@@ -316,6 +334,102 @@ const Library: React.FC = () => {
                       <Trash2 size={16} className="text-white" />
                     </button>
                   </div>
+
+                  {/* Mobile Action Buttons - só aparece no mobile */}
+                  <div className="absolute top-2 right-2 md:hidden flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditClick(item);
+                      }}
+                      className="p-2.5 bg-blue-500/80 backdrop-blur-sm rounded-full hover:bg-blue-500/90 active:scale-95 transition-all duration-200 border border-blue-400/30 shadow-lg"
+                      title="Editar"
+                    >
+                      <Edit size={16} className="text-white drop-shadow-sm" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteClick(item);
+                      }}
+                      className="p-2.5 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg"
+                      title="Excluir"
+                    >
+                      <Trash2 size={16} className="text-white drop-shadow-sm" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Mobile Content - aparece em telas pequenas */}
+                <div className="p-2 sm:p-3 md:hidden">
+                  <h3 className="font-semibold text-white mb-1.5 text-xs sm:text-sm line-clamp-2 leading-tight">
+                    {item.title}
+                  </h3>
+
+                  {/* Status */}
+                  <div
+                    className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-1.5`}
+                  >
+                    <span className="text-xs">{getStatusLabel(item.status)}</span>
+                  </div>
+
+                  {/* Stats - versão compacta para mobile */}
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      {item.rating && (
+                        <div className="flex items-center gap-0.5">
+                          <Star
+                            className="text-yellow-400"
+                            size={10}
+                            fill="currentColor"
+                          />
+                          <span className="text-white text-xs">{item.rating}</span>
+                        </div>
+                      )}
+                      {item.hoursSpent && (
+                        <div className="flex items-center gap-0.5">
+                          <Clock className="text-blue-400" size={10} />
+                          <span className="text-white text-xs">{item.hoursSpent}h</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Progress bar para livros - versão mobile */}
+                  {item.type === "books" && item.totalPages && (
+                    <div className="mt-1.5">
+                      <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-green-500"
+                          style={{
+                            width: `${Math.max(0, Math.min(((item.currentPage || 0) / (item.totalPages || 1)) * 100, 100))}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {item.currentPage || 0}/{item.totalPages}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Tags - versão compacta */}
+                  {item.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {item.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {item.tags.length > 2 && (
+                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                          +{item.tags.length - 2}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Desktop Content - só aparece em telas maiores */}
@@ -389,7 +503,6 @@ const Library: React.FC = () => {
                 )}
               </div>
             </div>
-          );
         ))}
       </div>
 
@@ -491,7 +604,7 @@ const Library: React.FC = () => {
                 Cancelar
               </button>
               <button
-                onClick={handleDeleteItem}
+                onClick={confirmDelete}
                 className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
               >
                 <Trash2 size={18} />

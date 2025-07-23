@@ -221,6 +221,37 @@ const Sidebar: React.FC = () => {
               )}
             </button>
 
+            {/* Perfil do usuário */}
+            <div className="mb-3 p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex-shrink-0">
+                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
+                    {profile?.avatar ? (
+                      <img
+                        src={profile.avatar}
+                        alt={profile.name || "Usuário"}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <span className="text-white text-xs font-bold">
+                        {(profile?.name || "U").charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {isExpanded && (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">
+                      {profile?.name || "Usuário"}
+                    </p>
+                    <p className="text-slate-400 text-xs truncate">
+                      {profile?.isPremium ? "Premium" : "Básico"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <button
               onClick={logout}
               className="group w-full flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 border border-transparent hover:border-red-500/30"

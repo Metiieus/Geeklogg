@@ -20,27 +20,48 @@ const Timeline: React.FC = () => {
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(
     null,
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [milestoneToDelete, setMilestoneToDelete] = useState<Milestone | null>(null);
 
   const sortedMilestones = milestones.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
-  const handleDeleteMilestone = async (milestoneId: string) => {
-    const milestone = milestones.find((m) => m.id === milestoneId);
-    const confirmMessage = `Vai apagar o marco "${milestone?.title}" mesmo? 🏆\n\nEssa memória será perdida para sempre!`;
+  const handleDeleteClick = (milestone: Milestone) => {
+    setMilestoneToDelete(milestone);
+    setShowDeleteModal(true);
+  };
 
-    if (confirm(confirmMessage)) {
-      await deleteMilestone(milestoneId);
-      setMilestones(
-        milestones.filter((milestone) => milestone.id !== milestoneId),
-      );
-      // Feedback visual
-      const toast = document.createElement("div");
-      toast.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
-      toast.textContent = "✅ Marco removido!";
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 3000);
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setMilestoneToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (milestoneToDelete && milestoneToDelete.id) {
+      try {
+        await deleteMilestone(milestoneToDelete.id);
+        setMilestones(
+          milestones.filter((milestone) => milestone.id !== milestoneToDelete.id),
+        );
+        // Feedback visual
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+        toast.textContent = "✅ Marco removido!";
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      } catch (error) {
+        console.error('Erro ao excluir marco:', error);
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+        toast.textContent = "❌ Erro ao remover marco!";
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      }
+      setShowDeleteModal(false);
+      setMilestoneToDelete(null);
     }
   };
 
@@ -83,7 +104,6 @@ const Timeline: React.FC = () => {
             <div className="absolute left-6 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-pink-500 via-purple-500 to-cyan-500 opacity-30 animate-pulse" />
 
             {sortedMilestones.map((milestone, index) => {
-              console.log("Timeline milestone", milestone);
               return (
                 <div
                   key={milestone.id}
@@ -122,7 +142,7 @@ const Timeline: React.FC = () => {
                           <Edit size={14} className="sm:w-4 sm:h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteMilestone(milestone.id)}
+                          onClick={() => handleDeleteClick(milestone)}
                           className="p-1 sm:p-2 text-slate-400 hover:text-red-400 transition-all duration-200 hover:scale-110 hover:animate-wiggle touch-target"
                           title="Excluir"
                         >
@@ -212,6 +232,49 @@ const Timeline: React.FC = () => {
           onClose={() => setEditingMilestone(null)}
           onSave={handleEditMilestone}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                <Trash2 className="text-red-400" size={32} />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-white text-center mb-4">
+              Excluir Marco
+            </h2>
+
+            <p className="text-slate-300 text-center mb-2">
+              Tem certeza que deseja excluir o marco
+            </p>
+            <p className="text-white font-semibold text-center mb-2">
+              "{milestoneToDelete?.title}"?
+            </p>
+            <p className="text-slate-400 text-sm text-center mb-8">
+              Essa memória será perdida para sempre.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDelete}
+                className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                <Trash2 size={18} />
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

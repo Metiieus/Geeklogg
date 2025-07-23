@@ -70,7 +70,7 @@ const navItems: NavItem[] = [
 
 export const MobileSidebar: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
-  const { logout, user } = useAuth();
+  const { logout, user, profile } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   // Close sidebar when page changes
@@ -130,18 +130,20 @@ export const MobileSidebar: React.FC = () => {
           </div>
 
           {/* Profile Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center">
-            {user?.photoURL ? (
-              <img 
-                src={user.photoURL} 
-                alt="Profile" 
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-white font-semibold text-sm">
-                {user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
-              </span>
-            )}
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
+              {profile?.avatar ? (
+                <img
+                  src={profile.avatar}
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-semibold text-sm">
+                  {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -184,25 +186,27 @@ export const MobileSidebar: React.FC = () => {
 
               {/* User info */}
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center">
-                  {user?.photoURL ? (
-                    <img 
-                      src={user.photoURL} 
-                      alt="Profile" 
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-semibold">
-                      {user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
-                    </span>
-                  )}
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5">
+                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
+                    {profile?.avatar ? (
+                      <img
+                        src={profile.avatar}
+                        alt="Profile"
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-semibold">
+                        {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-white font-medium truncate">
-                    {user?.displayName || user?.email?.split("@")[0] || "Usuário"}
+                    {profile?.name || user?.displayName || user?.email?.split("@")[0] || "Usuário"}
                   </p>
                   <p className="text-gray-400 text-sm truncate">
-                    {user?.email}
+                    {profile?.isPremium ? "Premium" : "Básico"} • {user?.email}
                   </p>
                 </div>
               </div>

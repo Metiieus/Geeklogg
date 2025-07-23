@@ -20,6 +20,8 @@ const Reviews: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
 
   const filteredReviews = reviews.filter((review) => {
     const media = mediaItems.find((item) => item.id === review.mediaId);
@@ -30,20 +32,39 @@ const Reviews: React.FC = () => {
     );
   });
 
-  const handleDeleteReview = async (reviewId: string) => {
-    const review = reviews.find((r) => r.id === reviewId);
-    const confirmMessage = `Vai apagar a resenha "${review?.title}" mesmo? 📝\n\nTodo seu texto será perdido!`;
+  const handleDeleteClick = (review: Review) => {
+    setReviewToDelete(review);
+    setShowDeleteModal(true);
+  };
 
-    if (confirm(confirmMessage)) {
-      await deleteReview(reviewId);
-      setReviews(reviews.filter((review) => review.id !== reviewId));
-      // Feedback visual
-      const toast = document.createElement("div");
-      toast.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
-      toast.textContent = "✅ Resenha removida!";
-      document.body.appendChild(toast);
-      setTimeout(() => document.body.removeChild(toast), 3000);
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setReviewToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (reviewToDelete && reviewToDelete.id) {
+      try {
+        await deleteReview(reviewToDelete.id);
+        setReviews(reviews.filter((review) => review.id !== reviewToDelete.id));
+        // Feedback visual
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+        toast.textContent = "✅ Resenha removida!";
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      } catch (error) {
+        console.error('Erro ao excluir resenha:', error);
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
+        toast.textContent = "❌ Erro ao remover resenha!";
+        document.body.appendChild(toast);
+        setTimeout(() => document.body.removeChild(toast), 3000);
+      }
+      setShowDeleteModal(false);
+      setReviewToDelete(null);
     }
   };
 
@@ -195,7 +216,7 @@ const Reviews: React.FC = () => {
                           Editar
                         </button>
                         <button
-                          onClick={() => handleDeleteReview(review.id)}
+                          onClick={() => handleDeleteClick(review)}
                           className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
                         >
                           <Trash2 size={14} />
@@ -247,6 +268,49 @@ const Reviews: React.FC = () => {
           onClose={() => setEditingReview(null)}
           onSave={handleEditReview}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                <Trash2 className="text-red-400" size={32} />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-white text-center mb-4">
+              Excluir Resenha
+            </h2>
+
+            <p className="text-slate-300 text-center mb-2">
+              Tem certeza que deseja excluir a resenha
+            </p>
+            <p className="text-white font-semibold text-center mb-2">
+              "{reviewToDelete?.title}"?
+            </p>
+            <p className="text-slate-400 text-sm text-center mb-8">
+              Todo o conteúdo será perdido permanentemente.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDelete}
+                className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                <Trash2 size={18} />
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
