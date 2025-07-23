@@ -161,9 +161,13 @@ const Library: React.FC = () => {
   }, []);
 
   const handleDeleteClick = useCallback((item: MediaItem) => {
+    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
+      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      return;
+    }
     setItemToDelete(item);
     setShowDeleteModal(true);
-  }, []);
+  }, [showError]);
 
   const cancelDelete = useCallback(() => {
     setShowDeleteModal(false);
@@ -171,12 +175,16 @@ const Library: React.FC = () => {
   }, []);
 
   const confirmDelete = useCallback(async () => {
-    if (itemToDelete && itemToDelete.id) {
+    if (itemToDelete && itemToDelete.id && typeof itemToDelete.id === "string" && itemToDelete.id.trim() !== "") {
       await handleDeleteItem(itemToDelete.id);
       setShowDeleteModal(false);
       setItemToDelete(null);
+    } else {
+      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      setShowDeleteModal(false);
+      setItemToDelete(null);
     }
-  }, [itemToDelete, handleDeleteItem]);
+  }, [itemToDelete, handleDeleteItem, showError]);
 
     return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-4 sm:space-y-6 animate-fade-in relative">
@@ -328,8 +336,9 @@ const Library: React.FC = () => {
                     )}
                                         <button
                       onClick={() => handleDeleteClick(item)}
-                      className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-all duration-200 hover:scale-110 animate-wiggle"
-                      title="Excluir"
+                      disabled={!item.id || typeof item.id !== "string" || item.id.trim() === ""}
+                      className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-all duration-200 hover:scale-110 animate-wiggle disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      title={!item.id || typeof item.id !== "string" || item.id.trim() === "" ? "Item sem ID válido" : "Excluir"}
                     >
                       <Trash2 size={16} className="text-white" />
                     </button>
@@ -352,8 +361,9 @@ const Library: React.FC = () => {
                         e.stopPropagation();
                         handleDeleteClick(item);
                       }}
-                      className="p-2.5 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg"
-                      title="Excluir"
+                      disabled={!item.id || typeof item.id !== "string" || item.id.trim() === ""}
+                      className="p-2.5 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100"
+                      title={!item.id || typeof item.id !== "string" || item.id.trim() === "" ? "Item sem ID válido" : "Excluir"}
                     >
                       <Trash2 size={16} className="text-white drop-shadow-sm" />
                     </button>
