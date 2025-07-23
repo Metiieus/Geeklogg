@@ -84,7 +84,34 @@ const Statistics: React.FC = () => {
   const mostPlayed = getMostPlayed();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-6 md:space-y-8 relative">
+      {/* Fragmentos animados no fundo */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute w-1 h-1 bg-cyan-400/20 rounded-full animate-pulse`}
+            style={{
+              left: `${(i % 5) * 20 + Math.random() * 15}%`,
+              top: `${Math.floor(i / 5) * 25 + Math.random() * 20}%`,
+              animationDelay: `${i * 0.7}s`,
+              animationDuration: `${2.5 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={`sparkle-${i}`}
+            className={`absolute w-2 h-2 bg-purple-400/15 rounded-full animate-bounce`}
+            style={{
+              left: `${15 + (i % 3) * 30 + Math.random() * 10}%`,
+              top: `${20 + Math.floor(i / 3) * 30 + Math.random() * 15}%`,
+              animationDelay: `${i * 1.2}s`,
+              animationDuration: `${3 + Math.random() * 1.5}s`,
+            }}
+          />
+        ))}
+      </div>
       {/* Header */}
       <div className="animate-slide-down">
         <h1 className="text-3xl font-bold text-white mb-2">Estatísticas</h1>
@@ -266,4 +293,3 @@ const Statistics: React.FC = () => {
     </div>
   );
 };export default Statistics;
-
