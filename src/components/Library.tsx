@@ -389,7 +389,6 @@ const Library: React.FC = () => {
                 )}
               </div>
             </div>
-          );
         ))}
       </div>
 
