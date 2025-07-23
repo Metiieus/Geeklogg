@@ -202,6 +202,123 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               )}
             </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Capa do Perfil
+            </label>
+            <div className="space-y-3">
+              <label
+                className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
+                  isUploading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer hover:bg-slate-700"
+                }`}
+              >
+                {isUploading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Upload size={18} />
+                )}
+                {isUploading ? "Processando..." : "Fazer Upload da Capa"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    setIsUploading(true);
+
+                    try {
+                      // Validar arquivo
+                      const validation = await validateFile(file, {
+                        maxSizeInMB: 3,
+                        allowedTypes: [
+                          "image/jpeg",
+                          "image/png",
+                          "image/gif",
+                          "image/webp",
+                        ],
+                        maxWidth: 1920,
+                        maxHeight: 1080,
+                      });
+
+                      if (!validation.isValid) {
+                        showError("Erro no upload da capa", validation.error);
+                        setIsUploading(false);
+                        return;
+                      }
+
+                      // Se a imagem for muito grande, comprimir
+                      let processedFile = file;
+                      if (file.size > 2 * 1024 * 1024) {
+                        // > 2MB
+                        showWarning(
+                          "Comprimindo capa",
+                          "A imagem está sendo otimizada para melhor performance",
+                        );
+                        processedFile = await compressImage(
+                          file,
+                          1200,
+                          600,
+                          0.8,
+                        );
+                      }
+
+                      // Converter para base64 para preview
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        const result = ev.target?.result as string;
+                        setLocal((prev) => ({ ...prev, cover: result }));
+                        showSuccess(
+                          "Capa carregada!",
+                          "Sua capa de perfil foi atualizada",
+                        );
+                        setIsUploading(false);
+                      };
+
+                      reader.onerror = () => {
+                        showError(
+                          "Erro ao processar capa",
+                          "Não foi possível carregar a imagem selecionada",
+                        );
+                        setIsUploading(false);
+                      };
+
+                      reader.readAsDataURL(processedFile);
+                    } catch (error) {
+                      console.error("Erro no upload da capa:", error);
+                      showError(
+                        "Erro inesperado",
+                        "Ocorreu um erro ao processar a capa. Tente novamente.",
+                      );
+                      setIsUploading(false);
+                    }
+                  }}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+              </label>
+              {local.cover && (
+                <div className="mt-2">
+                  <img
+                    src={local.cover}
+                    alt="Preview da Capa"
+                    className="w-full h-32 object-cover rounded-lg mx-auto"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setLocal((prev) => ({ ...prev, cover: "" }))}
+                    className="mt-2 text-red-400 hover:text-red-300 text-sm"
+                  >
+                    Remover Capa
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Biografia
