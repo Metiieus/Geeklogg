@@ -130,18 +130,20 @@ export const MobileSidebar: React.FC = () => {
           </div>
 
           {/* Profile Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center">
-            {user?.photoURL ? (
-              <img 
-                src={user.photoURL} 
-                alt="Profile" 
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="text-white font-semibold text-sm">
-                {user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
-              </span>
-            )}
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
+              {profile?.avatar ? (
+                <img
+                  src={profile.avatar}
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-semibold text-sm">
+                  {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
