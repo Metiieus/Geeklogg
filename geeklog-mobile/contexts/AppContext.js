@@ -154,6 +154,11 @@ export const AppProvider = ({ children }) => {
   const deleteMediaItem = async (itemId, itemType) => {
     if (!user?.uid) return;
 
+    if (!itemId || typeof itemId !== "string" || itemId.trim() === "") {
+      console.error("ID do item é obrigatório e deve ser uma string válida");
+      return;
+    }
+
     try {
       await database.delete(["users", user.uid, "media", itemId]);
       setMediaItems((prev) => prev.filter((item) => item.id !== itemId));
