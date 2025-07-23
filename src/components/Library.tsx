@@ -240,9 +240,9 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedType(e.target.value as MediaType | "all")
             }
-            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="all">Tipo</option>
+            <option value="all">Todos os Tipos</option>
             {Object.entries(mediaTypeLabels).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
@@ -256,13 +256,13 @@ const Library: React.FC = () => {
             onChange={(e) =>
               setSelectedStatus(e.target.value as Status | "all")
             }
-            className="px-3 py-2 text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-3 py-3 sm:py-2 text-base sm:text-sm bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="all">Status</option>
-            <option value="completed">Concluído</option>
-            <option value="in-progress">Progresso</option>
-            <option value="dropped">Abandonado</option>
-            <option value="planned">Planejado</option>
+            <option value="all">Todos os Status</option>
+            <option value="completed">✅ Concluído</option>
+            <option value="in-progress">⏳ Em Progresso</option>
+            <option value="dropped">❌ Abandonado</option>
+            <option value="planned">📅 Planejado</option>
           </select>
 
           {/* Sort */}
