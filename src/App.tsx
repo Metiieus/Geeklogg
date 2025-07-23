@@ -92,6 +92,7 @@ export interface FavoriteItem {
 export interface UserSettings {
   name: string;
   avatar?: string;
+  cover?: string;
   bio?: string;
   favorites: {
     characters: FavoriteItem[];
