@@ -171,13 +171,13 @@ const Statistics: React.FC = () => {
       <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 sm:p-6 border border-slate-700/50 animate-slide-in-left hover:scale-[1.01] md:hover:scale-105 transition-all duration-300 relative z-10">
         <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">Por Tipo de Mídia</h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 animate-fade-in">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 animate-fade-in">
           {Object.entries(mediaStats).map(([type, stats]) => {
             const Icon = mediaTypeIcons[type as MediaType];
             return (
-              <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:scale-105 transition-all duration-300 hover:shadow-lg`}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Icon size={20} className="text-white" />
+              <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-lg md:rounded-xl p-2 sm:p-3 md:p-4 border border-gray-700/50 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg`}>
+                <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                  <Icon size={14} sm:size={16} md:size={20} className="text-white" />
                   <span className="text-white font-medium">{mediaTypeLabels[type as MediaType]}</span>
                 </div>
                 
