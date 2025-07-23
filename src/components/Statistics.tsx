@@ -168,10 +168,10 @@ const Statistics: React.FC = () => {
       </div>
 
       {/* Media Type Breakdown */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 animate-slide-in-left hover:scale-105 transition-all duration-300">
-        <h2 className="text-xl font-semibold text-white mb-6">Por Tipo de Mídia</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 animate-fade-in">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 sm:p-6 border border-slate-700/50 animate-slide-in-left hover:scale-[1.01] md:hover:scale-105 transition-all duration-300 relative z-10">
+        <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">Por Tipo de Mídia</h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 animate-fade-in">
           {Object.entries(mediaStats).map(([type, stats]) => {
             console.log('Media stats', type, stats);
             const Icon = mediaTypeIcons[type as MediaType];
