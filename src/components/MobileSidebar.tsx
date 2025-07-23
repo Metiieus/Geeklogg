@@ -203,10 +203,10 @@ export const MobileSidebar: React.FC = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-white font-medium truncate">
-                    {user?.displayName || user?.email?.split("@")[0] || "Usuário"}
+                    {profile?.name || user?.displayName || user?.email?.split("@")[0] || "Usuário"}
                   </p>
                   <p className="text-gray-400 text-sm truncate">
-                    {user?.email}
+                    {profile?.isPremium ? "Premium" : "Básico"} • {user?.email}
                   </p>
                 </div>
               </div>
