@@ -259,25 +259,25 @@ const Statistics: React.FC = () => {
             {mostPlayed.length > 0 ? (
               mostPlayed.map((item, index) => {
                 return (
-                <div key={item.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                <div key={item.id} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors duration-200">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
                     {index + 1}
                   </div>
-                  <div className="w-10 h-12 bg-slate-700 rounded overflow-hidden">
+                  <div className="w-8 h-10 sm:w-10 sm:h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
                     {item.cover ? (
                       <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-500">
-                        <Clock size={14} />
+                        <Clock size={10} sm:size={14} />
                       </div>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <p className="text-white font-medium text-sm line-clamp-1">{item.title}</p>
-                    <p className="text-slate-400 text-xs">{mediaTypeLabels[item.type]}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium text-xs sm:text-sm line-clamp-1">{item.title}</p>
+                    <p className="text-slate-400 text-xs hidden sm:block">{mediaTypeLabels[item.type]}</p>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="text-blue-400" size={14} />
+                  <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                    <Clock className="text-blue-400" size={12} sm:size={14} />
                     <span className="text-white font-medium">{item.hoursSpent}h</span>
                   </div>
                 </div>
