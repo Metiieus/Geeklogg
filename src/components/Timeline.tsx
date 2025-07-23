@@ -143,7 +143,7 @@ const Timeline: React.FC = () => {
                           <Edit size={14} className="sm:w-4 sm:h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteMilestone(milestone.id)}
+                          onClick={() => handleDeleteClick(milestone)}
                           className="p-1 sm:p-2 text-slate-400 hover:text-red-400 transition-all duration-200 hover:scale-110 hover:animate-wiggle touch-target"
                           title="Excluir"
                         >
