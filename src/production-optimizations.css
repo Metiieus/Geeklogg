@@ -1,0 +1,152 @@
+/* Otimizações de produção para GeekLog */
+
+/* Melhorar performance de scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Otimizar rendering de fontes */
+body {
+  font-display: swap;
+  text-rendering: optimizeSpeed;
+}
+
+/* Acelerar animações em dispositivos mais lentos */
+@media (max-device-width: 480px) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Otimizar imagens para performance */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Reduzir motion para usuários que preferem */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Otimizar focus para acessibilidade */
+*:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Garantir que modais sejam acessíveis */
+.modal-overlay {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Otimizar tooltips */
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Otimizar performance de grid/flexbox */
+.grid {
+  contain: layout style paint;
+}
+
+.flex {
+  contain: layout style;
+}
+
+/* Preload de imagens críticas */
+.critical-image {
+  loading: eager;
+  decoding: sync;
+}
+
+/* Lazy loading para imagens não críticas */
+.lazy-image {
+  loading: lazy;
+  decoding: async;
+}
+
+/* Otimizar scrollbars customizadas */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Melhorar seleção de texto */
+::selection {
+  background: rgba(139, 92, 246, 0.3);
+  color: white;
+}
+
+/* Otimizar hover states para touch devices */
+@media (hover: none) {
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover {
+    transform: none !important;
+  }
+}
+
+/* Garantir boa legibilidade em todas as telas */
+@media (max-width: 320px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .text-xs {
+    font-size: 11px;
+  }
+  
+  .text-sm {
+    font-size: 13px;
+  }
+}
+
+/* Print styles */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
