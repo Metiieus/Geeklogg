@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, MediaItem, Status } from '../App';
