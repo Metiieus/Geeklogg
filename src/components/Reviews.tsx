@@ -216,7 +216,7 @@ const Reviews: React.FC = () => {
                           Editar
                         </button>
                         <button
-                          onClick={() => handleDeleteReview(review.id)}
+                          onClick={() => handleDeleteClick(review)}
                           className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
                         >
                           <Trash2 size={14} />
