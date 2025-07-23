@@ -152,31 +152,31 @@ const Library: React.FC = () => {
     setSelectedExternalResult(null);
   }, [mediaItems, setMediaItems]);
 
-  const handleEditClick = (item: MediaItem) => {
+  const handleEditClick = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
       alert("ID inválido");
       return;
     }
     setEditingItem(item);
-  };
+  }, []);
 
-  const handleDeleteClick = (item: MediaItem) => {
+  const handleDeleteClick = useCallback((item: MediaItem) => {
     setItemToDelete(item);
     setShowDeleteModal(true);
-  };
+  }, []);
 
-  const cancelDelete = () => {
+  const cancelDelete = useCallback(() => {
     setShowDeleteModal(false);
     setItemToDelete(null);
-  };
+  }, []);
 
-  const confirmDelete = async () => {
+  const confirmDelete = useCallback(async () => {
     if (itemToDelete && itemToDelete.id) {
       await handleDeleteItem(itemToDelete.id);
       setShowDeleteModal(false);
       setItemToDelete(null);
     }
-  };
+  }, [itemToDelete, handleDeleteItem]);
 
     return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-4 sm:space-y-6 animate-fade-in relative">
@@ -202,7 +202,7 @@ const Library: React.FC = () => {
             Biblioteca
           </h1>
           <p className="text-slate-400 text-sm md:text-base hidden sm:block">
-            Sua cole��ão pessoal de jogos, anime, séries, livros e filmes
+            Sua coleção pessoal de jogos, anime, séries, livros e filmes
           </p>
         </div>
         <button
