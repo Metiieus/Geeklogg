@@ -5,6 +5,7 @@ import "./index.css";
 import "./mobile-improvements.css";
 import "./library-mobile-optimizations.css";
 import "./production-optimizations.css";
+import "./library-frames.css";
 import { AuthProvider } from "./context/AuthContext";
 
 // Inicializar proteções de segurança
