@@ -9,13 +9,13 @@ import { getStorage } from "firebase/storage";
 
 // Configuração do Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBIQIUNwk_wmMj5IprvMjlbJaitxofLk1M",
-  authDomain: "geeklog-26b2c.firebaseapp.com",
-  projectId: "geeklog-26b2c",
-  storageBucket: "geeklog-26b2c.firebasestorage.app",
-  messagingSenderId: "367690608897",
-  appId: "1:367690608897:web:4b7e084e60ad8cdb8deb00",
-  measurementId: "G-KC9X0WP28Z"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Verifica se todas as variáveis obrigatórias estão definidas
@@ -31,7 +31,7 @@ const requiredEnvVars = [
 const missingVars = requiredEnvVars.filter((varName) => {
   const value = import.meta.env[varName];
   return (
-    !value || value.includes("your_") || value === "AIzaSyBIQIUNwk_wmMj5IprvMjlbJaitxofLk1M"
+    !value || value.includes("your_")
   );
 });
 
