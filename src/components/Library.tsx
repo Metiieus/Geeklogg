@@ -19,6 +19,15 @@ const mediaTypeColors = {
   dorama: "from-red-500 to-pink-500",
 };
 
+const mediaTypeFrames = {
+  games: "ring-4 ring-blue-400/50 shadow-lg shadow-blue-500/25",
+  anime: "ring-4 ring-pink-400/50 shadow-lg shadow-pink-500/25",
+  series: "ring-4 ring-purple-400/50 shadow-lg shadow-purple-500/25",
+  books: "ring-4 ring-green-400/50 shadow-lg shadow-green-500/25",
+  movies: "ring-4 ring-yellow-400/50 shadow-lg shadow-yellow-500/25",
+  dorama: "ring-4 ring-red-400/50 shadow-lg shadow-red-500/25",
+};
+
 const mediaTypeLabels = {
   games: "Jogos",
   anime: "Anime",
