@@ -233,6 +233,8 @@ class ExternalMediaService {
           return await this.searchBooks(query, limit);
         case "movies":
           return await this.searchMovies(query, limit);
+        case "games":
+          return await this.searchGames(query, limit);
         case "series":
         case "anime":
         case "dorama":
