@@ -20,8 +20,13 @@ export interface ExternalMediaResult {
   runtime?: number;
   imdbId?: string;
   tmdbId?: number;
+  // Campos específicos para games
+  platforms?: string[];
+  developer?: string;
+  screenshots?: string[];
+  officialWebsite?: string;
   // Campo para identificar a fonte
-  source: "google-books" | "tmdb";
+  source: "google-books" | "tmdb" | "igdb";
   // Tipo original da API
   originalType?: string;
 }
