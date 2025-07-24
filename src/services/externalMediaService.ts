@@ -162,23 +162,26 @@ class ExternalMediaService {
       }
 
       return data.results.slice(0, limit).map(
-        (item: any): ExternalMediaResult => ({
-          id: item.id.toString(),
-          title: item.name || "Título não informado",
-          description: item.overview || undefined,
-          image: item.poster_path
-            ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
-            : undefined,
-          year: item.first_air_date
-            ? parseInt(item.first_air_date.split("-")[0])
-            : undefined,
-          genres: item.genre_ids
-            ? this.mapTmdbGenres(item.genre_ids, "tv")
-            : [],
-          tmdbId: item.id,
-          source: "tmdb",
-          originalType: "tv",
-        }),
+        (item: any): ExternalMediaResult => {
+          const isAnime = this.detectIfAnime(item);
+          return {
+            id: item.id.toString(),
+            title: item.name || "Título não informado",
+            description: item.overview || undefined,
+            image: item.poster_path
+              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+              : undefined,
+            year: item.first_air_date
+              ? parseInt(item.first_air_date.split("-")[0])
+              : undefined,
+            genres: item.genre_ids
+              ? this.mapTmdbGenres(item.genre_ids, "tv")
+              : [],
+            tmdbId: item.id,
+            source: "tmdb",
+            originalType: isAnime ? "anime" : "tv",
+          };
+        }
       );
     } catch (error) {
       console.error("Erro ao buscar séries:", error);
