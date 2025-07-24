@@ -349,6 +349,23 @@ class ExternalMediaService {
     return (isJapanese && hasAnimationGenre) || hasAnimeKeywords;
   }
 
+  // Detectar se um resultado é um dorama
+  private detectIfDorama(result: ExternalMediaResult): boolean {
+    const title = result.title.toLowerCase();
+    const description = (result.description || "").toLowerCase();
+
+    // Palavras-chave que indicam dorama
+    const doramaKeywords = [
+      'dorama', 'k-drama', 'korean drama', 'j-drama', 'japanese drama',
+      'thai drama', 'chinese drama', 'drama coreano', 'drama japonês',
+      'drama tailandês', 'drama chinês', 'bl', 'boys love', 'yaoi live action'
+    ];
+
+    return doramaKeywords.some(keyword =>
+      title.includes(keyword) || description.includes(keyword)
+    );
+  }
+
   // Mapear IDs de gêneros do TMDb para nomes
   private mapTmdbGenres(
     genreIds: number[],
