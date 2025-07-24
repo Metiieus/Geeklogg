@@ -186,6 +186,39 @@ class ExternalMediaService {
     }
   }
 
+  // Buscar games no IGDB
+  async searchGames(
+    query: string,
+    limit: number = 10,
+  ): Promise<ExternalMediaResult[]> {
+    try {
+      const igdbResults = await igdbService.searchGames({
+        query,
+        limit,
+      });
+
+      return igdbResults.map((game: IGDBSearchResult): ExternalMediaResult => ({
+        id: game.id,
+        title: game.title,
+        description: game.description,
+        image: game.image,
+        year: game.year,
+        genres: game.genres || [],
+        platforms: game.platforms,
+        developer: game.developer,
+        screenshots: game.screenshots,
+        officialWebsite: game.officialWebsite,
+        rating: game.rating,
+        source: "igdb",
+        originalType: "game",
+      }));
+    } catch (error) {
+      console.error("Erro ao buscar games:", error);
+      // Se IGDB falhar, retorna array vazio em vez de lançar erro
+      return [];
+    }
+  }
+
   // Função principal de busca que redireciona baseado no tipo
   async searchMedia(params: SearchParams): Promise<ExternalMediaResult[]> {
     const { query, type, limit = 10 } = params;
