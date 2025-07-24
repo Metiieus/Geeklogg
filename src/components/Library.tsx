@@ -20,12 +20,12 @@ const mediaTypeColors = {
 };
 
 const mediaTypeFrames = {
-  games: "ring-4 ring-blue-400/50 shadow-lg shadow-blue-500/25",
-  anime: "ring-4 ring-pink-400/50 shadow-lg shadow-pink-500/25",
-  series: "ring-4 ring-purple-400/50 shadow-lg shadow-purple-500/25",
-  books: "ring-4 ring-green-400/50 shadow-lg shadow-green-500/25",
-  movies: "ring-4 ring-yellow-400/50 shadow-lg shadow-yellow-500/25",
-  dorama: "ring-4 ring-red-400/50 shadow-lg shadow-red-500/25",
+  games: "ring-2 ring-blue-400/70 shadow-xl shadow-blue-500/30 before:absolute before:inset-0 before:ring-2 before:ring-blue-400/30 before:rounded-xl before:animate-pulse hover:ring-blue-400/90 hover:shadow-blue-500/50",
+  anime: "ring-2 ring-pink-400/70 shadow-xl shadow-pink-500/30 before:absolute before:inset-0 before:ring-2 before:ring-pink-400/30 before:rounded-xl before:animate-pulse hover:ring-pink-400/90 hover:shadow-pink-500/50",
+  series: "ring-2 ring-purple-400/70 shadow-xl shadow-purple-500/30 before:absolute before:inset-0 before:ring-2 before:ring-purple-400/30 before:rounded-xl before:animate-pulse hover:ring-purple-400/90 hover:shadow-purple-500/50",
+  books: "ring-2 ring-green-400/70 shadow-xl shadow-green-500/30 before:absolute before:inset-0 before:ring-2 before:ring-green-400/30 before:rounded-xl before:animate-pulse hover:ring-green-400/90 hover:shadow-green-500/50",
+  movies: "ring-2 ring-yellow-400/70 shadow-xl shadow-yellow-500/30 before:absolute before:inset-0 before:ring-2 before:ring-yellow-400/30 before:rounded-xl before:animate-pulse hover:ring-yellow-400/90 hover:shadow-yellow-500/50",
+  dorama: "ring-2 ring-red-400/70 shadow-xl shadow-red-500/30 before:absolute before:inset-0 before:ring-2 before:ring-red-400/30 before:rounded-xl before:animate-pulse hover:ring-red-400/90 hover:shadow-red-500/50",
 };
 
 const mediaTypeLabels = {
@@ -320,11 +320,11 @@ const Library: React.FC = () => {
       {/* Media Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 animate-fade-in">
         {filteredAndSortedItems.map((item) => (
-          <div key={item.id} className={`group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up ${mediaTypeFrames[item.type] || ''}`}>
+          <div key={item.id} className={`group relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-500 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up ${mediaTypeFrames[item.type] || ''}`}>
               {/* Cover Image */}
-              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
+              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl">
                 {item.cover ? (
-                  <img src={item.cover} alt={item.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                  <img src={item.cover} alt={item.title} className="w-full h-full object-contain bg-slate-700 transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-500">
                     <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
@@ -439,20 +439,21 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Tags - versão compacta */}
+                  {/* Tags - versão compacta limitada a 3 */}
                   {item.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {item.tags.slice(0, 2).map((tag) => (
+                      {item.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full truncate max-w-[80px]"
+                          title={tag}
                         >
                           {tag}
                         </span>
                       ))}
-                      {item.tags.length > 2 && (
-                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                          +{item.tags.length - 2}
+                      {item.tags.length > 3 && (
+                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full" title={`Mais ${item.tags.length - 3} tags`}>
+                          +{item.tags.length - 3}
                         </span>
                       )}
                     </div>
@@ -510,19 +511,20 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                {/* Tags */}
+                {/* Tags - limitadas a 3 */}
                 {item.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-3">
                     {item.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full truncate max-w-[100px]"
+                        title={tag}
                       >
                         {tag}
                       </span>
                     ))}
                     {item.tags.length > 3 && (
-                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full" title={`Mais ${item.tags.length - 3} tags`}>
                         +{item.tags.length - 3}
                       </span>
                     )}
