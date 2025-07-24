@@ -303,6 +303,44 @@ class ExternalMediaService {
     }
   }
 
+  // Detectar se um item do TMDb é um anime
+  private detectIfAnime(item: any): boolean {
+    const title = (item.name || item.title || "").toLowerCase();
+    const overview = (item.overview || "").toLowerCase();
+    const originalLanguage = item.original_language || "";
+
+    // Palavras-chave que indicam anime
+    const animeKeywords = [
+      'anime', 'manga', 'otaku', 'shounen', 'shoujo', 'seinen', 'josei',
+      'mecha', 'isekai', 'shonen', 'shojo', 'ecchi', 'harem', 'yaoi', 'yuri',
+      'magical girl', 'mahou shoujo', 'slice of life', 'school life',
+      'ninja', 'samurai', 'dragon ball', 'naruto', 'one piece', 'attack on titan',
+      'demon slayer', 'my hero academia', 'jujutsu kaisen', 'chainsaw man'
+    ];
+
+    // Países de origem que indicam anime
+    const animeCountries = ['JP', 'Japan'];
+    const countries = item.origin_country || [];
+
+    // Gêneros que são comuns em animes (ID 16 = Animation)
+    const genreIds = item.genre_ids || [];
+    const hasAnimationGenre = genreIds.includes(16);
+
+    // Verifica país de origem japonês
+    const isJapanese = originalLanguage === 'ja' ||
+                      countries.some((country: string) => animeCountries.includes(country));
+
+    // Verifica palavras-chave no título ou descrição
+    const hasAnimeKeywords = animeKeywords.some(keyword =>
+      title.includes(keyword) || overview.includes(keyword)
+    );
+
+    // É anime se:
+    // 1. É japonês E tem gênero de animação
+    // 2. OU tem palavras-chave específicas de anime
+    return (isJapanese && hasAnimationGenre) || hasAnimeKeywords;
+  }
+
   // Mapear IDs de gêneros do TMDb para nomes
   private mapTmdbGenres(
     genreIds: number[],
