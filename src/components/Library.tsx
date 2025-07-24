@@ -324,7 +324,12 @@ const Library: React.FC = () => {
               {/* Cover Image */}
               <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl">
                 {item.cover ? (
-                  <img src={item.cover} alt={item.title} className="w-full h-full object-contain bg-slate-700 transition-transform duration-500 group-hover:scale-105" />
+                  <img
+                    src={item.cover}
+                    alt={item.title}
+                    className="w-full h-full object-contain bg-gradient-to-b from-slate-600 to-slate-700 transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-500">
                     <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
