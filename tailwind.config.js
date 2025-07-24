@@ -63,7 +63,10 @@ export default {
         'slide-in-right': 'slideInRight 0.4s ease-out',
         'bounce': 'bounce 1s infinite',
         'pulse': 'pulse 2s infinite',
-        'wiggle': 'wiggle 0.5s ease-in-out'
+        'wiggle': 'wiggle 0.5s ease-in-out',
+        'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+        'border-spin': 'border-spin 3s linear infinite',
+        'shimmer': 'shimmer 2s ease-in-out infinite'
       }
     },
   },
