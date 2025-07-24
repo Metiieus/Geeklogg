@@ -239,9 +239,17 @@ class ExternalMediaService {
         case "games":
           return await this.searchGames(query, limit);
         case "series":
+          return await this.searchTvShows(query, limit).then(results =>
+            results.filter(result => result.originalType !== "anime")
+          );
         case "anime":
+          return await this.searchTvShows(query, limit).then(results =>
+            results.filter(result => result.originalType === "anime")
+          );
         case "dorama":
-          return await this.searchTvShows(query, limit);
+          return await this.searchTvShows(query, limit).then(results =>
+            results.filter(result => this.detectIfDorama(result))
+          );
         default:
           // Para tipos não suportados, retorna array vazio
           return [];
