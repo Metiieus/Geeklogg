@@ -1,4 +1,5 @@
 import { MediaType } from "../App";
+import { igdbService, IGDBSearchResult } from "../infrastructure/services/IGDBService";
 
 // Interfaces para resultados das APIs
 export interface ExternalMediaResult {
