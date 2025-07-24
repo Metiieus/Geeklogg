@@ -20,12 +20,12 @@ const mediaTypeColors = {
 };
 
 const mediaTypeFrames = {
-  games: "ring-2 ring-blue-400/70 shadow-xl shadow-blue-500/30 before:absolute before:inset-0 before:ring-2 before:ring-blue-400/30 before:rounded-xl before:animate-pulse hover:ring-blue-400/90 hover:shadow-blue-500/50",
-  anime: "ring-2 ring-pink-400/70 shadow-xl shadow-pink-500/30 before:absolute before:inset-0 before:ring-2 before:ring-pink-400/30 before:rounded-xl before:animate-pulse hover:ring-pink-400/90 hover:shadow-pink-500/50",
-  series: "ring-2 ring-purple-400/70 shadow-xl shadow-purple-500/30 before:absolute before:inset-0 before:ring-2 before:ring-purple-400/30 before:rounded-xl before:animate-pulse hover:ring-purple-400/90 hover:shadow-purple-500/50",
-  books: "ring-2 ring-green-400/70 shadow-xl shadow-green-500/30 before:absolute before:inset-0 before:ring-2 before:ring-green-400/30 before:rounded-xl before:animate-pulse hover:ring-green-400/90 hover:shadow-green-500/50",
-  movies: "ring-2 ring-yellow-400/70 shadow-xl shadow-yellow-500/30 before:absolute before:inset-0 before:ring-2 before:ring-yellow-400/30 before:rounded-xl before:animate-pulse hover:ring-yellow-400/90 hover:shadow-yellow-500/50",
-  dorama: "ring-2 ring-red-400/70 shadow-xl shadow-red-500/30 before:absolute before:inset-0 before:ring-2 before:ring-red-400/30 before:rounded-xl before:animate-pulse hover:ring-red-400/90 hover:shadow-red-500/50",
+  games: "ring-2 ring-blue-400/60 shadow-2xl shadow-blue-500/40 hover:ring-blue-400 hover:shadow-blue-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-blue-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  anime: "ring-2 ring-pink-400/60 shadow-2xl shadow-pink-500/40 hover:ring-pink-400 hover:shadow-pink-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-pink-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  series: "ring-2 ring-purple-400/60 shadow-2xl shadow-purple-500/40 hover:ring-purple-400 hover:shadow-purple-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-purple-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  books: "ring-2 ring-green-400/60 shadow-2xl shadow-green-500/40 hover:ring-green-400 hover:shadow-green-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-green-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  movies: "ring-2 ring-yellow-400/60 shadow-2xl shadow-yellow-500/40 hover:ring-yellow-400 hover:shadow-yellow-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-yellow-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  dorama: "ring-2 ring-red-400/60 shadow-2xl shadow-red-500/40 hover:ring-red-400 hover:shadow-red-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-red-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
 };
 
 const mediaTypeLabels = {
