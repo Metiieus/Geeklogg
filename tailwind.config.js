@@ -37,6 +37,22 @@ export default {
           '0%, 100%': { transform: 'rotate(0deg)' },
           '25%': { transform: 'rotate(-3deg)' },
           '75%': { transform: 'rotate(3deg)' }
+        },
+        'glow-pulse': {
+          '0%, 100%': {
+            boxShadow: '0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor'
+          },
+          '50%': {
+            boxShadow: '0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor'
+          }
+        },
+        'border-spin': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' }
+        },
+        'shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' }
         }
       },
       animation: {
