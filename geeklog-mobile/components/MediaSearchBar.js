@@ -33,6 +33,7 @@ const MediaSearchBar = ({ selectedType, onTypeChange, onResultSelect, placeholde
     { value: "series", label: "Séries", icon: "tv" },
     { value: "anime", label: "Anime", icon: "animation" },
     { value: "dorama", label: "Doramas", icon: "tv" },
+    { value: "games", label: "Games", icon: "gamepad" },
   ];
 
   // Cleanup timeout on unmount

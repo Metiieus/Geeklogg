@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Search, X, Loader, AlertCircle, Book, Film, Tv } from "lucide-react";
+import { Search, X, Loader, AlertCircle, Book, Film, Tv, Gamepad2 } from "lucide-react";
 import { MediaType } from "../App";
 import {
   externalMediaService,
@@ -19,7 +19,7 @@ const mediaTypeOptions = [
   { value: "movies", label: "Filmes", icon: Film },
   { value: "series", label: "Séries", icon: Tv },
   { value: "anime", label: "Anime", icon: Tv },
-  { value: "dorama", label: "Doramas", icon: Tv },
+  { value: "games", label: "Jogos", icon: Gamepad2 },
 ] as const;
 
 export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({

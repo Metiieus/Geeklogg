@@ -1,4 +1,5 @@
 import { MediaType } from "../App";
+import { igdbService, IGDBSearchResult } from "../infrastructure/services/IGDBService";
 
 // Interfaces para resultados das APIs
 export interface ExternalMediaResult {
@@ -19,8 +20,13 @@ export interface ExternalMediaResult {
   runtime?: number;
   imdbId?: string;
   tmdbId?: number;
+  // Campos específicos para games
+  platforms?: string[];
+  developer?: string;
+  screenshots?: string[];
+  officialWebsite?: string;
   // Campo para identificar a fonte
-  source: "google-books" | "tmdb";
+  source: "google-books" | "tmdb" | "igdb";
   // Tipo original da API
   originalType?: string;
 }
@@ -156,27 +162,63 @@ class ExternalMediaService {
       }
 
       return data.results.slice(0, limit).map(
-        (item: any): ExternalMediaResult => ({
-          id: item.id.toString(),
-          title: item.name || "Título não informado",
-          description: item.overview || undefined,
-          image: item.poster_path
-            ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
-            : undefined,
-          year: item.first_air_date
-            ? parseInt(item.first_air_date.split("-")[0])
-            : undefined,
-          genres: item.genre_ids
-            ? this.mapTmdbGenres(item.genre_ids, "tv")
-            : [],
-          tmdbId: item.id,
-          source: "tmdb",
-          originalType: "tv",
-        }),
+        (item: any): ExternalMediaResult => {
+          const isAnime = this.detectIfAnime(item);
+          return {
+            id: item.id.toString(),
+            title: item.name || "Título não informado",
+            description: item.overview || undefined,
+            image: item.poster_path
+              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+              : undefined,
+            year: item.first_air_date
+              ? parseInt(item.first_air_date.split("-")[0])
+              : undefined,
+            genres: item.genre_ids
+              ? this.mapTmdbGenres(item.genre_ids, "tv")
+              : [],
+            tmdbId: item.id,
+            source: "tmdb",
+            originalType: isAnime ? "anime" : "tv",
+          };
+        }
       );
     } catch (error) {
       console.error("Erro ao buscar séries:", error);
       throw error;
+    }
+  }
+
+  // Buscar games no IGDB
+  async searchGames(
+    query: string,
+    limit: number = 10,
+  ): Promise<ExternalMediaResult[]> {
+    try {
+      const igdbResults = await igdbService.searchGames({
+        query,
+        limit,
+      });
+
+      return igdbResults.map((game: IGDBSearchResult): ExternalMediaResult => ({
+        id: game.id,
+        title: game.title,
+        description: game.description,
+        image: game.image,
+        year: game.year,
+        genres: game.genres || [],
+        platforms: game.platforms,
+        developer: game.developer,
+        screenshots: game.screenshots,
+        officialWebsite: game.officialWebsite,
+        rating: game.rating,
+        source: "igdb",
+        originalType: "game",
+      }));
+    } catch (error) {
+      console.error("Erro ao buscar games:", error);
+      // Se IGDB falhar, retorna array vazio em vez de lançar erro
+      return [];
     }
   }
 
@@ -194,10 +236,20 @@ class ExternalMediaService {
           return await this.searchBooks(query, limit);
         case "movies":
           return await this.searchMovies(query, limit);
+        case "games":
+          return await this.searchGames(query, limit);
         case "series":
+          return await this.searchTvShows(query, limit).then(results =>
+            results.filter(result => result.originalType !== "anime")
+          );
         case "anime":
+          return await this.searchTvShows(query, limit).then(results =>
+            results.filter(result => result.originalType === "anime")
+          );
         case "dorama":
-          return await this.searchTvShows(query, limit);
+          return await this.searchTvShows(query, limit).then(results =>
+            results.filter(result => this.detectIfDorama(result))
+          );
         default:
           // Para tipos não suportados, retorna array vazio
           return [];
@@ -257,6 +309,61 @@ class ExternalMediaService {
       console.error("Erro ao buscar detalhes da série:", error);
       return {};
     }
+  }
+
+  // Detectar se um item do TMDb é um anime
+  private detectIfAnime(item: any): boolean {
+    const title = (item.name || item.title || "").toLowerCase();
+    const overview = (item.overview || "").toLowerCase();
+    const originalLanguage = item.original_language || "";
+
+    // Palavras-chave que indicam anime
+    const animeKeywords = [
+      'anime', 'manga', 'otaku', 'shounen', 'shoujo', 'seinen', 'josei',
+      'mecha', 'isekai', 'shonen', 'shojo', 'ecchi', 'harem', 'yaoi', 'yuri',
+      'magical girl', 'mahou shoujo', 'slice of life', 'school life',
+      'ninja', 'samurai', 'dragon ball', 'naruto', 'one piece', 'attack on titan',
+      'demon slayer', 'my hero academia', 'jujutsu kaisen', 'chainsaw man'
+    ];
+
+    // Países de origem que indicam anime
+    const animeCountries = ['JP', 'Japan'];
+    const countries = item.origin_country || [];
+
+    // Gêneros que são comuns em animes (ID 16 = Animation)
+    const genreIds = item.genre_ids || [];
+    const hasAnimationGenre = genreIds.includes(16);
+
+    // Verifica país de origem japonês
+    const isJapanese = originalLanguage === 'ja' ||
+                      countries.some((country: string) => animeCountries.includes(country));
+
+    // Verifica palavras-chave no título ou descrição
+    const hasAnimeKeywords = animeKeywords.some(keyword =>
+      title.includes(keyword) || overview.includes(keyword)
+    );
+
+    // É anime se:
+    // 1. É japonês E tem gênero de animação
+    // 2. OU tem palavras-chave específicas de anime
+    return (isJapanese && hasAnimationGenre) || hasAnimeKeywords;
+  }
+
+  // Detectar se um resultado é um dorama
+  private detectIfDorama(result: ExternalMediaResult): boolean {
+    const title = result.title.toLowerCase();
+    const description = (result.description || "").toLowerCase();
+
+    // Palavras-chave que indicam dorama
+    const doramaKeywords = [
+      'dorama', 'k-drama', 'korean drama', 'j-drama', 'japanese drama',
+      'thai drama', 'chinese drama', 'drama coreano', 'drama japonês',
+      'drama tailandês', 'drama chinês', 'bl', 'boys love', 'yaoi live action'
+    ];
+
+    return doramaKeywords.some(keyword =>
+      title.includes(keyword) || description.includes(keyword)
+    );
   }
 
   // Mapear IDs de gêneros do TMDb para nomes

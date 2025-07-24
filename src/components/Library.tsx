@@ -16,7 +16,16 @@ const mediaTypeColors = {
   series: "from-purple-500 to-violet-500",
   books: "from-green-500 to-emerald-500",
   movies: "from-yellow-500 to-orange-500",
-  dorama: "from-red-500 to-pink-500",
+  jogos: "from-blue-500 to-cyan-500",
+};
+
+const mediaTypeFrames = {
+  games: "ring-2 ring-blue-400/60 shadow-2xl shadow-blue-500/40 hover:ring-blue-400 hover:shadow-blue-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-blue-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  anime: "ring-2 ring-pink-400/60 shadow-2xl shadow-pink-500/40 hover:ring-pink-400 hover:shadow-pink-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-pink-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  series: "ring-2 ring-purple-400/60 shadow-2xl shadow-purple-500/40 hover:ring-purple-400 hover:shadow-purple-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-purple-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  books: "ring-2 ring-green-400/60 shadow-2xl shadow-green-500/40 hover:ring-green-400 hover:shadow-green-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-green-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  movies: "ring-2 ring-yellow-400/60 shadow-2xl shadow-yellow-500/40 hover:ring-yellow-400 hover:shadow-yellow-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-yellow-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
+  jogos: "ring-2 ring-blue-400/60 shadow-2xl shadow-blue-500/40 hover:ring-blue-400 hover:shadow-blue-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-blue-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
 };
 
 const mediaTypeLabels = {
@@ -25,7 +34,7 @@ const mediaTypeLabels = {
   series: "Séries",
   books: "Livros",
   movies: "Filmes",
-  dorama: "Doramas",
+  jogos: "Jogos",
 };
 
 const bookmarkColors = {
@@ -34,7 +43,7 @@ const bookmarkColors = {
   series: "bg-purple-500",
   books: "bg-green-500",
   movies: "bg-yellow-500",
-  dorama: "bg-red-500",
+  jogos: "bg-blue-500",
 };
 
 const Library: React.FC = () => {
@@ -309,13 +318,18 @@ const Library: React.FC = () => {
       </div>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6 animate-fade-in">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 lg:gap-6 animate-fade-in">
         {filteredAndSortedItems.map((item) => (
-          <div key={item.id} className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up">
+          <div key={item.id} className={`group relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-500 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up ${mediaTypeFrames[item.type] || ''}`}>
               {/* Cover Image */}
-              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden">
+              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl">
                 {item.cover ? (
-                  <img src={item.cover} alt={item.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                  <img
+                    src={item.cover}
+                    alt={item.title}
+                    className="w-full h-full object-contain bg-gradient-to-b from-slate-600 to-slate-700 transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-500">
                     <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
@@ -379,21 +393,21 @@ const Library: React.FC = () => {
                 </div>
 
                 {/* Mobile Content - aparece em telas pequenas */}
-                <div className="p-2 sm:p-3 md:hidden">
-                  <h3 className="font-semibold text-white mb-1.5 text-xs sm:text-sm line-clamp-2 leading-tight">
+                <div className="p-2 sm:p-3 md:hidden space-y-2">
+                  <h3 className="font-semibold text-white text-xs sm:text-sm line-clamp-2 leading-tight">
                     {item.title}
                   </h3>
 
-                  {/* Status */}
-                  <div
-                    className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-1.5`}
-                  >
-                    <span className="text-xs">{getStatusLabel(item.status)}</span>
-                  </div>
+                  {/* Status e Stats em linha compacta */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div
+                      className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)} flex-shrink-0`}
+                    >
+                      <span className="text-xs truncate">{getStatusLabel(item.status)}</span>
+                    </div>
 
-                  {/* Stats - versão compacta para mobile */}
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
+                    {/* Stats - versão ultra compacta */}
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
                       {item.rating && (
                         <div className="flex items-center gap-0.5">
                           <Star
@@ -430,20 +444,21 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Tags - versão compacta */}
+                  {/* Tags - versão compacta limitada a 3 */}
                   {item.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {item.tags.slice(0, 2).map((tag) => (
+                      {item.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full truncate max-w-[80px]"
+                          title={tag}
                         >
                           {tag}
                         </span>
                       ))}
-                      {item.tags.length > 2 && (
-                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full">
-                          +{item.tags.length - 2}
+                      {item.tags.length > 3 && (
+                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full" title={`Mais ${item.tags.length - 3} tags`}>
+                          +{item.tags.length - 3}
                         </span>
                       )}
                     </div>
@@ -501,19 +516,20 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                {/* Tags */}
+                {/* Tags - limitadas a 3 */}
                 {item.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-3">
                     {item.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full truncate max-w-[100px]"
+                        title={tag}
                       >
                         {tag}
                       </span>
                     ))}
                     {item.tags.length > 3 && (
-                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full" title={`Mais ${item.tags.length - 3} tags`}>
                         +{item.tags.length - 3}
                       </span>
                     )}
@@ -548,8 +564,8 @@ const Library: React.FC = () => {
 
       {/* Add Media Options Modal */}
       {showAddOptions && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full p-6 animate-slide-up">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fade-in overflow-y-auto">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 w-full max-w-xs sm:max-w-lg md:max-w-3xl lg:max-w-4xl xl:max-w-5xl p-4 sm:p-6 animate-slide-up my-auto min-h-0">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">
                 Adicionar Nova Mídia
@@ -592,8 +608,8 @@ const Library: React.FC = () => {
 
             {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in overflow-y-auto">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up my-auto min-h-0">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
                 <Trash2 className="text-red-400" size={32} />
