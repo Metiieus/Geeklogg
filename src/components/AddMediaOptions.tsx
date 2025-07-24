@@ -23,25 +23,25 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
 
   if (isSearchMode) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Header da busca */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Search className="text-purple-400" size={24} />
-            <div>
-              <h2 className="text-xl font-bold text-white">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+            <Search className="text-purple-400 flex-shrink-0 mt-1" size={20} />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg sm:text-xl font-bold text-white">
                 Buscar Mídia Online
               </h2>
-              <p className="text-slate-400 text-sm">
-                Encontre livros, filmes e séries para adicionar à sua biblioteca
+              <p className="text-slate-400 text-xs sm:text-sm">
+                Encontre livros, filmes, séries e jogos
               </p>
             </div>
           </div>
           <button
             onClick={() => setIsSearchMode(false)}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-700 rounded-lg transition-colors flex-shrink-0"
           >
-            <X className="text-slate-400" size={20} />
+            <X className="text-slate-400" size={18} />
           </button>
         </div>
 
