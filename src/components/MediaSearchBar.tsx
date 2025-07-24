@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Search, X, Loader, AlertCircle, Book, Film, Tv } from "lucide-react";
+import { Search, X, Loader, AlertCircle, Book, Film, Tv, Gamepad2 } from "lucide-react";
 import { MediaType } from "../App";
 import {
   externalMediaService,
