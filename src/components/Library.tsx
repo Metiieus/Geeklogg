@@ -320,7 +320,7 @@ const Library: React.FC = () => {
       {/* Media Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 animate-fade-in media-grid grid-container">
         {filteredAndSortedItems.map((item) => (
-          <div key={item.id} className={`group relative bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-800'}/20 to-slate-900/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-600/30 hover:border-slate-500/60 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/25 animate-slide-up`}>
+          <div key={item.id} className={`group relative bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-800'}/20 to-slate-900/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-600/30 hover:border-slate-500/60 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/25 animate-slide-up media-card scale-on-hover`}>
               {/* Cover Image */}
               <div className="aspect-[3/4] bg-gradient-to-b from-slate-600/50 to-slate-800/80 relative overflow-hidden rounded-t-2xl">
                 {item.cover ? (
