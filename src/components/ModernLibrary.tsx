@@ -167,10 +167,10 @@ const ModernLibrary: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+    <div className="relative overflow-hidden">
       {/* Floating Particles Background */}
       <FloatingParticles count={8} color="cyan" />
-      
+
       {/* Content Container */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
         
