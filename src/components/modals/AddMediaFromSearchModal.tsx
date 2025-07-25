@@ -69,7 +69,16 @@ export const AddMediaFromSearchModal: React.FC<
         return "movies";
       case "tv":
         return "series";
+      case "anime":
+        return "anime";
+      case "game":
+        return "games";
       default:
+        // Fallback: tentar detectar pelo source ou outros indicadores
+        if (result.source === "igdb") {
+          return "games";
+        }
+        // Default para movies apenas se realmente não conseguir detectar
         return "movies";
     }
   }
