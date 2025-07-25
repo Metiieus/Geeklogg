@@ -1,7 +1,7 @@
 // server.js
 import express from "express";
 import cors from "cors";
-import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference, Payment } from "mercadopago";
 import dotenv from "dotenv";
 import admin from "firebase-admin";
 
@@ -12,23 +12,38 @@ if (!process.env.MP_ACCESS_TOKEN) {
   console.error("❌ MERCADO_PAGO_ACCESS_TOKEN não definido em .env");
   process.exit(1);
 }
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN,
-});
+const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+const preference = new Preference(client);
+const payment = new Payment(client);
 console.log("✅ MercadoPago configurado");
 
 // --- 2) CONFIGURAÇÃO DO FIREBASE ADMIN ---
-if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+let db = null;
+let isFirebaseInitialized = false;
+
+try {
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+    });
+  } else if (process.env.FIREBASE_PROJECT_ID) {
+    // Inicialização alternativa sem service account para desenvolvimento
+    admin.initializeApp({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+    });
+  } else {
+    throw new Error("No Firebase credentials or project ID provided");
+  }
+
+  db = admin.firestore();
+  isFirebaseInitialized = true;
+  console.log("✅ Firebase Admin inicializado");
+} catch (error) {
   console.warn(
-    "⚠️ GOOGLE_APPLICATION_CREDENTIALS não definido. " +
-    "Webhook de ativação de plano poderá falhar."
+    "⚠️ Firebase Admin não inicializado:", error.message +
+    " Webhook de ativação de plano não funcionará."
   );
 }
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-});
-const db = admin.firestore();
-console.log("✅ Firebase Admin inicializado");
 
 // --- 3) APP & MIDDLEWARES ---
 const app = express();
@@ -45,7 +60,7 @@ app.post("/api/create-preference", async (req, res) => {
         .json({ error: "Parâmetros uid e email são obrigatórios" });
     }
 
-    const preference = {
+    const preferenceData = {
       items: [
         {
           title: "GeekLog Premium",
@@ -68,7 +83,7 @@ app.post("/api/create-preference", async (req, res) => {
         `${process.env.SERVER_URL || "http://localhost:8080"}/api/webhook`,
     };
 
-    const { body } = await mercadopago.preferences.create(preference);
+    const { body } = await preference.create({ body: preferenceData });
     return res.json({
       init_point: body.init_point,
       preference_id: body.id,
@@ -87,8 +102,8 @@ app.post("/api/webhook", async (req, res) => {
 
     // Exemplo mínimo de tratamento
     if (mpBody.type === "payment" && mpBody.data?.id) {
-      const payment = await mercadopago.payment.get(mpBody.data.id);
-      console.log("✅ Payment detail:", payment.body.status);
+      const paymentResponse = await payment.get({ id: mpBody.data.id });
+      console.log("✅ Payment detail:", paymentResponse.body.status);
       // Você pode atualizar o Firestore aqui, por ex. ativar premium se aprovado
     }
 
@@ -102,6 +117,12 @@ app.post("/api/webhook", async (req, res) => {
 // --- 6) ROTA: ATUALIZAÇÃO DO PLANO NO FIRESTORE ---
 app.post("/api/update-premium", async (req, res) => {
   try {
+    if (!isFirebaseInitialized) {
+      return res.status(503).json({
+        error: "Firebase Admin não inicializado. Configure as credenciais do Firebase."
+      });
+    }
+
     const { uid, preference_id } = req.body;
     if (!uid || !preference_id) {
       return res
