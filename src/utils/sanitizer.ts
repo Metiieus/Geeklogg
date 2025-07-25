@@ -64,12 +64,18 @@ export const sanitizeText = (input: string, maxLength?: number): string => {
   // Escape HTML restante
   sanitized = escapeHtml(sanitized);
 
+  // Normaliza espaços múltiplos mas preserva espaços únicos
+  sanitized = sanitized.replace(/\s+/g, ' ');
+
+  // Remove espaços apenas do início e fim
+  sanitized = sanitized.trim();
+
   // Aplicar limite de caracteres se especificado
   if (maxLength && sanitized.length > maxLength) {
     sanitized = sanitized.substring(0, maxLength);
   }
 
-  return sanitized.trim();
+  return sanitized;
 };
 
 /**

@@ -48,6 +48,12 @@ const Profile: React.FC = () => {
       cover: result.cover ?? settings.cover,
     };
     setSettings(updated);
+
+    // Persiste as alterações no banco de dados
+    if (user?.uid) {
+      await saveSettings(user.uid, updated);
+    }
+
     setEditProfile(false);
   };
 

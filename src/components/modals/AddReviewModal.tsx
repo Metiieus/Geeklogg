@@ -43,7 +43,14 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
       typeof value === "string" &&
       (field === "content" || field === "title")
     ) {
-      value = sanitizeText(value, field === "content" ? 5000 : 200);
+      console.log("Sanitizing field:", field, "value:", value);
+      // Teste temporário - desabilitar sanitização do content
+      if (field === "content") {
+        // Apenas limitar o tamanho sem sanitizar
+        value = value.length > 5000 ? value.substring(0, 5000) : value;
+      } else {
+        value = sanitizeText(value, field === "content" ? 5000 : 200);
+      }
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
