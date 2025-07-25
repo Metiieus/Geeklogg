@@ -100,6 +100,7 @@ export interface UserSettings {
     movies: FavoriteItem[];
   };
   defaultLibrarySort: string;
+  theme?: string;
 }
 
 export type ActivePage =

@@ -467,7 +467,7 @@ export const AddMediaFromSearchModal: React.FC<
                 </div>
               </div>
 
-              {/* P��ginas (apenas para livros) */}
+              {/* Páginas (apenas para livros) */}
               {formData.type === "books" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

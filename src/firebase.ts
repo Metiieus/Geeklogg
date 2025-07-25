@@ -1,9 +1,10 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, type FirebaseApp } from "firebase/app";
+import { getAuth, type Auth } from "firebase/auth";
 import {
   getFirestore,
   enableIndexedDbPersistence,
   enableNetwork,
+  type Firestore,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -41,9 +42,9 @@ if (missingVars.length > 0) {
 }
 
 // Inicializa o app Firebase com tratamento de erro
-let app: any = null;
-let auth: any = null;
-let db: any = null;
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
 
 try {
   app = initializeApp(firebaseConfig);
@@ -73,3 +74,8 @@ if (db) {
 export const storage = getStorage(app);
 
 // Mensagem final de status
+if (app) {
+  console.log("Firebase inicializado");
+} else {
+  console.warn("Firebase não foi inicializado");
+}
