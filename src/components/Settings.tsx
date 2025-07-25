@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { Download, Upload, Trash2, Save } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 import { saveSettings } from "../services/settingsService";
 
 const Settings: React.FC = () => {
   const { settings, setSettings, mediaItems, reviews, milestones } =
     useAppContext();
+  const { user } = useAuth();
   const [localSettings, setLocalSettings] = useState(settings);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleSave = async () => {
     console.log("💾 Salvando configurações:", localSettings);
     setSettings(localSettings);
-    await saveSettings(localSettings);
+    if (user?.uid) {
+      await saveSettings(user.uid, localSettings);
+    } else {
+      console.error("Usuário não autenticado");
+    }
     // Feedback visual melhorado
     const toast = document.createElement("div");
     toast.className =
@@ -65,7 +71,7 @@ const Settings: React.FC = () => {
         const toast = document.createElement("div");
         toast.className =
           "fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-        toast.textContent = "�� Backup importado com sucesso!";
+        toast.textContent = "✅ Backup importado com sucesso!";
         document.body.appendChild(toast);
         setTimeout(() => document.body.removeChild(toast), 3000);
       } catch (error) {

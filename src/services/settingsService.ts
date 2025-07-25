@@ -4,8 +4,14 @@ import { removeUndefinedFields, sanitizeStrings, getUserId } from "./utils";
 export interface UserSettings {
   name?: string;
   avatar?: string;
+  cover?: string;
   bio?: string;
-  favorites?: string[];
+  favorites?: {
+    characters: Array<{ id: string; name: string; image?: string }>;
+    games: Array<{ id: string; name: string; image?: string }>;
+    movies: Array<{ id: string; name: string; image?: string }>;
+  };
+  theme?: string;
   defaultLibrarySort?: string;
 }
 
