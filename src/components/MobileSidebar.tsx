@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { ActivePage } from "../App";
 
 interface NavItem {
@@ -71,7 +72,16 @@ const navItems: NavItem[] = [
 export const MobileSidebar: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
   const { logout, user, profile } = useAuth();
+  const { showInfo } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleNavigation = (itemId: ActivePage) => {
+    if (itemId === "social") {
+      showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+      return;
+    }
+    setActivePage(itemId);
+  };
 
   // Close sidebar when page changes
   useEffect(() => {
@@ -217,9 +227,11 @@ export const MobileSidebar: React.FC = () => {
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setActivePage(item.id)}
+                  onClick={() => handleNavigation(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${
-                    activePage === item.id
+                    item.id === "social"
+                      ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30"
+                      : activePage === item.id
                       ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105"
                       : "hover:bg-gray-800/50 active:scale-95"
                   }`}
@@ -243,10 +255,17 @@ export const MobileSidebar: React.FC = () => {
                   </div>
                   <span
                     className={`font-medium ${
-                      activePage === item.id ? "text-white" : "text-gray-300"
+                      item.id === "social"
+                        ? "text-gray-400"
+                        : activePage === item.id
+                        ? "text-white"
+                        : "text-gray-300"
                     }`}
                   >
                     {item.label}
+                    {item.id === "social" && (
+                      <span className="ml-1 text-xs text-purple-400">Em breve</span>
+                    )}
                   </span>
                   {activePage === item.id && (
                     <div className="ml-auto w-2 h-2 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full"></div>
