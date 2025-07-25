@@ -97,6 +97,20 @@ export const storage = getStorage(app);
 // Mensagem final de status
 if (app) {
   console.log("Firebase inicializado");
+  if (!checkConnectivity()) {
+    console.warn("⚠️ Sem conectividade com a internet");
+  }
 } else {
   console.warn("Firebase não foi inicializado");
+}
+
+// Detectar mudanças de conectividade
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => {
+    console.log("🌐 Conectividade restaurada");
+  });
+
+  window.addEventListener('offline', () => {
+    console.warn("⚠️ Conectividade perdida");
+  });
 }
