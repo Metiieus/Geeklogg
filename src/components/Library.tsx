@@ -16,7 +16,6 @@ const mediaTypeColors = {
   series: "from-purple-500 to-violet-500",
   books: "from-green-500 to-emerald-500",
   movies: "from-yellow-500 to-orange-500",
-  jogos: "from-blue-500 to-cyan-500",
 };
 
 const mediaTypeFrames = {
@@ -242,7 +241,7 @@ const Library: React.FC = () => {
       </div>
 
             {/* Filters */}
-      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/10 relative z-10">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-slate-700/50 relative z-10">
         <div className="flex flex-col space-y-3 sm:grid sm:grid-cols-2 md:grid-cols-4 sm:gap-3 md:gap-4 sm:space-y-0">
           {/* Search */}
           <div className="relative sm:col-span-2 md:col-span-1">
@@ -495,7 +494,7 @@ const Library: React.FC = () => {
       {/* Add Media Options Modal */}
       {showAddOptions && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fade-in overflow-y-auto">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 w-full max-w-xs sm:max-w-lg md:max-w-3xl lg:max-w-4xl xl:max-w-5xl p-4 sm:p-6 animate-slide-up my-auto min-h-0">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 w-full max-w-xs sm:max-w-lg md:max-w-3xl lg:max-w-4xl xl:max-w-5xl p-4 sm:p-6 animate-slide-up my-auto min-h-0">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">
                 Adicionar Nova Mídia
@@ -539,7 +538,7 @@ const Library: React.FC = () => {
             {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in overflow-y-auto">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-md w-full p-6 animate-slide-up my-auto min-h-0">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up my-auto min-h-0">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
                 <Trash2 className="text-red-400" size={32} />
