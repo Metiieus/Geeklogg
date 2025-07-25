@@ -322,18 +322,32 @@ const Library: React.FC = () => {
         {filteredAndSortedItems.map((item) => (
           <div key={item.id} className={`group relative bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-800'}/20 to-slate-900/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-600/30 hover:border-slate-500/60 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/25 animate-slide-up media-card scale-on-hover min-h-[300px] sm:min-h-[350px] md:min-h-[400px]`}>
               {/* Cover Image */}
-              <div className="aspect-[3/4] bg-gradient-to-b from-slate-600/50 to-slate-800/80 relative overflow-hidden rounded-t-2xl">
+              <div className="h-60 sm:h-72 md:h-80 bg-gradient-to-b from-slate-600/50 to-slate-800/80 relative overflow-hidden rounded-t-2xl">
                 {item.cover ? (
                   <img
                     src={item.cover}
                     alt={item.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `
+                          <div class="w-full h-full flex items-center justify-center text-slate-400">
+                            <div class="w-20 h-20 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-600 to-slate-700'} opacity-40 flex items-center justify-center">
+                              <span class="text-white font-bold text-2xl">${item.title.charAt(0)}</span>
+                            </div>
+                          </div>
+                        `;
+                      }
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-400">
-                    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-40 flex items-center justify-center`}>
-                      <span className="text-white font-bold text-xl">{item.title.charAt(0)}</span>
+                    <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-40 flex items-center justify-center`}>
+                      <span className="text-white font-bold text-2xl">{item.title.charAt(0)}</span>
                     </div>
                   </div>
                 )}
