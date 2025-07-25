@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Filter, Grid, List, SortAsc } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
