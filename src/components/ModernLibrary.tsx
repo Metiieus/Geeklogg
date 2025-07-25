@@ -307,7 +307,10 @@ const ModernLibrary: React.FC = () => {
                   transition={{ duration: 0.4, delay: index * 0.05 }}
                 >
                   <MediaCard
-                    item={item as any}
+                    item={{
+                      ...item,
+                      synopsis: item.description,
+                    } as any}
                     onEdit={setEditingItem}
                     onDelete={handleDeleteItem}
                     variant={viewMode === 'list' ? 'compact' : 'default'}
