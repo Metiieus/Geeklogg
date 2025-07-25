@@ -45,7 +45,7 @@ app.post("/api/create-preference", async (req, res) => {
         .json({ error: "Parâmetros uid e email são obrigatórios" });
     }
 
-    const preference = {
+    const preferenceData = {
       items: [
         {
           title: "GeekLog Premium",
@@ -68,7 +68,7 @@ app.post("/api/create-preference", async (req, res) => {
         `${process.env.SERVER_URL || "http://localhost:8080"}/api/webhook`,
     };
 
-    const { body } = await mercadopago.preferences.create(preference);
+    const { body } = await preference.create({ body: preferenceData });
     return res.json({
       init_point: body.init_point,
       preference_id: body.id,
