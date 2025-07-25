@@ -162,7 +162,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
         setIsLoading(false);
       }
     },
-    [apiStatus, showError, showWarning],
+    [apiStatus, showError, showWarning, detectTypeFromQuery, onTypeChange],
   );
 
   // Debounce da busca
