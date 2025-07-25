@@ -446,20 +446,20 @@ const Library: React.FC = () => {
 
                   {/* Tempo de jogo/horas */}
                   {item.hoursSpent && (
-                    <div className="flex items-center gap-1 text-blue-400">
-                      <Clock size={12} />
-                      <span className="text-xs">{item.hoursSpent}h</span>
+                    <div className="flex items-center gap-2 text-blue-400">
+                      <Clock size={14} />
+                      <span className="text-sm font-medium">{item.hoursSpent}h</span>
                     </div>
                   )}
 
                   {/* Tag principal - limitada a 1 */}
                   {item.tags.length > 0 && (
-                    <div className="flex items-center gap-1">
-                      <span className={`px-2 py-1 bg-gradient-to-r ${mediaTypeColors[item.type]}/20 border border-current/20 text-xs rounded-full truncate max-w-[120px]`}>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-3 py-1.5 bg-gradient-to-r ${mediaTypeColors[item.type]}/20 border border-current/20 text-sm rounded-full truncate max-w-[140px] font-medium`}>
                         {item.tags[0]}
                       </span>
                       {item.tags.length > 1 && (
-                        <span className="text-xs text-slate-400">+{item.tags.length - 1}</span>
+                        <span className="text-sm text-slate-400 font-medium">+{item.tags.length - 1}</span>
                       )}
                     </div>
                   )}
