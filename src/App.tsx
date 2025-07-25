@@ -36,8 +36,7 @@ export type MediaType =
   | "anime"
   | "series"
   | "books"
-  | "movies"
-  | "jogos";
+  | "movies";
 export type Status = "completed" | "in-progress" | "dropped" | "planned";
 
 export interface MediaItem {
