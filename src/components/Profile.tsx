@@ -14,6 +14,7 @@ import {
   markAllNotificationsAsRead,
 } from "../services/socialService";
 import { Notification } from "../types/social";
+import { saveProfile as saveProfileService } from "../services/profileService";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import MercadoPagoButton from "./MercadoPagoButton";
@@ -31,14 +32,22 @@ const Profile: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
-  const saveProfile = async (newSettings: typeof settings) => {
-    console.log("💾 Salvando perfil:", newSettings);
-    setSettings(newSettings);
-    if (!user?.uid) {
-      console.error("Usuário não autenticado");
-      return;
-    }
-    await saveSettings(user.uid, newSettings);
+  const handleSaveProfile = async (data: {
+    name: string;
+    bio: string;
+    avatarFile?: File;
+    coverFile?: File;
+  }) => {
+    console.log("💾 Salvando perfil:", data);
+    const result = await saveProfileService(data);
+    const updated = {
+      ...settings,
+      name: data.name,
+      bio: data.bio,
+      avatar: result.avatar ?? settings.avatar,
+      cover: result.cover ?? settings.cover,
+    };
+    setSettings(updated);
     setEditProfile(false);
   };
 
@@ -483,7 +492,7 @@ const Profile: React.FC = () => {
       {editProfile && (
         <EditProfileModal
           profile={settings}
-          onSave={saveProfile}
+          onSave={handleSaveProfile}
           onClose={() => setEditProfile(false)}
         />
       )}

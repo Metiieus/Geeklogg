@@ -24,7 +24,7 @@ import PremiumPending from "./components/PremiumPending";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
 import { getMilestones } from "./services/milestoneService";
-import { getSettings } from "./services/settingsService";
+import { loadProfile } from "./services/profileService";
 import { AppProvider } from "./context/AppContext";
 import { useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
@@ -142,7 +142,7 @@ function App() {
         getMedias(),
         getReviews(),
         getMilestones(),
-        getSettings(),
+        loadProfile(),
       ]);
       setMediaItems(mItems);
       setReviews(revs);

@@ -5,9 +5,16 @@ import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
 import { sanitizeText } from "../../utils/sanitizer";
 
+interface EditProfileData {
+  name: string;
+  bio: string;
+  avatarFile?: File;
+  coverFile?: File;
+}
+
 interface EditProfileModalProps {
   profile: UserSettings;
-  onSave: (settings: UserSettings) => void;
+  onSave: (data: EditProfileData) => void;
   onClose: () => void;
 }
 
@@ -23,6 +30,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     cover: profile?.cover || "",
     bio: profile?.bio || "",
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,11 +59,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     try {
       console.log("💾 Salvando perfil no modal:", local);
       onSave({
-        ...profile,
         name: local.name.trim(),
-        avatar: local.avatar || undefined,
-        cover: local.cover || undefined,
         bio: local.bio.trim(),
+        avatarFile: avatarFile || undefined,
+        coverFile: coverFile || undefined,
       });
       showSuccess("Perfil salvo!", "Suas informações foram atualizadas");
     } catch (error) {
@@ -162,6 +170,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                       reader.onload = (ev) => {
                         const result = ev.target?.result as string;
                         setLocal((prev) => ({ ...prev, avatar: result }));
+                        setAvatarFile(processedFile);
                         showSuccess(
                           "Imagem carregada!",
                           "Sua foto de perfil foi atualizada",
@@ -271,6 +280,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                       reader.onload = (ev) => {
                         const result = ev.target?.result as string;
                         setLocal((prev) => ({ ...prev, cover: result }));
+                        setCoverFile(processedFile);
                         showSuccess(
                           "Capa carregada!",
                           "Sua capa de perfil foi atualizada",
