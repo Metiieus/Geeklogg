@@ -332,7 +332,7 @@ class ExternalMediaService {
     }
 
     // Países de origem que indicam anime
-    const animeCountries = ['JP', 'Japan'];
+    const animeCountries = ['JP'];
     const countries = item.origin_country || [];
 
     // Gêneros que são comuns em animes (ID 16 = Animation)
@@ -343,22 +343,21 @@ class ExternalMediaService {
     const isJapanese = originalLanguage === 'ja' ||
                       countries.some((country: string) => animeCountries.includes(country));
 
-    // Palavras-chave específicas de anime (mais restritivas)
-    const animeKeywords = [
-      'anime', 'manga', 'otaku', 'shounen', 'shoujo', 'seinen', 'josei',
-      'mecha', 'isekai', 'shonen', 'shojo', 'magical girl', 'mahou shoujo'
+    // Palavras-chave MUITO específicas de anime
+    const strictAnimeKeywords = [
+      'anime', 'manga'
     ];
 
-    // Verifica palavras-chave no título ou descrição (com mais critério)
-    const hasAnimeKeywords = animeKeywords.some(keyword =>
+    // Verifica palavras-chave no título ou descrição
+    const hasStrictAnimeKeywords = strictAnimeKeywords.some(keyword =>
       title.includes(keyword) || overview.includes(keyword)
     );
 
     // É anime apenas se:
-    // 1. É japonês E tem gênero de animação E (tem palavras-chave de anime OU é definitivamente anime)
-    // 2. OU tem palavras-chave muito específicas de anime
-    return (isJapanese && hasAnimationGenre && hasAnimeKeywords) ||
-           (hasAnimeKeywords && (title.includes('anime') || overview.includes('anime')));
+    // 1. É definitivamente um anime conhecido OU
+    // 2. É japonês E tem gênero de animação E tem palavras-chave específicas de anime
+    return isDefiniteAnime ||
+           (isJapanese && hasAnimationGenre && hasStrictAnimeKeywords);
   }
 
   // Detectar se um resultado é um dorama
