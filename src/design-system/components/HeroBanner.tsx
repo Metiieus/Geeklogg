@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Sparkles, Gamepad2, BookOpen, Film } from 'lucide-react';
 import { gradients, colors, typography, shadows } from '../tokens';
 
-interface HeroBannerProps {
+export interface HeroBannerProps {
   title?: string;
   subtitle?: string;
   onAddMedia?: () => void;
