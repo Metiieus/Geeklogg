@@ -317,17 +317,22 @@ class ExternalMediaService {
     const overview = (item.overview || "").toLowerCase();
     const originalLanguage = item.original_language || "";
 
-    // Palavras-chave que indicam anime
-    const animeKeywords = [
-      'anime', 'manga', 'otaku', 'shounen', 'shoujo', 'seinen', 'josei',
-      'mecha', 'isekai', 'shonen', 'shojo', 'ecchi', 'harem', 'yaoi', 'yuri',
-      'magical girl', 'mahou shoujo', 'slice of life', 'school life',
-      'ninja', 'samurai', 'dragon ball', 'naruto', 'one piece', 'attack on titan',
-      'demon slayer', 'my hero academia', 'jujutsu kaisen', 'chainsaw man'
+    // Animes muito específicos que sempre devem ser detectados como anime
+    const definiteAnimes = [
+      'one piece', 'dragon ball', 'naruto', 'attack on titan', 'demon slayer',
+      'my hero academia', 'jujutsu kaisen', 'fullmetal alchemist', 'death note',
+      'bleach', 'hunter x hunter', 'pokemon', 'sailor moon', 'evangelion'
     ];
 
+    const isDefiniteAnime = definiteAnimes.some(anime => title.includes(anime));
+
+    // Se for um anime definitivo, retorna true
+    if (isDefiniteAnime) {
+      return true;
+    }
+
     // Países de origem que indicam anime
-    const animeCountries = ['JP', 'Japan'];
+    const animeCountries = ['JP'];
     const countries = item.origin_country || [];
 
     // Gêneros que são comuns em animes (ID 16 = Animation)
@@ -338,24 +343,21 @@ class ExternalMediaService {
     const isJapanese = originalLanguage === 'ja' ||
                       countries.some((country: string) => animeCountries.includes(country));
 
+    // Palavras-chave MUITO específicas de anime
+    const strictAnimeKeywords = [
+      'anime', 'manga'
+    ];
+
     // Verifica palavras-chave no título ou descrição
-    const hasAnimeKeywords = animeKeywords.some(keyword =>
+    const hasStrictAnimeKeywords = strictAnimeKeywords.some(keyword =>
       title.includes(keyword) || overview.includes(keyword)
     );
 
-    // Animes muito específicos que sempre devem ser detectados como anime
-    const definiteAnimes = [
-      'one piece', 'dragon ball', 'naruto', 'attack on titan', 'demon slayer',
-      'my hero academia', 'jujutsu kaisen', 'fullmetal alchemist', 'death note'
-    ];
-
-    const isDefiniteAnime = definiteAnimes.some(anime => title.includes(anime));
-
-    // É anime se:
-    // 1. É definitivamente um anime conhecido
-    // 2. OU é japonês E tem gênero de animação
-    // 3. OU tem palavras-chave específicas de anime
-    return isDefiniteAnime || (isJapanese && hasAnimationGenre) || hasAnimeKeywords;
+    // É anime apenas se:
+    // 1. É definitivamente um anime conhecido OU
+    // 2. É japonês E tem gênero de animação E tem palavras-chave específicas de anime
+    return isDefiniteAnime ||
+           (isJapanese && hasAnimationGenre && hasStrictAnimeKeywords);
   }
 
   // Detectar se um resultado é um dorama

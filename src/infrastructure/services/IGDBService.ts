@@ -83,57 +83,40 @@ export interface IGDBSearchParams {
 }
 
 class IGDBService {
-  private readonly baseUrl = "https://api.igdb.com/v4";
-  private readonly clientId: string;
-  private readonly accessToken: string;
+  private readonly proxyUrl = "http://localhost:8080/api/igdb";
 
   constructor() {
-    this.clientId = import.meta.env.VITE_IGDB_CLIENT_ID || "";
-    this.accessToken = import.meta.env.VITE_IGDB_ACCESS_TOKEN || "";
-
-    if (!this.clientId || !this.accessToken) {
-      console.warn("IGDB credentials not configured. Game search will be limited.");
-    }
+    // No need to store credentials here since proxy handles authentication
   }
 
   async searchGames(params: IGDBSearchParams): Promise<IGDBSearchResult[]> {
-    if (!this.clientId || !this.accessToken) {
-      throw new Error("IGDB API credentials not configured");
-    }
-
     try {
       const query = this.buildQuery(params);
-      
-      const response = await fetch(`${this.baseUrl}/games`, {
+
+      const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
         headers: {
-          "Client-ID": this.clientId,
-          "Authorization": `Bearer ${this.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: query,
+        body: JSON.stringify({ query }),
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText}`);
       }
 
       const games: IGDBGame[] = await response.json();
       return games.map(game => this.mapToSearchResult(game));
     } catch (error) {
-      console.error("Error searching games on IGDB:", error);
+      console.error("Error searching games via IGDB proxy:", error);
       throw error;
     }
   }
 
   async getGameDetails(gameId: number): Promise<IGDBGame | null> {
-    if (!this.clientId || !this.accessToken) {
-      throw new Error("IGDB API credentials not configured");
-    }
-
     try {
       const query = `
-        fields id, name, summary, cover.url, cover.image_id, first_release_date, 
+        fields id, name, summary, cover.url, cover.image_id, first_release_date,
                genres.name, platforms.name, platforms.abbreviation, rating, rating_count,
                screenshots.url, screenshots.image_id, involved_companies.company.name,
                involved_companies.developer, involved_companies.publisher,
@@ -142,33 +125,27 @@ class IGDBService {
         where id = ${gameId};
       `;
 
-      const response = await fetch(`${this.baseUrl}/games`, {
+      const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
         headers: {
-          "Client-ID": this.clientId,
-          "Authorization": `Bearer ${this.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: query,
+        body: JSON.stringify({ query }),
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText}`);
       }
 
       const games: IGDBGame[] = await response.json();
       return games.length > 0 ? games[0] : null;
     } catch (error) {
-      console.error("Error fetching game details from IGDB:", error);
+      console.error("Error fetching game details via IGDB proxy:", error);
       throw error;
     }
   }
 
   async getPopularGames(limit: number = 20): Promise<IGDBSearchResult[]> {
-    if (!this.clientId || !this.accessToken) {
-      return [];
-    }
-
     try {
       const query = `
         fields id, name, summary, cover.url, cover.image_id, first_release_date,
@@ -178,33 +155,27 @@ class IGDBService {
         limit ${limit};
       `;
 
-      const response = await fetch(`${this.baseUrl}/games`, {
+      const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
         headers: {
-          "Client-ID": this.clientId,
-          "Authorization": `Bearer ${this.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: query,
+        body: JSON.stringify({ query }),
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText}`);
       }
 
       const games: IGDBGame[] = await response.json();
       return games.map(game => this.mapToSearchResult(game));
     } catch (error) {
-      console.error("Error fetching popular games from IGDB:", error);
+      console.error("Error fetching popular games via IGDB proxy:", error);
       return [];
     }
   }
 
   async getGamesByGenre(genreName: string, limit: number = 20): Promise<IGDBSearchResult[]> {
-    if (!this.clientId || !this.accessToken) {
-      return [];
-    }
-
     try {
       const query = `
         fields id, name, summary, cover.url, cover.image_id, first_release_date,
@@ -214,47 +185,39 @@ class IGDBService {
         limit ${limit};
       `;
 
-      const response = await fetch(`${this.baseUrl}/games`, {
+      const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
         headers: {
-          "Client-ID": this.clientId,
-          "Authorization": `Bearer ${this.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: query,
+        body: JSON.stringify({ query }),
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText}`);
       }
 
       const games: IGDBGame[] = await response.json();
       return games.map(game => this.mapToSearchResult(game));
     } catch (error) {
-      console.error("Error fetching games by genre from IGDB:", error);
+      console.error("Error fetching games by genre via IGDB proxy:", error);
       return [];
     }
   }
 
   async checkApiAvailability(): Promise<boolean> {
-    if (!this.clientId || !this.accessToken) {
-      return false;
-    }
-
     try {
-      const response = await fetch(`${this.baseUrl}/games`, {
+      const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
         headers: {
-          "Client-ID": this.clientId,
-          "Authorization": `Bearer ${this.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: "fields id; limit 1;",
+        body: JSON.stringify({ query: "fields id; limit 1;" }),
       });
 
       return response.ok;
     } catch (error) {
-      console.warn("IGDB API not available:", error);
+      console.warn("IGDB proxy not available:", error);
       return false;
     }
   }

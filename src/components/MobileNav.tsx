@@ -10,6 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
+import { useToast } from "../context/ToastContext";
 import { ActivePage } from "../App";
 
 interface NavItem {
@@ -60,6 +61,15 @@ const navItems: NavItem[] = [
 
 export const MobileNav: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
+  const { showInfo } = useToast();
+
+  const handleNavigation = (itemId: ActivePage) => {
+    if (itemId === "social") {
+      showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+      return;
+    }
+    setActivePage(itemId);
+  };
 
   return (
     <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
@@ -75,9 +85,13 @@ export const MobileNav: React.FC = () => {
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActivePage(item.id)}
+              onClick={() => handleNavigation(item.id)}
               className={`flex flex-col items-center justify-center min-w-0 flex-1 py-2 px-1 transition-all duration-300 ${
-                activePage === item.id ? "scale-110" : "active:scale-95"
+                item.id === "social"
+                  ? "opacity-50 cursor-not-allowed"
+                  : activePage === item.id
+                  ? "scale-110"
+                  : "active:scale-95"
               }`}
             >
               {/* Container do ícone com efeito ativo */}
@@ -107,10 +121,14 @@ export const MobileNav: React.FC = () => {
               {/* Label */}
               <span
                 className={`text-xs mt-1 font-medium transition-colors truncate max-w-full ${
-                  activePage === item.id ? "text-white" : "text-gray-200"
+                  item.id === "social"
+                    ? "text-gray-400"
+                    : activePage === item.id
+                    ? "text-white"
+                    : "text-gray-200"
                 }`}
               >
-                {item.label}
+                {item.id === "social" ? "Em breve" : item.label}
               </span>
             </button>
           ))}
