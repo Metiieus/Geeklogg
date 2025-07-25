@@ -129,7 +129,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             className="w-full h-full object-cover"
             onError={() => setImageError(true)}
             whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.6, ease: animations.easing.easeOut }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700/50 to-slate-800/80">
