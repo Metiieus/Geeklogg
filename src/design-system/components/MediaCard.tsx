@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { colors, gradients, shadows, animations, getCategoryColors, getCategoryGradient } from '../tokens';
 
-interface MediaItemDS {
+export interface MediaItemDS {
   id: string;
   title: string;
   cover?: string;
