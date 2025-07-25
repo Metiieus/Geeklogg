@@ -300,6 +300,17 @@ const ModernLibrary: React.FC = () => {
           </div>
         </motion.div>
 
+        {/* Connectivity Error */}
+        {hasConnectionError && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <ConnectivityError onRetry={handleRetryConnection} />
+          </motion.div>
+        )}
+
         {/* Media Grid */}
         <AnimatePresence mode="wait">
           {filteredAndSortedItems.length > 0 ? (
