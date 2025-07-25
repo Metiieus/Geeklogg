@@ -107,7 +107,7 @@ export const MobileSidebar: React.FC = () => {
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="sm:hidden fixed top-0 left-0 right-0 z-40 bg-gray-900/95 backdrop-blur-xl border-b border-cyan-500/20">
+      <div className="sm:hidden fixed top-0 left-0 right-0 z-40 backdrop-blur-xl border-b border-white/10" style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}>
         <div className="safe-area-inset-top flex items-center justify-between px-4 py-3">
           {/* Menu Button */}
           <button
