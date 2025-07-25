@@ -297,7 +297,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     y: -2,
                     boxShadow: "0 15px 30px rgba(6, 182, 212, 0.1)"
                   }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 mx-1"
+                  className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 mx-1 feature-card"
                 >
                   <motion.div
                     whileHover={{ rotate: 360, scale: 1.1 }}
