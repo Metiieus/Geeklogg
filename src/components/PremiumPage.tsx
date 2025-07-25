@@ -53,7 +53,7 @@ const PremiumPage: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
+              <div key={index} className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-white/10">
                 <div className="text-cyan-400 mb-3">{feature.icon}</div>
                 <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
                 <p className="text-slate-300 text-sm">{feature.description}</p>
@@ -84,7 +84,7 @@ const PremiumPage: React.FC = () => {
         </div>
 
         {/* Pricing Card */}
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 mb-12 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 bg-gradient-to-l from-cyan-500 to-pink-500 text-white px-4 py-2 text-sm font-bold rounded-bl-lg">
             MAIS POPULAR
           </div>
@@ -133,7 +133,7 @@ const PremiumPage: React.FC = () => {
         </div>
 
         {/* Additional Benefits */}
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
+        <div className="bg-slate-800/30 rounded-xl p-6 border border-white/10">
           <h3 className="text-xl font-semibold text-white mb-4 text-center">Por que escolher o Premium?</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div>

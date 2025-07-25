@@ -59,7 +59,7 @@ export default function PremiumSuccessPage() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950">
-        <div className="text-center bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+        <div className="text-center bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
           <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Processando Pagamento</h2>
           <p className="text-slate-300">Aguarde enquanto confirmamos seu pagamento...</p>

@@ -11,7 +11,7 @@ interface ModernCardProps extends HTMLMotionProps<"div"> {
 }
 
 const cardVariants = {
-  default: "bg-slate-800/80 backdrop-blur-sm border border-slate-700/50",
+  default: "bg-slate-800/80 backdrop-blur-sm border border-white/10",
   gradient: "bg-gradient-to-br from-slate-800/90 via-slate-800/70 to-slate-900/90 backdrop-blur-md border border-slate-600/30",
   glass: "bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg",
   neon: "bg-slate-900/80 backdrop-blur-sm border border-cyan-400/50 shadow-lg shadow-cyan-400/20",

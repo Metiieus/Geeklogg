@@ -167,7 +167,7 @@ export const NotificationCenter: React.FC = () => {
               notifications.slice(0, 10).map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-3 sm:p-4 border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${
+                  className={`p-3 sm:p-4 border-b border-white/10 hover:bg-slate-700/30 transition-colors ${
                     !notification.read ? "bg-purple-500/5" : ""
                   }`}
                 >

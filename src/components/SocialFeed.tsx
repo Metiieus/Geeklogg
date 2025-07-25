@@ -235,7 +235,7 @@ export const SocialFeed: React.FC = () => {
       )}
 
       {activeTab === "search" && (
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
           <UserSearch onUserSelect={setSelectedUser} />
         </div>
       )}
