@@ -343,10 +343,19 @@ class ExternalMediaService {
       title.includes(keyword) || overview.includes(keyword)
     );
 
+    // Animes muito específicos que sempre devem ser detectados como anime
+    const definiteAnimes = [
+      'one piece', 'dragon ball', 'naruto', 'attack on titan', 'demon slayer',
+      'my hero academia', 'jujutsu kaisen', 'fullmetal alchemist', 'death note'
+    ];
+
+    const isDefiniteAnime = definiteAnimes.some(anime => title.includes(anime));
+
     // É anime se:
-    // 1. É japonês E tem gênero de animação
-    // 2. OU tem palavras-chave específicas de anime
-    return (isJapanese && hasAnimationGenre) || hasAnimeKeywords;
+    // 1. É definitivamente um anime conhecido
+    // 2. OU é japonês E tem gênero de animação
+    // 3. OU tem palavras-chave específicas de anime
+    return isDefiniteAnime || (isJapanese && hasAnimationGenre) || hasAnimeKeywords;
   }
 
   // Detectar se um resultado é um dorama
@@ -403,7 +412,7 @@ class ExternalMediaService {
       10751: "Família",
       10762: "Infantil",
       9648: "Mistério",
-      10763: "Notícias",
+      10763: "Not��cias",
       10764: "Reality",
       10765: "Ficção Científica e Fantasia",
       10766: "Novela",
