@@ -318,65 +318,67 @@ const Library: React.FC = () => {
       </div>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 lg:gap-6 animate-fade-in">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 animate-fade-in p-2">
         {filteredAndSortedItems.map((item) => (
-          <div key={item.id} className={`group relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/50 hover:border-slate-600/50 transition-all duration-500 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up ${mediaTypeFrames[item.type] || ''}`}>
+          <div key={item.id} className={`group relative bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-800'}/20 to-slate-900/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-600/30 hover:border-slate-500/60 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/25 animate-slide-up`}>
               {/* Cover Image */}
-              <div className="aspect-[3/4] bg-slate-700 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl">
+              <div className="aspect-[3/4] bg-gradient-to-b from-slate-600/50 to-slate-800/80 relative overflow-hidden rounded-t-2xl">
                 {item.cover ? (
                   <img
                     src={item.cover}
                     alt={item.title}
-                    className="w-full h-full object-contain bg-gradient-to-b from-slate-600 to-slate-700 transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-500">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-20`} />
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-40 flex items-center justify-center`}>
+                      <span className="text-white font-bold text-xl">{item.title.charAt(0)}</span>
+                    </div>
                   </div>
                 )}
 
                   {/* Overlay with actions - só aparece no desktop */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 md:flex hidden items-center justify-center gap-2 overflow-hidden">
+                  <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 md:flex hidden items-center justify-center gap-3">
                     <button
                       onClick={() => handleEditClick(item)}
-                      className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110 animate-bounce"
+                      className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110"
                       title="Editar"
                     >
-                      <Edit size={16} className="text-white" />
+                      <Edit size={18} className="text-white" />
                     </button>
                     {item.externalLink && (
                       <a
                         href={item.externalLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110 animate-bounce"
+                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-200 hover:scale-110"
                         title="Link Externo"
                       >
-                        <ExternalLink size={16} className="text-white" />
+                        <ExternalLink size={18} className="text-white" />
                       </a>
                     )}
-                                        <button
+                    <button
                       onClick={() => handleDeleteClick(item)}
                       disabled={!item.id || typeof item.id !== "string" || item.id.trim() === ""}
-                      className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-all duration-200 hover:scale-110 animate-wiggle disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="p-3 bg-red-500/30 backdrop-blur-sm rounded-full hover:bg-red-500/50 transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                       title={!item.id || typeof item.id !== "string" || item.id.trim() === "" ? "Item sem ID válido" : "Excluir"}
                     >
-                      <Trash2 size={16} className="text-white" />
+                      <Trash2 size={18} className="text-white" />
                     </button>
                   </div>
 
                   {/* Mobile Action Buttons - só aparece no mobile */}
-                  <div className="absolute top-2 right-2 md:hidden flex gap-2">
+                  <div className="absolute top-3 right-3 md:hidden flex gap-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditClick(item);
                       }}
-                      className="p-2.5 bg-blue-500/80 backdrop-blur-sm rounded-full hover:bg-blue-500/90 active:scale-95 transition-all duration-200 border border-blue-400/30 shadow-lg"
+                      className="p-2 bg-black/60 backdrop-blur-sm rounded-full hover:bg-black/80 active:scale-95 transition-all duration-200 border border-white/20 shadow-lg"
                       title="Editar"
                     >
-                      <Edit size={16} className="text-white drop-shadow-sm" />
+                      <Edit size={14} className="text-white" />
                     </button>
                     <button
                       onClick={(e) => {
@@ -384,125 +386,37 @@ const Library: React.FC = () => {
                         handleDeleteClick(item);
                       }}
                       disabled={!item.id || typeof item.id !== "string" || item.id.trim() === ""}
-                      className="p-2.5 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100"
+                      className="p-2 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                       title={!item.id || typeof item.id !== "string" || item.id.trim() === "" ? "Item sem ID válido" : "Excluir"}
                     >
-                      <Trash2 size={16} className="text-white drop-shadow-sm" />
+                      <Trash2 size={14} className="text-white" />
                     </button>
                   </div>
                 </div>
 
-                {/* Mobile Content - aparece em telas pequenas */}
-                <div className="p-2 sm:p-3 md:hidden space-y-2">
-                  <h3 className="font-semibold text-white text-xs sm:text-sm line-clamp-2 leading-tight">
-                    {item.title}
-                  </h3>
-
-                  {/* Status e Stats em linha compacta */}
-                  <div className="flex items-center justify-between gap-2">
-                    <div
-                      className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)} flex-shrink-0`}
-                    >
-                      <span className="text-xs truncate">{getStatusLabel(item.status)}</span>
-                    </div>
-
-                    {/* Stats - versão ultra compacta */}
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      {item.rating && (
-                        <div className="flex items-center gap-0.5">
-                          <Star
-                            className="text-yellow-400"
-                            size={10}
-                            fill="currentColor"
-                          />
-                          <span className="text-white text-xs">{item.rating}</span>
-                        </div>
-                      )}
-                      {item.hoursSpent && (
-                        <div className="flex items-center gap-0.5">
-                          <Clock className="text-blue-400" size={10} />
-                          <span className="text-white text-xs">{item.hoursSpent}h</span>
-                        </div>
-                      )}
-                    </div>
+                {/* Card Content */}
+                <div className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="font-bold text-white text-sm line-clamp-2 leading-tight flex-1">
+                      {item.title}
+                    </h3>
+                    {item.rating && (
+                      <div className="flex items-center gap-1 flex-shrink-0 bg-yellow-500/20 px-2 py-1 rounded-full">
+                        <Star className="text-yellow-400" size={12} fill="currentColor" />
+                        <span className="text-white text-xs font-bold">{item.rating}</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Progress bar para livros - versão mobile */}
-                  {item.type === "books" && item.totalPages && (
-                    <div className="mt-1.5">
-                      <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-green-500"
-                          style={{
-                            width: `${Math.max(0, Math.min(((item.currentPage || 0) / (item.totalPages || 1)) * 100, 100))}%`,
-                          }}
-                        />
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        {item.currentPage || 0}/{item.totalPages}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Tags - versão compacta limitada a 3 */}
-                  {item.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {item.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full truncate max-w-[80px]"
-                          title={tag}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                      {item.tags.length > 3 && (
-                        <span className="px-2 py-0.5 bg-slate-700/50 text-slate-300 text-xs rounded-full" title={`Mais ${item.tags.length - 3} tags`}>
-                          +{item.tags.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Desktop Content - só aparece em telas maiores */}
-                <div className="p-4 hidden md:block">
-                  <h3 className="font-semibold text-white mb-2 line-clamp-2">
-                    {item.title}
-                  </h3>
-
                   {/* Status */}
-                  <div
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)} mb-3`}
-                  >
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
                     {getStatusLabel(item.status)}
                   </div>
 
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4">
-                      {item.rating && (
-                        <div className="flex items-center gap-1">
-                          <Star
-                            className="text-yellow-400"
-                            size={14}
-                            fill="currentColor"
-                          />
-                          <span className="text-white">{item.rating}</span>
-                        </div>
-                      )}
-                      {item.hoursSpent && (
-                        <div className="flex items-center gap-1">
-                          <Clock className="text-blue-400" size={14} />
-                          <span className="text-white">{item.hoursSpent}h</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
+                  {/* Progress para livros */}
                   {item.type === "books" && item.totalPages && (
-                    <div className="mt-2">
-                      <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div>
+                      <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-green-500"
                           style={{
@@ -516,26 +430,28 @@ const Library: React.FC = () => {
                     </div>
                   )}
 
-                {/* Tags - limitadas a 3 */}
-                {item.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-3">
-                    {item.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full truncate max-w-[100px]"
-                        title={tag}
-                      >
-                        {tag}
+                  {/* Tempo de jogo/horas */}
+                  {item.hoursSpent && (
+                    <div className="flex items-center gap-1 text-blue-400">
+                      <Clock size={12} />
+                      <span className="text-xs">{item.hoursSpent}h</span>
+                    </div>
+                  )}
+
+                  {/* Tag principal - limitada a 1 */}
+                  {item.tags.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span className={`px-2 py-1 bg-gradient-to-r ${mediaTypeColors[item.type]}/20 border border-current/20 text-xs rounded-full truncate max-w-[120px]`}>
+                        {item.tags[0]}
                       </span>
-                    ))}
-                    {item.tags.length > 3 && (
-                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full" title={`Mais ${item.tags.length - 3} tags`}>
-                        +{item.tags.length - 3}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
+                      {item.tags.length > 1 && (
+                        <span className="text-xs text-slate-400">+{item.tags.length - 1}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+
             </div>
         ))}
       </div>
