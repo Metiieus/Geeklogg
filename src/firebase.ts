@@ -62,14 +62,24 @@ export { app, auth, db };
 
 // Configuração especial para DEV e produção
 if (db) {
-  if (import.meta.env.DEV) {
-    enableIndexedDbPersistence(db).catch((err) =>
-      console.warn("⚠️ Falha ao ativar persistence:", err),
-    );
-  } else {
-    enableNetwork(db).catch((err) =>
-      console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
-    );
+  try {
+    if (import.meta.env.DEV) {
+      enableIndexedDbPersistence(db).catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn("⚠️ Multiple tabs open, persistence can only be enabled in one tab at a time.");
+        } else if (err.code === 'unimplemented') {
+          console.warn("⚠️ The current browser doesn't support all of the features required to enable persistence");
+        } else {
+          console.warn("⚠️ Falha ao ativar persistence:", err);
+        }
+      });
+    } else {
+      enableNetwork(db).catch((err) =>
+        console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
+      );
+    }
+  } catch (error) {
+    console.warn("⚠️ Erro na configuração do Firestore:", error);
   }
 }
 
