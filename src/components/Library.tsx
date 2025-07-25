@@ -40,7 +40,6 @@ const bookmarkColors = {
   series: "bg-purple-500",
   books: "bg-green-500",
   movies: "bg-yellow-500",
-  jogos: "bg-blue-500",
 };
 
 const Library: React.FC = () => {
