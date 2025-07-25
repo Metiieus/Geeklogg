@@ -176,10 +176,6 @@ class IGDBService {
   }
 
   async getGamesByGenre(genreName: string, limit: number = 20): Promise<IGDBSearchResult[]> {
-    if (!this.clientId || !this.accessToken) {
-      return [];
-    }
-
     try {
       const query = `
         fields id, name, summary, cover.url, cover.image_id, first_release_date,
@@ -189,24 +185,22 @@ class IGDBService {
         limit ${limit};
       `;
 
-      const response = await fetch(`${this.baseUrl}/games`, {
+      const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
         headers: {
-          "Client-ID": this.clientId,
-          "Authorization": `Bearer ${this.accessToken}`,
           "Content-Type": "application/json",
         },
-        body: query,
+        body: JSON.stringify({ query }),
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText}`);
       }
 
       const games: IGDBGame[] = await response.json();
       return games.map(game => this.mapToSearchResult(game));
     } catch (error) {
-      console.error("Error fetching games by genre from IGDB:", error);
+      console.error("Error fetching games by genre via IGDB proxy:", error);
       return [];
     }
   }
