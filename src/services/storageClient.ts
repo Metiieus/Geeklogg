@@ -1,5 +1,6 @@
-import { storage } from '../firebase';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { getUserId } from "./utils";
 
 class StorageClient {
   private storage = storage;
@@ -48,6 +49,25 @@ class StorageClient {
       console.error("Erro ao deletar arquivo:", e);
       throw e;
     }
+  }
+
+  async upload(relativePath: string, file: File | Blob): Promise<string> {
+    const uid = getUserId();
+    if (!uid) {
+      throw new Error("Usuário não autenticado");
+    }
+    const storageRef = this.createRef(`users/${uid}/${relativePath}`);
+    await this.uploadFile(storageRef, file);
+    return this.getDownloadURL(storageRef);
+  }
+
+  async remove(relativePath: string): Promise<void> {
+    const uid = getUserId();
+    if (!uid) {
+      throw new Error("Usuário não autenticado");
+    }
+    const storageRef = this.createRef(`users/${uid}/${relativePath}`);
+    await this.deleteFile(storageRef);
   }
 }
 
