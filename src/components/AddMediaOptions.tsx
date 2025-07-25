@@ -103,7 +103,7 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
         {/* Barra de busca */}
         <MediaSearchBar
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={handleTypeChange}
           onResultSelect={handleResultSelect}
           placeholder="Digite o nome da mídia que deseja adicionar..."
         />
