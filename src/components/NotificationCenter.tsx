@@ -136,9 +136,9 @@ export const NotificationCenter: React.FC = () => {
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-50 animate-slide-down">
+        <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-slate-800 rounded-xl border border-white/20 shadow-xl z-50 animate-slide-down">
           {/* Header */}
-          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-slate-700">
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/20">
             <h3 className="text-white font-semibold text-sm sm:text-base">
               Notificações
             </h3>
@@ -239,7 +239,7 @@ export const NotificationCenter: React.FC = () => {
           </div>
 
           {notifications.length > 10 && (
-            <div className="p-3 text-center border-t border-slate-700">
+            <div className="p-3 text-center border-t border-white/20">
               <button className="text-purple-400 hover:text-purple-300 text-xs sm:text-sm touch-target">
                 Ver todas as notificações
               </button>

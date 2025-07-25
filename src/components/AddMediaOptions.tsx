@@ -54,7 +54,7 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
         />
 
         {/* Opção manual */}
-        <div className="flex items-center justify-center pt-3 sm:pt-4 border-t border-slate-700">
+        <div className="flex items-center justify-center pt-3 sm:pt-4 border-t border-white/20">
           <button
             onClick={onManualAdd}
             className="flex items-center gap-2 px-3 sm:px-4 py-2 text-slate-400 hover:text-white transition-colors text-sm sm:text-base"

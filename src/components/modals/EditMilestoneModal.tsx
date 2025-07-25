@@ -51,9 +51,9 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ mileston
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slide-up">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+        <div className="flex items-center justify-between p-6 border-b border-white/20">
           <h2 className="text-2xl font-bold text-white">Editar Marco</h2>
           <button 
             onClick={onClose}
@@ -159,7 +159,7 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ mileston
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-700">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/20">
             <button
               type="button"
               onClick={onClose}

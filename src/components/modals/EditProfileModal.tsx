@@ -65,8 +65,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-lg w-full overflow-hidden animate-slide-up">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-lg w-full overflow-hidden animate-slide-up">
+        <div className="flex items-center justify-between p-6 border-b border-white/20">
           <h2 className="text-2xl font-bold text-white">Editar Perfil</h2>
           <button
             onClick={onClose}
@@ -352,7 +352,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               </div>
             )}
           </div>
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-700">
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/20">
             <button
               type="button"
               onClick={onClose}
