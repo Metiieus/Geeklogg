@@ -27,6 +27,9 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
   const uid = getUserId();
   if (!uid) throw new Error("Usuário não autenticado");
 
+  // Carrega os dados existentes do perfil
+  const existingProfile = await loadProfile();
+
   // --------------------
   // 1. Upload de imagens
   // --------------------
@@ -57,8 +60,8 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
     id: uid,
     name: data.name,
     bio: data.bio,
-    avatar: avatarUrl,
-    cover: coverUrl,
+    avatar: avatarUrl || existingProfile?.avatar,
+    cover: coverUrl || existingProfile?.cover,
     updatedAt: now,
   };
 }
