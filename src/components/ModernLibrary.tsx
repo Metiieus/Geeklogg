@@ -34,7 +34,7 @@ const statusOptions = [
 ];
 
 const sortOptions = [
-  { value: 'updatedAt', label: '�� Mais Recentes' },
+  { value: 'updatedAt', label: '🕐 Mais Recentes' },
   { value: 'title', label: '🔤 A-Z' },
   { value: 'rating', label: '⭐ Avaliação' },
   { value: 'hoursSpent', label: '⏱️ Mais Horas' },
@@ -159,6 +159,12 @@ const ModernLibrary: React.FC = () => {
     setMediaItems([...mediaItems, newItem]);
     setSelectedExternalResult(null);
   }, [mediaItems, setMediaItems]);
+
+  const handleRetryConnection = useCallback(() => {
+    setHasConnectionError(false);
+    // Reload the page to reinitialize connections
+    window.location.reload();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
