@@ -423,7 +423,7 @@ const Library: React.FC = () => {
                   </div>
 
                   {/* Status */}
-                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
+                  <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(item.status)}`}>
                     {getStatusLabel(item.status)}
                   </div>
 
