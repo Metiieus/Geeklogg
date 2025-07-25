@@ -4,8 +4,14 @@ import { removeUndefinedFields, sanitizeStrings, getUserId } from "./utils";
 export interface UserSettings {
   name?: string;
   avatar?: string;
+  cover?: string;
   bio?: string;
-  favorites?: string[];
+  favorites?: {
+    characters: Array<{ id: string; name: string; image?: string }>;
+    games: Array<{ id: string; name: string; image?: string }>;
+    movies: Array<{ id: string; name: string; image?: string }>;
+  };
+  theme?: string;
   defaultLibrarySort?: string;
 }
 
@@ -28,21 +34,26 @@ export async function getSettings(
 
     const userData = userDoc.data();
 
+    if (!userData) {
+      return null;
+    }
+
     // Extract settings-related fields
     const settings: UserSettings = {
       name: userData.name,
       avatar: userData.avatar,
+      cover: userData.cover,
       bio: userData.bio,
       favorites: userData.favorites,
-      defaultLibrarySort: userData.defaultLibrarySort,
+      theme: userData.theme,
+      defaultLibrarySort: userData.defaultLibrarySort
     };
-
-    // Remove undefined fields and sanitize strings
-    return sanitizeStrings(removeUndefinedFields(settings));
+    return settings;
   } catch (error) {
     console.error("Error fetching user settings:", error);
-    throw error;
+    return null;
   }
+}
 }
 
 export async function saveSettings(

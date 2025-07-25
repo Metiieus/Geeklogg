@@ -1,4 +1,4 @@
-# NerdLog
+ # NerdLog
 
 NerdLog é um diário digital para registrar e acompanhar seu consumo de mídias geek.
 O projeto utiliza React + TypeScript com Vite e TailwindCSS, além dos serviços do Firebase (Authentication, Firestore e Storage).
