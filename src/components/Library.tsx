@@ -32,7 +32,6 @@ const mediaTypeLabels = {
   series: "Séries",
   books: "Livros",
   movies: "Filmes",
-  jogos: "Jogos",
 };
 
 const bookmarkColors = {
@@ -124,7 +123,7 @@ const Library: React.FC = () => {
 
   const handleDeleteItem = useCallback(async (itemId: string) => {
     if (!itemId || typeof itemId !== "string" || itemId.trim() === "") {
-      showError('Erro', 'ID do item é inválido. Não �� possível excluir este item.');
+      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
       return;
     }
 
