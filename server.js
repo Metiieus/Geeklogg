@@ -18,17 +18,32 @@ const payment = new Payment(client);
 console.log("✅ MercadoPago configurado");
 
 // --- 2) CONFIGURAÇÃO DO FIREBASE ADMIN ---
-if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+let db = null;
+let isFirebaseInitialized = false;
+
+try {
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+    });
+  } else if (process.env.FIREBASE_PROJECT_ID) {
+    // Inicialização alternativa sem service account para desenvolvimento
+    admin.initializeApp({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+    });
+  } else {
+    throw new Error("No Firebase credentials or project ID provided");
+  }
+
+  db = admin.firestore();
+  isFirebaseInitialized = true;
+  console.log("✅ Firebase Admin inicializado");
+} catch (error) {
   console.warn(
-    "⚠️ GOOGLE_APPLICATION_CREDENTIALS não definido. " +
-    "Webhook de ativação de plano poderá falhar."
+    "⚠️ Firebase Admin não inicializado:", error.message +
+    " Webhook de ativação de plano não funcionará."
   );
 }
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-});
-const db = admin.firestore();
-console.log("✅ Firebase Admin inicializado");
 
 // --- 3) APP & MIDDLEWARES ---
 const app = express();
