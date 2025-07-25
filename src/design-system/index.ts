@@ -42,7 +42,7 @@ export {
 
 // Media Cards
 export { MediaCard } from './components/MediaCard';
-export type { MediaItem } from './components/MediaCard';
+export type { MediaItemDS } from './components/MediaCard';
 
 // Patterns & Ornaments
 export { 
