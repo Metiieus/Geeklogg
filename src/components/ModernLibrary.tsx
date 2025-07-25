@@ -2,7 +2,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, Filter, Grid, List, SortAsc } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { MediaType, MediaItem, Status } from '../App';
+import { MediaType, Status } from '../App';
+import type { MediaItem } from '../App';
 import { useToast } from '../context/ToastContext';
 
 // Design System Components
