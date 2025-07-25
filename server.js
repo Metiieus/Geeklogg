@@ -87,8 +87,8 @@ app.post("/api/webhook", async (req, res) => {
 
     // Exemplo mínimo de tratamento
     if (mpBody.type === "payment" && mpBody.data?.id) {
-      const payment = await mercadopago.payment.get(mpBody.data.id);
-      console.log("✅ Payment detail:", payment.body.status);
+      const paymentResponse = await payment.get({ id: mpBody.data.id });
+      console.log("✅ Payment detail:", paymentResponse.body.status);
       // Você pode atualizar o Firestore aqui, por ex. ativar premium se aprovado
     }
 
