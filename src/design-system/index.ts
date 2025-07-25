@@ -127,6 +127,8 @@ export { getCategoryColors, getCategoryGradient } from './tokens';
  * - Navigation: Glass cards with tooltips and badges
  */
 
+// ============= DEFAULT EXPORT =============
+
 export default {
   // Quick access to core utilities
   colors,
@@ -134,11 +136,4 @@ export default {
   shadows,
   getCategoryColors,
   getCategoryGradient,
-  
-  // Most commonly used components
-  HeroBanner,
-  MediaCard,
-  GlassInput,
-  GlassNavigation,
-  TribalDivider,
-} from './tokens';
+};
