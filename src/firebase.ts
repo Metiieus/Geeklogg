@@ -19,6 +19,14 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Verificação de conectividade
+const checkConnectivity = () => {
+  if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
+    return navigator.onLine;
+  }
+  return true; // Assume online se não puder verificar
+};
+
 // Verifica se todas as variáveis obrigatórias estão definidas
 const requiredEnvVars = [
   "VITE_FIREBASE_API_KEY",
