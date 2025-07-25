@@ -34,7 +34,7 @@ const statusOptions = [
 ];
 
 const sortOptions = [
-  { value: 'updatedAt', label: '🕐 Mais Recentes' },
+  { value: 'updatedAt', label: '�� Mais Recentes' },
   { value: 'title', label: '🔤 A-Z' },
   { value: 'rating', label: '⭐ Avaliação' },
   { value: 'hoursSpent', label: '⏱️ Mais Horas' },
@@ -126,9 +126,17 @@ const ModernLibrary: React.FC = () => {
         await deleteMedia(item.id);
         setMediaItems(mediaItems.filter(mediaItem => mediaItem.id !== item.id));
         showSuccess('Item removido com sucesso!');
+        setHasConnectionError(false); // Reset error state on success
       } catch (err: any) {
         console.error('Erro ao excluir mídia', err);
-        showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
+
+        // Check if it's a connectivity error
+        if (err.message?.includes('fetch') || err.message?.includes('network') || err.name === 'TypeError') {
+          setHasConnectionError(true);
+          showError('Erro de Conectividade', 'Verifique sua conexão com a internet e tente novamente.');
+        } else {
+          showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
+        }
       }
     }
   }, [mediaItems, setMediaItems, showSuccess, showError]);
