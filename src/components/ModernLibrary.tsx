@@ -17,6 +17,7 @@ import { TribalDivider, NeonOrnament, FloatingParticles } from '../design-system
 import { colors, gradients, shadows, animations, getCategoryColors } from '../design-system/tokens';
 
 // Existing services
+import { ConnectivityError } from './ConnectivityError';
 import { AddMediaModal } from './modals/AddMediaModal';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
 import { EditMediaModal } from './modals/EditMediaModal';
