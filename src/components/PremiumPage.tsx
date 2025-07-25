@@ -84,7 +84,7 @@ const PremiumPage: React.FC = () => {
         </div>
 
         {/* Pricing Card */}
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-12 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 bg-gradient-to-l from-cyan-500 to-pink-500 text-white px-4 py-2 text-sm font-bold rounded-bl-lg">
             MAIS POPULAR
           </div>

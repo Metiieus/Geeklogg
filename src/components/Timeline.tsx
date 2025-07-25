@@ -118,7 +118,7 @@ const Timeline: React.FC = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+                  <div className="flex-1 bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
                     <div className="flex items-start justify-between mb-2 sm:mb-3">
                       <div>
                         <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 line-clamp-2">

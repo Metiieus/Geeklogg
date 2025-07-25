@@ -266,7 +266,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
         <h3 className="text-xl font-semibold text-white mb-4">
           Atividade Recente
         </h3>
