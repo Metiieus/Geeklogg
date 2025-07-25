@@ -162,7 +162,7 @@ const ModernLibrary: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: animations.easing.easeOut }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <HeroBanner
             title="Minha Biblioteca"
