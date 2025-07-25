@@ -7,6 +7,7 @@ import { AchievementModal } from "./AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
+import { saveProfile } from "../services/profileService"; 
 import {
   getUserNotifications,
   markNotificationAsRead,

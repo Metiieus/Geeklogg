@@ -14,6 +14,10 @@ export interface AddMediaData extends Omit<MediaItem, "id" | "createdAt" | "upda
   coverFile?: File;
 }
 
+/**
+ * Atualiza um documento de mídia.
+ * Mantém campos existentes (merge) e faz upload opcional da nova capa.
+ */
 export async function updateMedia(
   id: string,
   data: UpdateMediaData,
@@ -23,7 +27,6 @@ export async function updateMedia(
   if (!uid || typeof uid !== "string") {
     throw new Error("Usuário não autenticado ou UID inválido");
   }
-
   if (!id || typeof id !== "string" || !id.trim()) {
     throw new Error("ID ausente ou inválido ao tentar atualizar mídia");
   }
@@ -34,18 +37,19 @@ export async function updateMedia(
     updatedAt: now,
   });
 
+  // Não queremos salvar o File binário no Firestore
   delete (toUpdate as { coverFile?: File }).coverFile;
 
-  // Atualiza os dados principais da mídia
+  // 1️⃣ Atualiza os dados principais (merge mantém o que já existe)
   await database.set(["users", uid, "medias"], id, toUpdate, { merge: true });
 
   let coverUrl: string | undefined;
 
-  // Faz upload da imagem de capa, se houver
+  // 2️⃣ Se veio nova imagem de capa, faz upload e salva a URL
   if (data.coverFile instanceof File) {
     try {
       coverUrl = await storageClient.upload(`media/${id}`, data.coverFile);
-      await database.update(["users", uid, "medias", id], { cover: coverUrl });
+      await database.update(["users", uid, "medias"], id, { cover: coverUrl });
     } catch (err) {
       console.error("Erro ao atualizar imagem de capa", err);
     }
@@ -54,9 +58,11 @@ export async function updateMedia(
   return { cover: coverUrl };
 }
 
+/**
+ * Cria uma nova mídia na biblioteca do usuário.
+ */
 export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   const uid = getUserId();
-
   if (!uid || typeof uid !== "string") {
     throw new Error("Usuário não autenticado ou UID inválido");
   }
@@ -69,20 +75,20 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
     ...sanitizedData,
     createdAt: now,
     updatedAt: now,
-    tags: Array.isArray(sanitizedData.tags) ? sanitizedData.tags : []
+    tags: Array.isArray(sanitizedData.tags) ? sanitizedData.tags : [],
   });
 
-  // Add the media document
+  // 1️⃣ Adiciona o documento
   const docRef = await database.add(["users", uid, "medias"], toSave);
   const mediaId = docRef.id;
 
   let coverUrl: string | undefined;
 
-  // Upload cover image if provided
+  // 2️⃣ Faz upload da capa se houver
   if (coverFile instanceof File) {
     try {
       coverUrl = await storageClient.upload(`media/${mediaId}`, coverFile);
-      await database.update(["users", uid, "medias", mediaId], { cover: coverUrl });
+      await database.update(["users", uid, "medias"], mediaId, { cover: coverUrl });
     } catch (err) {
       console.error("Erro ao fazer upload da capa:", err);
     }
@@ -91,13 +97,15 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   return {
     id: mediaId,
     ...toSave,
-    cover: coverUrl || toSave.cover
+    cover: coverUrl || toSave.cover,
   } as MediaItem;
 }
 
+/**
+ * Retorna todas as mídias da biblioteca do usuário.
+ */
 export async function getMedias(): Promise<MediaItem[]> {
   const uid = getUserId();
-
   if (!uid) {
     console.warn("User not authenticated, returning empty array");
     return [];
@@ -106,16 +114,15 @@ export async function getMedias(): Promise<MediaItem[]> {
   try {
     const medias = await database.getCollection(["users", uid, "medias"]);
     return medias
-      .filter(media => {
-        // Filter out any media items without valid IDs
+      .filter((media) => {
         const hasValidId = media.id && typeof media.id === "string" && media.id.trim() !== "";
         if (!hasValidId) {
           console.warn("Documento de mídia encontrado sem ID válido:", media);
         }
         return hasValidId;
       })
-      .map(media => {
-        // Normalize old "jogos" type to "games" for backward compatibility
+      .map((media) => {
+        // Normaliza tipo antigo "jogos" → "games"
         let normalizedType = media.type || "games";
         if (normalizedType === "jogos") {
           normalizedType = "games";
@@ -138,7 +145,7 @@ export async function getMedias(): Promise<MediaItem[]> {
           type: normalizedType,
           description: media.description,
           createdAt: media.createdAt || new Date().toISOString(),
-          updatedAt: media.updatedAt || new Date().toISOString()
+          updatedAt: media.updatedAt || new Date().toISOString(),
         };
       });
   } catch (error) {
@@ -147,6 +154,9 @@ export async function getMedias(): Promise<MediaItem[]> {
   }
 }
 
+/**
+ * Remove uma mídia (documento e arquivo de capa).
+ */
 export async function deleteMedia(id: string): Promise<void> {
   if (!id || typeof id !== "string" || id.trim() === "") {
     throw new Error("ID da mídia é obrigatório e deve ser uma string válida");
@@ -157,8 +167,11 @@ export async function deleteMedia(id: string): Promise<void> {
     throw new Error("Usuário não autenticado");
   }
 
-  await database.delete(["users", uid, "medias", id]);
+  // Remove documento
+  await database.delete(["users", uid, "medias"], id);
   secureLog.info("🗑️ Documento de mídia removido", { id });
+
+  // Remove arquivo da Storage (ignora erro caso não exista)
   try {
     await storageClient.remove(`media/${id}`);
   } catch (error) {
