@@ -16,6 +16,19 @@
   transform-origin: center;
   margin: 0.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 280px;
+}
+
+@media (min-width: 768px) {
+  .media-card {
+    min-width: 320px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .media-card {
+    min-width: 280px;
+  }
 }
 
 .media-card:hover {
