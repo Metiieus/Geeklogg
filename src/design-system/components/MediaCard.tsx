@@ -24,9 +24,9 @@ interface MediaItemDS {
 
 interface MediaCardProps {
   item: MediaItemDS;
-  onEdit?: (item: MediaItem) => void;
-  onDelete?: (item: MediaItem) => void;
-  onQuickAction?: (item: MediaItem) => void;
+  onEdit?: (item: MediaItemDS) => void;
+  onDelete?: (item: MediaItemDS) => void;
+  onQuickAction?: (item: MediaItemDS) => void;
   className?: string;
   variant?: 'default' | 'compact' | 'featured';
 }
