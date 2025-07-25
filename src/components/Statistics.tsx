@@ -208,7 +208,7 @@ const Statistics: React.FC = () => {
       {/* Top Lists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Rated */}
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+        <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
           <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
             <Star className="text-yellow-400" size={20} />
             Melhor Avaliados
@@ -249,7 +249,7 @@ const Statistics: React.FC = () => {
         </div>
 
         {/* Most Time Spent */}
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+        <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
           <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
             <Clock className="text-blue-400" size={20} />
             Mais Tempo Gasto
