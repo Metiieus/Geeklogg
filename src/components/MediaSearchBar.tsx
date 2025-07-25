@@ -77,7 +77,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
   }, []);
 
   // Função para detectar automaticamente o tipo baseado na query
-  const detectTypeFromQuery = useCallback((query: string): MediaType => {
+  const detectTypeFromQuery = useCallback((query: string, currentType: MediaType): MediaType => {
     const lowerQuery = query.toLowerCase();
 
     // Animes populares e palavras-chave
@@ -93,7 +93,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
     }
 
     // Mantém o tipo selecionado se não detectar automaticamente
-    return mediaType;
+    return currentType;
   }, []);
 
   // Função de busca com debounce
@@ -106,7 +106,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       }
 
       // Detectar tipo automaticamente para consultas específicas
-      const detectedType = detectTypeFromQuery(searchQuery);
+      const detectedType = detectTypeFromQuery(searchQuery, mediaType);
       const finalType = detectedType !== mediaType ? detectedType : mediaType;
 
       // Atualizar o tipo se foi detectado automaticamente
