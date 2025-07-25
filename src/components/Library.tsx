@@ -204,7 +204,7 @@ const Library: React.FC = () => {
   }, [itemToDelete, handleDeleteItem, showError]);
 
     return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-4 sm:space-y-6 animate-fade-in relative">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-4 sm:space-y-6 animate-fade-in relative library-container animation-safe">
       {/* Fragmentos animados no fundo */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {[...Array(12)].map((_, i) => (
