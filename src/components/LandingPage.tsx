@@ -252,7 +252,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4 features-grid grid-container">
             {[
               {
                 icon: BookOpen,
