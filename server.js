@@ -1,7 +1,7 @@
 // server.js
 import express from "express";
 import cors from "cors";
-import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference, Payment } from "mercadopago";
 import dotenv from "dotenv";
 import admin from "firebase-admin";
 
@@ -12,9 +12,9 @@ if (!process.env.MP_ACCESS_TOKEN) {
   console.error("❌ MERCADO_PAGO_ACCESS_TOKEN não definido em .env");
   process.exit(1);
 }
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN,
-});
+const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+const preference = new Preference(client);
+const payment = new Payment(client);
 console.log("✅ MercadoPago configurado");
 
 // --- 2) CONFIGURAÇÃO DO FIREBASE ADMIN ---
