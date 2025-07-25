@@ -287,7 +287,7 @@ function App() {
             <Route path="/premium/failure" element={<PremiumFailure />} />
             <Route path="/premium/pending" element={<PremiumPending />} />
             <Route path="*" element={
-              <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-950 relative overflow-hidden">
+              <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #111827 0%, #1F2937 50%, #111827 100%)' }}>
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-10 sm:top-20 left-5 sm:left-20 w-32 sm:w-64 h-32 sm:h-64 bg-cyan-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
             <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-20 w-48 sm:w-96 h-48 sm:h-96 bg-pink-500/15 rounded-full blur-2xl sm:blur-3xl"></div>
