@@ -162,7 +162,7 @@ export const MobileSidebar: React.FC = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-r border-cyan-500/20 overflow-hidden">
+        <div className="h-full border-r border-white/10 overflow-hidden" style={{ background: 'linear-gradient(135deg, #111827 0%, #1F2937 50%, #111827 100%)' }}>
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-20 -left-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
