@@ -1,0 +1,76 @@
+/* CSS para corrigir problemas de corte em animações */
+
+/* Container principal da biblioteca com padding para animações */
+.library-container {
+  padding: 1rem;
+  overflow: visible;
+}
+
+/* Grid com espaçamento para animações */
+.media-grid {
+  padding: 1rem;
+}
+
+/* Cards com transformações seguras */
+.media-card {
+  transform-origin: center;
+  margin: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.media-card:hover {
+  z-index: 10;
+  position: relative;
+}
+
+/* Prevenir overflow nos containers de grid */
+.grid-container {
+  overflow: visible !important;
+}
+
+/* Garantir que elementos com scale não sejam cortados */
+.scale-on-hover {
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+.scale-on-hover:hover {
+  transform: scale(1.03);
+}
+
+/* Landing page features com espaçamento seguro */
+.features-grid {
+  padding: 2rem 1rem;
+}
+
+.feature-card {
+  margin: 1rem 0.5rem;
+  transform-origin: center;
+}
+
+/* Prevenir cortes durante animações complexas */
+.animation-safe {
+  overflow: visible;
+  contain: none;
+}
+
+/* Media queries para ajustes responsivos */
+@media (max-width: 768px) {
+  .media-card {
+    margin: 0.25rem;
+  }
+  
+  .feature-card {
+    margin: 0.5rem 0.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .media-card {
+    margin: 0.75rem;
+  }
+  
+  .feature-card {
+    margin: 1.5rem 0.75rem;
+  }
+}
