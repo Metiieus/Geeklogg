@@ -409,15 +409,15 @@ const Library: React.FC = () => {
                 </div>
 
                 {/* Card Content */}
-                <div className="p-4 space-y-3">
+                <div className="p-4 sm:p-5 md:p-6 space-y-3 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-bold text-white text-sm line-clamp-2 leading-tight flex-1">
+                    <h3 className="font-bold text-white text-sm sm:text-base md:text-lg line-clamp-2 leading-tight flex-1">
                       {item.title}
                     </h3>
                     {item.rating && (
                       <div className="flex items-center gap-1 flex-shrink-0 bg-yellow-500/20 px-2 py-1 rounded-full">
-                        <Star className="text-yellow-400" size={12} fill="currentColor" />
-                        <span className="text-white text-xs font-bold">{item.rating}</span>
+                        <Star className="text-yellow-400" size={14} fill="currentColor" />
+                        <span className="text-white text-sm font-bold">{item.rating}</span>
                       </div>
                     )}
                   </div>
