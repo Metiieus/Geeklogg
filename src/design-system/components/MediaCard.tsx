@@ -330,7 +330,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               animate={{ 
                 width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%` 
               }}
-              transition={{ delay: 0.6, duration: 0.8, ease: animations.easing.easeOut }}
+              transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
               className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500"
             />
           </motion.div>
