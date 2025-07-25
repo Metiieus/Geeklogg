@@ -23,7 +23,7 @@ interface MediaItemDS {
 }
 
 interface MediaCardProps {
-  item: MediaItem;
+  item: MediaItemDS;
   onEdit?: (item: MediaItem) => void;
   onDelete?: (item: MediaItem) => void;
   onQuickAction?: (item: MediaItem) => void;
