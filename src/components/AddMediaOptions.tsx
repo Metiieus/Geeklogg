@@ -72,6 +72,10 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
     setIsSearchMode(false);
   };
 
+  const handleTypeChange = (newType: MediaType) => {
+    setSelectedType(newType);
+  };
+
   if (isSearchMode) {
     return (
       <div className="space-y-3 sm:space-y-4">
