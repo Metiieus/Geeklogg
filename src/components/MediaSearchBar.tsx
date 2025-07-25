@@ -105,14 +105,8 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
         return;
       }
 
-      // Detectar tipo automaticamente para consultas específicas
-      const detectedType = detectTypeFromQuery(searchQuery, mediaType);
-      const finalType = detectedType !== mediaType ? detectedType : mediaType;
-
-      // Atualizar o tipo se foi detectado automaticamente
-      if (detectedType !== mediaType) {
-        onTypeChange(detectedType);
-      }
+      // Usar o tipo selecionado pelo usuário sempre
+      const finalType = mediaType;
 
       // Verificar se a API necessária está disponível
       const needsGoogleBooks = finalType === "books";
