@@ -115,9 +115,9 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       }
 
       // Verificar se a API necessária está disponível
-      const needsGoogleBooks = mediaType === "books";
+      const needsGoogleBooks = finalType === "books";
       const needsTmdb = ["movies", "series", "anime", "dorama"].includes(
-        mediaType,
+        finalType,
       );
 
       if (
@@ -126,7 +126,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       ) {
         showError(
           "API Indisponível",
-          `Busca para ${mediaType} temporariamente indisponível`,
+          `Busca para ${finalType} temporariamente indisponível`,
         );
         return;
       }
@@ -137,7 +137,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       try {
         const searchResults = await externalMediaService.searchMedia({
           query: searchQuery,
-          type: mediaType,
+          type: finalType,
           limit: 8,
         });
 
