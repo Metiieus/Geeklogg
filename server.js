@@ -153,7 +153,42 @@ app.post("/api/update-premium", async (req, res) => {
   }
 });
 
-// --- 7) HEALTHCHECK & START SERVER ---
+// --- 7) ROTA: IGDB PROXY ---
+app.post("/api/igdb/:endpoint", async (req, res) => {
+  try {
+    const { endpoint } = req.params;
+    const { query } = req.body;
+
+    const igdbClientId = process.env.VITE_IGDB_CLIENT_ID;
+    const igdbToken = process.env.VITE_IGDB_ACCESS_TOKEN;
+
+    if (!igdbClientId || !igdbToken) {
+      return res.status(500).json({ error: "IGDB credentials not configured" });
+    }
+
+    const response = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Client-ID": igdbClientId,
+        "Authorization": `Bearer ${igdbToken}`,
+        "Content-Type": "application/json",
+      },
+      body: query,
+    });
+
+    if (!response.ok) {
+      throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("🚨 IGDB proxy error:", error);
+    res.status(500).json({ error: error.message || error.toString() });
+  }
+});
+
+// --- 8) HEALTHCHECK & START SERVER ---
 app.get("/health", (_req, res) => {
   res.json({ status: "OK" });
 });
