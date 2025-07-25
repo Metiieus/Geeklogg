@@ -9,7 +9,7 @@ dotenv.config();
 
 // --- 1) CONFIGURAÇÃO DO MERCADO PAGO ---
 if (!process.env.MP_ACCESS_TOKEN) {
-  console.error("❌ MERCADO_PAGO_ACCESS_TOKEN não definido em .env");
+  console.error("❌ MP_ACCESS_TOKEN não definido em .env");
   process.exit(1);
 }
 const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
