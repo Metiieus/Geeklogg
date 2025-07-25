@@ -412,7 +412,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     y: -4,
                     boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)"
                   }}
-                  className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 mx-2"
+                  className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 mx-2 feature-card"
                 >
                   <motion.div
                     whileHover={{
