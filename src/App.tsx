@@ -151,6 +151,8 @@ function App() {
         const normalizedSettings = {
           name: prefs.name || "Usuário",
           bio: prefs.bio || "",
+          avatar: prefs.avatar || "",
+          cover: prefs.cover || "",
           defaultLibrarySort: prefs.defaultLibrarySort || "updatedAt",
           favorites: {
             characters: Array.isArray(prefs.favorites?.characters)
