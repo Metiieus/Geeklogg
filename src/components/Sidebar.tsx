@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { ActivePage } from "../App";
 
 interface NavItem {
@@ -66,9 +67,18 @@ const navigationItems: NavItem[] = [
 const Sidebar: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
   const { logout, profile } = useAuth();
+  const { showInfo } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isPremium = profile?.isPremium || false;
+
+  const handleNavigation = (itemId: ActivePage) => {
+    if (itemId === "social") {
+      showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+      return;
+    }
+    setActivePage(itemId);
+  };
 
   return (
     <>
@@ -121,9 +131,11 @@ const Sidebar: React.FC = () => {
             {navigationItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setActivePage(item.id)}
+                onClick={() => handleNavigation(item.id)}
                 className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
-                  activePage === item.id
+                  item.id === "social"
+                    ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30 border border-transparent"
+                    : activePage === item.id
                     ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
                     : "hover:bg-gray-800/50 border border-transparent"
                 }`}
@@ -142,12 +154,17 @@ const Sidebar: React.FC = () => {
                 {isExpanded && (
                   <span
                     className={`ml-3 text-sm font-medium transition-colors whitespace-nowrap ${
-                      activePage === item.id
+                      item.id === "social"
+                        ? "text-gray-400"
+                        : activePage === item.id
                         ? "text-white"
                         : "text-gray-200 group-hover:text-white"
                     }`}
                   >
                     {item.label}
+                    {item.id === "social" && (
+                      <span className="ml-1 text-xs text-purple-400">Em breve</span>
+                    )}
                   </span>
                 )}
 
