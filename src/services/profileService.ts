@@ -91,14 +91,33 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
  * Carrega o perfil do usuário logado.
  */
 export async function loadProfile(): Promise<Profile | null> {
+  console.log("📖 loadProfile iniciado");
+
   const uid = getUserId();
-  if (!uid) return null;
+  if (!uid) {
+    console.log("❌ UID não encontrado no loadProfile");
+    return null;
+  }
+  console.log("✅ UID para loadProfile:", uid);
 
-  const doc = await database.getDoc(["users"], uid);
-  if (!doc) return null;
+  try {
+    const doc = await database.getDoc(["users"], uid);
+    console.log("📄 Documento carregado:", doc);
 
-  return {
-    id: uid,
-    ...doc,
-  } as Profile;
+    if (!doc) {
+      console.log("❌ Documento não encontrado");
+      return null;
+    }
+
+    const profile = {
+      id: uid,
+      ...doc,
+    } as Profile;
+
+    console.log("✅ Perfil carregado:", profile);
+    return profile;
+  } catch (error) {
+    console.error("❌ Erro ao carregar perfil:", error);
+    return null;
+  }
 }
