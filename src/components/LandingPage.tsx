@@ -252,7 +252,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
             {[
               {
                 icon: BookOpen,
@@ -293,11 +293,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               >
                 <motion.div
                   whileHover={{
-                    scale: 1.05,
-                    y: -5,
-                    boxShadow: "0 20px 40px rgba(6, 182, 212, 0.1)"
+                    scale: 1.02,
+                    y: -2,
+                    boxShadow: "0 15px 30px rgba(6, 182, 212, 0.1)"
                   }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300"
+                  className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 mx-1"
                 >
                   <motion.div
                     whileHover={{ rotate: 360, scale: 1.1 }}
@@ -369,7 +369,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                         </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4">
             {[
               {
                 icon: Target,
@@ -408,12 +408,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               >
                 <motion.div
                   whileHover={{
-                    scale: 1.05,
-                    y: -10,
-                    rotateY: 5,
-                    boxShadow: "0 25px 50px rgba(6, 182, 212, 0.15)"
+                    scale: 1.02,
+                    y: -4,
+                    boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)"
                   }}
-                  className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500"
+                  className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 mx-2"
                 >
                   <motion.div
                     whileHover={{
@@ -537,12 +536,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <motion.button
               onClick={onRegister}
               whileHover={{
-                scale: 1.1,
-                y: -5,
-                boxShadow: "0 20px 40px rgba(6, 182, 212, 0.3)"
+                scale: 1.05,
+                y: -2,
+                boxShadow: "0 15px 30px rgba(6, 182, 212, 0.3)"
               }}
               whileTap={{ scale: 0.95 }}
-              className="group w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all shadow-2xl"
+              className="group w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all shadow-2xl mx-2"
             >
               <span className="flex items-center justify-center space-x-2 sm:space-x-3">
                 <motion.div
