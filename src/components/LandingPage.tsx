@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { colors, gradients } from "../design-system/tokens";
 import {
   BookOpen,
   Gamepad2,
@@ -565,7 +566,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </motion.div>
 
           <p className="text-gray-500 mt-6 sm:mt-8 text-sm sm:text-base lg:text-lg px-4 leading-relaxed">
-            ⚡ Cadastro em 30 segundos • 🎮 Sem cartão de crédito • 🚀 Comece a
+            ⚡ Cadastro em 30 segundos �� 🎮 Sem cartão de crédito • 🚀 Comece a
             usar imediatamente
           </p>
         </div>
