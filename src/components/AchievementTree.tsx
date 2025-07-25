@@ -536,7 +536,7 @@ const AchievementCard: React.FC<AchievementCardProps> = ({
 
   return (
     <motion.div
-      className={`relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border-2 overflow-hidden cursor-pointer group transition-all duration-300 ${
+      className={`relative bg-gradient-to-br from-slate-800/30 to-slate-900/50 rounded-2xl border-2 overflow-hidden cursor-pointer group transition-all duration-300 ${
         achievement.unlocked
           ? `${rarity.border} shadow-lg ${rarity.glow}`
           : "border-slate-600/50 hover:border-slate-500/70"
@@ -659,7 +659,7 @@ const AchievementListItem: React.FC<AchievementListItemProps> = ({
     <motion.div
       className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border cursor-pointer group transition-all duration-300 ${
         achievement.unlocked
-          ? `bg-gradient-to-r from-slate-800/50 to-slate-900/50 ${rarity.border} shadow-lg`
+          ? `bg-gradient-to-r from-slate-800/30 to-slate-900/50 ${rarity.border} shadow-lg`
           : "bg-slate-800/30 border-slate-600/50 hover:border-slate-500/70"
       }`}
       initial={{ opacity: 0, x: -20 }}

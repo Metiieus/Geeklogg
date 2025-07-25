@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
         return (
           <div
             key={it.id}
-            className="bg-slate-800/50 p-2 rounded-lg text-center border border-slate-700/50 min-w-0"
+            className="bg-slate-800/50 p-2 rounded-lg text-center border border-white/10 min-w-0"
           >
             <div className="w-full h-16 sm:h-20 bg-slate-700 rounded-md overflow-hidden mb-2">
               {it.image ? (
@@ -439,7 +439,7 @@ const Profile: React.FC = () => {
                   key={notification.id}
                   className={`p-4 rounded-lg border transition-all ${
                     notification.read
-                      ? "bg-slate-800/50 border-slate-700/50"
+                      ? "bg-slate-800/50 border-white/10"
                       : "bg-purple-900/20 border-purple-500/30"
                   }`}
                 >

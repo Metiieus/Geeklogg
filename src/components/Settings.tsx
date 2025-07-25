@@ -111,7 +111,7 @@ const Settings: React.FC = () => {
       </div>
 
       {/* Data Management */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
         <h2 className="text-xl font-semibold text-white mb-6">Configurações</h2>
 
         <div className="mb-6">

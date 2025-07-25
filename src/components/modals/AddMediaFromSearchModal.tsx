@@ -69,7 +69,16 @@ export const AddMediaFromSearchModal: React.FC<
         return "movies";
       case "tv":
         return "series";
+      case "anime":
+        return "anime";
+      case "game":
+        return "games";
       default:
+        // Fallback: tentar detectar pelo source ou outros indicadores
+        if (result.source === "igdb") {
+          return "games";
+        }
+        // Default para movies apenas se realmente não conseguir detectar
         return "movies";
     }
   }
@@ -273,9 +282,9 @@ export const AddMediaFromSearchModal: React.FC<
 
   return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 animate-fade-in overflow-y-auto">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-slate-700 max-w-4xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-4xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20">
           <div className="flex items-center gap-2 sm:gap-4">
             <h2 className="text-lg sm:text-2xl font-bold text-white">
               Adicionar à Biblioteca
@@ -297,7 +306,7 @@ export const AddMediaFromSearchModal: React.FC<
 
                 <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
           {/* Preview da mídia - sidebar responsiva */}
-          <div className="lg:w-80 p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-slate-700 bg-slate-800/50">
+          <div className="lg:w-80 p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-white/20 bg-slate-800/50">
             <div className="space-y-4">
               {/* Imagem de capa */}
               <div className="relative">
@@ -632,7 +641,7 @@ export const AddMediaFromSearchModal: React.FC<
             </form>
 
             {/* Actions - Fixed at bottom */}
-            <div className="flex-shrink-0 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent p-4 sm:p-6 border-t border-slate-700">
+            <div className="flex-shrink-0 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent p-4 sm:p-6 border-t border-white/20">
               <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
                 <button
                   type="button"

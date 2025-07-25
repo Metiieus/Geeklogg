@@ -76,6 +76,26 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Função para detectar automaticamente o tipo baseado na query
+  const detectTypeFromQuery = useCallback((query: string): MediaType => {
+    const lowerQuery = query.toLowerCase();
+
+    // Animes populares e palavras-chave
+    const animeKeywords = [
+      'one piece', 'naruto', 'dragon ball', 'attack on titan', 'demon slayer',
+      'my hero academia', 'jujutsu kaisen', 'chainsaw man', 'death note',
+      'fullmetal alchemist', 'hunter x hunter', 'bleach', 'pokemon',
+      'sailor moon', 'evangelion', 'cowboy bebop', 'anime', 'manga'
+    ];
+
+    if (animeKeywords.some(keyword => lowerQuery.includes(keyword))) {
+      return "anime";
+    }
+
+    // Mantém o tipo selecionado se não detectar automaticamente
+    return mediaType;
+  }, []);
+
   // Função de busca com debounce
   const performSearch = useCallback(
     async (searchQuery: string, mediaType: MediaType) => {
@@ -85,10 +105,19 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
         return;
       }
 
+      // Detectar tipo automaticamente para consultas específicas
+      const detectedType = detectTypeFromQuery(searchQuery);
+      const finalType = detectedType !== mediaType ? detectedType : mediaType;
+
+      // Atualizar o tipo se foi detectado automaticamente
+      if (detectedType !== mediaType) {
+        onTypeChange(detectedType);
+      }
+
       // Verificar se a API necessária está disponível
-      const needsGoogleBooks = mediaType === "books";
+      const needsGoogleBooks = finalType === "books";
       const needsTmdb = ["movies", "series", "anime", "dorama"].includes(
-        mediaType,
+        finalType,
       );
 
       if (
@@ -97,7 +126,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       ) {
         showError(
           "API Indisponível",
-          `Busca para ${mediaType} temporariamente indisponível`,
+          `Busca para ${finalType} temporariamente indisponível`,
         );
         return;
       }
@@ -108,7 +137,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       try {
         const searchResults = await externalMediaService.searchMedia({
           query: searchQuery,
-          type: mediaType,
+          type: finalType,
           limit: 8,
         });
 
@@ -133,7 +162,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
         setIsLoading(false);
       }
     },
-    [apiStatus, showError, showWarning],
+    [apiStatus, showError, showWarning, detectTypeFromQuery, onTypeChange],
   );
 
   // Debounce da busca

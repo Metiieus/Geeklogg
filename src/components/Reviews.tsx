@@ -107,7 +107,7 @@ const Reviews: React.FC = () => {
       </div>
 
       {/* Search */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
         <div className="relative">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -132,7 +132,7 @@ const Reviews: React.FC = () => {
             return (
               <div
                 key={review.id}
-                className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 animate-slide-up"
+                className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 animate-slide-up"
               >
                 <div className="flex items-start gap-4">
                   {/* Media Cover */}
@@ -273,7 +273,7 @@ const Reviews: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-md w-full p-6 animate-slide-up">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-md w-full p-6 animate-slide-up">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
                 <Trash2 className="text-red-400" size={32} />

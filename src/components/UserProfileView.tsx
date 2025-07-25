@@ -151,7 +151,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
       </div>
 
       {/* Profile Header */}
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-white/20">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
@@ -266,7 +266,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
         <h3 className="text-xl font-semibold text-white mb-4">
           Atividade Recente
         </h3>

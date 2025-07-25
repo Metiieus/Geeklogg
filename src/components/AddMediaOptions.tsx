@@ -14,11 +14,66 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
   onManualAdd,
 }) => {
   const [isSearchMode, setIsSearchMode] = useState(false);
-  const [selectedType, setSelectedType] = useState<MediaType>("books");
+  const [selectedType, setSelectedType] = useState<MediaType>("anime");
+
+  // Função para detectar automaticamente o tipo baseado na query
+  const detectTypeFromQuery = (query: string): MediaType => {
+    const lowerQuery = query.toLowerCase();
+
+    // Animes populares e palavras-chave
+    const animeKeywords = [
+      'one piece', 'naruto', 'dragon ball', 'attack on titan', 'demon slayer',
+      'my hero academia', 'jujutsu kaisen', 'chainsaw man', 'death note',
+      'fullmetal alchemist', 'hunter x hunter', 'bleach', 'pokemon',
+      'sailor moon', 'evangelion', 'cowboy bebop', 'anime', 'manga'
+    ];
+
+    // Games e palavras-chave de jogos
+    const gameKeywords = [
+      'call of duty', 'minecraft', 'fortnite', 'league of legends', 'gta',
+      'god of war', 'cyberpunk', 'witcher', 'zelda', 'mario', 'sonic',
+      'final fantasy', 'resident evil', 'assassins creed', 'game'
+    ];
+
+    // Filmes e séries
+    const movieSeriesKeywords = [
+      'movie', 'film', 'series', 'season', 'episode', 'netflix', 'marvel',
+      'dc comics', 'star wars', 'harry potter', 'lord of the rings'
+    ];
+
+    // Livros
+    const bookKeywords = [
+      'book', 'novel', 'livro', 'romance', 'biografia', 'autobiography',
+      'cookbook', 'manual', 'guide', 'textbook'
+    ];
+
+    if (animeKeywords.some(keyword => lowerQuery.includes(keyword))) {
+      return "anime";
+    }
+
+    if (gameKeywords.some(keyword => lowerQuery.includes(keyword))) {
+      return "games";
+    }
+
+    if (bookKeywords.some(keyword => lowerQuery.includes(keyword))) {
+      return "books";
+    }
+
+    if (movieSeriesKeywords.some(keyword => lowerQuery.includes(keyword))) {
+      return "movies";
+    }
+
+    // Se não detectar, mantém anime como padrão (mais comum)
+    return selectedType;
+  };
 
   const handleResultSelect = (result: ExternalMediaResult) => {
     onExternalResultSelect(result);
     setIsSearchMode(false);
+  };
+
+  const handleTypeChange = (newType: MediaType) => {
+    setSelectedType(newType);
   };
 
   if (isSearchMode) {
@@ -48,13 +103,13 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
         {/* Barra de busca */}
         <MediaSearchBar
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={handleTypeChange}
           onResultSelect={handleResultSelect}
           placeholder="Digite o nome da mídia que deseja adicionar..."
         />
 
         {/* Opção manual */}
-        <div className="flex items-center justify-center pt-3 sm:pt-4 border-t border-slate-700">
+        <div className="flex items-center justify-center pt-3 sm:pt-4 border-t border-white/20">
           <button
             onClick={onManualAdd}
             className="flex items-center gap-2 px-3 sm:px-4 py-2 text-slate-400 hover:text-white transition-colors text-sm sm:text-base"

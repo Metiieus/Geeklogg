@@ -82,7 +82,7 @@ export default function DebugCheckout() {
   };
 
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 max-w-2xl mx-auto">
+    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-white/10 max-w-2xl mx-auto">
       <h3 className="text-lg font-semibold text-white mb-4">🔧 Debug do Checkout</h3>
       
       <div className="mb-4">

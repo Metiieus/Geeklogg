@@ -108,8 +108,8 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full overflow-hidden animate-slide-up">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-2xl w-full overflow-hidden animate-slide-up">
+        <div className="flex items-center justify-between p-6 border-b border-white/20">
           <h2 className="text-2xl font-bold text-white">Editar Favoritos</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
             <X className="text-slate-400" size={20} />
@@ -119,7 +119,7 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
           {renderCategory('characters', 'Personagens Favoritos')}
           {renderCategory('games', 'Jogos Favoritos')}
           {renderCategory('movies', 'Filmes/Séries Favoritos')}
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-700">
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/20">
             <button type="button" onClick={onClose} className="px-6 py-3 text-slate-300 hover:text-white transition-colors">Cancelar</button>
             <button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2">
               <Save size={18} /> Salvar

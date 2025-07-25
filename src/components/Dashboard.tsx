@@ -99,7 +99,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 animate-slide-in-left">
         {/* Featured Item */}
         <div className="lg:col-span-2 hover:scale-105 transition-transform duration-300">
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-slate-700/50">
+          <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
               <Star className="text-yellow-400" size={20} />
               Atualizado Recentemente
@@ -240,7 +240,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-slate-700/50 animate-fade-in hover:scale-105 transition-all duration-300">
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10 animate-fade-in hover:scale-105 transition-all duration-300">
         <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center gap-2">
           <Calendar className="text-purple-400" size={18} sm:size={20} />
           Marcos Recentes

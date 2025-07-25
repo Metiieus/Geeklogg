@@ -19,6 +19,14 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Verificação de conectividade
+const checkConnectivity = () => {
+  if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
+    return navigator.onLine;
+  }
+  return true; // Assume online se não puder verificar
+};
+
 // Verifica se todas as variáveis obrigatórias estão definidas
 const requiredEnvVars = [
   "VITE_FIREBASE_API_KEY",
@@ -62,14 +70,24 @@ export { app, auth, db };
 
 // Configuração especial para DEV e produção
 if (db) {
-  if (import.meta.env.DEV) {
-    enableIndexedDbPersistence(db).catch((err) =>
-      console.warn("⚠️ Falha ao ativar persistence:", err),
-    );
-  } else {
-    enableNetwork(db).catch((err) =>
-      console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
-    );
+  try {
+    if (import.meta.env.DEV) {
+      enableIndexedDbPersistence(db).catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn("⚠️ Multiple tabs open, persistence can only be enabled in one tab at a time.");
+        } else if (err.code === 'unimplemented') {
+          console.warn("⚠️ The current browser doesn't support all of the features required to enable persistence");
+        } else {
+          console.warn("⚠️ Falha ao ativar persistence:", err);
+        }
+      });
+    } else {
+      enableNetwork(db).catch((err) =>
+        console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
+      );
+    }
+  } catch (error) {
+    console.warn("⚠️ Erro na configuração do Firestore:", error);
   }
 }
 
@@ -79,6 +97,20 @@ export const storage = getStorage(app);
 // Mensagem final de status
 if (app) {
   console.log("Firebase inicializado");
+  if (!checkConnectivity()) {
+    console.warn("⚠️ Sem conectividade com a internet");
+  }
 } else {
   console.warn("Firebase não foi inicializado");
+}
+
+// Detectar mudanças de conectividade
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => {
+    console.log("🌐 Conectividade restaurada");
+  });
+
+  window.addEventListener('offline', () => {
+    console.warn("⚠️ Conectividade perdida");
+  });
 }

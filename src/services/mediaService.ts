@@ -114,25 +114,33 @@ export async function getMedias(): Promise<MediaItem[]> {
         }
         return hasValidId;
       })
-      .map(media => ({
-        id: media.id,
-        title: media.title || "",
-        cover: media.cover,
-        platform: media.platform,
-        status: media.status || "planned",
-        rating: media.rating,
-        hoursSpent: media.hoursSpent,
-        totalPages: media.totalPages,
-        currentPage: media.currentPage,
-        startDate: media.startDate,
-        endDate: media.endDate,
-        tags: Array.isArray(media.tags) ? media.tags : [],
-        externalLink: media.externalLink,
-        type: media.type || "games",
-        description: media.description,
-        createdAt: media.createdAt || new Date().toISOString(),
-        updatedAt: media.updatedAt || new Date().toISOString()
-      }));
+      .map(media => {
+        // Normalize old "jogos" type to "games" for backward compatibility
+        let normalizedType = media.type || "games";
+        if (normalizedType === "jogos") {
+          normalizedType = "games";
+        }
+
+        return {
+          id: media.id,
+          title: media.title || "",
+          cover: media.cover,
+          platform: media.platform,
+          status: media.status || "planned",
+          rating: media.rating,
+          hoursSpent: media.hoursSpent,
+          totalPages: media.totalPages,
+          currentPage: media.currentPage,
+          startDate: media.startDate,
+          endDate: media.endDate,
+          tags: Array.isArray(media.tags) ? media.tags : [],
+          externalLink: media.externalLink,
+          type: normalizedType,
+          description: media.description,
+          createdAt: media.createdAt || new Date().toISOString(),
+          updatedAt: media.updatedAt || new Date().toISOString()
+        };
+      });
   } catch (error) {
     console.error("Error fetching medias:", error);
     return [];

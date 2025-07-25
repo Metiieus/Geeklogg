@@ -204,9 +204,9 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 animate-fade-in overflow-y-auto">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-slate-700 max-w-2xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
           <h2 className="text-xl sm:text-2xl font-bold text-white">
             Adicionar Nova Mídia
           </h2>
@@ -467,7 +467,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
           </div>
 
           {/* Actions - Fixed at bottom */}
-          <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-4 sm:p-6 border-t border-slate-700">
+          <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-4 sm:p-6 border-t border-white/20">
             <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
               <button
                 type="button"

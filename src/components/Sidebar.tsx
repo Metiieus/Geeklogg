@@ -74,7 +74,7 @@ const Sidebar: React.FC = () => {
     <>
       {/* Desktop Sidebar */}
       <div
-        className={`hidden sm:flex fixed left-0 top-0 h-full bg-gray-900/95 backdrop-blur-xl border-r border-cyan-500/20 transition-all duration-300 z-40 ${
+        className={`hidden sm:flex fixed left-0 top-0 h-full backdrop-blur-xl border-r border-white/10 transition-all duration-300 z-40 ${
           isExpanded ? "w-64" : "w-20"
         }`}
         onMouseEnter={() => setIsExpanded(true)}
