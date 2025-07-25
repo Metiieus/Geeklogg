@@ -187,6 +187,19 @@ function App() {
     loadData();
   }, [user]);
 
+  // Global error handler for fetch failures
+  useEffect(() => {
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      if (event.reason?.message?.includes('fetch') || event.reason?.name === 'TypeError') {
+        console.warn('Network error detected:', event.reason);
+        event.preventDefault(); // Prevent console error spam
+      }
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+  }, []);
+
     const contextValue = {
     mediaItems,
     setMediaItems,
