@@ -101,7 +101,7 @@ export async function loadProfile(): Promise<Profile | null> {
   console.log("✅ UID para loadProfile:", uid);
 
   try {
-    const doc = await database.getDoc(["users"], uid);
+    const doc = await database.get(["users"], uid);
     console.log("📄 Documento carregado:", doc);
 
     if (!doc) {
