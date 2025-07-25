@@ -24,7 +24,6 @@ const mediaTypeFrames = {
   series: "ring-2 ring-purple-400/60 shadow-2xl shadow-purple-500/40 hover:ring-purple-400 hover:shadow-purple-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-purple-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
   books: "ring-2 ring-green-400/60 shadow-2xl shadow-green-500/40 hover:ring-green-400 hover:shadow-green-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-green-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
   movies: "ring-2 ring-yellow-400/60 shadow-2xl shadow-yellow-500/40 hover:ring-yellow-400 hover:shadow-yellow-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-yellow-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
-  jogos: "ring-2 ring-blue-400/60 shadow-2xl shadow-blue-500/40 hover:ring-blue-400 hover:shadow-blue-500/60 transition-all duration-500 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-blue-400/20 before:to-transparent before:animate-shimmer hover:animate-glow-pulse",
 };
 
 const mediaTypeLabels = {
@@ -125,7 +124,7 @@ const Library: React.FC = () => {
 
   const handleDeleteItem = useCallback(async (itemId: string) => {
     if (!itemId || typeof itemId !== "string" || itemId.trim() === "") {
-      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      showError('Erro', 'ID do item é inválido. Não �� possível excluir este item.');
       return;
     }
 
