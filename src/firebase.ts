@@ -60,7 +60,7 @@ let db: Firestore | null = null;
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
-  db = getFirestore(app, 'geeklog');
+  db = getFirestore(app);
 } catch (error) {
   console.warn("⚠️ Firebase initialization failed:", error);
   console.warn("App will run in offline mode. Please configure Firebase environment variables.");
