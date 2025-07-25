@@ -279,9 +279,6 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Teste temporário do Firebase */}
-      <FirebaseTest />
     </div>
   );
 };
