@@ -117,6 +117,12 @@ app.post("/api/webhook", async (req, res) => {
 // --- 6) ROTA: ATUALIZAÇÃO DO PLANO NO FIRESTORE ---
 app.post("/api/update-premium", async (req, res) => {
   try {
+    if (!isFirebaseInitialized) {
+      return res.status(503).json({
+        error: "Firebase Admin não inicializado. Configure as credenciais do Firebase."
+      });
+    }
+
     const { uid, preference_id } = req.body;
     if (!uid || !preference_id) {
       return res
