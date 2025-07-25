@@ -129,6 +129,8 @@ export { getCategoryColors, getCategoryGradient } from './tokens';
 
 // ============= DEFAULT EXPORT =============
 
+import { colors, gradients, shadows, getCategoryColors, getCategoryGradient } from './tokens';
+
 export default {
   // Quick access to core utilities
   colors,
