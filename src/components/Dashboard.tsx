@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { MediaItem, Status } from "../App";
-import FirebaseTest from "./FirebaseTest";
 
 const Dashboard: React.FC = () => {
   const { mediaItems, reviews, milestones, settings, setActivePage } =
