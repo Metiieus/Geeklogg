@@ -54,7 +54,6 @@ export async function getSettings(
     return null;
   }
 }
-}
 
 export async function saveSettings(
   userId: string,
