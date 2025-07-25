@@ -369,7 +369,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                         </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 features-grid grid-container">
             {[
               {
                 icon: Target,
