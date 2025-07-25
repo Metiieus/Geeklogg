@@ -97,7 +97,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       exit={{ opacity: 0, y: -20 }}
       whileHover={{ 
         y: -8,
-        transition: { duration: 0.3, ease: animations.easing.easeOut }
+        transition: { duration: 0.3, ease: "easeOut" }
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
