@@ -98,12 +98,13 @@ class IGDBService {
 
   async searchGames(params: IGDBSearchParams): Promise<IGDBSearchResult[]> {
     if (!this.clientId || !this.accessToken) {
-      throw new Error("IGDB API credentials not configured");
+      console.warn("IGDB API credentials not configured");
+      return [];
     }
 
     try {
       const query = this.buildQuery(params);
-      
+
       const response = await fetch(`${this.baseUrl}/games`, {
         method: "POST",
         headers: {
@@ -115,14 +116,16 @@ class IGDBService {
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        console.warn(`IGDB API error: ${response.status} ${response.statusText}`);
+        return [];
       }
 
       const games: IGDBGame[] = await response.json();
       return games.map(game => this.mapToSearchResult(game));
     } catch (error) {
-      console.error("Error searching games on IGDB:", error);
-      throw error;
+      console.warn("IGDB API not accessible (likely CORS issue):", error.message);
+      // Return empty array instead of throwing to allow fallback
+      return [];
     }
   }
 
@@ -189,13 +192,14 @@ class IGDBService {
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+        console.warn(`IGDB API error: ${response.status} ${response.statusText}`);
+        return [];
       }
 
       const games: IGDBGame[] = await response.json();
       return games.map(game => this.mapToSearchResult(game));
     } catch (error) {
-      console.error("Error fetching popular games from IGDB:", error);
+      console.warn("IGDB API not accessible for popular games:", error.message);
       return [];
     }
   }
@@ -254,7 +258,7 @@ class IGDBService {
 
       return response.ok;
     } catch (error) {
-      console.warn("IGDB API not available:", error);
+      console.warn("IGDB API not available (likely CORS restriction):", error.message);
       return false;
     }
   }
