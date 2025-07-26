@@ -542,6 +542,21 @@ export const EnhancedLibrary: React.FC = () => {
           </motion.div>
         )}
       </div>
+
+      {/* Edit Media Modal */}
+      {editingItem && (
+        <EditMediaModal
+          item={editingItem}
+          onClose={() => setEditingItem(null)}
+          onSave={(updatedItem) => {
+            const updatedItems = mediaItems.map(item =>
+              item.id === updatedItem.id ? updatedItem : item
+            );
+            setMediaItems(updatedItems);
+            setEditingItem(null);
+          }}
+        />
+      )}
     </div>
   );
 };
