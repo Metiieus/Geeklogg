@@ -42,6 +42,35 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     }
   };
 
+  const handleForgotPassword = async (resetEmail: string) => {
+    if (!resetEmail.trim()) {
+      showError("Email obrigatório", "Por favor, insira seu email para resetar a senha");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
+      showError("Email inválido", "Por favor, insira um email válido");
+      return;
+    }
+
+    setIsResettingPassword(true);
+
+    try {
+      await resetPassword(resetEmail);
+      showSuccess(
+        "Email enviado!",
+        "Verifique sua caixa de entrada para resetar sua senha"
+      );
+      setShowForgotPassword(false);
+    } catch (error: any) {
+      console.error("Erro ao resetar senha:", error);
+      const errorMessage = getErrorMessage(error);
+      showError("Erro ao resetar senha", errorMessage);
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
