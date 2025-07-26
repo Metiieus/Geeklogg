@@ -35,11 +35,15 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       case "auth/too-many-requests":
         return "Muitas tentativas de login. Tente novamente mais tarde.";
       case "auth/network-request-failed":
-        return "Erro de conexão. Verifique sua internet e tente novamente.";
+        return "Erro de conexão com o servidor. Verifique sua internet e tente novamente em alguns segundos.";
       case "auth/invalid-credential":
         return "Credenciais inválidas. Verifique email e senha.";
+      case "auth/configuration-not-found":
+        return "Configuração do Firebase não encontrada. Entre em contato com o suporte.";
+      case "auth/invalid-api-key":
+        return "Configuração inválida. Entre em contato com o suporte.";
       default:
-        return "Erro no login. Tente novamente.";
+        return "Erro no sistema. Tente novamente em alguns instantes.";
     }
   };
 
