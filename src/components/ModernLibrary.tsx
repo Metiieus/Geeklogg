@@ -56,6 +56,8 @@ const ModernLibrary: React.FC = () => {
   const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
   const [hasConnectionError, setHasConnectionError] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
 
   // Filtered and sorted items
   const filteredAndSortedItems = useMemo(() => {
