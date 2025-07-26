@@ -3,7 +3,7 @@ import { Save, X, Upload, AlertCircle } from "lucide-react";
 import { UserSettings } from "../../App";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
-import { sanitizeText } from "../../utils/sanitizer";
+import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
 
 interface EditProfileData {
   name: string;
