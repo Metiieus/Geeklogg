@@ -59,6 +59,15 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       return;
     }
 
+    // Verificar se o Firebase está inicializado
+    if (!auth) {
+      showError(
+        "Erro de Configuração",
+        "Sistema não configurado corretamente. Entre em contato com o suporte."
+      );
+      return;
+    }
+
     setIsResettingPassword(true);
 
     try {
