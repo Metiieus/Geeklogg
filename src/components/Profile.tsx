@@ -18,6 +18,7 @@ import { saveProfile as saveProfileService } from "../services/profileService";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import MercadoPagoButton from "./MercadoPagoButton";
+import { ConditionalPremiumBadge } from "./PremiumBadge";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
