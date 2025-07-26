@@ -4,6 +4,7 @@ import { Bot, X, Send, Sparkles, Crown, Brain, Zap, ChevronRight, Shuffle } from
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
+import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
 import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
