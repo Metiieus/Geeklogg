@@ -14,7 +14,9 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const { login, resetPassword } = useAuth();
   const { showError, showSuccess } = useToast();
 
   const getErrorMessage = (error: any): string => {
