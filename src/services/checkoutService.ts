@@ -6,19 +6,19 @@ const getApiUrl = () => {
   const isDev = hostname === 'localhost' || hostname === '127.0.0.1';
 
   if (isDev) {
-    return 'http://localhost:4242';
+    return 'http://localhost:8080';
   } else {
     // Para ambiente hospedado no Builder.io, vamos tentar várias opções
     const currentOrigin = window.location.origin;
 
-    // Se estivermos no domínio do Builder.io, tenta usar a mesma URL mas porta 4242
+    // Se estivermos no domínio do Builder.io, tenta usar a mesma URL mas porta 8080
     if (hostname.includes('fly.dev') || hostname.includes('builder.io')) {
       // Tenta usar HTTP na mesma porta para testar
       return currentOrigin;
     }
 
     // Fallback para localhost em desenvolvimento
-    return 'http://localhost:4242';
+    return 'http://localhost:8080';
   }
 };
 
@@ -64,7 +64,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
 
     if (!isBackendAvailable) {
       // Tenta localhost como fallback
-      const fallbackUrl = 'http://localhost:4242';
+      const fallbackUrl = 'http://localhost:8080';
       console.log('Tentando fallback:', fallbackUrl);
 
       const isFallbackAvailable = await testBackendConnectivity(fallbackUrl);

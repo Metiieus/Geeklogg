@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase';
 
 interface UserProfile {
@@ -20,6 +20,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -87,13 +88,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await signOut(auth);
   };
 
+  const resetPassword = async (email: string) => {
+    if (!auth) {
+      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    }
+
+    // Verificar conectividade básica
+    if (typeof navigator !== 'undefined' && 'onLine' in navigator && !navigator.onLine) {
+      throw new Error('auth/network-request-failed');
+    }
+
+    console.log('🔄 Tentando enviar email de reset para:', email);
+    console.log('🔧 Current origin:', window.location.origin);
+    console.log('🔧 Firebase config check:', {
+      hasAuth: !!auth,
+      authDomain: auth?.config?.authDomain,
+      apiKey: auth?.config?.apiKey ? 'Present' : 'Missing'
+    });
+
+    try {
+      // Enviar email sem configurações customizadas para evitar problemas de CORS/rede
+      await sendPasswordResetEmail(auth, email);
+      console.log('✅ Email de reset enviado com sucesso');
+    } catch (error) {
+      console.error('❌ Erro ao enviar email de reset:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     profile,
     loading,
     login,
     register,
-    logout
+    logout,
+    resetPassword
   };
 
   return (

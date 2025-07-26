@@ -3,7 +3,7 @@ import { X, Save, Star } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { Review } from "../../App";
 import { addReview } from "../../services/reviewService";
-import { sanitizeText } from "../../utils/sanitizer";
+import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
 
 interface AddReviewModalProps {
   onClose: () => void;
@@ -43,13 +43,11 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
       typeof value === "string" &&
       (field === "content" || field === "title")
     ) {
-      console.log("Sanitizing field:", field, "value:", value);
-      // Teste temporário - desabilitar sanitização do content
+      // Para o content da resenha, usar sanitizeBioText para preservar espaços
       if (field === "content") {
-        // Apenas limitar o tamanho sem sanitizar
-        value = value.length > 5000 ? value.substring(0, 5000) : value;
+        value = sanitizeBioText(value, 5000);
       } else {
-        value = sanitizeText(value, field === "content" ? 5000 : 200);
+        value = sanitizeText(value, 200);
       }
     }
     setFormData((prev) => ({ ...prev, [field]: value }));

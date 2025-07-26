@@ -4,6 +4,7 @@ import { Bot, X, Send, Sparkles, Crown, Brain, Zap, ChevronRight, Shuffle } from
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
+import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
 import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
@@ -298,7 +299,13 @@ ${config.callToAction}
           <div className="hidden sm:block px-4 py-3 pr-6">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white text-lg">Archivius</h3>
-              {isPremium && <Crown className="w-4 h-4 text-cyan-400" />}
+              <ConditionalPremiumBadge
+                isPremium={isPremium}
+                variant="icon-only"
+                size="sm"
+                animated={false}
+                className="text-cyan-400"
+              />
             </div>
             <div className="flex items-center gap-2">
               <div

@@ -180,7 +180,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           </motion.div>
         )}
 
-        {/* Action Menu */}
+        {/* Desktop Action Menu (hover) */}
         <AnimatePresence>
           {isHovered && (
             <motion.div
@@ -188,7 +188,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/60 flex items-center justify-center gap-3"
+              className="absolute inset-0 bg-black/60 flex items-center justify-center gap-3 hidden md:flex"
             >
               {onEdit && (
                 <motion.button
@@ -248,6 +248,34 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Mobile Action Buttons (always visible) */}
+        <div className="absolute top-3 right-3 flex gap-1.5 md:hidden">
+          {onEdit && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
+              className="p-2.5 bg-slate-900/85 backdrop-blur-sm rounded-xl border border-slate-600/50 text-slate-200 hover:text-white hover:bg-slate-800/95 transition-all duration-200 shadow-xl"
+            >
+              <Edit size={16} />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(item);
+              }}
+              className="p-2.5 bg-red-900/85 backdrop-blur-sm rounded-xl border border-red-600/50 text-red-200 hover:text-white hover:bg-red-800/95 transition-all duration-200 shadow-xl"
+            >
+              <Trash2 size={16} />
+            </motion.button>
+          )}
+        </div>
       </div>
 
       {/* Content Section */}
