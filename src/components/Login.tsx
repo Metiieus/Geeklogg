@@ -80,12 +80,12 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     } catch (error: any) {
       console.error("Erro ao resetar senha:", error);
 
-      // Se for erro de rede e ainda não tentou 2 vezes, tenta novamente
-      if (error?.code === "auth/network-request-failed" && retryCount < 2) {
-        console.log(`Tentando novamente... (tentativa ${retryCount + 1}/2)`);
+      // Se for erro de rede e ainda não tentou 1 vez, tenta novamente com delay maior
+      if (error?.code === "auth/network-request-failed" && retryCount < 1) {
+        console.log(`Tentando novamente com delay maior... (tentativa ${retryCount + 1}/1)`);
         setTimeout(() => {
           handleForgotPassword(resetEmail, retryCount + 1);
-        }, 2000); // Aguarda 2 segundos antes de tentar novamente
+        }, 5000); // Aguarda 5 segundos antes de tentar novamente
         return;
       }
 
@@ -94,8 +94,8 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       // Mensagem específica para problemas de conectividade persistentes
       if (error?.code === "auth/network-request-failed") {
         showError(
-          "Problema de Conectividade",
-          "Não conseguimos conectar com o servidor do Firebase. Verifique sua conexão com a internet e tente novamente mais tarde. 🌐"
+          "Serviço Temporariamente Indisponível",
+          "O serviço de reset de senha está temporariamente indisponível. Tente novamente em alguns minutos ou entre em contato pelo suporte. 📧"
         );
       } else {
         showError("Erro ao resetar senha", errorMessage);
