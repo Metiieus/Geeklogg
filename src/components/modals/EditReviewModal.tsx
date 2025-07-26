@@ -3,7 +3,7 @@ import { X, Save, Star } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { Review } from "../../App";
 import { updateReview } from "../../services/reviewService";
-import { sanitizeText } from "../../utils/sanitizer";
+import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
 
 interface EditReviewModalProps {
   review: Review;
