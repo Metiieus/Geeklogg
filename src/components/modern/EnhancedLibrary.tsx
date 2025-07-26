@@ -566,6 +566,21 @@ export const EnhancedLibrary: React.FC = () => {
           }}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        title="Excluir Item"
+        message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!` : ''}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowDeleteConfirm(false);
+          setItemToDelete(null);
+        }}
+      />
     </div>
   );
 };
