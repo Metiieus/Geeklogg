@@ -180,7 +180,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           </motion.div>
         )}
 
-        {/* Action Menu */}
+        {/* Desktop Action Menu (hover) */}
         <AnimatePresence>
           {isHovered && (
             <motion.div
@@ -188,7 +188,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/60 flex items-center justify-center gap-3"
+              className="absolute inset-0 bg-black/60 flex items-center justify-center gap-3 hidden md:flex"
             >
               {onEdit && (
                 <motion.button
@@ -248,6 +248,34 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Mobile Action Buttons (always visible) */}
+        <div className="absolute bottom-2 right-2 flex gap-1 md:hidden">
+          {onEdit && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
+              className="p-2 bg-black/60 backdrop-blur-sm rounded-full border border-white/20 text-white hover:bg-black/80 transition-all duration-200"
+            >
+              <Edit size={14} />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(item);
+              }}
+              className="p-2 bg-red-500/60 backdrop-blur-sm rounded-full border border-red-500/40 text-white hover:bg-red-500/80 transition-all duration-200"
+            >
+              <Trash2 size={14} />
+            </motion.button>
+          )}
+        </div>
       </div>
 
       {/* Content Section */}
