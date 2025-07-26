@@ -116,33 +116,39 @@ const ModernLibrary: React.FC = () => {
   }, [mediaItems]);
 
   // Event handlers
-  const handleDeleteItem = useCallback(async (item: MediaItem) => {
+  const handleDeleteItem = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
       showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
       return;
     }
 
-    const confirmMessage = `Vai apagar "${item.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
+    setItemToDelete(item);
+    setShowDeleteConfirm(true);
+  }, [showError]);
 
-    if (confirm(confirmMessage)) {
-      try {
-        await deleteMedia(item.id);
-        setMediaItems(mediaItems.filter(mediaItem => mediaItem.id !== item.id));
-        showSuccess('Item removido com sucesso!');
-        setHasConnectionError(false); // Reset error state on success
-      } catch (err: any) {
-        console.error('Erro ao excluir mídia', err);
+  const confirmDelete = useCallback(async () => {
+    if (!itemToDelete) return;
 
-        // Check if it's a connectivity error
-        if (err.message?.includes('fetch') || err.message?.includes('network') || err.name === 'TypeError') {
-          setHasConnectionError(true);
-          showError('Erro de Conectividade', 'Verifique sua conexão com a internet e tente novamente.');
-        } else {
-          showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
-        }
+    try {
+      await deleteMedia(itemToDelete.id);
+      setMediaItems(mediaItems.filter(mediaItem => mediaItem.id !== itemToDelete.id));
+      showSuccess('Item removido com sucesso!');
+      setHasConnectionError(false); // Reset error state on success
+    } catch (err: any) {
+      console.error('Erro ao excluir mídia', err);
+
+      // Check if it's a connectivity error
+      if (err.message?.includes('fetch') || err.message?.includes('network') || err.name === 'TypeError') {
+        setHasConnectionError(true);
+        showError('Erro de Conectividade', 'Verifique sua conexão com a internet e tente novamente.');
+      } else {
+        showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
       }
+    } finally {
+      setItemToDelete(null);
+      setShowDeleteConfirm(false);
     }
-  }, [mediaItems, setMediaItems, showSuccess, showError]);
+  }, [itemToDelete, mediaItems, setMediaItems, showSuccess, showError]);
 
   const handleEditItem = useCallback((updatedItem: MediaItem) => {
     setMediaItems(
