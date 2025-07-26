@@ -64,7 +64,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
 
     if (!isBackendAvailable) {
       // Tenta localhost como fallback
-      const fallbackUrl = 'http://localhost:4242';
+      const fallbackUrl = 'http://localhost:8080';
       console.log('Tentando fallback:', fallbackUrl);
 
       const isFallbackAvailable = await testBackendConnectivity(fallbackUrl);
