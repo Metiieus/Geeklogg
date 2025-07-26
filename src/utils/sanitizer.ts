@@ -86,7 +86,7 @@ export const sanitizeBioText = (input: string, maxLength?: number): string => {
 
   let sanitized = input;
 
-  // Remove tags script
+  // Remove apenas tags HTML perigosas, preservando espaços
   sanitized = sanitized.replace(
     /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
     "",
@@ -110,12 +110,11 @@ export const sanitizeBioText = (input: string, maxLength?: number): string => {
     "",
   );
 
-  // Escape HTML restante
-  sanitized = escapeHtml(sanitized);
+  // Remove apenas tags HTML básicas, preservando texto e espaços
+  sanitized = sanitized.replace(/<[^>]*>/g, "");
 
-  // Para BIO, preserva espaços e quebras de linha naturais
-  // Remove apenas espaços excessivos no final das linhas
-  sanitized = sanitized.replace(/[ \t]+$/gm, '');
+  // NÃO escapar HTML nem mexer nos espaços para preservar formatação da BIO
+  // Manter texto exatamente como digitado pelo usuário
 
   // Aplicar limite de caracteres se especificado
   if (maxLength && sanitized.length > maxLength) {
