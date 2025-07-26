@@ -26,6 +26,7 @@ import { ModernCard, GlassCard, InteractiveCard } from './ModernCard';
 import { ModernButton, GradientButton, NeonButton, GhostButton } from './ModernButton';
 import { enhancedExternalMediaService, EnhancedExternalMediaResult } from '../../infrastructure/services/EnhancedExternalMediaService';
 import { useToast } from '../../context/ToastContext';
+import { deleteMedia } from '../../services/mediaService';
 
 const mediaTypeConfig = {
   games: { 
