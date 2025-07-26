@@ -4,6 +4,7 @@ import { LogIn, User, Lock, Sparkles, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
+import { auth } from "../firebase";
 
 interface LoginProps {
   onCancel?: () => void;
