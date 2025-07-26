@@ -58,8 +58,8 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     try {
       await resetPassword(resetEmail);
       showSuccess(
-        "Email enviado!",
-        "Verifique sua caixa de entrada para resetar sua senha"
+        "🎉 Email mágico enviado!",
+        "O Archivius mandou um email especial para você! Verifique sua caixa de entrada (e a pasta de spam também) para redefinir sua senha ✨"
       );
       setShowForgotPassword(false);
     } catch (error: any) {
