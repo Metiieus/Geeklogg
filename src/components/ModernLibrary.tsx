@@ -24,6 +24,7 @@ import { EditMediaModal } from './modals/EditMediaModal';
 import { AddMediaOptions } from './AddMediaOptions';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
+import { ConfirmationModal } from './ConfirmationModal';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
