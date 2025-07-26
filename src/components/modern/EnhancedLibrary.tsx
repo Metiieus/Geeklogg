@@ -105,6 +105,32 @@ export const EnhancedLibrary: React.FC = () => {
     books: EnhancedExternalMediaResult[];
   }>({ games: [], movies: [], books: [] });
   const [isLoadingTrending, setIsLoadingTrending] = useState(false);
+  const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
+
+  // Event handlers
+  const handleDeleteItem = useCallback(async (item: MediaItem) => {
+    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
+      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      return;
+    }
+
+    const confirmMessage = `Vai apagar "${item.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!`;
+
+    if (confirm(confirmMessage)) {
+      try {
+        await deleteMedia(item.id);
+        setMediaItems(mediaItems.filter(mediaItem => mediaItem.id !== item.id));
+        showSuccess('Item removido com sucesso!');
+      } catch (err: any) {
+        console.error('Erro ao excluir mídia', err);
+        showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
+      }
+    }
+  }, [mediaItems, setMediaItems, showError, showSuccess]);
+
+  const handleEditItem = useCallback((item: MediaItem) => {
+    setEditingItem(item);
+  }, []);
 
   // Load trending content
   useEffect(() => {
@@ -252,7 +278,7 @@ export const EnhancedLibrary: React.FC = () => {
           className="grid grid-cols-2 lg:grid-cols-5 gap-4"
         >
           {[
-            { label: "Total", value: stats.total, icon: "📚", color: "from-blue-500 to-cyan-500" },
+            { label: "Total", value: stats.total, icon: "��", color: "from-blue-500 to-cyan-500" },
             { label: "Concluídos", value: stats.completed, icon: "✅", color: "from-green-500 to-emerald-500" },
             { label: "Em Progresso", value: stats.inProgress, icon: "⏳", color: "from-yellow-500 to-orange-500" },
             { label: "Horas Totais", value: `${stats.totalHours}h`, icon: "⏱️", color: "from-purple-500 to-pink-500" },
