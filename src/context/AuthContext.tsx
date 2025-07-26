@@ -93,15 +93,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
     }
 
-    // Configurações personalizadas para o email
-    const actionCodeSettings = {
-      // URL para onde o usuário será redirecionado após redefinir a senha
-      url: window.location.origin + '/login',
-      // Se true, a operação será completada no mesmo dispositivo onde foi iniciada
-      handleCodeInApp: true,
-    };
+    // Verificar conectividade básica
+    if (typeof navigator !== 'undefined' && 'onLine' in navigator && !navigator.onLine) {
+      throw new Error('auth/network-request-failed');
+    }
 
-    await sendPasswordResetEmail(auth, email, actionCodeSettings);
+    console.log('🔄 Tentando enviar email de reset para:', email);
+
+    try {
+      // Configurações personalizadas para o email
+      const actionCodeSettings = {
+        // URL para onde o usuário será redirecionado após redefinir a senha
+        url: window.location.origin,
+        // Se true, a operação será completada no mesmo dispositivo onde foi iniciada
+        handleCodeInApp: false, // Mudando para false para evitar problemas
+      };
+
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      console.log('✅ Email de reset enviado com sucesso');
+    } catch (error) {
+      console.error('❌ Erro ao enviar email de reset:', error);
+      throw error;
+    }
   };
 
   const value: AuthContextType = {
