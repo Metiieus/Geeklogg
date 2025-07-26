@@ -341,7 +341,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <textarea
               value={local.bio}
               onChange={(e) => {
-                const sanitizedBio = sanitizeText(e.target.value, 1000);
+                const sanitizedBio = sanitizeBioText(e.target.value, 1000);
                 setLocal((prev) => ({ ...prev, bio: sanitizedBio }));
               }}
               rows={4}
