@@ -3,7 +3,7 @@ import { Save, X, Upload, AlertCircle } from "lucide-react";
 import { UserSettings } from "../../App";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
-import { sanitizeText } from "../../utils/sanitizer";
+import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
 
 interface EditProfileData {
   name: string;
@@ -341,7 +341,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <textarea
               value={local.bio}
               onChange={(e) => {
-                const sanitizedBio = sanitizeText(e.target.value, 1000);
+                const sanitizedBio = sanitizeBioText(e.target.value, 1000);
                 setLocal((prev) => ({ ...prev, bio: sanitizedBio }));
               }}
               rows={4}

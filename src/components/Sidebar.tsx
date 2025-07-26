@@ -17,6 +17,7 @@ import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { ActivePage } from "../App";
+import { ConditionalPremiumBadge } from "./PremiumBadge";
 
 interface NavItem {
   id: ActivePage;
@@ -106,11 +107,12 @@ const Sidebar: React.FC = () => {
                 alt="GeekLog"
                 className="w-12 sm:w-16 h-12 sm:h-16 object-contain object-cover"
               />
-              {isPremium && (
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                  <Crown className="w-3 h-3 text-white" />
-                </div>
-              )}
+              <ConditionalPremiumBadge
+                isPremium={isPremium}
+                variant="avatar"
+                size="sm"
+                animated={true}
+              />
             </div>
             {isExpanded && (
               <div className="ml-3 overflow-hidden">
@@ -118,9 +120,15 @@ const Sidebar: React.FC = () => {
                   GeekLog
                 </h1>
                 {isPremium && (
-                  <p className="text-xs text-purple-400 whitespace-nowrap">
-                    Premium
-                  </p>
+                  <div className="flex items-center">
+                    <ConditionalPremiumBadge
+                      isPremium={isPremium}
+                      variant="inline"
+                      size="sm"
+                      showLabel={true}
+                      animated={false}
+                    />
+                  </div>
                 )}
               </div>
             )}

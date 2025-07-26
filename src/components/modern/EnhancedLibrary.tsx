@@ -26,6 +26,9 @@ import { ModernCard, GlassCard, InteractiveCard } from './ModernCard';
 import { ModernButton, GradientButton, NeonButton, GhostButton } from './ModernButton';
 import { enhancedExternalMediaService, EnhancedExternalMediaResult } from '../../infrastructure/services/EnhancedExternalMediaService';
 import { useToast } from '../../context/ToastContext';
+import { deleteMedia } from '../../services/mediaService';
+import { EditMediaModal } from '../modals/EditMediaModal';
+import { ConfirmationModal } from '../ConfirmationModal';
 
 const mediaTypeConfig = {
   games: { 
@@ -104,6 +107,40 @@ export const EnhancedLibrary: React.FC = () => {
     books: EnhancedExternalMediaResult[];
   }>({ games: [], movies: [], books: [] });
   const [isLoadingTrending, setIsLoadingTrending] = useState(false);
+  const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
+
+  // Event handlers
+  const handleDeleteItem = useCallback((item: MediaItem) => {
+    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
+      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
+      return;
+    }
+
+    setItemToDelete(item);
+    setShowDeleteConfirm(true);
+  }, [showError]);
+
+  const confirmDelete = useCallback(async () => {
+    if (!itemToDelete) return;
+
+    try {
+      await deleteMedia(itemToDelete.id);
+      setMediaItems(mediaItems.filter(mediaItem => mediaItem.id !== itemToDelete.id));
+      showSuccess('Item removido com sucesso!');
+    } catch (err: any) {
+      console.error('Erro ao excluir mídia', err);
+      showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
+    } finally {
+      setItemToDelete(null);
+      setShowDeleteConfirm(false);
+    }
+  }, [itemToDelete, mediaItems, setMediaItems, showError, showSuccess]);
+
+  const handleEditItem = useCallback((item: MediaItem) => {
+    setEditingItem(item);
+  }, []);
 
   // Load trending content
   useEffect(() => {
@@ -475,7 +512,11 @@ export const EnhancedLibrary: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 {viewMode === 'grid' ? (
-                  <MediaGridCard item={item} />
+                  <MediaGridCard
+                    item={item}
+                    onEdit={handleEditItem}
+                    onDelete={handleDeleteItem}
+                  />
                 ) : (
                   <MediaListCard item={item} />
                 )}
@@ -510,12 +551,46 @@ export const EnhancedLibrary: React.FC = () => {
           </motion.div>
         )}
       </div>
+
+      {/* Edit Media Modal */}
+      {editingItem && (
+        <EditMediaModal
+          item={editingItem}
+          onClose={() => setEditingItem(null)}
+          onSave={(updatedItem) => {
+            const updatedItems = mediaItems.map(item =>
+              item.id === updatedItem.id ? updatedItem : item
+            );
+            setMediaItems(updatedItems);
+            setEditingItem(null);
+          }}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        title="Excluir Item"
+        message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!` : ''}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowDeleteConfirm(false);
+          setItemToDelete(null);
+        }}
+      />
     </div>
   );
 };
 
 // Helper components
-const MediaGridCard: React.FC<{ item: MediaItem }> = ({ item }) => {
+const MediaGridCard: React.FC<{
+  item: MediaItem;
+  onEdit?: (item: MediaItem) => void;
+  onDelete?: (item: MediaItem) => void;
+}> = ({ item, onEdit, onDelete }) => {
   const config = mediaTypeConfig[item.type];
   const statusConfig_local = statusConfig[item.status];
 
@@ -523,35 +598,75 @@ const MediaGridCard: React.FC<{ item: MediaItem }> = ({ item }) => {
     <InteractiveCard className="group">
       <div className="aspect-[3/4] bg-slate-700 rounded-lg overflow-hidden relative mb-3">
         {item.cover ? (
-          <img 
-            src={item.cover} 
-            alt={item.title} 
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+          <img
+            src={item.cover}
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <config.icon className={config.textColor} size={48} />
           </div>
         )}
-        
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+
+        {/* Desktop Overlay (hover) */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 hidden md:flex">
           <div className="flex gap-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-            >
-              <Edit size={16} className="text-white" />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
-            >
-              <Trash2 size={16} className="text-white" />
-            </motion.button>
+            {onEdit && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(item);
+                }}
+                className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+              >
+                <Edit size={16} className="text-white" />
+              </motion.button>
+            )}
+            {onDelete && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item);
+                }}
+                className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
+              >
+                <Trash2 size={16} className="text-white" />
+              </motion.button>
+            )}
           </div>
+        </div>
+
+        {/* Mobile Action Buttons (always visible) */}
+        <div className="absolute top-2 right-2 flex gap-1.5 md:hidden">
+          {onEdit && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
+              className="p-2 bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-600/50 text-slate-300 hover:text-white hover:bg-slate-800/90 transition-all duration-200 shadow-lg"
+            >
+              <Edit size={14} />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(item);
+              }}
+              className="p-2 bg-red-900/80 backdrop-blur-sm rounded-lg border border-red-600/50 text-red-300 hover:text-white hover:bg-red-800/90 transition-all duration-200 shadow-lg"
+            >
+              <Trash2 size={14} />
+            </motion.button>
+          )}
         </div>
 
         {/* Status badge */}

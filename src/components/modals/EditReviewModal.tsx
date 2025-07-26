@@ -3,7 +3,7 @@ import { X, Save, Star } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { Review } from "../../App";
 import { updateReview } from "../../services/reviewService";
-import { sanitizeText } from "../../utils/sanitizer";
+import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
 
 interface EditReviewModalProps {
   review: Review;
@@ -55,7 +55,12 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({
       typeof value === "string" &&
       (field === "content" || field === "title")
     ) {
-      value = sanitizeText(value, field === "content" ? 5000 : 200);
+      // Para o content da resenha, usar sanitizeBioText para preservar espaços
+      if (field === "content") {
+        value = sanitizeBioText(value, 5000);
+      } else {
+        value = sanitizeText(value, 200);
+      }
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };

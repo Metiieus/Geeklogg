@@ -79,6 +79,52 @@ export const sanitizeText = (input: string, maxLength?: number): string => {
 };
 
 /**
+ * Sanitiza texto preservando espaços para campos como BIO
+ */
+export const sanitizeBioText = (input: string, maxLength?: number): string => {
+  if (!input) return "";
+
+  let sanitized = input;
+
+  // Remove apenas tags HTML perigosas, preservando espaços
+  sanitized = sanitized.replace(
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+    "",
+  );
+
+  // Remove javascript: links
+  sanitized = sanitized.replace(/javascript:/gi, "");
+
+  // Remove event handlers (onclick, onload, etc)
+  sanitized = sanitized.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, "");
+
+  // Remove style tags
+  sanitized = sanitized.replace(
+    /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,
+    "",
+  );
+
+  // Remove iframe, object, embed tags
+  sanitized = sanitized.replace(
+    /<(iframe|object|embed)\b[^<]*(?:(?!<\/\1>)<[^<]*)*<\/\1>/gi,
+    "",
+  );
+
+  // Remove apenas tags HTML básicas, preservando texto e espaços
+  sanitized = sanitized.replace(/<[^>]*>/g, "");
+
+  // NÃO escapar HTML nem mexer nos espaços para preservar formatação da BIO
+  // Manter texto exatamente como digitado pelo usuário
+
+  // Aplicar limite de caracteres se especificado
+  if (maxLength && sanitized.length > maxLength) {
+    sanitized = sanitized.substring(0, maxLength);
+  }
+
+  return sanitized;
+};
+
+/**
  * Valida e sanitiza URLs
  */
 export const sanitizeUrl = (url: string): string | null => {
@@ -200,6 +246,7 @@ export default {
   stripHtml,
   escapeHtml,
   sanitizeText,
+  sanitizeBioText,
   sanitizeUrl,
   sanitizeTags,
   validateFileInput,

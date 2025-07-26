@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { LogIn, User, Lock, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { LogIn, User, Lock, Sparkles, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
+import { auth } from "../firebase";
 
 interface LoginProps {
   onCancel?: () => void;
@@ -14,7 +16,9 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const { login, resetPassword } = useAuth();
   const { showError, showSuccess } = useToast();
 
   const getErrorMessage = (error: any): string => {
@@ -32,11 +36,72 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       case "auth/too-many-requests":
         return "Muitas tentativas de login. Tente novamente mais tarde.";
       case "auth/network-request-failed":
-        return "Erro de conexão. Verifique sua internet e tente novamente.";
+        return "Erro de conexão com o servidor. Verifique sua internet e tente novamente em alguns segundos.";
       case "auth/invalid-credential":
         return "Credenciais inválidas. Verifique email e senha.";
+      case "auth/configuration-not-found":
+        return "Configuração do Firebase não encontrada. Entre em contato com o suporte.";
+      case "auth/invalid-api-key":
+        return "Configuração inválida. Entre em contato com o suporte.";
       default:
-        return "Erro no login. Tente novamente.";
+        return "Erro no sistema. Tente novamente em alguns instantes.";
+    }
+  };
+
+  const handleForgotPassword = async (resetEmail: string, retryCount = 0) => {
+    if (!resetEmail.trim()) {
+      showError("Email obrigatório", "Por favor, insira seu email para resetar a senha");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
+      showError("Email inválido", "Por favor, insira um email válido");
+      return;
+    }
+
+    // Verificar se o Firebase está inicializado
+    if (!auth) {
+      showError(
+        "Erro de Configuração",
+        "Sistema não configurado corretamente. Entre em contato com o suporte."
+      );
+      return;
+    }
+
+    setIsResettingPassword(true);
+
+    try {
+      await resetPassword(resetEmail);
+      showSuccess(
+        "🎉 Email mágico enviado!",
+        "O Archivius mandou um email especial para você! Verifique sua caixa de entrada (e a pasta de spam também) para redefinir sua senha ✨"
+      );
+      setShowForgotPassword(false);
+    } catch (error: any) {
+      console.error("Erro ao resetar senha:", error);
+
+      // Se for erro de rede e ainda não tentou 1 vez, tenta novamente com delay maior
+      if (error?.code === "auth/network-request-failed" && retryCount < 1) {
+        console.log(`Tentando novamente com delay maior... (tentativa ${retryCount + 1}/1)`);
+        setTimeout(() => {
+          handleForgotPassword(resetEmail, retryCount + 1);
+        }, 5000); // Aguarda 5 segundos antes de tentar novamente
+        return;
+      }
+
+      const errorMessage = getErrorMessage(error);
+
+      // Mensagem específica para problemas de conectividade persistentes
+      if (error?.code === "auth/network-request-failed") {
+        showError(
+          "Serviço Temporariamente Indisponível",
+          "O serviço de reset de senha está temporariamente indisponível. Tente novamente em alguns minutos ou entre em contato pelo suporte. 📧"
+        );
+      } else {
+        showError("Erro ao resetar senha", errorMessage);
+      }
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -158,6 +223,17 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
               />
             </div>
 
+            {/* Forgot Password Link */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
+
             {/* Login Button - responsivo */}
             <button
               type="submit"
@@ -193,6 +269,119 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
           </button>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 rounded-3xl border border-cyan-500/20 max-w-lg w-full overflow-hidden shadow-2xl relative"
+          >
+            {/* Background Effects */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-3xl bg-cyan-500/10"></div>
+              <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full blur-3xl bg-pink-500/10"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full blur-xl bg-purple-500/10"></div>
+            </div>
+
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between p-8 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
+                    Archivius te Ajuda! 🤖
+                  </h2>
+                  <p className="text-slate-400 text-sm">Redefinição de Senha</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowForgotPassword(false)}
+                className="p-2 hover:bg-slate-700/50 rounded-xl transition-colors"
+              >
+                <X className="text-slate-400 hover:text-white" size={24} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Esqueceu sua senha? 😅
+                </h3>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  Relaxa! O Archivius vai mandar um email mágico ✨ para você redefinir sua senha.
+                  É só digitar seu email aí embaixo que ele resolve tudo para você! 🚀
+                </p>
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleForgotPassword(email);
+                }}
+                className="space-y-6"
+              >
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-cyan-400" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Digite seu email mágico ✉️"
+                    required
+                    className="w-full pl-12 pr-4 py-4 bg-gray-900/50 border border-gray-700 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(false)}
+                    className="px-6 py-3 text-slate-300 hover:text-white hover:bg-slate-700/30 transition-all duration-200 rounded-xl"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isResettingPassword}
+                    className={`px-8 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                      isResettingPassword
+                        ? "bg-slate-600/50 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 hover:shadow-lg hover:shadow-cyan-500/25"
+                    } text-white`}
+                  >
+                    {isResettingPassword ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Enviando magia...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Enviar Email Mágico
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-xs text-slate-500">
+                  💡 Dica: Verifique sua caixa de spam também!
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
