@@ -108,6 +108,8 @@ export const EnhancedLibrary: React.FC = () => {
   }>({ games: [], movies: [], books: [] });
   const [isLoadingTrending, setIsLoadingTrending] = useState(false);
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
 
   // Event handlers
   const handleDeleteItem = useCallback(async (item: MediaItem) => {
