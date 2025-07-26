@@ -278,7 +278,7 @@ export const EnhancedLibrary: React.FC = () => {
           className="grid grid-cols-2 lg:grid-cols-5 gap-4"
         >
           {[
-            { label: "Total", value: stats.total, icon: "��", color: "from-blue-500 to-cyan-500" },
+            { label: "Total", value: stats.total, icon: "📚", color: "from-blue-500 to-cyan-500" },
             { label: "Concluídos", value: stats.completed, icon: "✅", color: "from-green-500 to-emerald-500" },
             { label: "Em Progresso", value: stats.inProgress, icon: "⏳", color: "from-yellow-500 to-orange-500" },
             { label: "Horas Totais", value: `${stats.totalHours}h`, icon: "⏱️", color: "from-purple-500 to-pink-500" },
@@ -542,7 +542,11 @@ export const EnhancedLibrary: React.FC = () => {
 };
 
 // Helper components
-const MediaGridCard: React.FC<{ item: MediaItem }> = ({ item }) => {
+const MediaGridCard: React.FC<{
+  item: MediaItem;
+  onEdit?: (item: MediaItem) => void;
+  onDelete?: (item: MediaItem) => void;
+}> = ({ item, onEdit, onDelete }) => {
   const config = mediaTypeConfig[item.type];
   const statusConfig_local = statusConfig[item.status];
 
@@ -550,35 +554,75 @@ const MediaGridCard: React.FC<{ item: MediaItem }> = ({ item }) => {
     <InteractiveCard className="group">
       <div className="aspect-[3/4] bg-slate-700 rounded-lg overflow-hidden relative mb-3">
         {item.cover ? (
-          <img 
-            src={item.cover} 
-            alt={item.title} 
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+          <img
+            src={item.cover}
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <config.icon className={config.textColor} size={48} />
           </div>
         )}
-        
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+
+        {/* Desktop Overlay (hover) */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 hidden md:flex">
           <div className="flex gap-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-            >
-              <Edit size={16} className="text-white" />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
-            >
-              <Trash2 size={16} className="text-white" />
-            </motion.button>
+            {onEdit && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(item);
+                }}
+                className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+              >
+                <Edit size={16} className="text-white" />
+              </motion.button>
+            )}
+            {onDelete && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item);
+                }}
+                className="p-2 bg-red-500/20 backdrop-blur-sm rounded-full hover:bg-red-500/30 transition-colors"
+              >
+                <Trash2 size={16} className="text-white" />
+              </motion.button>
+            )}
           </div>
+        </div>
+
+        {/* Mobile Action Buttons (always visible) */}
+        <div className="absolute bottom-2 right-2 flex gap-1 md:hidden">
+          {onEdit && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
+              className="p-1.5 bg-black/60 backdrop-blur-sm rounded-full border border-white/20 text-white hover:bg-black/80 transition-all duration-200"
+            >
+              <Edit size={12} />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(item);
+              }}
+              className="p-1.5 bg-red-500/60 backdrop-blur-sm rounded-full border border-red-500/40 text-white hover:bg-red-500/80 transition-all duration-200"
+            >
+              <Trash2 size={12} />
+            </motion.button>
+          )}
         </div>
 
         {/* Status badge */}
