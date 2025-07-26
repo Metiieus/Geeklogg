@@ -50,6 +50,13 @@ const missingVars = requiredEnvVars.filter((varName) => {
 if (missingVars.length > 0) {
   console.error("❌ Firebase config incompleta:", missingVars);
   console.warn("Verifique seu arquivo .env");
+} else {
+  console.log("✅ Todas as variáveis do Firebase estão definidas");
+  console.log("🔧 Firebase config:", {
+    apiKey: firebaseConfig.apiKey ? "✅ Definido" : "❌ Indefinido",
+    authDomain: firebaseConfig.authDomain ? "✅ Definido" : "❌ Indefinido",
+    projectId: firebaseConfig.projectId ? "✅ Definido" : "❌ Indefinido",
+  });
 }
 
 // Inicializa o app Firebase com tratamento de erro
