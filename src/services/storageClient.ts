@@ -42,10 +42,16 @@ class StorageClient {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
-    
+
     try {
       return await deleteObject(storageRef);
-    } catch (e) {
+    } catch (e: any) {
+      // Se o arquivo não existe, consideramos como sucesso
+      if (e.code === 'storage/object-not-found') {
+        console.log("ℹ️ Arquivo não encontrado (já foi deletado):", e);
+        return; // Não é erro, apenas ignora
+      }
+
       console.error("Erro ao deletar arquivo:", e);
       throw e;
     }
