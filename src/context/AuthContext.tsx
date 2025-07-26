@@ -101,15 +101,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log('🔄 Tentando enviar email de reset para:', email);
 
     try {
-      // Configurações personalizadas para o email
-      const actionCodeSettings = {
-        // URL para onde o usuário será redirecionado após redefinir a senha
-        url: window.location.origin,
-        // Se true, a operação será completada no mesmo dispositivo onde foi iniciada
-        handleCodeInApp: false, // Mudando para false para evitar problemas
-      };
-
-      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      // Enviar email sem configurações customizadas para evitar problemas de CORS/rede
+      await sendPasswordResetEmail(auth, email);
       console.log('✅ Email de reset enviado com sucesso');
     } catch (error) {
       console.error('❌ Erro ao enviar email de reset:', error);
