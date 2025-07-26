@@ -120,9 +120,15 @@ const Sidebar: React.FC = () => {
                   GeekLog
                 </h1>
                 {isPremium && (
-                  <p className="text-xs text-purple-400 whitespace-nowrap">
-                    Premium
-                  </p>
+                  <div className="flex items-center">
+                    <ConditionalPremiumBadge
+                      isPremium={isPremium}
+                      variant="inline"
+                      size="sm"
+                      showLabel={true}
+                      animated={false}
+                    />
+                  </div>
                 )}
               </div>
             )}
