@@ -9,6 +9,7 @@ import { AddMediaOptions } from './AddMediaOptions';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
 import { useToast } from '../context/ToastContext';
+import { ConfirmationModal } from './ConfirmationModal';
 
 const mediaTypeColors = {
   games: "from-blue-500 to-cyan-500",
