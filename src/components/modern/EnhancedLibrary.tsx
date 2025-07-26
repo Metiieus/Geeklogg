@@ -27,6 +27,7 @@ import { ModernButton, GradientButton, NeonButton, GhostButton } from './ModernB
 import { enhancedExternalMediaService, EnhancedExternalMediaResult } from '../../infrastructure/services/EnhancedExternalMediaService';
 import { useToast } from '../../context/ToastContext';
 import { deleteMedia } from '../../services/mediaService';
+import { EditMediaModal } from '../modals/EditMediaModal';
 
 const mediaTypeConfig = {
   games: { 
