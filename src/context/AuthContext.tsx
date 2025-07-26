@@ -92,7 +92,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!auth) {
       throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
     }
-    await sendPasswordResetEmail(auth, email);
+
+    // Configurações personalizadas para o email
+    const actionCodeSettings = {
+      // URL para onde o usuário será redirecionado após redefinir a senha
+      url: window.location.origin + '/login',
+      // Se true, a operação será completada no mesmo dispositivo onde foi iniciada
+      handleCodeInApp: true,
+    };
+
+    await sendPasswordResetEmail(auth, email, actionCodeSettings);
   };
 
   const value: AuthContextType = {
