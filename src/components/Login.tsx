@@ -189,6 +189,17 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
               />
             </div>
 
+            {/* Forgot Password Link */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
+
             {/* Login Button - responsivo */}
             <button
               type="submit"
