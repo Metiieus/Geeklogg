@@ -250,29 +250,29 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         </AnimatePresence>
 
         {/* Mobile Action Buttons (always visible) */}
-        <div className="absolute bottom-2 right-2 flex gap-1 md:hidden">
+        <div className="absolute top-3 right-3 flex gap-1.5 md:hidden">
           {onEdit && (
             <motion.button
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(item);
               }}
-              className="p-2 bg-black/60 backdrop-blur-sm rounded-full border border-white/20 text-white hover:bg-black/80 transition-all duration-200"
+              className="p-2.5 bg-slate-900/85 backdrop-blur-sm rounded-xl border border-slate-600/50 text-slate-200 hover:text-white hover:bg-slate-800/95 transition-all duration-200 shadow-xl"
             >
-              <Edit size={14} />
+              <Edit size={16} />
             </motion.button>
           )}
           {onDelete && (
             <motion.button
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(item);
               }}
-              className="p-2 bg-red-500/60 backdrop-blur-sm rounded-full border border-red-500/40 text-white hover:bg-red-500/80 transition-all duration-200"
+              className="p-2.5 bg-red-900/85 backdrop-blur-sm rounded-xl border border-red-600/50 text-red-200 hover:text-white hover:bg-red-800/95 transition-all duration-200 shadow-xl"
             >
-              <Trash2 size={14} />
+              <Trash2 size={16} />
             </motion.button>
           )}
         </div>
