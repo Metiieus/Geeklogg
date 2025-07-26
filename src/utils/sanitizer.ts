@@ -247,6 +247,7 @@ export default {
   stripHtml,
   escapeHtml,
   sanitizeText,
+  sanitizeBioText,
   sanitizeUrl,
   sanitizeTags,
   validateFileInput,
