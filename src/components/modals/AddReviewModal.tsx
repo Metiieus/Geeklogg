@@ -47,7 +47,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
       if (field === "content") {
         value = sanitizeBioText(value, 5000);
       } else {
-        value = sanitizeText(value, field === "content" ? 5000 : 200);
+        value = sanitizeText(value, 200);
       }
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
