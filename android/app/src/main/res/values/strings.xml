@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Geeklog</string>
+    <string name="title_activity_main">Geeklog</string>
+    <string name="package_name">com.geeklog.mydiary</string>
+    <string name="custom_url_scheme">com.geeklog.mydiary</string>
+</resources>
