@@ -235,6 +235,75 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
           </button>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-md w-full overflow-hidden animate-slide-up">
+            <div className="flex items-center justify-between p-6 border-b border-white/20">
+              <h2 className="text-xl font-bold text-white">Resetar Senha</h2>
+              <button
+                onClick={() => setShowForgotPassword(false)}
+                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <span className="text-slate-400 text-xl">×</span>
+              </button>
+            </div>
+
+            <div className="p-6">
+              <p className="text-slate-300 mb-4 text-sm">
+                Digite seu email e enviaremos um link para resetar sua senha.
+              </p>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleForgotPassword(email);
+                }}
+                className="space-y-4"
+              >
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-4 w-4 text-cyan-400" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Seu email"
+                    required
+                    className="w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(false)}
+                    className="px-4 py-2 text-slate-300 hover:text-white transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isResettingPassword}
+                    className={`px-6 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
+                      isResettingPassword
+                        ? "bg-slate-600 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600"
+                    } text-white`}
+                  >
+                    {isResettingPassword ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : null}
+                    {isResettingPassword ? "Enviando..." : "Enviar"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
