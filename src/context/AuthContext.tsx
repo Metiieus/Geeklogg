@@ -88,13 +88,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await signOut(auth);
   };
 
+  const resetPassword = async (email: string) => {
+    if (!auth) {
+      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    }
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const value: AuthContextType = {
     user,
     profile,
     loading,
     login,
     register,
-    logout
+    logout,
+    resetPassword
   };
 
   return (
