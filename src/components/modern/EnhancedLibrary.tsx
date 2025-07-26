@@ -28,6 +28,7 @@ import { enhancedExternalMediaService, EnhancedExternalMediaResult } from '../..
 import { useToast } from '../../context/ToastContext';
 import { deleteMedia } from '../../services/mediaService';
 import { EditMediaModal } from '../modals/EditMediaModal';
+import { ConfirmationModal } from '../ConfirmationModal';
 
 const mediaTypeConfig = {
   games: { 
