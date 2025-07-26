@@ -354,12 +354,13 @@ const Profile: React.FC = () => {
                     )}
                   </div>
                 </div>
-                {/* Badge premium/status */}
-                {profile?.isPremium && (
-                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center border-2 border-slate-900">
-                    <Crown className="w-4 h-4 text-white" />
-                  </div>
-                )}
+                {/* Premium Badge */}
+                <ConditionalPremiumBadge
+                  isPremium={profile?.isPremium}
+                  variant="avatar"
+                  size="lg"
+                  animated={true}
+                />
               </div>
 
               <div className="text-center sm:text-left flex-1 min-w-0">
