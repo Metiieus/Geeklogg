@@ -642,29 +642,29 @@ const MediaGridCard: React.FC<{
         </div>
 
         {/* Mobile Action Buttons (always visible) */}
-        <div className="absolute bottom-2 right-2 flex gap-1 md:hidden">
+        <div className="absolute top-2 right-2 flex gap-1.5 md:hidden">
           {onEdit && (
             <motion.button
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(item);
               }}
-              className="p-1.5 bg-black/60 backdrop-blur-sm rounded-full border border-white/20 text-white hover:bg-black/80 transition-all duration-200"
+              className="p-2 bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-600/50 text-slate-300 hover:text-white hover:bg-slate-800/90 transition-all duration-200 shadow-lg"
             >
-              <Edit size={12} />
+              <Edit size={14} />
             </motion.button>
           )}
           {onDelete && (
             <motion.button
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(item);
               }}
-              className="p-1.5 bg-red-500/60 backdrop-blur-sm rounded-full border border-red-500/40 text-white hover:bg-red-500/80 transition-all duration-200"
+              className="p-2 bg-red-900/80 backdrop-blur-sm rounded-lg border border-red-600/50 text-red-300 hover:text-white hover:bg-red-800/90 transition-all duration-200 shadow-lg"
             >
-              <Trash2 size={12} />
+              <Trash2 size={14} />
             </motion.button>
           )}
         </div>
