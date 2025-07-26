@@ -502,7 +502,11 @@ export const EnhancedLibrary: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 {viewMode === 'grid' ? (
-                  <MediaGridCard item={item} />
+                  <MediaGridCard
+                    item={item}
+                    onEdit={handleEditItem}
+                    onDelete={handleDeleteItem}
+                  />
                 ) : (
                   <MediaListCard item={item} />
                 )}
