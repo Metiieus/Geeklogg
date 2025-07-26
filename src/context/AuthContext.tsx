@@ -99,6 +99,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     console.log('🔄 Tentando enviar email de reset para:', email);
+    console.log('🔧 Current origin:', window.location.origin);
+    console.log('🔧 Firebase config check:', {
+      hasAuth: !!auth,
+      authDomain: auth?.config?.authDomain,
+      apiKey: auth?.config?.apiKey ? 'Present' : 'Missing'
+    });
 
     try {
       // Enviar email sem configurações customizadas para evitar problemas de CORS/rede
