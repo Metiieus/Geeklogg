@@ -238,70 +238,114 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
       {/* Forgot Password Modal */}
       {showForgotPassword && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-md w-full overflow-hidden animate-slide-up">
-            <div className="flex items-center justify-between p-6 border-b border-white/20">
-              <h2 className="text-xl font-bold text-white">Resetar Senha</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 rounded-3xl border border-cyan-500/20 max-w-lg w-full overflow-hidden shadow-2xl relative"
+          >
+            {/* Background Effects */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-3xl bg-cyan-500/10"></div>
+              <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full blur-3xl bg-pink-500/10"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full blur-xl bg-purple-500/10"></div>
+            </div>
+
+            {/* Header */}
+            <div className="relative z-10 flex items-center justify-between p-8 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
+                    Archivius te Ajuda! 🤖
+                  </h2>
+                  <p className="text-slate-400 text-sm">Redefinição de Senha</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowForgotPassword(false)}
-                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-700/50 rounded-xl transition-colors"
               >
-                <span className="text-slate-400 text-xl">×</span>
+                <X className="text-slate-400 hover:text-white" size={24} />
               </button>
             </div>
 
-            <div className="p-6">
-              <p className="text-slate-300 mb-4 text-sm">
-                Digite seu email e enviaremos um link para resetar sua senha.
-              </p>
+            {/* Content */}
+            <div className="relative z-10 p-8">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  Esqueceu sua senha? 😅
+                </h3>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  Relaxa! O Archivius vai mandar um email mágico ✨ para você redefinir sua senha.
+                  É só digitar seu email aí embaixo que ele resolve tudo para você! 🚀
+                </p>
+              </div>
 
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   handleForgotPassword(email);
                 }}
-                className="space-y-4"
+                className="space-y-6"
               >
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-4 w-4 text-cyan-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-cyan-400" />
                   </div>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Seu email"
+                    placeholder="Digite seu email mágico ✉️"
                     required
-                    className="w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="w-full pl-12 pr-4 py-4 bg-gray-900/50 border border-gray-700 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-3">
+                <div className="flex items-center justify-center gap-4 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(false)}
-                    className="px-4 py-2 text-slate-300 hover:text-white transition-colors"
+                    className="px-6 py-3 text-slate-300 hover:text-white hover:bg-slate-700/30 transition-all duration-200 rounded-xl"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={isResettingPassword}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
+                    className={`px-8 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                       isResettingPassword
-                        ? "bg-slate-600 cursor-not-allowed"
-                        : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600"
+                        ? "bg-slate-600/50 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 hover:shadow-lg hover:shadow-cyan-500/25"
                     } text-white`}
                   >
                     {isResettingPassword ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : null}
-                    {isResettingPassword ? "Enviando..." : "Enviar"}
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Enviando magia...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Enviar Email Mágico
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-xs text-slate-500">
+                  💡 Dica: Verifique sua caixa de spam também!
+                </p>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>
