@@ -8,16 +8,8 @@ const getApiUrl = () => {
   if (isDev) {
     return 'http://localhost:8080';
   } else {
-    // Para ambiente hospedado no Builder.io, vamos tentar várias opções
-    const currentOrigin = window.location.origin;
-
-    // Se estivermos no domínio do Builder.io, tenta usar a mesma URL mas porta 8080
-    if (hostname.includes('fly.dev') || hostname.includes('builder.io')) {
-      // Tenta usar HTTP na mesma porta para testar
-      return currentOrigin;
-    }
-
-    // Fallback para localhost em desenvolvimento
+    // Para ambiente de produção, sempre usa localhost:8080
+    // pois o backend roda na mesma máquina
     return 'http://localhost:8080';
   }
 };
