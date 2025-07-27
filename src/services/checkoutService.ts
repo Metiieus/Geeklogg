@@ -44,7 +44,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
     const apiUrl = getApiUrl();
     console.log('Conectando com backend:', apiUrl);
 
-    const response = await fetch(`${apiUrl}/api/create-preference`, {
+    const response = await fetch('/api/create-preference', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
