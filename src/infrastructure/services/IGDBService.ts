@@ -83,7 +83,7 @@ export interface IGDBSearchParams {
 }
 
 class IGDBService {
-  private readonly proxyUrl = "http://localhost:8080/api/igdb";
+  private readonly proxyUrl = "/api/igdb";
 
   constructor() {
     // No need to store credentials here since proxy handles authentication

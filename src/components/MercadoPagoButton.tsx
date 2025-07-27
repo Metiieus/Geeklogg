@@ -25,34 +25,10 @@ export default function MercadoPagoButton({
     setLoading(true);
 
     try {
-      // Usa a mesma URL do frontend para o backend
-      const apiUrl = window.location.origin;
-
-      const response = await fetch(`${apiUrl}/api/create-preference`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: user.uid,
-          email: user.email,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      } else {
-        throw new Error('Falha ao criar sessão de pagamento');
-      }
+      await handleCheckout();
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Erro ao processar pagamento. Verifique se o servidor está rodando.');
+      alert('Erro ao processar pagamento. Tente novamente em alguns momentos.');
     } finally {
       setLoading(false);
     }
