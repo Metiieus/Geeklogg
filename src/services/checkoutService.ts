@@ -49,65 +49,20 @@ export async function createPreference(): Promise<CheckoutResponse> {
     }
 
     const apiUrl = getApiUrl();
-    console.log('Tentando conectar com backend:', apiUrl);
+    console.log('Conectando com backend:', apiUrl);
 
-    // Testa conectividade primeiro
-    const isBackendAvailable = await testBackendConnectivity(apiUrl);
-
-    if (!isBackendAvailable) {
-      // Tenta localhost como fallback
-      const fallbackUrl = 'http://localhost:8080';
-      console.log('Tentando fallback:', fallbackUrl);
-
-      const isFallbackAvailable = await testBackendConnectivity(fallbackUrl);
-
-      if (!isFallbackAvailable) {
-        throw new Error('Backend não está acessível. Verifique se o servidor está rodando.');
-      }
-
-      // Usa o fallback
-      const response = await fetch(`${fallbackUrl}/api/create-preference`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          uid: user.uid,
-          email: user.email,
-          title: 'GeekLog Premium',
-          description: 'Assinatura Premium do GeekLog',
-          price: 19.99,
-          currency: 'BRL'
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Erro ${response.status}: ${errorText}`);
-      }
-
-      const data = await response.json();
-      return {
-        success: true,
-        init_point: data.init_point,
-        preference_id: data.preference_id
-      };
-    }
-
-    // Backend principal está disponível
     const response = await fetch(`${apiUrl}/api/create-preference`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         uid: user.uid,
-        email: user.email,
-        title: 'GeekLog Premium',
-        description: 'Assinatura Premium do GeekLog',
-        price: 19.99,
-        currency: 'BRL'
+        email: user.email
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Erro na resposta:', response.status, errorText);
       throw new Error(`Erro ${response.status}: ${errorText}`);
     }
 
