@@ -1,17 +1,10 @@
 import { auth } from '../firebase';
 
-// Detecta automaticamente o ambiente
+// Usa rotas relativas que serão proxy pelo Vite
 const getApiUrl = () => {
-  const hostname = window.location.hostname;
-  const isDev = hostname === 'localhost' || hostname === '127.0.0.1';
-
-  if (isDev) {
-    return 'http://localhost:8080';
-  } else {
-    // Para ambiente de produção no fly.dev ou builder.io,
-    // usa a mesma origin mas com rota /api
-    return window.location.origin;
-  }
+  // Em desenvolvimento, o Vite fará proxy de /api para localhost:8080
+  // Em produção, /api deve estar servido pelo mesmo servidor
+  return '';
 };
 
 export interface CheckoutResponse {
