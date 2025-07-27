@@ -95,9 +95,7 @@ export async function handleCheckout(): Promise<void> {
 
 export async function updateUserPremium(uid: string, paymentId: string): Promise<boolean> {
   try {
-    const apiUrl = getApiUrl();
-    
-    const response = await fetch(`${apiUrl}/api/update-premium`, {
+    const response = await fetch('/api/update-premium', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
