@@ -20,8 +20,8 @@ const getApiUrl = (): string => {
   if (isDevelopment) {
     return 'http://localhost:8080';
   } else {
-    // ATENÇÃO: Altere para a URL real do seu backend em produção.
-    return 'https://geeklogg.com'; 
+    // ✅ Agora aponta diretamente para a Cloud Function do Firebase
+    return 'https://us-central1-geeklog-26b2c.cloudfunctions.net/api';
   }
 };
 
@@ -41,7 +41,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
   
   try {
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
-    const response = await fetch(`${apiUrl}/api/create-preference`, {
+    const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ uid: user.uid, email: user.email }),
@@ -86,7 +86,6 @@ export async function handleCheckout(): Promise<void> {
 }
 
 /**
- * **FUNÇÃO ADICIONADA NOVAMENTE**
  * Chama o backend para atualizar o status do plano do usuário para Premium.
  */
 export async function updateUserPremium(uid: string, preference_id: string): Promise<boolean> {
@@ -98,7 +97,7 @@ export async function updateUserPremium(uid: string, preference_id: string): Pro
   const apiUrl = getApiUrl();
 
   try {
-    const response = await fetch(`${apiUrl}/api/update-premium`, {
+    const response = await fetch(`${apiUrl}/update-premium`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ uid, preference_id }),
