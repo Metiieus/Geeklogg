@@ -24,11 +24,10 @@ export default function MercadoPagoButton({
     setLoading(true);
 
     try {
-      // Usa a função centralizada que já trata toda a lógica de checkout
-      await handleCheckout(); 
+      await handleCheckout();
     } catch (error) {
-      console.error('Erro ao iniciar pagamento:', error);
-      alert('Erro ao iniciar pagamento. Verifique se o servidor está rodando.');
+      console.error('Payment error:', error);
+      alert('Erro ao processar pagamento. Tente novamente em alguns momentos.');
     } finally {
       setLoading(false);
     }

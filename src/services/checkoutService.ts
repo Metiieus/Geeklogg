@@ -1,17 +1,10 @@
 import { auth } from '../firebase';
 
-// Função corrigida e simplificada para obter a URL da API
+// Usa rotas relativas que serão proxy pelo Vite
 const getApiUrl = () => {
-  const hostname = window.location.hostname;
-  const isDevelopment = hostname === 'localhost' || hostname.startsWith('192.168');
-
-  if (isDevelopment) {
-    // Em desenvolvimento, o backend está rodando localmente
-    return 'http://localhost:8080'; 
-  } else {
-    // Em produção, usa o domínio do seu site
-    return 'https://geeklogg.com'; 
-  }
+  // Em desenvolvimento, o Vite fará proxy de /api para localhost:8080
+  // Em produção, /api deve estar servido pelo mesmo servidor
+  return '';
 };
 
 // --- Interfaces ---
@@ -33,24 +26,24 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Usuário não autenticado.' };
   }
 
-  const apiUrl = getApiUrl();
-  console.log(`API URL: ${apiUrl}`);
+    const apiUrl = getApiUrl();
+    console.log('Conectando com backend:', apiUrl);
 
-  try {
-    const response = await fetch(`${apiUrl}/api/create-preference`, {
+    const response = await fetch('/api/create-preference', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         uid: user.uid,
-        email: user.email,
+        email: user.email
       }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Erro ${response.status}`);
+      const errorText = await response.text();
+      console.error('Erro na resposta:', response.status, errorText);
+      throw new Error(`Erro ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
@@ -82,6 +75,23 @@ export async function handleCheckout(): Promise<void> {
     }
   } catch (error) {
     console.error('Erro no checkout:', error);
-    alert(`Erro ao iniciar pagamento: ${error instanceof Error ? error.message : 'Tente novamente.'}`);
+    alert(`Erro ao iniciar pagamento: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+  }
+}
+
+export async function updateUserPremium(uid: string, paymentId: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/update-premium', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uid, paymentId }),
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Erro ao atualizar premium:', error);
+    return false;
   }
 }

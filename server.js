@@ -46,7 +46,7 @@ try {
 
 // 6. Inicializa o app
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
 app.use(express.json());
 
 // 7. Rota de criação de preferência Mercado Pago
