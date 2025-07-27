@@ -47,7 +47,7 @@ try {
 
 // --- 3) APP & MIDDLEWARES ---
 const app = express();
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
 app.use(express.json());
 
 // --- 4) ROTA: CREATE PREFERENCE ---
