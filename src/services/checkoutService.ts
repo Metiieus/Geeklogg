@@ -26,6 +26,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Usuário não autenticado.' };
   }
 
+  try {
     const apiUrl = getApiUrl();
     console.log('Conectando com backend:', apiUrl);
 
