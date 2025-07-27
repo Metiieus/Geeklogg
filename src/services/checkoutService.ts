@@ -8,9 +8,9 @@ const getApiUrl = () => {
   if (isDev) {
     return 'http://localhost:8080';
   } else {
-    // Para ambiente de produção, sempre usa localhost:8080
-    // pois o backend roda na mesma máquina
-    return 'http://localhost:8080';
+    // Para ambiente de produção no fly.dev ou builder.io,
+    // usa a mesma origin mas com rota /api
+    return window.location.origin;
   }
 };
 
