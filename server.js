@@ -47,37 +47,7 @@ try {
 
 // --- 3) APP & MIDDLEWARES ---
 const app = express();
-// Configuração de CORS mais flexível para desenvolvimento e produção
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Permite requisições sem origin (mobile apps, postman, etc.)
-    if (!origin) return callback(null, true);
-
-    // Lista de origens permitidas
-    const allowedOrigins = [
-      process.env.CLIENT_URL,
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'http://127.0.0.1:5173'
-    ];
-
-    // Permite domínios fly.dev e builder.io
-    if (origin.includes('fly.dev') || origin.includes('builder.io')) {
-      return callback(null, true);
-    }
-
-    // Verifica se a origem está na lista permitida
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('CORS bloqueou origem:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-};
-
-app.use(cors(corsOptions));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 // --- 4) ROTA: CREATE PREFERENCE ---
