@@ -20,7 +20,7 @@ const getApiUrl = (): string => {
   if (isDevelopment) {
     return 'http://localhost:8080';
   } else {
-    // ✅ Agora aponta diretamente para a Cloud Function do Firebase
+    // ✅ Aponta para a sua Cloud Function do Firebase
     return 'https://us-central1-geeklog-26b2c.cloudfunctions.net/api';
   }
 };
@@ -40,10 +40,21 @@ export async function createPreference(): Promise<CheckoutResponse> {
   const apiUrl = getApiUrl();
   
   try {
+    // --- CORREÇÃO INICIA AQUI ---
+    // 1. Obter o token de autenticação do usuário do Firebase.
+    const token = await user.getIdToken();
+    // --- CORREÇÃO TERMINA AQUI ---
+
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        // --- CORREÇÃO INICIA AQUI ---
+        // 2. Enviar o token no cabeçalho 'Authorization'.
+        'Authorization': `Bearer ${token}`,
+        // --- CORREÇÃO TERMINA AQUI ---
+      },
       body: JSON.stringify({ uid: user.uid, email: user.email }),
     });
 
@@ -81,6 +92,7 @@ export async function handleCheckout(): Promise<void> {
     }
   } catch (error) {
     console.error('Erro final no fluxo de checkout:', error);
+    // Evite usar alert() em produção. Considere usar um componente de notificação (toast).
     alert(`Erro ao iniciar o pagamento: ${error instanceof Error ? error.message : 'Tente novamente mais tarde.'}`);
   }
 }
@@ -95,11 +107,21 @@ export async function updateUserPremium(uid: string, preference_id: string): Pro
   }
   
   const apiUrl = getApiUrl();
+  const user = auth.currentUser;
 
   try {
+    // É uma boa prática autenticar esta chamada também.
+    const token = user ? await user.getIdToken() : null;
+    if (!token) {
+        throw new Error("Usuário não autenticado para atualizar o plano.");
+    }
+
     const response = await fetch(`${apiUrl}/update-premium`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+      },
       body: JSON.stringify({ uid, preference_id }),
     });
 
