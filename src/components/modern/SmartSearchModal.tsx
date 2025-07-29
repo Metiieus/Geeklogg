@@ -34,22 +34,7 @@ const mediaTypeConfig = {
     textColor: "text-blue-400",
     borderColor: "border-blue-500/30"
   },
-  anime: { 
-    icon: Tv, 
-    label: "Anime", 
-    color: "from-pink-500 to-rose-500",
-    bgColor: "bg-pink-500/20",
-    textColor: "text-pink-400",
-    borderColor: "border-pink-500/30"
-  },
-  series: { 
-    icon: Tv, 
-    label: "Séries", 
-    color: "from-purple-500 to-violet-500",
-    bgColor: "bg-purple-500/20",
-    textColor: "text-purple-400",
-    borderColor: "border-purple-500/30"
-  },
+
   books: { 
     icon: Book, 
     label: "Livros", 
