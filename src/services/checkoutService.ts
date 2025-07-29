@@ -37,15 +37,17 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Você precisa estar logado para continuar.' };
   }
 
+  const apiUrl = getApiUrl();
+
+  try {
+    const token = await user.getIdToken();
+
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        // --- CORREÇÃO INICIA AQUI ---
-        // 2. Enviar o token no cabeçalho 'Authorization'.
         'Authorization': `Bearer ${token}`,
-        // --- CORREÇÃO TERMINA AQUI ---
       },
       body: JSON.stringify({ uid: user.uid, email: user.email }),
     });
@@ -84,7 +86,6 @@ export async function handleCheckout(): Promise<void> {
     }
   } catch (error) {
     console.error('Erro final no fluxo de checkout:', error);
-    // Evite usar alert() em produção. Considere usar um componente de notificação (toast).
     alert(`Erro ao iniciar o pagamento: ${error instanceof Error ? error.message : 'Tente novamente mais tarde.'}`);
   }
 }
@@ -102,17 +103,16 @@ export async function updateUserPremium(uid: string, preference_id: string): Pro
   const user = auth.currentUser;
 
   try {
-    // É uma boa prática autenticar esta chamada também.
     const token = user ? await user.getIdToken() : null;
     if (!token) {
-        throw new Error("Usuário não autenticado para atualizar o plano.");
+      throw new Error("Usuário não autenticado para atualizar o plano.");
     }
 
     const response = await fetch(`${apiUrl}/update-premium`, {
       method: 'POST',
       headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ uid, preference_id }),
     });
@@ -124,7 +124,7 @@ export async function updateUserPremium(uid: string, preference_id: string): Pro
 
     console.log("Plano do usuário atualizado para Premium com sucesso!");
     return true;
-    
+
   } catch (error) {
     console.error('Falha ao atualizar o plano do usuário:', error);
     return false;
