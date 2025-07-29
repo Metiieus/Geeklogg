@@ -4,6 +4,7 @@ import { useAppContext } from "../../context/AppContext";
 import { Review } from "../../App";
 import { updateReview } from "../../services/reviewService";
 import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
+import { useScrollLock } from "../../hooks/useScrollLock";
 
 interface EditReviewModalProps {
   review: Review;
