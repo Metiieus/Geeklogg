@@ -60,12 +60,18 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       document.addEventListener('keydown', handleTabKey);
       document.addEventListener('keydown', handleEscapeKey);
       
-      // Ensure modal is visible
+      // Ensure modal is visible - aparecer no topo no mobile
       setTimeout(() => {
-        modalRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
-        });
+        if (window.innerWidth < 640) {
+          // Mobile: rolar para o topo
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Desktop: centralizar
+          modalRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
       }, 100);
 
       return () => {
@@ -86,14 +92,15 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   };
 
   return (
-    <div 
+    <div
       ref={overlayRef}
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center p-2 sm:p-4 ${zIndex} animate-fade-in`}
+      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 ${zIndex} animate-fade-in`}
       style={{
         overflowY: 'auto',
         overflowX: 'hidden',
         minHeight: '100vh',
-        paddingTop: '2rem',
+        // Diferentes paddings para mobile vs desktop
+        paddingTop: window.innerWidth < 640 ? '1rem' : '2rem',
         paddingBottom: '2rem'
       }}
       onClick={handleOverlayClick}
@@ -106,7 +113,10 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         transition={{ duration: 0.2, ease: "easeOut" }}
         className={`w-full ${maxWidth} mx-auto ${className}`}
         onClick={(e) => e.stopPropagation()}
-        style={{ marginTop: 'auto', marginBottom: 'auto' }}
+        style={{
+          marginTop: window.innerWidth < 640 ? 'auto' : 'auto',
+          marginBottom: 'auto'
+        }}
       >
         {children}
       </motion.div>

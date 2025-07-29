@@ -37,10 +37,12 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Você precisa estar logado para continuar.' };
   }
 
+  try {
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
+    const token = await user.getIdToken();
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         // --- CORREÇÃO INICIA AQUI ---
         // 2. Enviar o token no cabeçalho 'Authorization'.
