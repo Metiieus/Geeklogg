@@ -64,9 +64,8 @@ export function getAchievementsWithProgress(
     return {
       ...achievement,
       unlockedAt: userAchievement?.unlockedAt,
-      // Mostrar como disponível apenas se as dependências foram atendidas
-      unlocked:
-        unlocked || (canUnlock && checkAchievementCondition(achievement.id)),
+      // Mostrar como desbloqueada apenas se realmente foi desbloqueada
+      unlocked: unlocked,
     };
   });
 }
