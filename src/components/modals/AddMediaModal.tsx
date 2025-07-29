@@ -25,9 +25,6 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
   onSave,
 }) => {
   const { showError, showSuccess, showWarning } = useToast();
-
-  // Bloquear scroll do body quando modal estiver aberto
-  useScrollLock(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
