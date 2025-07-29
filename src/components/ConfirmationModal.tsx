@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { AlertTriangle, X, Trash2 } from 'lucide-react';
+import { ModalWrapper } from './ModalWrapper';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -64,14 +64,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-md w-full overflow-hidden shadow-2xl"
-      >
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onCancel}
+      maxWidth="max-w-md"
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 overflow-hidden shadow-2xl"
+    >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/20">
           <div className="flex items-center gap-3">
@@ -112,8 +110,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             {confirmText}
           </button>
         </div>
-      </motion.div>
-    </div>
+    </ModalWrapper>
   );
 };
 
