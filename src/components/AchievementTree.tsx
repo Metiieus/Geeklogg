@@ -218,12 +218,24 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                 </div>
                 Central de Conquistas
               </h3>
-              <motion.div className="text-right" whileHover={{ scale: 1.05 }}>
-                <p className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
-                  {progress.totalUnlocked}/{progress.totalAvailable}
-                </p>
-                <p className="text-sm text-slate-400">Conquistas</p>
-              </motion.div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl border border-slate-600/30 hover:border-cyan-400/30 transition-all duration-200 text-slate-300 hover:text-white"
+                  title={isCollapsed ? "Mostrar conquistas" : "Esconder conquistas"}
+                >
+                  {isCollapsed ? <Eye size={18} /> : <EyeOff size={18} />}
+                  <span className="text-sm hidden sm:inline">
+                    {isCollapsed ? "Mostrar" : "Esconder"}
+                  </span>
+                </button>
+                <motion.div className="text-right" whileHover={{ scale: 1.05 }}>
+                  <p className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                    {progress.totalUnlocked}/{progress.totalAvailable}
+                  </p>
+                  <p className="text-sm text-slate-400">Conquistas</p>
+                </motion.div>
+              </div>
             </div>
 
             {/* Enhanced Progress Bar */}
