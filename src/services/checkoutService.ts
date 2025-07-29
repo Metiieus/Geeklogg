@@ -37,6 +37,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Você precisa estar logado para continuar.' };
   }
 
+  try {
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',
