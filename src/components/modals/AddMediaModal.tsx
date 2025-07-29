@@ -5,7 +5,6 @@ import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
 import { sanitizeText, sanitizeUrl, sanitizeTags } from "../../utils/sanitizer";
-import { useScrollLock } from "../../hooks/useScrollLock";
 
 interface AddMediaModalProps {
   onClose: () => void;
