@@ -12,6 +12,8 @@ import {
   Filter,
   Grid,
   List,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
