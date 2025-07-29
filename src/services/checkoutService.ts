@@ -37,14 +37,6 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Você precisa estar logado para continuar.' };
   }
 
-  const apiUrl = getApiUrl();
-  
-  try {
-    // --- CORREÇÃO INICIA AQUI ---
-    // 1. Obter o token de autenticação do usuário do Firebase.
-    const token = await user.getIdToken();
-    // --- CORREÇÃO TERMINA AQUI ---
-
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',

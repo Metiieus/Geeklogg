@@ -17,8 +17,6 @@ interface MediaSearchBarProps {
 const mediaTypeOptions = [
   { value: "books", label: "Livros", icon: Book },
   { value: "movies", label: "Filmes", icon: Film },
-  { value: "series", label: "Séries", icon: Tv },
-  { value: "anime", label: "Anime", icon: Tv },
   { value: "games", label: "Jogos", icon: Gamepad2 },
 ] as const;
 
@@ -110,7 +108,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
       // Verificar se a API necessária está disponível
       const needsGoogleBooks = finalType === "books";
-      const needsTmdb = ["movies", "series", "anime", "dorama"].includes(
+      const needsTmdb = ["movies", "dorama"].includes(
         finalType,
       );
 

@@ -203,8 +203,11 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 animate-fade-in overflow-y-auto">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
+    <ModalWrapper
+      isOpen={true}
+      onClose={onClose}
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col max-h-[90vh]"
+    >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
           <h2 className="text-xl sm:text-2xl font-bold text-white">
@@ -495,7 +498,6 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </div>
           </div>
         </form>
-      </div>
-    </div>
+    </ModalWrapper>
   );
 };
