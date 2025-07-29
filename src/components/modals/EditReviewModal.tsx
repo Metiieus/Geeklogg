@@ -18,6 +18,9 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({
   onSave,
 }) => {
   const { mediaItems } = useAppContext();
+
+  // Bloquear scroll do body quando modal estiver aberto
+  useScrollLock(true);
   const [formData, setFormData] = useState({
     title: review.title,
     content: review.content,
