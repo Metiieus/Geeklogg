@@ -108,7 +108,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
       // Verificar se a API necessária está disponível
       const needsGoogleBooks = finalType === "books";
-      const needsTmdb = ["movies", "series", "anime", "dorama"].includes(
+      const needsTmdb = ["movies", "dorama"].includes(
         finalType,
       );
 
