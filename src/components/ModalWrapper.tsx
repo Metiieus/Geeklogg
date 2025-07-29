@@ -60,12 +60,18 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       document.addEventListener('keydown', handleTabKey);
       document.addEventListener('keydown', handleEscapeKey);
       
-      // Ensure modal is visible
+      // Ensure modal is visible - aparecer no topo no mobile
       setTimeout(() => {
-        modalRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
-        });
+        if (window.innerWidth < 640) {
+          // Mobile: rolar para o topo
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Desktop: centralizar
+          modalRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
       }, 100);
 
       return () => {
