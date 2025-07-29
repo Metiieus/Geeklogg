@@ -103,6 +103,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     loadAchievements();
