@@ -16,6 +16,9 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   onSave,
 }) => {
   const { mediaItems } = useAppContext();
+
+  // Bloquear scroll do body quando modal estiver aberto
+  useScrollLock(true);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
