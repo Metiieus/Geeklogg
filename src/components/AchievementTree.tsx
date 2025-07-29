@@ -321,12 +321,15 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
       )}
 
       {/* Filters and Controls */}
-      <motion.div
-        className="bg-gradient-to-br from-slate-800/60 via-indigo-950/40 to-slate-900/60 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/20"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
+      <AnimatePresence>
+        {!isCollapsed && (
+          <motion.div
+            className="bg-gradient-to-br from-slate-800/60 via-indigo-950/40 to-slate-900/60 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
@@ -401,10 +404,20 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
             </div>
           </div>
         </div>
-      </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Achievements Display */}
-      <div className="space-y-8">
+      <AnimatePresence>
+        {!isCollapsed && (
+          <motion.div
+            className="space-y-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+          >
         {selectedCategory ? (
           // Single category view
           <motion.div
@@ -441,24 +454,26 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
             ),
           )
         )}
-      </div>
 
-      {filteredAchievements.length === 0 && (
-        <motion.div
-          className="text-center py-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center">
-            <Filter className="text-slate-400" size={32} />
-          </div>
-          <p className="text-xl text-slate-400 mb-2">
-            Nenhuma conquista encontrada
-          </p>
-          <p className="text-slate-500">Tente ajustar os filtros de busca</p>
-        </motion.div>
-      )}
+            {filteredAchievements.length === 0 && (
+              <motion.div
+                className="text-center py-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center">
+                  <Filter className="text-slate-400" size={32} />
+                </div>
+                <p className="text-xl text-slate-400 mb-2">
+                  Nenhuma conquista encontrada
+                </p>
+                <p className="text-slate-500">Tente ajustar os filtros de busca</p>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
