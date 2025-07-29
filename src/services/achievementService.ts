@@ -64,9 +64,8 @@ export function getAchievementsWithProgress(
     return {
       ...achievement,
       unlockedAt: userAchievement?.unlockedAt,
-      // Mostrar como disponível apenas se as dependências foram atendidas
-      unlocked:
-        unlocked || (canUnlock && checkAchievementCondition(achievement.id)),
+      // Mostrar como desbloqueada apenas se realmente foi desbloqueada
+      unlocked: unlocked,
     };
   });
 }
@@ -103,11 +102,7 @@ export function getAchievementProgress(
   };
 }
 
-function checkAchievementCondition(achievementId: string): boolean {
-  // Esta função será chamada pelo checkAchievements para verificar condições específicas
-  // Por enquanto retorna false, será implementada quando chamada
-  return false;
-}
+
 
 export async function checkAchievements(
   mediaItems: MediaItem[],
