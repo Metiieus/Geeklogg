@@ -54,11 +54,15 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slide-up">
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 animate-fade-in overflow-y-auto"
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full max-w-2xl my-4 sm:my-auto animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/20">
-          <h2 className="text-2xl font-bold text-white">Nova Resenha</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Nova Resenha</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
@@ -70,7 +74,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]"
+          className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[calc(100vh-120px)] sm:max-h-[calc(90vh-100px)] overflow-y-auto"
         >
           {/* Media Selection */}
           <div>
@@ -112,7 +116,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Avaliação *
             </label>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               <input
                 type="range"
                 min="0"
@@ -122,7 +126,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
                 onChange={(e) =>
                   handleChange("rating", parseInt(e.target.value))
                 }
-                className="flex-1"
+                className="w-full sm:flex-1"
               />
               <div className="flex items-center gap-1 min-w-[80px]">
                 <Star
@@ -146,8 +150,8 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
               required
               value={formData.content}
               onChange={(e) => handleChange("content", e.target.value)}
-              rows={8}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              rows={6}
+              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none min-h-[120px]"
               placeholder="Escreva sua resenha aqui..."
             />
           </div>
@@ -167,17 +171,17 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/20">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-white/20">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 text-slate-300 hover:text-white transition-colors"
+              className="px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2"
+              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2"
             >
               <Save size={18} />
               Salvar Resenha
