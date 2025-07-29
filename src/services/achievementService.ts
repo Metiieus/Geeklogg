@@ -102,11 +102,7 @@ export function getAchievementProgress(
   };
 }
 
-function checkAchievementCondition(achievementId: string): boolean {
-  // Esta função será chamada pelo checkAchievements para verificar condições específicas
-  // Por enquanto retorna false, será implementada quando chamada
-  return false;
-}
+
 
 export async function checkAchievements(
   mediaItems: MediaItem[],
