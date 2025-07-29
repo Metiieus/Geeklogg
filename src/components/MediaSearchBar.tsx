@@ -17,8 +17,6 @@ interface MediaSearchBarProps {
 const mediaTypeOptions = [
   { value: "books", label: "Livros", icon: Book },
   { value: "movies", label: "Filmes", icon: Film },
-  { value: "series", label: "Séries", icon: Tv },
-  { value: "anime", label: "Anime", icon: Tv },
   { value: "games", label: "Jogos", icon: Gamepad2 },
 ] as const;
 
