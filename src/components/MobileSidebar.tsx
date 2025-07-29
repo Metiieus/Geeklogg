@@ -122,7 +122,7 @@ export const MobileSidebar: React.FC = () => {
           {/* Menu Button */}
           <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transition-all duration-300 active:scale-95"
+            className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transition-all duration-300 active:scale-95"
           >
             <Menu size={20} className="text-white" />
           </button>
@@ -140,7 +140,7 @@ export const MobileSidebar: React.FC = () => {
           </div>
 
           {/* Profile Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center">
             <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
               {profile?.avatar ? (
                 <img
