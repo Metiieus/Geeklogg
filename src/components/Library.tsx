@@ -563,13 +563,7 @@ const Library: React.FC = () => {
       )}
 
       {/* Edit Media Modal */}
-      {editingItem && (
-        <EditMediaModal
-          item={editingItem}
-          onClose={() => setEditingItem(null)}
-          onSave={handleEditItem}
-        />
-      )}
+
     </div>
   );
 };
