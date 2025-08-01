@@ -48,11 +48,9 @@ const Library: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] =
     useState<ExternalMediaResult | null>(null);
-    const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
 
