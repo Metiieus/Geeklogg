@@ -137,6 +137,7 @@ function App() {
     defaultLibrarySort: "updatedAt",
   });
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
 
   useEffect(() => {
     if (!user) return;
