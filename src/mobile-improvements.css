@@ -5,6 +5,29 @@
   box-sizing: border-box;
 }
 
+/* Melhorar modais em mobile */
+@media (max-width: 640px) {
+  .modal-content {
+    margin: 0.5rem;
+    max-height: calc(100vh - 1rem);
+    border-radius: 1rem;
+    width: calc(100vw - 1rem);
+  }
+
+  /* Garantir que modais apareçam no topo */
+  .modal-overlay {
+    align-items: flex-start;
+    padding-top: 1rem;
+  }
+
+  /* Melhorar botões de fechar em mobile */
+  .modal-close-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+  }
+}
+
 /* Melhorar touch targets para mobile */
 @media (max-width: 640px) {
   button,
@@ -33,13 +56,6 @@
     border-radius: 8px;
   }
 
-  /* Modal adjustments */
-  .modal-content {
-    margin: 8px;
-    max-height: calc(100vh - 16px);
-    border-radius: 12px;
-  }
-
   /* Grid responsivo */
   .responsive-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -66,6 +82,26 @@
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
+  /* Melhorar performance de scroll em modais */
+  .modal-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Otimizar grids para mobile */
+  .avatar-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Melhorar botões de ação em cards */
+  .card-action-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+    border-radius: 12px;
+  }
 }
 
 /* Melhorias para landscape mobile */
@@ -75,7 +111,13 @@
   }
 
   .modal-content {
-    max-height: calc(100vh - 20px);
+    max-height: calc(100vh - 2rem);
+    margin: 1rem;
+  }
+
+  /* Ajustar grid de avatares em landscape */
+  .avatar-grid {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
@@ -239,5 +281,30 @@ img[loading="lazy"].loaded {
   .grid > * {
     flex: 1 1 calc(50% - 0.375rem);
     min-width: 0;
+  }
+
+  /* Melhorar responsividade de cards */
+  .media-card {
+    min-height: 280px;
+    max-height: 350px;
+  }
+
+  /* Otimizar biblioteca para mobile */
+  .library-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Melhorar formulários em mobile */
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Otimizar navegação mobile */
+  .mobile-nav-item {
+    min-width: 60px;
+    min-height: 60px;
+    padding: 8px;
   }
 }

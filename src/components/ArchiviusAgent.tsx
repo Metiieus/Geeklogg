@@ -269,7 +269,7 @@ ${config.callToAction}
     <>
       {/* Botão Flutuante - responsivo com espaço para navegação mobile */}
       <motion.div
-        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50"
+        className="fixed bottom-24 sm:bottom-6 right-3 sm:right-6 z-50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 200 }}
@@ -325,11 +325,11 @@ ${config.callToAction}
           {/* Indicador de IA */}
           {isPremium && (
             <motion.div
-              className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full flex items-center justify-center"
+              className="absolute -top-0.5 -right-0.5 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full flex items-center justify-center"
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             >
-              <Sparkles className="w-3 h-3 text-white" />
+              <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
             </motion.div>
           )}
         </motion.button>
@@ -338,7 +338,7 @@ ${config.callToAction}
       {/* Modal de Chat */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 sm:items-end sm:justify-end">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
             {/* Overlay */}
             <motion.div
               className="absolute inset-0 bg-black bg-opacity-20"
@@ -350,7 +350,7 @@ ${config.callToAction}
 
             {/* Chat Window - responsivo */}
             <motion.div
-              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-md sm:w-96 h-[85vh] sm:h-[600px] max-h-[700px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md h-[90vh] sm:h-[600px] max-h-[700px] overflow-hidden"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -405,9 +405,9 @@ ${config.callToAction}
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="w-8 h-8 sm:w-9 sm:h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all touch-target"
+                    className="w-9 h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all touch-target"
                   >
-                    <X className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                    <X className="w-5 h-5 text-white" />
                   </button>
                 </div>
               </div>

@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-down">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
             {getGreeting()}, {settings.name || "Nerd"}
           </h1>
           <p className="text-slate-400 text-sm sm:text-base">
@@ -96,18 +96,18 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Featured Content & Quick Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 animate-slide-in-left">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 animate-slide-in-left">
         {/* Featured Item */}
         <div className="lg:col-span-2 hover:scale-105 transition-transform duration-300">
-          <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10">
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/10">
+            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
               <Star className="text-yellow-400" size={20} />
               Atualizado Recentemente
             </h2>
 
             {recentItem ? (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="w-20 sm:w-24 h-28 sm:h-32 bg-slate-700 rounded-lg flex-shrink-0 overflow-hidden mx-auto sm:mx-0">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <div className="w-16 sm:w-20 md:w-24 h-20 sm:h-28 md:h-32 bg-slate-700 rounded-lg flex-shrink-0 overflow-hidden mx-auto sm:mx-0">
                   {recentItem.cover ? (
                     <img
                       src={recentItem.cover}
@@ -116,19 +116,19 @@ const Dashboard: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-500">
-                      <BookOpen size={20} sm:size={24} />
+                      <BookOpen size={16} sm:size={20} />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 text-center sm:text-left">
-                  <h3 className="text-base sm:text-lg font-semibold text-white mb-1">
+                  <h3 className="text-sm sm:text-base md:text-lg font-semibold text-white mb-1 line-clamp-2">
                     {recentItem.title}
                   </h3>
                   <p className="text-sm text-slate-400 mb-2">
                     {getStatusLabel(recentItem.status)}
                   </p>
                   {recentItem.rating && (
-                    <div className="flex items-center gap-1 mb-2">
+                    <div className="flex items-center gap-1 mb-2 justify-center sm:justify-start">
                       <Star
                         className="text-yellow-400"
                         size={14}
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
                     </div>
                   )}
                   {recentItem.hoursSpent && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 justify-center sm:justify-start">
                       <Clock className="text-blue-400" size={14} />
                       <span className="text-sm text-white">
                         {recentItem.hoursSpent}h
@@ -166,37 +166,37 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="space-y-3 sm:space-y-4 animate-slide-in-right">
-          <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+        <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-slide-in-right">
+          <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
             <div className="flex items-center gap-3 mb-2">
-              <Clock className="text-blue-400" size={20} />
-              <span className="text-blue-400 font-medium">Total de Horas</span>
+              <Clock className="text-blue-400" size={16} sm:size={18} md:size={20} />
+              <span className="text-blue-400 font-medium text-sm sm:text-base">Total de Horas</span>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
               {stats.totalHours.toLocaleString()}
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
+          <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
             <div className="flex items-center gap-3 mb-2">
               <TrendingUp className="text-green-400" size={18} sm:size={20} />
               <span className="text-green-400 font-medium text-sm sm:text-base">
                 Concluídos
               </span>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
               {stats.completed}
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
+          <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
             <div className="flex items-center gap-3 mb-2">
               <Star className="text-yellow-400" size={18} sm:size={20} />
               <span className="text-yellow-400 font-medium text-sm sm:text-base">
                 Nota Média
               </span>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white">
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
               {stats.avgRating.toFixed(1)}/10
             </p>
           </div>
@@ -204,58 +204,58 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Status Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-slide-up">
-        <div className="bg-gradient-to-br from-green-500/5 to-green-600/5 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-green-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 animate-slide-up">
+        <div className="bg-gradient-to-br from-green-500/5 to-green-600/5 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-green-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
           <p className="text-green-400 text-xs sm:text-sm font-medium">
             Concluídos
           </p>
-          <p className="text-xl sm:text-2xl font-bold text-white">
+          <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
             {statusCounts.completed}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-blue-500/5 to-blue-600/5 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-blue-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
+        <div className="bg-gradient-to-br from-blue-500/5 to-blue-600/5 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-blue-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
           <p className="text-blue-400 text-xs sm:text-sm font-medium">
             Em Progresso
           </p>
-          <p className="text-xl sm:text-2xl font-bold text-white">
+          <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
             {statusCounts["in-progress"]}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-red-500/5 to-red-600/5 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-red-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10">
+        <div className="bg-gradient-to-br from-red-500/5 to-red-600/5 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-red-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10">
           <p className="text-red-400 text-xs sm:text-sm font-medium">
             Abandonados
           </p>
-          <p className="text-xl sm:text-2xl font-bold text-white">
+          <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
             {statusCounts.dropped}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-purple-500/5 to-purple-600/5 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-purple-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
+        <div className="bg-gradient-to-br from-purple-500/5 to-purple-600/5 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-purple-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
           <p className="text-purple-400 text-xs sm:text-sm font-medium">
             Planejados
           </p>
-          <p className="text-xl sm:text-2xl font-bold text-white">
+          <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
             {statusCounts.planned}
           </p>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10 animate-fade-in hover:scale-105 transition-all duration-300">
-        <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/10 animate-fade-in hover:scale-105 transition-all duration-300">
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
           <Calendar className="text-purple-400" size={18} sm:size={20} />
           Marcos Recentes
         </h2>
 
         {milestones.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {milestones.slice(0, 3).map((milestone) => {
               console.log("Dashboard milestone", milestone);
               return (
                 <div
                   key={milestone.id}
-                  className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg"
+                  className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-800/30 rounded-lg"
                 >
-                  <div className="text-xl sm:text-2xl flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center overflow-hidden">
+                  <div className="text-lg sm:text-xl md:text-2xl flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex items-center justify-center overflow-hidden">
                     {milestone.icon}
                   </div>
                   <div className="flex-1 min-w-0">

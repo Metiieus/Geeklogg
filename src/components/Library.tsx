@@ -315,11 +315,11 @@ const Library: React.FC = () => {
       </div>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-6 lg:gap-8 animate-fade-in media-grid grid-container">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8 animate-fade-in media-grid grid-container library-grid">
         {filteredAndSortedItems.map((item) => (
-          <div key={item.id} className={`group relative bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-800'}/20 to-slate-900/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-600/30 hover:border-slate-500/60 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/25 animate-slide-up media-card scale-on-hover min-h-[300px] sm:min-h-[350px] md:min-h-[400px]`}>
+          <div key={item.id} className={`group relative bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-800'}/20 to-slate-900/90 backdrop-blur-sm rounded-xl sm:rounded-2xl overflow-hidden border border-slate-600/30 hover:border-slate-500/60 transition-all duration-300 hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl sm:hover:shadow-2xl hover:shadow-purple-500/25 animate-slide-up media-card scale-on-hover min-h-[280px] sm:min-h-[320px] md:min-h-[380px]`}>
               {/* Cover Image */}
-              <div className="h-60 sm:h-72 md:h-80 bg-gradient-to-b from-slate-600/50 to-slate-800/80 relative overflow-hidden rounded-t-2xl">
+              <div className="h-48 sm:h-60 md:h-72 bg-gradient-to-b from-slate-600/50 to-slate-800/80 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl">
                 {item.cover ? (
                   <img
                     src={item.cover}
@@ -343,7 +343,7 @@ const Library: React.FC = () => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-400">
-                    <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-40 flex items-center justify-center`}>
+                    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type]} opacity-40 flex items-center justify-center`}>
                       <span className="text-white font-bold text-2xl">{item.title.charAt(0)}</span>
                     </div>
                   </div>
@@ -380,16 +380,16 @@ const Library: React.FC = () => {
                   </div>
 
                   {/* Mobile Action Buttons - só aparece no mobile */}
-                  <div className="absolute top-3 right-3 md:hidden flex gap-2">
+                  <div className="absolute top-2 right-2 md:hidden flex gap-1.5">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditClick(item);
                       }}
-                      className="p-2 bg-black/60 backdrop-blur-sm rounded-full hover:bg-black/80 active:scale-95 transition-all duration-200 border border-white/20 shadow-lg"
+                      className="p-2.5 bg-slate-900/85 backdrop-blur-sm rounded-xl border border-slate-600/50 text-slate-200 hover:text-white hover:bg-slate-800/95 transition-all duration-200 shadow-xl card-action-button"
                       title="Editar"
                     >
-                      <Edit size={14} className="text-white" />
+                      <Edit size={16} />
                     </button>
                     <button
                       onClick={(e) => {
@@ -397,37 +397,37 @@ const Library: React.FC = () => {
                         handleDeleteClick(item);
                       }}
                       disabled={!item.id || typeof item.id !== "string" || item.id.trim() === ""}
-                      className="p-2 bg-red-500/80 backdrop-blur-sm rounded-full hover:bg-red-500/90 active:scale-95 transition-all duration-200 border border-red-400/30 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2.5 bg-red-900/85 backdrop-blur-sm rounded-xl border border-red-600/50 text-red-200 hover:text-white hover:bg-red-800/95 transition-all duration-200 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed card-action-button"
                       title={!item.id || typeof item.id !== "string" || item.id.trim() === "" ? "Item sem ID válido" : "Excluir"}
                     >
-                      <Trash2 size={14} className="text-white" />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
 
                 {/* Card Content */}
-                <div className="p-4 sm:p-5 md:p-6 space-y-3 flex-1">
+                <div className="p-3 sm:p-4 md:p-5 space-y-2 sm:space-y-3 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-bold text-white text-sm sm:text-base md:text-lg line-clamp-2 leading-tight flex-1">
+                    <h3 className="font-bold text-white text-xs sm:text-sm md:text-base line-clamp-2 leading-tight flex-1">
                       {item.title}
                     </h3>
                     {item.rating && (
-                      <div className="flex items-center gap-1 flex-shrink-0 bg-yellow-500/20 px-2 py-1 rounded-full">
-                        <Star className="text-yellow-400" size={14} fill="currentColor" />
-                        <span className="text-white text-sm font-bold">{item.rating}</span>
+                      <div className="flex items-center gap-1 flex-shrink-0 bg-yellow-500/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                        <Star className="text-yellow-400" size={12} sm:size={14} fill="currentColor" />
+                        <span className="text-white text-xs sm:text-sm font-bold">{item.rating}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Status */}
-                  <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(item.status)}`}>
+                  <div className={`inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
                     {getStatusLabel(item.status)}
                   </div>
 
                   {/* Progress para livros */}
                   {item.type === "books" && item.totalPages && (
                     <div>
-                      <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+                      <div className="h-1.5 sm:h-2 bg-slate-700/50 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-green-500"
                           style={{
@@ -444,19 +444,19 @@ const Library: React.FC = () => {
                   {/* Tempo de jogo/horas */}
                   {item.hoursSpent && (
                     <div className="flex items-center gap-2 text-blue-400">
-                      <Clock size={14} />
-                      <span className="text-sm font-medium">{item.hoursSpent}h</span>
+                      <Clock size={12} sm:size={14} />
+                      <span className="text-xs sm:text-sm font-medium">{item.hoursSpent}h</span>
                     </div>
                   )}
 
                   {/* Tag principal - limitada a 1 */}
                   {item.tags.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <span className={`px-3 py-1.5 bg-gradient-to-r ${mediaTypeColors[item.type]}/20 border border-current/20 text-sm rounded-full truncate max-w-[140px] font-medium`}>
+                      <span className={`px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r ${mediaTypeColors[item.type]}/20 border border-current/20 text-xs sm:text-sm rounded-full truncate max-w-[120px] sm:max-w-[140px] font-medium`}>
                         {item.tags[0]}
                       </span>
                       {item.tags.length > 1 && (
-                        <span className="text-sm text-slate-400 font-medium">+{item.tags.length - 1}</span>
+                        <span className="text-xs sm:text-sm text-slate-400 font-medium">+{item.tags.length - 1}</span>
                       )}
                     </div>
                   )}

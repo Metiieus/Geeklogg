@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Save, X, Upload, AlertCircle } from "lucide-react";
+import { Save, X, Upload, AlertCircle, User } from "lucide-react";
 import { UserSettings } from "../../App";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
 import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
+import { ModalWrapper } from "../ModalWrapper";
 
 interface EditProfileData {
   name: string;
@@ -17,6 +18,22 @@ interface EditProfileModalProps {
   onSave: (data: EditProfileData) => void;
   onClose: () => void;
 }
+
+// Avatares predefinidos estilo Netflix
+const PREDEFINED_AVATARS = [
+  "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1040883/pexels-photo-1040883.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=200",
+];
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   profile,
@@ -33,6 +50,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,9 +89,20 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     }
   };
 
+  const handlePredefinedAvatarSelect = (avatarUrl: string) => {
+    setLocal((prev) => ({ ...prev, avatar: avatarUrl }));
+    setAvatarFile(null); // Remove arquivo personalizado se houver
+    setShowAvatarSelector(false);
+    showSuccess("Avatar selecionado!", "Avatar predefinido foi escolhido");
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-lg w-full overflow-hidden animate-slide-up">
+    <ModalWrapper
+      isOpen={true}
+      onClose={onClose}
+      maxWidth="max-w-lg"
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 overflow-hidden"
+    >
         <div className="flex items-center justify-between p-6 border-b border-white/20">
           <h2 className="text-2xl font-bold text-white">Editar Perfil</h2>
           <button
@@ -85,7 +114,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         </div>
         <form
           onSubmit={handleSubmit}
-          className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
+          className="p-6 space-y-4 max-h-[80vh] overflow-y-auto"
         >
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -102,11 +131,44 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               placeholder="Seu nome"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Avatar
             </label>
             <div className="space-y-3">
+              {/* Avatar atual */}
+              {local.avatar && (
+                <div className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-lg">
+                  <img
+                    src={local.avatar}
+                    alt="Avatar atual"
+                    className="w-16 h-16 object-cover rounded-full"
+                  />
+                  <div className="flex-1">
+                    <p className="text-white text-sm">Avatar atual</p>
+                    <button
+                      type="button"
+                      onClick={() => setLocal((prev) => ({ ...prev, avatar: "" }))}
+                      className="text-red-400 hover:text-red-300 text-xs mt-1"
+                    >
+                      Remover avatar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Botões de seleção */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAvatarSelector(!showAvatarSelector)}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                >
+                  <User size={18} />
+                  Avatares Predefinidos
+                </button>
+
               <label
                 className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
                   isUploading
@@ -200,13 +262,40 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   disabled={isUploading}
                 />
               </label>
-              {local.avatar && (
-                <div className="mt-2">
-                  <img
-                    src={local.avatar}
-                    alt="Preview"
-                    className="w-24 h-24 object-cover rounded-full mx-auto"
-                  />
+              </div>
+
+              {/* Seletor de avatares predefinidos */}
+              {showAvatarSelector && (
+                <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-600/50">
+                  <h4 className="text-white font-medium mb-3">Escolha um avatar:</h4>
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
+                    {PREDEFINED_AVATARS.map((avatarUrl, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => handlePredefinedAvatarSelect(avatarUrl)}
+                        className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${
+                          local.avatar === avatarUrl 
+                            ? 'border-purple-500 ring-2 ring-purple-400/50' 
+                            : 'border-slate-600 hover:border-slate-400'
+                        }`}
+                      >
+                        <img
+                          src={avatarUrl}
+                          alt={`Avatar ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowAvatarSelector(false)}
+                    className="mt-3 text-slate-400 hover:text-white text-sm"
+                  >
+                    Fechar seletor
+                  </button>
                 </div>
               )}
             </div>
@@ -379,7 +468,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </ModalWrapper>
   );
 };

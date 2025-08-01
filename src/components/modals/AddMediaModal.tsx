@@ -5,6 +5,7 @@ import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
 import { sanitizeText, sanitizeUrl, sanitizeTags } from "../../utils/sanitizer";
+import { ModalWrapper } from "../ModalWrapper";
 
 interface AddMediaModalProps {
   onClose: () => void;
@@ -206,6 +207,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
     <ModalWrapper
       isOpen={true}
       onClose={onClose}
+      maxWidth="max-w-2xl"
       className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col max-h-[90vh]"
     >
         {/* Header */}
@@ -215,7 +217,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
           >
             <X className="text-slate-400" size={20} />
           </button>
@@ -229,7 +231,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         >
           <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
             {/* Basic Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 form-grid">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Título *
@@ -262,7 +264,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 form-grid">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Status *
@@ -294,7 +296,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </div>
 
             {/* Rating & Hours */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 form-grid">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Avaliação (0-10)
@@ -328,7 +330,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </div>
 
             {formData.type === "books" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 form-grid">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Páginas Totais
@@ -359,7 +361,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             )}
 
             {/* Dates */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 form-grid">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Data de Início
@@ -447,7 +449,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                     <img
                       src={formData.coverPreview}
                       alt="Preview"
-                      className="w-32 h-40 object-cover rounded-lg mx-auto"
+                      className="w-24 sm:w-32 h-32 sm:h-40 object-cover rounded-lg mx-auto"
                     />
                   </div>
                 )}
