@@ -430,7 +430,7 @@ const ModernLibrary: React.FC = () => {
               <AddMediaOptions
                 onExternalResultSelect={handleExternalResultSelect}
                 onManualAdd={() => {
-                  setShowAddModal(true);
+                  navigateToAddMedia();
                   setShowAddOptions(false);
                 }}
               />
