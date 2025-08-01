@@ -10,6 +10,8 @@ const Statistics = lazy(() => import("./components/Statistics"));
 const Settings = lazy(() => import("./components/Settings"));
 const Profile = lazy(() => import("./components/Profile"));
 import { SocialFeed } from "./components/SocialFeed";
+import { AddMediaPage } from "./components/AddMediaPage";
+import { EditMediaPage } from "./components/EditMediaPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Login } from "./components/Login";
 import { Register } from "./components/Register";
@@ -110,7 +112,9 @@ export type ActivePage =
   | "statistics"
   | "profile"
   | "settings"
-  | "social";
+  | "social"
+  | "add-media"
+  | "edit-media";
 
 type ViewMode = "landing" | "login" | "register";
 
@@ -133,6 +137,7 @@ function App() {
     defaultLibrarySort: "updatedAt",
   });
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -214,6 +219,14 @@ function App() {
     setActivePage,
     selectedUser,
     setSelectedUser,
+    editingMediaItem,
+    setEditingMediaItem,
+    navigateToAddMedia: () => setActivePage("add-media"),
+    navigateToEditMedia: (item: MediaItem) => {
+      setEditingMediaItem(item);
+      setActivePage("edit-media");
+    },
+    navigateBack: () => setActivePage("library"),
   };
 
   if (loading) {
@@ -274,6 +287,33 @@ function App() {
         return <Settings />;
       case "social":
         return <SocialFeed />;
+      case "add-media":
+        return (
+          <AddMediaPage
+            onSave={(item) => {
+              setMediaItems(prev => [...prev, item]);
+            }}
+            onBack={() => setActivePage("library")}
+          />
+        );
+      case "edit-media":
+        return editingMediaItem ? (
+          <EditMediaPage
+            item={editingMediaItem}
+            onSave={(updatedItem) => {
+              setMediaItems(prev =>
+                prev.map(item => item.id === updatedItem.id ? updatedItem : item)
+              );
+              setEditingMediaItem(null);
+            }}
+            onBack={() => {
+              setEditingMediaItem(null);
+              setActivePage("library");
+            }}
+          />
+        ) : (
+          <Library />
+        );
       default:
         return <Dashboard />;
     }

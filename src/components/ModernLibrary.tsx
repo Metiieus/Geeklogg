@@ -18,9 +18,7 @@ import { colors, gradients, shadows, animations, getCategoryColors } from '../de
 
 // Existing services
 import { ConnectivityError } from './ConnectivityError';
-import { AddMediaModal } from './modals/AddMediaModal';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
-import { EditMediaModal } from './modals/EditMediaModal';
 import { AddMediaOptions } from './AddMediaOptions';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
@@ -42,7 +40,7 @@ const sortOptions = [
 ];
 
 const ModernLibrary: React.FC = () => {
-  const { mediaItems, setMediaItems } = useAppContext();
+  const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
 
   // State
@@ -51,10 +49,8 @@ const ModernLibrary: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
-  const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
   const [hasConnectionError, setHasConnectionError] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
@@ -156,7 +152,6 @@ const ModernLibrary: React.FC = () => {
         item.id === updatedItem.id ? updatedItem : item,
       ),
     );
-    setEditingItem(null);
   }, [mediaItems, setMediaItems]);
 
   const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
@@ -347,7 +342,7 @@ const ModernLibrary: React.FC = () => {
                       ...item,
                       synopsis: item.description,
                     } as any}
-                    onEdit={setEditingItem}
+                    onEdit={navigateToEditMedia}
                     onDelete={handleDeleteItem}
                     variant={viewMode === 'list' ? 'compact' : 'default'}
                     className={viewMode === 'list' ? 'flex-row h-32' : ''}
@@ -434,7 +429,7 @@ const ModernLibrary: React.FC = () => {
               <AddMediaOptions
                 onExternalResultSelect={handleExternalResultSelect}
                 onManualAdd={() => {
-                  setShowAddModal(true);
+                  navigateToAddMedia();
                   setShowAddOptions(false);
                 }}
               />
@@ -442,15 +437,7 @@ const ModernLibrary: React.FC = () => {
           </motion.div>
         )}
 
-        {showAddModal && (
-          <AddMediaModal
-            onClose={() => setShowAddModal(false)}
-            onSave={(newItem) => {
-              setMediaItems([...mediaItems, newItem]);
-              setShowAddModal(false);
-            }}
-          />
-        )}
+
 
         {selectedExternalResult && (
           <AddMediaFromSearchModal
@@ -460,19 +447,13 @@ const ModernLibrary: React.FC = () => {
           />
         )}
 
-        {editingItem && (
-          <EditMediaModal
-            item={editingItem}
-            onClose={() => setEditingItem(null)}
-            onSave={handleEditItem}
-          />
-        )}
+
 
         {/* Delete Confirmation Modal */}
         <ConfirmationModal
           isOpen={showDeleteConfirm}
           title="Excluir Item"
-          message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!` : ''}
+          message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa aç��o não pode ser desfeita!` : ''}
           confirmText="Excluir"
           cancelText="Cancelar"
           variant="danger"

@@ -45,10 +45,15 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
         {/* Header */}
         <div className="relative p-4 sm:p-6 pb-0">
           <button
-            onClick={onClose}
-            className="absolute top-3 sm:top-4 right-3 sm:right-4 p-2 sm:p-3 hover:bg-slate-700 rounded-lg transition-colors touch-target"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className="absolute top-3 sm:top-4 right-3 sm:right-4 p-2 sm:p-3 hover:bg-slate-700 rounded-lg transition-colors touch-target z-10"
+            type="button"
+            aria-label="Fechar modal"
           >
-            <X className="text-slate-400" size={18} />
+            <X className="text-slate-400 hover:text-white" size={18} />
           </button>
 
           <div className="flex items-center gap-3 sm:gap-4">
@@ -139,6 +144,17 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
               </div>
             </div>
           )}
+
+          {/* Close button at bottom for mobile users */}
+          <div className="mt-6 pt-4 border-t border-slate-700/50 md:hidden">
+            <button
+              onClick={onClose}
+              className="w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+              type="button"
+            >
+              Fechar
+            </button>
+          </div>
         </div>
     </ModalWrapper>
   );
