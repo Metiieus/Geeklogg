@@ -287,6 +287,33 @@ function App() {
         return <Settings />;
       case "social":
         return <SocialFeed />;
+      case "add-media":
+        return (
+          <AddMediaPage
+            onSave={(item) => {
+              setMediaItems(prev => [...prev, item]);
+            }}
+            onBack={() => setActivePage("library")}
+          />
+        );
+      case "edit-media":
+        return editingMediaItem ? (
+          <EditMediaPage
+            item={editingMediaItem}
+            onSave={(updatedItem) => {
+              setMediaItems(prev =>
+                prev.map(item => item.id === updatedItem.id ? updatedItem : item)
+              );
+              setEditingMediaItem(null);
+            }}
+            onBack={() => {
+              setEditingMediaItem(null);
+              setActivePage("library");
+            }}
+          />
+        ) : (
+          <Library />
+        );
       default:
         return <Dashboard />;
     }
