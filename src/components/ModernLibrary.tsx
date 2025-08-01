@@ -152,7 +152,6 @@ const ModernLibrary: React.FC = () => {
         item.id === updatedItem.id ? updatedItem : item,
       ),
     );
-    setEditingItem(null);
   }, [mediaItems, setMediaItems]);
 
   const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
