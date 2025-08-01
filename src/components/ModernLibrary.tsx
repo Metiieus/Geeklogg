@@ -438,15 +438,7 @@ const ModernLibrary: React.FC = () => {
           </motion.div>
         )}
 
-        {showAddModal && (
-          <AddMediaModal
-            onClose={() => setShowAddModal(false)}
-            onSave={(newItem) => {
-              setMediaItems([...mediaItems, newItem]);
-              setShowAddModal(false);
-            }}
-          />
-        )}
+
 
         {selectedExternalResult && (
           <AddMediaFromSearchModal
