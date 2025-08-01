@@ -42,7 +42,7 @@ const bookmarkColors = {
 };
 
 const Library: React.FC = () => {
-  const { mediaItems, setMediaItems } = useAppContext();
+  const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
