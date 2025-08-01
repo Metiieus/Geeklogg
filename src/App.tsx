@@ -10,6 +10,8 @@ const Statistics = lazy(() => import("./components/Statistics"));
 const Settings = lazy(() => import("./components/Settings"));
 const Profile = lazy(() => import("./components/Profile"));
 import { SocialFeed } from "./components/SocialFeed";
+import { AddMediaPage } from "./components/AddMediaPage";
+import { EditMediaPage } from "./components/EditMediaPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Login } from "./components/Login";
 import { Register } from "./components/Register";
