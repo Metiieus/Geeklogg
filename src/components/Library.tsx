@@ -152,9 +152,9 @@ const Library: React.FC = () => {
   }, []);
 
   const handleManualAdd = useCallback(() => {
-    setShowAddModal(true);
+    navigateToAddMedia();
     setShowAddOptions(false);
-  }, []);
+  }, [navigateToAddMedia]);
 
   const handleAddFromSearch = useCallback((newItem: MediaItem) => {
     setMediaItems([...mediaItems, newItem]);
