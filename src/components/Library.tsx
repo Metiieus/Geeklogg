@@ -2,9 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Search, Plus, Star, Clock, ExternalLink, Edit, Trash2, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, MediaItem, Status } from '../App';
-import { AddMediaModal } from './modals/AddMediaModal';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
-import { EditMediaModal } from './modals/EditMediaModal';
 import { AddMediaOptions } from './AddMediaOptions';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
@@ -44,17 +42,15 @@ const bookmarkColors = {
 };
 
 const Library: React.FC = () => {
-  const { mediaItems, setMediaItems } = useAppContext();
+  const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] =
     useState<ExternalMediaResult | null>(null);
-    const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
 
@@ -148,7 +144,6 @@ const Library: React.FC = () => {
         item.id === updatedItem.id ? updatedItem : item,
       ),
     );
-    setEditingItem(null);
   }, [mediaItems, setMediaItems]);
 
   const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
@@ -157,9 +152,9 @@ const Library: React.FC = () => {
   }, []);
 
   const handleManualAdd = useCallback(() => {
-    setShowAddModal(true);
+    navigateToAddMedia();
     setShowAddOptions(false);
-  }, []);
+  }, [navigateToAddMedia]);
 
   const handleAddFromSearch = useCallback((newItem: MediaItem) => {
     setMediaItems([...mediaItems, newItem]);
@@ -168,11 +163,11 @@ const Library: React.FC = () => {
 
   const handleEditClick = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
-      alert("ID inválido");
+      showError("Erro", "Item sem ID válido para edição");
       return;
     }
-    setEditingItem(item);
-  }, []);
+    navigateToEditMedia(item);
+  }, [navigateToEditMedia, showError]);
 
   const handleDeleteClick = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
@@ -513,16 +508,7 @@ const Library: React.FC = () => {
         </div>
       )}
 
-      {/* Add Media Modal */}
-      {showAddModal && (
-        <AddMediaModal
-          onClose={() => setShowAddModal(false)}
-          onSave={(newItem) => {
-            setMediaItems([...mediaItems, newItem]);
-            setShowAddModal(false);
-          }}
-        />
-      )}
+
 
       {/* Add Media From Search Modal */}
       {selectedExternalResult && (
@@ -577,13 +563,7 @@ const Library: React.FC = () => {
       )}
 
       {/* Edit Media Modal */}
-      {editingItem && (
-        <EditMediaModal
-          item={editingItem}
-          onClose={() => setEditingItem(null)}
-          onSave={handleEditItem}
-        />
-      )}
+
     </div>
   );
 };

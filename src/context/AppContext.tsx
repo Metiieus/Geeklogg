@@ -15,6 +15,11 @@ interface AppContextType {
   setActivePage: (page: ActivePage) => void;
   selectedUser: UserProfile | null;
   setSelectedUser: (user: UserProfile | null) => void;
+  editingMediaItem: MediaItem | null;
+  setEditingMediaItem: (item: MediaItem | null) => void;
+  navigateToAddMedia: () => void;
+  navigateToEditMedia: (item: MediaItem) => void;
+  navigateBack: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
