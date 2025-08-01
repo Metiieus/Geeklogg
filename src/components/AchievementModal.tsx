@@ -2,6 +2,7 @@ import React from "react";
 import { X, Calendar, Trophy, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { AchievementNode } from "../types/achievements";
+import { ModalWrapper } from "./ModalWrapper";
 
 interface AchievementModalProps {
   achievement: AchievementNode;
@@ -35,14 +36,12 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
   onClose,
 }) => {
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
-      <motion.div
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-md w-full max-h-[90vh] overflow-hidden"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      >
+    <ModalWrapper
+      isOpen={true}
+      onClose={onClose}
+      maxWidth="max-w-md"
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden"
+    >
         {/* Header */}
         <div className="relative p-4 sm:p-6 pb-0">
           <button
@@ -141,7 +140,6 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
             </div>
           )}
         </div>
-      </motion.div>
-    </div>
+    </ModalWrapper>
   );
 };

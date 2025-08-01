@@ -18,7 +18,7 @@ const getApiUrl = (): string => {
   const isDevelopment = hostname === 'localhost' || hostname.startsWith('192.168');
 
   if (isDevelopment) {
-    return 'http://localhost:8080';
+    return 'http://localhost:4242';
   } else {
     // ✅ Aponta para a sua Cloud Function do Firebase
     return 'https://us-central1-geeklog-26b2c.cloudfunctions.net/api';
@@ -37,14 +37,14 @@ export async function createPreference(): Promise<CheckoutResponse> {
     return { success: false, error: 'Você precisa estar logado para continuar.' };
   }
 
+  const apiUrl = getApiUrl();
+
   try {
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
-    const token = await user.getIdToken();
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ uid: user.uid, email: user.email }),
     });
@@ -97,19 +97,12 @@ export async function updateUserPremium(uid: string, preference_id: string): Pro
   }
   
   const apiUrl = getApiUrl();
-  const user = auth.currentUser;
 
   try {
-    const token = user ? await user.getIdToken() : null;
-    if (!token) {
-      throw new Error("Usuário não autenticado para atualizar o plano.");
-    }
-
     const response = await fetch(`${apiUrl}/update-premium`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ uid, preference_id }),
     });
