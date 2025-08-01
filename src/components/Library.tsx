@@ -164,11 +164,11 @@ const Library: React.FC = () => {
 
   const handleEditClick = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
-      alert("ID inválido");
+      showError("Erro", "Item sem ID válido para edição");
       return;
     }
-    setEditingItem(item);
-  }, []);
+    navigateToEditMedia(item);
+  }, [navigateToEditMedia, showError]);
 
   const handleDeleteClick = useCallback((item: MediaItem) => {
     if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
