@@ -219,6 +219,14 @@ function App() {
     setActivePage,
     selectedUser,
     setSelectedUser,
+    editingMediaItem,
+    setEditingMediaItem,
+    navigateToAddMedia: () => setActivePage("add-media"),
+    navigateToEditMedia: (item: MediaItem) => {
+      setEditingMediaItem(item);
+      setActivePage("edit-media");
+    },
+    navigateBack: () => setActivePage("library"),
   };
 
   if (loading) {
