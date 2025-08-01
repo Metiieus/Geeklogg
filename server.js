@@ -1,10 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const { MercadoPagoConfig, Preference } = require('mercadopago');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import { MercadoPagoConfig, Preference } from 'mercadopago';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4242;
+const PORT = process.env.PORT || 3000;
 
 // Configuração do MercadoPago
 const client = new MercadoPagoConfig({ 
@@ -118,4 +120,4 @@ app.listen(PORT, () => {
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
 });
 
-module.exports = app;
+export default app;
