@@ -18,9 +18,7 @@ import { colors, gradients, shadows, animations, getCategoryColors } from '../de
 
 // Existing services
 import { ConnectivityError } from './ConnectivityError';
-import { AddMediaModal } from './modals/AddMediaModal';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
-import { EditMediaModal } from './modals/EditMediaModal';
 import { AddMediaOptions } from './AddMediaOptions';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
@@ -472,7 +470,7 @@ const ModernLibrary: React.FC = () => {
         <ConfirmationModal
           isOpen={showDeleteConfirm}
           title="Excluir Item"
-          message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa ação não pode ser desfeita!` : ''}
+          message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa aç��o não pode ser desfeita!` : ''}
           confirmText="Excluir"
           cancelText="Cancelar"
           variant="danger"
