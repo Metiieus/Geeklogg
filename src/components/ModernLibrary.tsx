@@ -342,7 +342,7 @@ const ModernLibrary: React.FC = () => {
                       ...item,
                       synopsis: item.description,
                     } as any}
-                    onEdit={setEditingItem}
+                    onEdit={navigateToEditMedia}
                     onDelete={handleDeleteItem}
                     variant={viewMode === 'list' ? 'compact' : 'default'}
                     className={viewMode === 'list' ? 'flex-row h-32' : ''}
