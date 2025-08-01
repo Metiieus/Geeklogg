@@ -40,7 +40,7 @@ const sortOptions = [
 ];
 
 const ModernLibrary: React.FC = () => {
-  const { mediaItems, setMediaItems } = useAppContext();
+  const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
 
   // State
