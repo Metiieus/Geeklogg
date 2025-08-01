@@ -110,7 +110,9 @@ export type ActivePage =
   | "statistics"
   | "profile"
   | "settings"
-  | "social";
+  | "social"
+  | "add-media"
+  | "edit-media";
 
 type ViewMode = "landing" | "login" | "register";
 
