@@ -448,13 +448,7 @@ const ModernLibrary: React.FC = () => {
           />
         )}
 
-        {editingItem && (
-          <EditMediaModal
-            item={editingItem}
-            onClose={() => setEditingItem(null)}
-            onSave={handleEditItem}
-          />
-        )}
+
 
         {/* Delete Confirmation Modal */}
         <ConfirmationModal
