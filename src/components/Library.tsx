@@ -508,16 +508,7 @@ const Library: React.FC = () => {
         </div>
       )}
 
-      {/* Add Media Modal */}
-      {showAddModal && (
-        <AddMediaModal
-          onClose={() => setShowAddModal(false)}
-          onSave={(newItem) => {
-            setMediaItems([...mediaItems, newItem]);
-            setShowAddModal(false);
-          }}
-        />
-      )}
+
 
       {/* Add Media From Search Modal */}
       {selectedExternalResult && (
