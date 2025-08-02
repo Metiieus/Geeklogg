@@ -92,6 +92,7 @@ class IGDBService {
   async searchGames(params: IGDBSearchParams): Promise<IGDBSearchResult[]> {
     try {
       const query = this.buildQuery(params);
+      console.log("🔍 IGDB Query:", query);
 
       const response = await fetch(`${this.proxyUrl}/games`, {
         method: "POST",
@@ -102,7 +103,9 @@ class IGDBService {
       });
 
       if (!response.ok) {
-        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error("❌ IGDB Error Response:", errorText);
+        throw new Error(`IGDB proxy error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const games: IGDBGame[] = await response.json();
@@ -118,10 +121,10 @@ class IGDBService {
       const query = `
         fields id, name, summary, cover.url, cover.image_id, first_release_date,
                genres.name, platforms.name, platforms.abbreviation, rating, rating_count,
-               screenshots.url, screenshots.image_id, involved_companies.company.name,
-               involved_companies.developer, involved_companies.publisher,
+               screenshots.url, screenshots.image_id, involved_companies.*,
                websites.url, websites.category, game_modes.name,
                player_perspectives.name, themes.name;
+        expand involved_companies.company;
         where id = ${gameId};
       `;
 
@@ -149,7 +152,8 @@ class IGDBService {
     try {
       const query = `
         fields id, name, summary, cover.url, cover.image_id, first_release_date,
-               genres.name, platforms.name, platforms.abbreviation, rating, rating_count;
+               genres.name, platforms.name, platforms.abbreviation, rating, rating_count, involved_companies.*;
+        expand involved_companies.company;
         where rating_count > 100 & rating > 75;
         sort rating desc;
         limit ${limit};
@@ -179,7 +183,8 @@ class IGDBService {
     try {
       const query = `
         fields id, name, summary, cover.url, cover.image_id, first_release_date,
-               genres.name, platforms.name, platforms.abbreviation, rating, rating_count;
+               genres.name, platforms.name, platforms.abbreviation, rating, rating_count, involved_companies.*;
+        expand involved_companies.company;
         where genres.name ~ "${genreName}" & rating_count > 10;
         sort rating desc;
         limit ${limit};
@@ -224,12 +229,12 @@ class IGDBService {
 
   private buildQuery(params: IGDBSearchParams): string {
     const { query, limit = 20, offset = 0, filters } = params;
-    
+
     let queryParts = [
       "fields id, name, summary, cover.url, cover.image_id, first_release_date,",
       "       genres.name, platforms.name, platforms.abbreviation, rating, rating_count,",
-      "       involved_companies.company.name, involved_companies.developer,",
-      "       involved_companies.publisher, websites.url, websites.category;"
+      "       involved_companies.*, websites.url, websites.category;",
+      "expand involved_companies.company;"
     ];
 
     // Search condition

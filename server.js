@@ -35,20 +35,29 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Backend está funcionando!' });
 });
 
-// IGDB API Proxy (✔️ CORRIGIDO)
+// Proxy para IGDB API com query corrigida e expand
 app.post('/api/igdb/games', async (req, res) => {
   try {
-    const { query } = req.body;
+    let { query } = req.body;
+
+    console.log('📨 Received IGDB request body:', req.body);
 
     if (!query) {
-      return res.status(400).json({ error: 'Query é obrigatória' });
+      return res.status(400).json({
+        error: 'Query é obrigatória',
+        message: 'O campo query deve estar presente no body da requisição'
+      });
     }
 
+    // Limpar e formatar a query
+    query = query.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+    console.log('✅ Query formatada:', query);
+
     if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
-      console.warn('🟡 IGDB credentials not configured, skipping request');
+      console.warn('🟡 IGDB credentials not configured');
       return res.status(503).json({
         error: 'IGDB API not configured',
-        message: 'Configure IGDB_CLIENT_ID and IGDB_ACCESS_TOKEN environment variables'
+        message: 'Configure IGDB_CLIENT_ID e IGDB_ACCESS_TOKEN nas variáveis de ambiente'
       });
     }
 
@@ -57,14 +66,18 @@ app.post('/api/igdb/games', async (req, res) => {
       headers: {
         'Client-ID': IGDB_CLIENT_ID,
         'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
-        'Content-Type': 'text/plain', // <-- Aqui está a correção
+        'Content-Type': 'text/plain',
       },
       body: query,
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`IGDB API error: ${response.status} - ${errorText}`);
+      console.error('Erro na resposta da IGDB:', errorText);
+      return res.status(response.status).json({
+        error: `IGDB API error: ${response.status}`,
+        message: errorText
+      });
     }
 
     const data = await response.json();
@@ -74,12 +87,12 @@ app.post('/api/igdb/games', async (req, res) => {
     console.error('🚨 ERRO no proxy IGDB:', error);
     res.status(500).json({
       error: 'Erro no proxy IGDB',
-      message: error.message
+      message: error.message,
     });
   }
 });
 
-// IGDB API Health Check (✔️ também ajustado)
+// IGDB API Health Check
 app.get('/api/igdb/status', async (req, res) => {
   try {
     if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
@@ -117,11 +130,11 @@ app.get('/api/igdb/status', async (req, res) => {
   }
 });
 
-// Criar preferência de pagamento
+// Criar preferência de pagamento MercadoPago
 app.post('/create-preference', async (req, res) => {
   try {
     const { uid, email } = req.body;
-    
+
     if (!uid || !email) {
       return res.status(400).json({ error: 'UID e Email são obrigatórios.' });
     }
@@ -150,7 +163,7 @@ app.post('/create-preference', async (req, res) => {
     };
 
     const result = await preference.create({ body: preferenceData });
-    
+
     res.status(200).json({
       init_point: result.init_point,
       preference_id: result.id,
@@ -167,13 +180,13 @@ app.post('/create-preference', async (req, res) => {
 app.post('/update-premium', async (req, res) => {
   try {
     const { uid, preference_id } = req.body;
-    
+
     if (!uid || !preference_id) {
       return res.status(400).json({ error: 'UID e Preference ID são obrigatórios.' });
     }
 
     console.log(`Atualizando usuário ${uid} para premium com preference ${preference_id}`);
-    
+
     res.status(200).json({ 
       success: true, 
       message: 'Premium ativado com sucesso!' 
@@ -185,7 +198,7 @@ app.post('/update-premium', async (req, res) => {
   }
 });
 
-// Webhook do MercadoPago
+// Webhook MercadoPago
 app.post('/webhook', (req, res) => {
   console.log('📨 Webhook recebido:', req.body);
   res.status(200).send('OK');
@@ -197,7 +210,7 @@ app.use((error, req, res, next) => {
   res.status(500).json({ error: 'Erro interno do servidor' });
 });
 
-// Iniciar servidor
+// Start do servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
