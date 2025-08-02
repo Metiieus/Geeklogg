@@ -190,7 +190,10 @@ export const database = {
           const fallback = localStorageService.getCollection(
             Array.isArray(collectionPath) ? collectionPath.join("/") : collectionPath,
           );
-          return fallback.map((item: any) => ({ id: item.id ?? Date.now().toString(), ...item }));
+          return fallback.map((item: any, index: number) => ({
+            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+            ...item
+          }));
         } catch {
           return [];
         }

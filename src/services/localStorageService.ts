@@ -40,7 +40,7 @@ export const localStorageService = {
   addDocument: (path: string | string[], data: any): string => {
     try {
       const key = Array.isArray(path) ? path.join("/") : path;
-      const id = Date.now().toString();
+      const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const docKey = `${key}/${id}`;
 
       localStorage.setItem(

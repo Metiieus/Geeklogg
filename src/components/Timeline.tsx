@@ -13,6 +13,7 @@ import { Milestone } from "../App";
 import { AddMilestoneModal } from "./modals/AddMilestoneModal";
 import { EditMilestoneModal } from "./modals/EditMilestoneModal";
 import { deleteMilestone } from "../services/milestoneService";
+import { parseDate, formatDateShort } from "../utils/dateUtils";
 
 const Timeline: React.FC = () => {
   const { milestones, setMilestones, mediaItems } = useAppContext();
@@ -24,7 +25,7 @@ const Timeline: React.FC = () => {
   const [milestoneToDelete, setMilestoneToDelete] = useState<Milestone | null>(null);
 
   const sortedMilestones = milestones.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime(),
   );
 
   const handleDeleteClick = (milestone: Milestone) => {
@@ -127,9 +128,7 @@ const Timeline: React.FC = () => {
                         <div className="flex items-center gap-1 text-slate-400 text-xs sm:text-sm">
                           <Calendar size={14} />
                           <span>
-                            {new Date(milestone.date).toLocaleDateString(
-                              "pt-BR",
-                            )}
+                            {formatDateShort(milestone.date)}
                           </span>
                         </div>
                       </div>

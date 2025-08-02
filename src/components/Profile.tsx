@@ -18,6 +18,7 @@ import { saveProfile as saveProfileService } from "../services/profileService";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import MercadoPagoButton from "./MercadoPagoButton";
+import { formatDate, normalizeTimestamp } from "../utils/dateUtils";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 
 const Profile: React.FC = () => {
@@ -74,10 +75,15 @@ const Profile: React.FC = () => {
     if (activeTab !== "notifications") return;
     setLoadingNotifications(true);
     try {
-            const userNotifications = await getUserNotifications(user?.uid || "");
-      setNotifications(userNotifications);
+      const userNotifications = await getUserNotifications(user?.uid || "");
+      // Normalizar timestamps e filtrar notificações válidas
+      const normalizedNotifications = userNotifications
+        .map(normalizeTimestamp)
+        .filter(notif => notif && notif.id);
+      setNotifications(normalizedNotifications);
     } catch (error) {
       console.error("Erro ao carregar notificações:", error);
+      setNotifications([]);
     } finally {
       setLoadingNotifications(false);
     }
@@ -475,9 +481,7 @@ const Profile: React.FC = () => {
                         {notification.message}
                       </p>
                       <p className="text-slate-400 text-xs">
-                        {new Date(notification.createdAt).toLocaleString(
-                          "pt-BR",
-                        )}
+                        {formatDate(notification.timestamp || notification.createdAt)}
                       </p>
                     </div>
                     {!notification.read && (

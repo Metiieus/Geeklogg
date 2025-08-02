@@ -326,13 +326,20 @@ const Library: React.FC = () => {
                       target.style.display = 'none';
                       const parent = target.parentElement;
                       if (parent) {
-                        parent.innerHTML = `
-                          <div class="w-full h-full flex items-center justify-center text-slate-400">
-                            <div class="w-20 h-20 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-600 to-slate-700'} opacity-40 flex items-center justify-center">
-                              <span class="text-white font-bold text-2xl">${item.title.charAt(0)}</span>
-                            </div>
-                          </div>
-                        `;
+                        // Criar elementos DOM de forma segura ao invés de usar innerHTML
+                        const container = document.createElement('div');
+                        container.className = 'w-full h-full flex items-center justify-center text-slate-400';
+
+                        const circle = document.createElement('div');
+                        circle.className = `w-20 h-20 rounded-full bg-gradient-to-br ${mediaTypeColors[item.type] || 'from-slate-600 to-slate-700'} opacity-40 flex items-center justify-center`;
+
+                        const letter = document.createElement('span');
+                        letter.className = 'text-white font-bold text-2xl';
+                        letter.textContent = item.title.charAt(0); // Uso seguro de textContent
+
+                        circle.appendChild(letter);
+                        container.appendChild(circle);
+                        parent.appendChild(container);
                       }
                     }}
                   />

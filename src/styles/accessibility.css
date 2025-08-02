@@ -1,0 +1,215 @@
+/* Estilos para acessibilidade - WCAG 2.1 AA */
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Screen reader only when focused */
+.sr-only-focusable:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: inherit !important;
+}
+
+/* Skip links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  z-index: 1000;
+  color: white;
+  background: #000;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Focus management */
+.focus-visible:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-gradient-to-r,
+  .bg-gradient-to-br,
+  .bg-gradient-to-l {
+    background: #000 !important;
+    border: 1px solid #fff !important;
+  }
+  
+  .text-gray-400,
+  .text-slate-400 {
+    color: #ffffff !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Touch targets - minimum 44px */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Better focus indicators for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target:focus {
+    background-color: rgba(59, 130, 246, 0.1);
+    outline: 2px solid #3B82F6;
+  }
+}
+
+/* Live regions for announcements */
+.live-region {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Error announcements */
+.error-live {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Form validation styles */
+.form-field-error {
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 0 1px #EF4444 !important;
+}
+
+.form-field-error:focus {
+  outline-color: #EF4444 !important;
+  border-color: #EF4444 !important;
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Color contrast improvements */
+.text-improved-contrast {
+  color: #E5E7EB; /* Melhor contraste que text-gray-400 */
+}
+
+.text-secondary-improved {
+  color: #D1D5DB; /* Melhor contraste que text-gray-500 */
+}
+
+/* Button states for accessibility */
+.btn-primary {
+  background: #3B82F6;
+  color: white;
+  border: 2px solid transparent;
+}
+
+.btn-primary:hover {
+  background: #2563EB;
+}
+
+.btn-primary:focus {
+  outline: 2px solid #60A5FA;
+  outline-offset: 2px;
+}
+
+.btn-primary:disabled {
+  background: #6B7280;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Modal focus trap */
+.modal-content:focus {
+  outline: none;
+}
+
+/* Keyboard navigation improvements */
+.navigation-item:focus {
+  background-color: rgba(59, 130, 246, 0.1);
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* Tooltip accessibility */
+.tooltip {
+  position: relative;
+}
+
+.tooltip[aria-describedby] {
+  cursor: help;
+}
+
+/* Status indicators */
+.status-online::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #10B981;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.status-offline::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #6B7280;
+  border-radius: 50%;
+  margin-right: 4px;
+}

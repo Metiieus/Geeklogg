@@ -5,6 +5,7 @@ import { UserProfileView } from "./UserProfileView";
 import { getFollowingActivities } from "../services/socialService";
 import { UserActivity, UserProfile } from "../types/social";
 import { useAppContext } from "../context/AppContext";
+import { formatTimeAgo as formatTimeAgoUtil, getTimestamp } from "../utils/dateUtils";
 
 export const SocialFeed: React.FC = () => {
   const { selectedUser, setSelectedUser } = useAppContext();
@@ -29,18 +30,7 @@ export const SocialFeed: React.FC = () => {
     }
   };
 
-  const formatTimeAgo = (timestamp: string) => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffInMinutes = Math.floor(
-      (now.getTime() - time.getTime()) / (1000 * 60),
-    );
-
-    if (diffInMinutes < 1) return "Agora";
-    if (diffInMinutes < 60) return `${diffInMinutes}m`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
-    return `${Math.floor(diffInMinutes / 1440)}d`;
-  };
+  // Usando função utilitária para formatação segura de tempo
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -185,7 +175,7 @@ export const SocialFeed: React.FC = () => {
                         {activity.description}
                       </span>
                       <span className="text-xs text-slate-500 ml-auto">
-                        {formatTimeAgo(activity.timestamp)}
+                        {formatTimeAgoUtil(activity.timestamp)}
                       </span>
                     </div>
 

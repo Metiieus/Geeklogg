@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
 import { auth } from '../firebase';
 
 interface UserProfile {
@@ -21,6 +21,7 @@ interface AuthContextType {
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -98,11 +99,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error('auth/network-request-failed');
     }
 
-    console.log('🔄 Tentando enviar email de reset para:', email);
+    console.log('🔄 Tentando enviar email de reset');
     console.log('🔧 Current origin:', window.location.origin);
     console.log('🔧 Firebase config check:', {
       hasAuth: !!auth,
-      authDomain: auth?.config?.authDomain,
+      authDomain: 'configured',
       apiKey: auth?.config?.apiKey ? 'Present' : 'Missing'
     });
 
@@ -116,6 +117,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const deleteAccount = async () => {
+    if (!auth || !user) {
+      throw new Error('Firebase Auth not initialized or user not logged in.');
+    }
+
+    try {
+      console.log('🗑️ Iniciando exclusão da conta do usuário');
+
+      // TODO: Em uma implementação real, aqui você faria:
+      // 1. Exclusão de todos os dados do usuário no Firestore
+      // 2. Exclusão de arquivos no Storage
+      // 3. Outros cleanup necessários
+
+      // Por enquanto, apenas deletamos o usuário do Auth
+      await deleteUser(user);
+      console.log('✅ Conta excluída com sucesso');
+
+      // O onAuthStateChanged vai lidar com a limpeza do estado
+    } catch (error) {
+      console.error('❌ Erro ao excluir conta:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     profile,
@@ -123,7 +148,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     login,
     register,
     logout,
-    resetPassword
+    resetPassword,
+    deleteAccount
   };
 
   return (

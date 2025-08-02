@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Download, Upload, Trash2, Save } from "lucide-react";
+import { Download, Upload, Trash2, Save, Shield, FileText, UserX } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { saveSettings } from "../services/settingsService";
 
 const Settings: React.FC = () => {
-  const { settings, setSettings, mediaItems, reviews, milestones } =
+  const { settings, setSettings, mediaItems, reviews, milestones, setActivePage } =
     useAppContext();
   const { user } = useAuth();
   const [localSettings, setLocalSettings] = useState(settings);
@@ -212,6 +212,58 @@ const Settings: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Legal and Privacy */}
+      <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+        <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+          <Shield className="text-blue-400" size={20} />
+          Legal e Privacidade
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Privacy Policy */}
+          <div className="p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
+            <h3 className="font-medium text-white mb-2 flex items-center gap-2">
+              <FileText className="text-blue-400" size={18} />
+              Política de Privacidade
+            </h3>
+            <p className="text-slate-400 text-sm mb-4">
+              Saiba como coletamos, usamos e protegemos seus dados
+            </p>
+            <button
+              onClick={() => setActivePage("privacy-policy")}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Ver Política de Privacidade
+            </button>
+          </div>
+
+          {/* Account Deletion */}
+          <div className="p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
+            <h3 className="font-medium text-white mb-2 flex items-center gap-2">
+              <UserX className="text-red-400" size={18} />
+              Exclusão de Conta
+            </h3>
+            <p className="text-slate-400 text-sm mb-4">
+              Excluir permanentemente sua conta e todos os dados
+            </p>
+            <button
+              onClick={() => setActivePage("account-deletion")}
+              className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Gerenciar Exclusão de Conta
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <p className="text-blue-300 text-sm">
+            <strong>Seus Direitos:</strong> Você tem direito ao acesso, retificação, exclusão e portabilidade dos seus dados,
+            conforme a Lei Geral de Proteção de Dados (LGPD). Para exercer esses direitos, use as opções acima ou
+            entre em contato conosco.
+          </p>
         </div>
       </div>
 

@@ -8,6 +8,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4242;
 
+// Configuração da IGDB API (via Twitch OAuth)
+const IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID || '';
+const IGDB_ACCESS_TOKEN = process.env.IGDB_ACCESS_TOKEN || '';
+
 // Configuração do MercadoPago
 const client = new MercadoPagoConfig({ 
   accessToken: process.env.MP_ACCESS_TOKEN || 'TEST-1234567890-123456-abcdef1234567890abcdef1234567890-123456789'
@@ -29,6 +33,86 @@ app.use(express.json());
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Backend está funcionando!' });
+});
+
+// IGDB API Proxy
+app.post('/api/igdb/games', async (req, res) => {
+  try {
+    const { query } = req.body;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query é obrigatória' });
+    }
+
+    if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
+      console.warn('🟡 IGDB credentials not configured, skipping request');
+      return res.status(503).json({
+        error: 'IGDB API not configured',
+        message: 'Configure IGDB_CLIENT_ID and IGDB_ACCESS_TOKEN environment variables'
+      });
+    }
+
+    const response = await fetch('https://api.igdb.com/v4/games', {
+      method: 'POST',
+      headers: {
+        'Client-ID': IGDB_CLIENT_ID,
+        'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: query,
+    });
+
+    if (!response.ok) {
+      throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    res.json(data);
+
+  } catch (error) {
+    console.error('🚨 ERRO no proxy IGDB:', error);
+    res.status(500).json({
+      error: 'Erro no proxy IGDB',
+      message: error.message
+    });
+  }
+});
+
+// IGDB API Health Check
+app.get('/api/igdb/status', async (req, res) => {
+  try {
+    if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
+      return res.status(503).json({
+        status: 'not_configured',
+        message: 'IGDB credentials not configured'
+      });
+    }
+
+    const response = await fetch('https://api.igdb.com/v4/games', {
+      method: 'POST',
+      headers: {
+        'Client-ID': IGDB_CLIENT_ID,
+        'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: 'fields id; limit 1;',
+    });
+
+    if (response.ok) {
+      res.json({ status: 'ok', message: 'IGDB API disponível' });
+    } else {
+      res.status(503).json({
+        status: 'error',
+        message: `IGDB API error: ${response.status}`
+      });
+    }
+
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      message: error.message
+    });
+  }
 });
 
 // Criar preferência de pagamento

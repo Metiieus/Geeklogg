@@ -1,6 +1,9 @@
 /* Melhorias de responsividade mobile */
 @import "./mobile-improvements.css";
 
+/* Estilos de acessibilidade WCAG */
+@import "./styles/accessibility.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

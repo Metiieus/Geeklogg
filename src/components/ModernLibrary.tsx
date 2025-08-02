@@ -57,7 +57,11 @@ const ModernLibrary: React.FC = () => {
 
   // Filtered and sorted items
   const filteredAndSortedItems = useMemo(() => {
-    let filtered = mediaItems;
+    // Filtrar itens duplicados por ID como medida preventiva
+    const uniqueItems = mediaItems.filter((item, index, arr) =>
+      arr.findIndex(i => i.id === item.id) === index
+    );
+    let filtered = uniqueItems;
 
     if (selectedType !== "all") {
       filtered = filtered.filter((item) => item.type === selectedType);
@@ -332,7 +336,7 @@ const ModernLibrary: React.FC = () => {
             >
               {filteredAndSortedItems.map((item, index) => (
                 <motion.div
-                  key={item.id}
+                  key={`${item.id}-${index}`}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -403,6 +407,7 @@ const ModernLibrary: React.FC = () => {
       <AnimatePresence>
         {showAddOptions && (
           <motion.div
+            key="add-options-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -441,6 +446,7 @@ const ModernLibrary: React.FC = () => {
 
         {selectedExternalResult && (
           <AddMediaFromSearchModal
+            key="external-result-modal"
             externalResult={selectedExternalResult}
             onClose={() => setSelectedExternalResult(null)}
             onSave={handleAddFromSearch}

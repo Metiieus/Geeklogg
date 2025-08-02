@@ -135,12 +135,15 @@ const Sidebar: React.FC = () => {
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex-1 space-y-2">
+          <nav className="flex-1 space-y-2" role="navigation" aria-label="Menu principal">
             {navigationItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavigation(item.id)}
-                className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
+                aria-label={`Navegar para ${item.label}`}
+                aria-current={activePage === item.id ? "page" : undefined}
+                disabled={item.id === "social"}
+                className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${
                   item.id === "social"
                     ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30 border border-transparent"
                     : activePage === item.id
@@ -188,7 +191,9 @@ const Sidebar: React.FC = () => {
           <div className="space-y-2 pt-4 border-t border-gray-800">
             <button
               onClick={() => setActivePage("profile")}
-              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
+              aria-label="Ir para perfil do usuário"
+              aria-current={activePage === "profile" ? "page" : undefined}
+              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${
                 activePage === "profile"
                   ? "bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30"
                   : "hover:bg-gray-800/50 border border-transparent"
@@ -218,7 +223,9 @@ const Sidebar: React.FC = () => {
 
             <button
               onClick={() => setActivePage("settings")}
-              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 ${
+              aria-label="Abrir configurações"
+              aria-current={activePage === "settings" ? "page" : undefined}
+              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${
                 activePage === "settings"
                   ? "bg-gradient-to-r from-gray-700/50 to-gray-600/50 border border-gray-600/30"
                   : "hover:bg-gray-800/50 border border-transparent"
@@ -279,7 +286,8 @@ const Sidebar: React.FC = () => {
 
             <button
               onClick={logout}
-              className="group w-full flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 border border-transparent hover:border-red-500/30"
+              aria-label="Sair da conta"
+              className="group w-full flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 border border-transparent hover:border-red-500/30 touch-target"
             >
               <div className="flex items-center justify-center w-6 h-6 text-gray-200 group-hover:text-red-400">
                 <LogOut size={20} />

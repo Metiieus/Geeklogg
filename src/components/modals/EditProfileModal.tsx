@@ -19,20 +19,20 @@ interface EditProfileModalProps {
   onClose: () => void;
 }
 
-// Avatares predefinidos estilo Netflix
+// Avatares predefinidos - artes abstratas e personagens
 const PREDEFINED_AVATARS = [
-  "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1040883/pexels-photo-1040883.jpeg?auto=compress&cs=tinysrgb&w=200",
-  "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=200",
+  "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=200&h=200&q=80", // Arte abstrata geométrica azul
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=200&h=200&q=80", // Arte abstrata colorida
+  "https://images.unsplash.com/photo-1558618047-d0a11e1e8e4c?auto=format&fit=crop&w=200&h=200&q=80", // Padrão geométrico rosa
+  "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=200&h=200&q=80&hue=120", // Arte abstrata verde
+  "https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=200&h=200&q=80", // Arte digital abstrata
+  "https://images.unsplash.com/photo-1558618047-d0a11e1e8e4c?auto=format&fit=crop&w=200&h=200&q=80&hue=240", // Padrão geométrico roxo
+  "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=200&h=200&q=80&hue=60", // Arte abstrata amarela
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=200&h=200&q=80&hue=180", // Arte abstrata ciano
+  "https://images.unsplash.com/photo-1558618047-d0a11e1e8e4c?auto=format&fit=crop&w=200&h=200&q=80&hue=300", // Padrão geométrico magenta
+  "https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=200&h=200&q=80&hue=90", // Arte digital verde
+  "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=200&h=200&q=80&hue=200", // Arte abstrata azul claro
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=200&h=200&q=80&hue=320", // Arte abstrata rosa escuro
 ];
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({

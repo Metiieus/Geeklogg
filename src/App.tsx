@@ -9,6 +9,8 @@ const Timeline = lazy(() => import("./components/Timeline"));
 const Statistics = lazy(() => import("./components/Statistics"));
 const Settings = lazy(() => import("./components/Settings"));
 const Profile = lazy(() => import("./components/Profile"));
+const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
+const AccountDeletion = lazy(() => import("./components/AccountDeletion"));
 import { SocialFeed } from "./components/SocialFeed";
 import { AddMediaPage } from "./components/AddMediaPage";
 import { EditMediaPage } from "./components/EditMediaPage";
@@ -32,6 +34,7 @@ import { useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 import { checkAchievements } from "./services/achievementService";
 import { UserProfile } from "./types/social";
+import { useOptimizedContext } from "./hooks/useOptimizedContext";
 
 export type MediaType =
   | "games"
@@ -114,7 +117,9 @@ export type ActivePage =
   | "settings"
   | "social"
   | "add-media"
-  | "edit-media";
+  | "edit-media"
+  | "privacy-policy"
+  | "account-deletion";
 
 type ViewMode = "landing" | "login" | "register";
 
@@ -206,7 +211,7 @@ function App() {
     return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
   }, []);
 
-    const contextValue = {
+  const contextValue = useOptimizedContext({
     mediaItems,
     setMediaItems,
     reviews,
@@ -221,13 +226,7 @@ function App() {
     setSelectedUser,
     editingMediaItem,
     setEditingMediaItem,
-    navigateToAddMedia: () => setActivePage("add-media"),
-    navigateToEditMedia: (item: MediaItem) => {
-      setEditingMediaItem(item);
-      setActivePage("edit-media");
-    },
-    navigateBack: () => setActivePage("library"),
-  };
+  });
 
   if (loading) {
     return null;
@@ -285,6 +284,10 @@ function App() {
         return <Profile />;
       case "settings":
         return <Settings />;
+      case "privacy-policy":
+        return <PrivacyPolicy />;
+      case "account-deletion":
+        return <AccountDeletion />;
       case "social":
         return <SocialFeed />;
       case "add-media":
