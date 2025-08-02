@@ -85,7 +85,7 @@ app.post('/update-premium', async (req, res) => {
     if (!uid || !preference_id) {
       return res.status(400).json({ error: 'UID e Preference ID são obrigatórios.' });
     }
-
+ 
     console.log(`Atualizando usuário ${uid} para premium com preference ${preference_id}`);
     
     res.status(200).json({ 
