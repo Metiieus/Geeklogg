@@ -35,7 +35,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Backend está funcionando!' });
 });
 
-// IGDB API Proxy
+// IGDB API Proxy (✔️ CORRIGIDO)
 app.post('/api/igdb/games', async (req, res) => {
   try {
     const { query } = req.body;
@@ -57,13 +57,14 @@ app.post('/api/igdb/games', async (req, res) => {
       headers: {
         'Client-ID': IGDB_CLIENT_ID,
         'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain', // <-- Aqui está a correção
       },
       body: query,
     });
 
     if (!response.ok) {
-      throw new Error(`IGDB API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`IGDB API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -78,7 +79,7 @@ app.post('/api/igdb/games', async (req, res) => {
   }
 });
 
-// IGDB API Health Check
+// IGDB API Health Check (✔️ também ajustado)
 app.get('/api/igdb/status', async (req, res) => {
   try {
     if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
@@ -93,7 +94,7 @@ app.get('/api/igdb/status', async (req, res) => {
       headers: {
         'Client-ID': IGDB_CLIENT_ID,
         'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
       body: 'fields id; limit 1;',
     });
@@ -101,9 +102,10 @@ app.get('/api/igdb/status', async (req, res) => {
     if (response.ok) {
       res.json({ status: 'ok', message: 'IGDB API disponível' });
     } else {
+      const errorText = await response.text();
       res.status(503).json({
         status: 'error',
-        message: `IGDB API error: ${response.status}`
+        message: `IGDB API error: ${response.status} - ${errorText}`
       });
     }
 
@@ -169,7 +171,7 @@ app.post('/update-premium', async (req, res) => {
     if (!uid || !preference_id) {
       return res.status(400).json({ error: 'UID e Preference ID são obrigatórios.' });
     }
- 
+
     console.log(`Atualizando usuário ${uid} para premium com preference ${preference_id}`);
     
     res.status(200).json({ 
