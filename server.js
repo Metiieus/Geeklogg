@@ -8,9 +8,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4242;
 
-// Configuração da IGDB API (via Twitch OAuth)
-const IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID || '';
-const IGDB_ACCESS_TOKEN = process.env.IGDB_ACCESS_TOKEN || '';
+// IGDB foi substituída pela RAWG API (acesso direto do frontend)
 
 // Configuração do MercadoPago
 const client = new MercadoPagoConfig({ 
@@ -35,100 +33,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Backend está funcionando!' });
 });
 
-// Proxy para IGDB API com query corrigida e expand
-app.post('/api/igdb/games', async (req, res) => {
-  try {
-    let { query } = req.body;
-
-    console.log('📨 Received IGDB request body:', req.body);
-
-    if (!query) {
-      return res.status(400).json({
-        error: 'Query é obrigatória',
-        message: 'O campo query deve estar presente no body da requisição'
-      });
-    }
-
-    // Limpar e formatar a query
-    query = query.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
-    console.log('✅ Query formatada:', query);
-
-    if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
-      console.warn('🟡 IGDB credentials not configured');
-      return res.status(503).json({
-        error: 'IGDB API not configured',
-        message: 'Configure IGDB_CLIENT_ID e IGDB_ACCESS_TOKEN nas variáveis de ambiente'
-      });
-    }
-
-    const response = await fetch('https://api.igdb.com/v4/games', {
-      method: 'POST',
-      headers: {
-        'Client-ID': IGDB_CLIENT_ID,
-        'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
-        'Content-Type': 'text/plain',
-      },
-      body: query,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Erro na resposta da IGDB:', errorText);
-      return res.status(response.status).json({
-        error: `IGDB API error: ${response.status}`,
-        message: errorText
-      });
-    }
-
-    const data = await response.json();
-    res.json(data);
-
-  } catch (error) {
-    console.error('🚨 ERRO no proxy IGDB:', error);
-    res.status(500).json({
-      error: 'Erro no proxy IGDB',
-      message: error.message,
-    });
-  }
-});
-
-// IGDB API Health Check
-app.get('/api/igdb/status', async (req, res) => {
-  try {
-    if (!IGDB_CLIENT_ID || !IGDB_ACCESS_TOKEN) {
-      return res.status(503).json({
-        status: 'not_configured',
-        message: 'IGDB credentials not configured'
-      });
-    }
-
-    const response = await fetch('https://api.igdb.com/v4/games', {
-      method: 'POST',
-      headers: {
-        'Client-ID': IGDB_CLIENT_ID,
-        'Authorization': `Bearer ${IGDB_ACCESS_TOKEN}`,
-        'Content-Type': 'text/plain',
-      },
-      body: 'fields id; limit 1;',
-    });
-
-    if (response.ok) {
-      res.json({ status: 'ok', message: 'IGDB API disponível' });
-    } else {
-      const errorText = await response.text();
-      res.status(503).json({
-        status: 'error',
-        message: `IGDB API error: ${response.status} - ${errorText}`
-      });
-    }
-
-  } catch (error) {
-    res.status(503).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-});
+// RAWG API é acessada diretamente do frontend, não precisa de proxy
 
 // Criar preferência de pagamento MercadoPago
 app.post('/create-preference', async (req, res) => {

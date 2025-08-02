@@ -1,5 +1,5 @@
 import { MediaType } from "../App";
-import { igdbService, IGDBSearchResult } from "../infrastructure/services/IGDBService";
+import { rawgService, RAWGSearchResult } from "../infrastructure/services/RAWGService";
 
 // Interfaces para resultados das APIs
 export interface ExternalMediaResult {
@@ -26,7 +26,7 @@ export interface ExternalMediaResult {
   screenshots?: string[];
   officialWebsite?: string;
   // Campo para identificar a fonte
-  source: "google-books" | "tmdb" | "igdb";
+  source: "google-books" | "tmdb" | "rawg";
   // Tipo original da API
   originalType?: string;
 }
@@ -189,18 +189,18 @@ class ExternalMediaService {
     }
   }
 
-  // Buscar games no IGDB
+  // Buscar games na RAWG
   async searchGames(
     query: string,
     limit: number = 10,
   ): Promise<ExternalMediaResult[]> {
     try {
-      const igdbResults = await igdbService.searchGames({
+      const rawgResults = await rawgService.searchGames({
         query,
         limit,
       });
 
-      return igdbResults.map((game: IGDBSearchResult): ExternalMediaResult => ({
+      return rawgResults.map((game: RAWGSearchResult): ExternalMediaResult => ({
         id: game.id,
         title: game.title,
         description: game.description,
@@ -212,12 +212,12 @@ class ExternalMediaService {
         screenshots: game.screenshots,
         officialWebsite: game.officialWebsite,
         rating: game.rating,
-        source: "igdb",
+        source: "rawg",
         originalType: "game",
       }));
     } catch (error) {
       console.error("Erro ao buscar games:", error);
-      // Se IGDB falhar, retorna array vazio em vez de lançar erro
+      // Se RAWG falhar, retorna array vazio em vez de lançar erro
       return [];
     }
   }
@@ -434,8 +434,9 @@ class ExternalMediaService {
   async checkApiAvailability(): Promise<{
     googleBooks: boolean;
     tmdb: boolean;
+    rawg: boolean;
   }> {
-    const results = { googleBooks: false, tmdb: false };
+    const results = { googleBooks: false, tmdb: false, rawg: false };
 
     try {
       // Testar Google Books API
@@ -455,6 +456,13 @@ class ExternalMediaService {
       results.tmdb = tmdbResponse.ok;
     } catch (error) {
       console.warn("TMDb API não disponível:", error);
+    }
+
+    try {
+      // Testar RAWG API
+      results.rawg = await rawgService.checkApiAvailability();
+    } catch (error) {
+      console.warn("RAWG API não disponível:", error);
     }
 
     return results;

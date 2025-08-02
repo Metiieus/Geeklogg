@@ -31,7 +31,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [apiStatus, setApiStatus] = useState({ googleBooks: true, tmdb: true });
+  const [apiStatus, setApiStatus] = useState({ googleBooks: true, tmdb: true, rawg: true });
 
   const { showError, showWarning } = useToast();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
         const status = await externalMediaService.checkApiAvailability();
         setApiStatus(status);
 
-        if (!status.googleBooks && !status.tmdb) {
+        if (!status.googleBooks && !status.tmdb && !status.rawg) {
           showWarning(
             "APIs Indisponíveis",
             "Serviços de busca externa temporariamente indisponíveis",
@@ -108,13 +108,13 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
       // Verificar se a API necessária está disponível
       const needsGoogleBooks = finalType === "books";
-      const needsTmdb = ["movies", "dorama"].includes(
-        finalType,
-      );
+      const needsTmdb = ["movies", "series", "anime", "dorama"].includes(finalType);
+      const needsRawg = finalType === "games";
 
       if (
         (needsGoogleBooks && !apiStatus.googleBooks) ||
-        (needsTmdb && !apiStatus.tmdb)
+        (needsTmdb && !apiStatus.tmdb) ||
+        (needsRawg && !apiStatus.rawg)
       ) {
         showError(
           "API Indisponível",
@@ -335,11 +335,15 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
                           className={`text-xs px-2 py-1 rounded ${
                             result.source === "google-books"
                               ? "bg-blue-500/20 text-blue-400"
+                              : result.source === "rawg"
+                              ? "bg-purple-500/20 text-purple-400"
                               : "bg-green-500/20 text-green-400"
                           }`}
                         >
                           {result.source === "google-books"
                             ? "Google Books"
+                            : result.source === "rawg"
+                            ? "RAWG"
                             : "TMDb"}
                         </span>
                       </div>
