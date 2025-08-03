@@ -26,6 +26,7 @@ import {
   getAchievementsWithProgress,
   getAchievementProgress,
 } from "../services/achievementService";
+import { AchievementModal } from "./AchievementModal";
 
 interface AchievementTreeProps {
   onAchievementClick: (achievement: AchievementNode) => void;
@@ -104,6 +105,8 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
+
 
   useEffect(() => {
     loadAchievements();
@@ -159,6 +162,20 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
     },
     {} as Record<string, AchievementNode[]>,
   );
+
+  const toggleCategoryCollapse = (category: string) => {
+    const newCollapsed = new Set(collapsedCategories);
+    if (newCollapsed.has(category)) {
+      newCollapsed.delete(category);
+    } else {
+      newCollapsed.add(category);
+    }
+    setCollapsedCategories(newCollapsed);
+  };
+
+  const handleAchievementClick = (achievement: AchievementNode) => {
+    onAchievementClick(achievement);
+  };
 
   if (loading) {
     return (
@@ -431,7 +448,9 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
               category={selectedCategory}
               achievements={groupedAchievements[selectedCategory] || []}
               viewMode={viewMode}
-              onAchievementClick={onAchievementClick}
+              onAchievementClick={handleAchievementClick}
+              isCollapsed={collapsedCategories.has(selectedCategory)}
+              onToggleCollapse={() => toggleCategoryCollapse(selectedCategory)}
             />
           </motion.div>
         ) : (
@@ -448,7 +467,9 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                   category={category}
                   achievements={categoryAchievements}
                   viewMode={viewMode}
-                  onAchievementClick={onAchievementClick}
+                  onAchievementClick={handleAchievementClick}
+                  isCollapsed={collapsedCategories.has(category)}
+                  onToggleCollapse={() => toggleCategoryCollapse(category)}
                 />
               </motion.div>
             ),
@@ -474,6 +495,8 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+
     </div>
   );
 };
@@ -484,6 +507,8 @@ interface AchievementCategoryProps {
   achievements: AchievementNode[];
   viewMode: ViewMode;
   onAchievementClick: (achievement: AchievementNode) => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 const AchievementCategory: React.FC<AchievementCategoryProps> = ({
@@ -491,6 +516,8 @@ const AchievementCategory: React.FC<AchievementCategoryProps> = ({
   achievements,
   viewMode,
   onAchievementClick,
+  isCollapsed = false,
+  onToggleCollapse,
 }) => {
   const IconComponent = categoryIcons[category as keyof typeof categoryIcons];
 
@@ -502,48 +529,72 @@ const AchievementCategory: React.FC<AchievementCategoryProps> = ({
       <div
         className={`bg-gradient-to-r ${categoryColors[category as keyof typeof categoryColors]} p-4 sm:p-6`}
       >
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <IconComponent className="text-white" size={20} />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <IconComponent className="text-white" size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg sm:text-2xl font-bold text-white">
+                {categoryNames[category as keyof typeof categoryNames]}
+              </h3>
+              <p className="text-sm sm:text-base text-white/80">
+                {achievements.filter((a) => a.unlocked).length} de{" "}
+                {achievements.length} desbloqueadas
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg sm:text-2xl font-bold text-white">
-              {categoryNames[category as keyof typeof categoryNames]}
-            </h3>
-            <p className="text-sm sm:text-base text-white/80">
-              {achievements.filter((a) => a.unlocked).length} de{" "}
-              {achievements.length} desbloqueadas
-            </p>
-          </div>
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg border border-white/20 hover:border-white/30 transition-all duration-200 text-white/80 hover:text-white"
+              title={isCollapsed ? "Mostrar conquistas" : "Esconder conquistas"}
+            >
+              {isCollapsed ? <Eye size={16} /> : <EyeOff size={16} />}
+              <span className="text-sm hidden sm:inline">
+                {isCollapsed ? "Mostrar" : "Esconder"}
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Achievements Grid/List */}
-      <div className="p-4 sm:p-6">
-        {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {achievements.map((achievement, index) => (
-              <AchievementCard
-                key={achievement.id}
-                achievement={achievement}
-                index={index}
-                onClick={() => onAchievementClick(achievement)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {achievements.map((achievement, index) => (
-              <AchievementListItem
-                key={achievement.id}
-                achievement={achievement}
-                index={index}
-                onClick={() => onAchievementClick(achievement)}
-              />
-            ))}
-          </div>
+      <AnimatePresence>
+        {!isCollapsed && (
+          <motion.div
+            className="p-4 sm:p-6"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {viewMode === "grid" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+                {achievements.map((achievement, index) => (
+                  <AchievementCard
+                    key={achievement.id}
+                    achievement={achievement}
+                    index={index}
+                    onClick={() => onAchievementClick(achievement)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {achievements.map((achievement, index) => (
+                  <AchievementListItem
+                    key={achievement.id}
+                    achievement={achievement}
+                    index={index}
+                    onClick={() => onAchievementClick(achievement)}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 };

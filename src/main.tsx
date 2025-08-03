@@ -8,6 +8,7 @@ import "./production-optimizations.css";
 import "./library-frames.css";
 import "./animation-fixes.css";
 import "./design-system/typography.css";
+import "./styles/responsive-fixes.css";
 import { AuthProvider } from "./context/AuthContext";
 
 // Inicializar proteções de segurança

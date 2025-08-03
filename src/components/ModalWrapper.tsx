@@ -88,7 +88,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   return (
     <div
       ref={overlayRef}
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 ${zIndex} animate-fade-in`}
+      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-0 sm:p-4 ${zIndex} animate-fade-in`}
       style={{
         overflowY: 'auto',
         overflowX: 'hidden',

@@ -208,7 +208,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
       isOpen={true}
       onClose={onClose}
       maxWidth="max-w-2xl"
-      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col max-h-[90vh]"
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col max-h-screen sm:max-h-[95vh] my-0 sm:my-4"
     >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
@@ -227,9 +227,9 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         <form
           id="media-form"
           onSubmit={handleSubmit}
-          className="flex-1 flex flex-col overflow-hidden"
+          className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
-          <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
+          <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0">
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 form-grid">
               <div>

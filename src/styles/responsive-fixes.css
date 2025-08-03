@@ -1,0 +1,88 @@
+/* Correções responsivas específicas */
+
+/* Reviews - Evitar overflow de texto */
+.reviews-container {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.reviews-content {
+  max-width: 100%;
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Modal responsivo - Mobile first */
+@media (max-width: 768px) {
+  .modal-mobile-full {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .modal-content-scroll {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-form-mobile {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+/* Timeline - Melhor responsividade */
+.timeline-content {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Botões touch-friendly */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Conquistas - Animações suaves */
+.achievement-category-collapse {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Media queries para dispositivos muito pequenos */
+@media (max-width: 360px) {
+  .review-card {
+    padding: 0.75rem;
+  }
+  
+  .achievement-card {
+    padding: 0.75rem;
+  }
+  
+  .timeline-dot {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* Correções para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Correções para telas ultra-wide */
+@media (min-width: 1440px) {
+  .max-content-width {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

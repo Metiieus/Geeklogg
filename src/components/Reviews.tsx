@@ -132,12 +132,12 @@ const Reviews: React.FC = () => {
             return (
               <div
                 key={review.id}
-                className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 animate-slide-up"
+                className="reviews-container bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 animate-slide-up max-w-full overflow-hidden"
               >
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   {/* Media Cover */}
                   {media && (
-                    <div className="w-16 h-20 bg-slate-700 rounded-lg flex-shrink-0 overflow-hidden hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-16 sm:w-16 sm:h-20 bg-slate-700 rounded-lg flex-shrink-0 overflow-hidden hover:scale-110 transition-transform duration-300">
                       {media.cover ? (
                         <img
                           src={media.cover}
@@ -146,26 +146,26 @@ const Reviews: React.FC = () => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500">
-                          <MessageSquare size={20} />
+                          <MessageSquare size={16} className="sm:w-5 sm:h-5" />
                         </div>
                       )}
                     </div>
                   )}
 
                   {/* Review Content */}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-xl font-semibold text-white mb-1">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-3 gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-lg sm:text-xl font-semibold text-white mb-1 break-words">
                           {review.title}
                         </h3>
                         {media && (
-                          <p className="text-slate-400 text-sm">
+                          <p className="text-slate-400 text-sm break-words">
                             Resenha de {media.title}
                           </p>
                         )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                         <button
                           onClick={() => handleToggleFavorite(review.id)}
                           className={`p-1 rounded transition-colors ${
@@ -192,13 +192,13 @@ const Reviews: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="prose prose-invert max-w-none mb-4 overflow-hidden">
-                      <p className="text-slate-300 leading-relaxed break-words">
+                    <div className="reviews-content mb-4 overflow-hidden">
+                      <p className="text-slate-300 leading-relaxed">
                         {review.content}
                       </p>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm text-slate-400">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm text-slate-400">
                       <div className="flex items-center gap-1">
                         <Calendar size={14} />
                         <span>
@@ -210,17 +210,17 @@ const Reviews: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setEditingReview(review)}
-                          className="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1"
+                          className="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 p-1 rounded touch-target"
                         >
                           <Edit size={14} />
-                          Editar
+                          <span className="hidden sm:inline">Editar</span>
                         </button>
                         <button
                           onClick={() => handleDeleteClick(review)}
-                          className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
+                          className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 p-1 rounded touch-target"
                         >
                           <Trash2 size={14} />
-                          Excluir
+                          <span className="hidden sm:inline">Excluir</span>
                         </button>
                       </div>
                     </div>

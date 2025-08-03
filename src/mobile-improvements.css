@@ -308,3 +308,44 @@ img[loading="lazy"].loaded {
     padding: 8px;
   }
 }
+
+/* Safe area insets para modais e elementos críticos */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+.safe-area-padding-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom, 0), 1rem);
+}
+
+.safe-area-padding-top {
+  padding-top: max(env(safe-area-inset-top, 0), 1rem);
+}
+
+/* Melhorar modais para mobile com safe area */
+@media (max-width: 640px) {
+  .modal-mobile-full {
+    border-radius: 0;
+    min-height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .modal-mobile-responsive {
+    border-radius: 0;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  /* Garantir que botões sejam acessíveis no bottom */
+  .modal-actions-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom, 0), 1rem);
+    padding-left: max(env(safe-area-inset-left, 0), 1rem);
+    padding-right: max(env(safe-area-inset-right, 0), 1rem);
+  }
+}

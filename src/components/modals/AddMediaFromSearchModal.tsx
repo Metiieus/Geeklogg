@@ -75,7 +75,7 @@ export const AddMediaFromSearchModal: React.FC<
         return "games";
       default:
         // Fallback: tentar detectar pelo source ou outros indicadores
-        if (result.source === "igdb") {
+        if (result.source === "rawg") {
           return "games";
         }
         // Default para movies apenas se realmente não conseguir detectar
@@ -281,8 +281,8 @@ export const AddMediaFromSearchModal: React.FC<
   };
 
   return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 animate-fade-in overflow-y-auto">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-4xl w-full min-h-[95vh] sm:min-h-0 sm:max-h-[90vh] my-2 sm:my-0 overflow-hidden animate-slide-up flex flex-col">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center p-0 sm:p-4 z-50 animate-fade-in overflow-y-auto">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-white/20 max-w-4xl w-full min-h-screen sm:min-h-0 sm:max-h-[95vh] my-0 sm:my-4 overflow-hidden animate-slide-up flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20">
           <div className="flex items-center gap-2 sm:gap-4">
@@ -304,13 +304,13 @@ export const AddMediaFromSearchModal: React.FC<
           </button>
         </div>
 
-                <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+                <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 safe-area-inset">
           {/* Preview da mídia - sidebar responsiva */}
-          <div className="lg:w-80 p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-white/20 bg-slate-800/50">
+          <div className="lg:w-80 p-3 sm:p-6 border-b lg:border-b-0 lg:border-r border-white/20 bg-slate-800/50 flex-shrink-0">
             <div className="space-y-4">
               {/* Imagem de capa */}
               <div className="relative">
-                <div className="w-full h-48 sm:h-64 lg:h-72 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="w-full h-40 sm:h-64 lg:h-72 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
                   {formData.coverPreview ? (
                     <img
                       src={formData.coverPreview}
@@ -389,11 +389,15 @@ export const AddMediaFromSearchModal: React.FC<
                     className={`text-xs px-2 py-1 rounded ${
                       externalResult.source === "google-books"
                         ? "bg-blue-500/20 text-blue-400"
+                        : externalResult.source === "rawg"
+                        ? "bg-purple-500/20 text-purple-400"
                         : "bg-green-500/20 text-green-400"
                     }`}
                   >
                     {externalResult.source === "google-books"
                       ? "Google Books"
+                      : externalResult.source === "rawg"
+                      ? "RAWG"
                       : "TMDb"}
                   </span>
                 </div>
@@ -402,13 +406,13 @@ export const AddMediaFromSearchModal: React.FC<
           </div>
 
           {/* Formulário - área principal */}
-                    <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
             <form
               id="search-media-form"
               onSubmit={handleSubmit}
-              className="flex-1 flex flex-col overflow-hidden"
+              className="flex-1 flex flex-col overflow-hidden min-h-0"
             >
-              <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
+              <div className="flex-1 p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-y-auto min-h-0 safe-area-padding-bottom">
               {/* Informações básicas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -641,8 +645,8 @@ export const AddMediaFromSearchModal: React.FC<
             </form>
 
             {/* Actions - Fixed at bottom */}
-            <div className="flex-shrink-0 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent p-4 sm:p-6 border-t border-white/20">
-              <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
+            <div className="flex-shrink-0 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent p-3 sm:p-6 border-t border-white/20 safe-area-padding-bottom">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={onClose}
