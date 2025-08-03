@@ -191,7 +191,11 @@ const ModernLibrary: React.FC = () => {
           <HeroBanner
             title="Minha Biblioteca"
             subtitle="Organize sua jornada geek com estilo e inteligência"
-            onAddMedia={() => setShowAddOptions(true)}
+            onAddMedia={() => {
+              // FORÇA scroll para topo ANTES de abrir modal
+              window.scrollTo(0, 0);
+              setShowAddOptions(true);
+            }}
           />
         </motion.div>
 
@@ -383,7 +387,11 @@ const ModernLibrary: React.FC = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setShowAddOptions(true)}
+                onClick={() => {
+                  // FORÇA scroll para topo ANTES de abrir modal
+                  window.scrollTo(0, 0);
+                  setShowAddOptions(true);
+                }}
                 className="px-8 py-4 bg-gradient-to-r from-violet-500 to-cyan-500 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl"
                 style={{ boxShadow: shadows.glow.violet }}
               >
@@ -411,13 +419,31 @@ const ModernLibrary: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed bg-black/70"
+            style={{
+              zIndex: 9999,
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1rem'
+            }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 0 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-sm rounded-2xl border border-white/20 w-full max-w-4xl p-6"
+              exit={{ opacity: 0, scale: 0.9, y: 0 }}
+              className="bg-slate-800 rounded-2xl border border-white/20 w-full max-w-4xl p-6 relative"
+              style={{
+                maxHeight: 'calc(100vh - 2rem)',
+                overflow: 'auto',
+                maxWidth: 'calc(100vw - 2rem)',
+                margin: 'auto'
+              }}
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">

@@ -281,8 +281,24 @@ export const AddMediaFromSearchModal: React.FC<
   };
 
   return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center p-0 sm:p-4 z-50 animate-fade-in overflow-y-auto">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-white/20 max-w-4xl w-full min-h-screen sm:min-h-0 sm:max-h-[95vh] my-0 sm:my-4 overflow-hidden animate-slide-up flex flex-col">
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflow: 'hidden' // BLOQUEIA scroll da página
+          }}
+        >
+      <div
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-4xl w-full my-auto overflow-hidden animate-slide-up flex flex-col"
+        style={{
+          maxHeight: 'calc(100vh - 2rem)',
+          minHeight: 'auto'
+        }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20">
           <div className="flex items-center gap-2 sm:gap-4">

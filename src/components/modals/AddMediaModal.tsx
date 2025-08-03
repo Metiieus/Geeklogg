@@ -208,7 +208,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
       isOpen={true}
       onClose={onClose}
       maxWidth="max-w-2xl"
-      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col max-h-screen sm:max-h-[95vh] my-0 sm:my-4"
+      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col"
     >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">

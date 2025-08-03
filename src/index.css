@@ -1,6 +1,15 @@
 /* Melhorias de responsividade mobile */
 @import "./mobile-improvements.css";
 
+/* Correções específicas para modais em mobile */
+@import "./modal-mobile-fixes.css";
+
+/* CORREÇÃO CRÍTICA - Bloquear scroll da página em modais */
+@import "./modal-critical-fix.css";
+
+/* FORÇA MODAL NO CENTRO DA VIEWPORT MOBILE */
+@import "./modal-mobile-center-force.css";
+
 /* Estilos de acessibilidade WCAG */
 @import "./styles/accessibility.css";
 

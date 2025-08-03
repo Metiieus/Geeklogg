@@ -1,0 +1,198 @@
+/* Correções específicas para modais em dispositivos móveis */
+
+/* Garantir que modais sejam sempre visíveis e centralizados em mobile */
+@media (max-width: 768px) {
+  /* Overlay dos modais - sempre centralizado */
+  .fixed.inset-0.bg-black\/50 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Container do modal - responsivo e centralizado */
+  .fixed.inset-0 > div[style*="maxHeight"] {
+    max-height: calc(100vh - 1rem) !important;
+    min-height: auto !important;
+    margin: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Forçar scroll interno em modais longos */
+  .modal-content-scroll {
+    overflow-y: auto !important;
+    max-height: calc(100vh - 8rem) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Header do modal - sempre fixo no topo */
+  .modal-header {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: inherit !important;
+  }
+
+  /* Área de conteúdo do modal - rolável */
+  .modal-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Footer/Actions do modal - sempre fixo no fundo */
+  .modal-footer {
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 10 !important;
+    background: inherit !important;
+  }
+
+  /* Touch targets maiores em mobile */
+  .modal-close-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 12px !important;
+  }
+
+  /* Inputs maiores em mobile para evitar zoom */
+  .modal-input,
+  .modal-textarea,
+  .modal-select {
+    font-size: 16px !important;
+    padding: 12px 16px !important;
+    min-height: 44px !important;
+  }
+
+  /* Botões maiores e mais acessíveis */
+  .modal-button {
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Correções específicas para dispositivos muito pequenos */
+@media (max-width: 360px) {
+  .fixed.inset-0.bg-black\/50 {
+    padding: 0.25rem !important;
+  }
+
+  .modal-content-scroll {
+    max-height: calc(100vh - 6rem) !important;
+  }
+
+  /* Ajustar grid de avatares */
+  .avatar-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Reduzir padding interno */
+  .modal-body {
+    padding: 0.75rem !important;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Orientação landscape em mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .fixed.inset-0 > div[style*="maxHeight"] {
+    max-height: calc(100vh - 0.5rem) !important;
+  }
+
+  .modal-content-scroll {
+    max-height: calc(100vh - 6rem) !important;
+  }
+
+  /* Ajustar grid de avatares em landscape */
+  .avatar-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+}
+
+/* Safe area support para notch e home bar */
+@media (max-width: 768px) {
+  .modal-with-safe-area {
+    padding-top: max(env(safe-area-inset-top), 0.5rem) !important;
+    padding-bottom: max(env(safe-area-inset-bottom), 0.5rem) !important;
+    padding-left: max(env(safe-area-inset-left), 0.5rem) !important;
+    padding-right: max(env(safe-area-inset-right), 0.5rem) !important;
+  }
+
+  .modal-footer {
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem) !important;
+  }
+}
+
+/* Melhorar performance em mobile */
+@media (max-width: 768px) {
+  .modal-overlay {
+    will-change: auto !important;
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+  }
+
+  /* Reduzir backdrop blur em devices com GPU limitada */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px) !important;
+  }
+}
+
+/* Correções para iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 768px) {
+    /* Evitar bounce scroll */
+    .modal-body {
+      overscroll-behavior: contain !important;
+    }
+
+    /* Fix para viewport height no iOS */
+    .fixed.inset-0 {
+      height: 100vh !important;
+      height: -webkit-fill-available !important;
+    }
+
+    .fixed.inset-0 > div[style*="maxHeight"] {
+      max-height: -webkit-fill-available !important;
+    }
+  }
+}
+
+/* Animações otimizadas para mobile */
+@media (max-width: 768px) {
+  .animate-slide-up {
+    animation-duration: 0.2s !important;
+  }
+
+  .animate-fade-in {
+    animation-duration: 0.15s !important;
+  }
+
+  /* Reduzir motion para melhor performance */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-slide-up,
+    .animate-fade-in {
+      animation: none !important;
+    }
+  }
+}
+
+/* Garantir que focus seja visível em mobile */
+@media (max-width: 768px) {
+  .modal-input:focus,
+  .modal-textarea:focus,
+  .modal-select:focus,
+  .modal-button:focus {
+    outline: 2px solid #06b6d4 !important;
+    outline-offset: 2px !important;
+  }
+}

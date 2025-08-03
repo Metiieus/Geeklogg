@@ -50,21 +50,28 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ mileston
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slide-up">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in">
+      <div
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full overflow-hidden animate-slide-up flex flex-col"
+        style={{
+          maxHeight: 'calc(100vh - 2rem)',
+          minHeight: 'auto'
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/20">
-          <h2 className="text-2xl font-bold text-white">Editar Marco</h2>
-          <button 
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Editar Marco</h2>
+          <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
           >
             <X className="text-slate-400" size={20} />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0">
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -158,22 +165,26 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ mileston
             </select>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/20">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-3 text-slate-300 hover:text-white transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2"
-            >
-              <Save size={18} />
-              Salvar Alterações
-            </button>
+          </div>
+
+          {/* Actions - Fixed at bottom */}
+          <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-4 sm:p-6 border-t border-white/20">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base"
+              >
+                <Save size={18} />
+                Salvar Alterações
+              </button>
+            </div>
           </div>
         </form>
       </div>
