@@ -13,7 +13,6 @@
 ## 📱 Plataformas Suportadas
 
 - **Web**: Aplicação responsiva que funciona em qualquer navegador
-- **Mobile**: App nativo para Android via Capacitor
 - **PWA**: Instalável como Progressive Web App
 
 ## ✨ Funcionalidades Principais
@@ -87,9 +86,6 @@
 ### **Integração de Pagamentos**
 - **MercadoPago 2.8.0** - Gateway de pagamentos
 
-### **Mobile**
-- **Capacitor 7.4.2** - Framework híbrido para mobile
-- **Android** - Plataforma nativa suportada
 
 ### **APIs Externas**
 - **RAWG API** - Dados de jogos
@@ -99,9 +95,8 @@
 ## 🚀 Instalação e Configuração
 
 ### **Pré-requisitos**
-- Node.js 18+ 
+- Node.js 18+
 - npm ou yarn
-- Android Studio (para desenvolvimento mobile)
 
 ### **1. Clone o Repositório**
 ```bash
@@ -163,24 +158,11 @@ npm run build
 npm run server
 ```
 
-### **6. Desenvolvimento Mobile (Android)**
-
-```bash
-# Build para mobile
-npm run build
-
-# Sincronizar com Capacitor
-npx cap sync android
-
-# Abrir no Android Studio
-npx cap open android
-```
 
 ## 📁 Estrutura do Projeto
 
 ```
 geeklog/
-├── 📱 android/                    # Projeto Android (Capacitor)
 ├── 🔧 functions/                  # Firebase Functions
 ├── 📦 src/
 │   ├── 🧩 components/            # Componentes React
@@ -198,7 +180,6 @@ geeklog/
 ├── ⚙️ server.js                   # Servidor Express
 ├── 📦 package.json               # Dependências
 ├── 🔧 vite.config.ts             # Configuração Vite
-├── 📱 capacitor.config.ts        # Configuração Capacitor
 └── 📄 README.md                  # Este arquivo
 ```
 
