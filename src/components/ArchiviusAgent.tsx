@@ -322,7 +322,7 @@ ${config.callToAction}
           </div>
 
           {/* Indicador de IA */}
-          {isPremium && (
+          {canAccess && (
             <motion.div
               className="absolute -top-0.5 -right-0.5 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full flex items-center justify-center"
               animate={{ rotate: 360 }}
@@ -393,7 +393,7 @@ ${config.callToAction}
                         <span className="text-white text-xs sm:text-sm opacity-90">
                           {isPremium
                             ? hasRealAPI
-                              ? "Oráculo Supremo"
+                              ? "Or��culo Supremo"
                               : "Modo Inteligente"
                             : isAuthorizedUser
                               ? "Premium Only"
