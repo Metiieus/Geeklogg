@@ -7,7 +7,7 @@ import { useToast } from "../context/ToastContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
-import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
+import { hasArchiviusAccess, canUseArchivius, ARCHIVIUS_CONFIG } from "../config/archivius";
 
 interface Message {
   id: string;
@@ -39,9 +39,9 @@ export const ArchiviusAgent: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Archivius épico restrito para contas autorizadas (fase beta)
-  const isAuthorizedUser = hasArchiviusAccess(profile?.email);
-  const isPremium = isAuthorizedUser || profile?.isPremium;
+  // Archivius disponível para usuários premium
+  const isPremium = profile?.isPremium === true;
+  const canAccess = canUseArchivius(isPremium, !!profile);
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
   // Gerar contexto enriquecido para IA
@@ -252,7 +252,7 @@ ${config.callToAction}
   };
 
   const categoryIcons: Record<string, string> = {
-    recommendation: "⚔️",
+    recommendation: "��️",
     analysis: "🔍", 
     discovery: "🗺️",
     motivation: "🏆"
