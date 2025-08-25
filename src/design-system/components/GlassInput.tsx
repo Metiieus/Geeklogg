@@ -55,7 +55,7 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(({
         `}
       >
         {/* Icon */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+        <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-10">
           <div className={`text-white/60 transition-colors duration-200 ${isFocused ? 'text-cyan-400' : ''}`}>
             {icon}
           </div>
@@ -68,9 +68,9 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className={`
-            w-full h-12 pl-12 pr-12 bg-transparent text-white placeholder-white/50
+            w-full h-11 sm:h-12 pl-10 sm:pl-12 pr-10 sm:pr-12 bg-transparent text-white placeholder-white/50
             focus:outline-none focus:placeholder-white/70
-            transition-all duration-200
+            transition-all duration-200 text-sm sm:text-base
           `}
           style={{ fontFamily: typography.fontFamily.primary }}
           {...props}
@@ -83,7 +83,7 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={onClear}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200"
+            className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200 p-1 touch-target"
           >
             <X size={16} />
           </motion.button>
