@@ -214,7 +214,7 @@ export const GlassSelect: React.FC<GlassSelectProps> = ({
           ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}
         `}
       >
-        <div className="max-h-64 overflow-y-auto">
+        <div className="max-h-56 sm:max-h-64 overflow-y-auto">
           {options.map((option) => (
             <motion.button
               key={option.value}
@@ -226,8 +226,9 @@ export const GlassSelect: React.FC<GlassSelectProps> = ({
                 setIsOpen(false);
               }}
               className={`
-                w-full px-4 py-3 text-left text-white hover:bg-white/10
+                w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left text-white hover:bg-white/10
                 transition-all duration-150 border-b border-white/5 last:border-b-0
+                text-sm sm:text-base touch-target
                 ${value === option.value ? 'bg-white/10 text-cyan-400' : ''}
               `}
             >
