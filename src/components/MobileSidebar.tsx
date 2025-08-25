@@ -161,7 +161,7 @@ export const MobileSidebar: React.FC = () => {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="sm:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in"
+          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
