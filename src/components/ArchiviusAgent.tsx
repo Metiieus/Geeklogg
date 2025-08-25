@@ -130,11 +130,9 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Magia suprema garantida!*" :
     const messageToSend = customPrompt || inputValue;
     if (!messageToSend.trim()) return;
 
-    if (!isPremium) {
+    if (!canAccess) {
       const config = ARCHIVIUS_CONFIG.upgradeMessage;
-      const upgradeMessage = isAuthorizedUser
-        ? "Para usar o Archivius épico, você precisa ser um usuário Premium! 👑"
-        : `# 🔒 **${config.title}**
+      const upgradeMessage = `# 🔒 **${config.title}**
 
 ## ⚔️ **${config.subtitle}**
 
