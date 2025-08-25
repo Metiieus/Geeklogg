@@ -258,23 +258,31 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex-shrink-0">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                    {profile?.avatar ? (
+                    {(profile?.avatar || profile?.profileImage) ? (
                       <img
-                        src={profile.avatar}
-                        alt={profile.name || "Usuário"}
+                        src={profile.avatar || profile.profileImage}
+                        alt={profile.name || profile?.displayName || "Usuário"}
                         className="w-full h-full object-cover rounded-full"
+                        onError={(e) => {
+                          // Fallback se a imagem falhar ao carregar
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.setAttribute('style', 'display: flex');
+                        }}
                       />
-                    ) : (
-                      <span className="text-white text-xs font-bold">
-                        {(profile?.name || "U").charAt(0).toUpperCase()}
-                      </span>
-                    )}
+                    ) : null}
+                    <span
+                      className="text-white text-xs font-bold flex items-center justify-center w-full h-full"
+                      style={{ display: (profile?.avatar || profile?.profileImage) ? 'none' : 'flex' }}
+                    >
+                      {(profile?.name || profile?.displayName || "U").charAt(0).toUpperCase()}
+                    </span>
                   </div>
                 </div>
                 {isExpanded && (
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">
-                      {profile?.name || "Usuário"}
+                      {profile?.name || profile?.displayName || "Usuário"}
                     </p>
                     <p className="text-slate-400 text-xs truncate">
                       {profile?.isPremium ? "Premium" : "Básico"}
