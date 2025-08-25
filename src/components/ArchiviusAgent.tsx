@@ -311,9 +311,9 @@ ${config.callToAction}
                 className={`w-2 h-2 rounded-full ${canAccess ? "bg-cyan-400" : "bg-orange-400"}`}
               />
               <span className="text-gray-100 text-sm">
-                {isPremium ? "Oráculo Ativo" : "Premium"}
+                {canAccess ? "Oráculo Ativo" : "Premium"}
               </span>
-              {isPremium && mediaItems.length > 0 && (
+              {canAccess && mediaItems.length > 0 && (
                 <span className="text-cyan-400 text-xs">
                   • {currentSuggestions.length} sugestões
                 </span>
