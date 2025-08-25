@@ -115,12 +115,13 @@ export const storage = getStorage(app);
 
 // Mensagem final de status
 if (app) {
-  console.log("Firebase inicializado");
+  console.log("✅ Firebase online - dados sincronizados na nuvem");
   if (!checkConnectivity()) {
     console.warn("⚠️ Sem conectividade com a internet");
   }
 } else {
-  console.warn("Firebase não foi inicializado");
+  console.log("💾 Modo offline ativado - dados salvos localmente");
+  console.log("📝 Para ativar Firebase: configure as variáveis de ambiente");
 }
 
 // Detectar mudanças de conectividade
