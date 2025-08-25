@@ -427,12 +427,12 @@ ${config.callToAction}
                       🧙‍♂️ Archivius, o Oráculo
                     </p>
                     <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
-                      {isPremium
+                      {canAccess
                         ? "⚔️ Companion IA épico com análise avançada de padrões!"
                         : "👑 Desperte os poderes premium para análises supremas!"}
                     </p>
 
-                    {isPremium && (
+                    {canAccess && (
                       <div className="space-y-3">
                         {/* Botão de Análise Épica */}
                         <button
