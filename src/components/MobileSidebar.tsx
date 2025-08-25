@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useCallback } from "react";
 import {
   Home,
   BookOpen,
@@ -69,19 +69,19 @@ const navItems: NavItem[] = [
   },
 ];
 
-export const MobileSidebar: React.FC = () => {
+const MobileSidebar: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
   const { logout, user, profile } = useAuth();
   const { showInfo } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleNavigation = (itemId: ActivePage) => {
+  const handleNavigation = useCallback((itemId: ActivePage) => {
     if (itemId === "social") {
       showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
       return;
     }
     setActivePage(itemId);
-  };
+  }, [showInfo, setActivePage]);
 
   // Close sidebar when page changes
   useEffect(() => {
@@ -129,10 +129,11 @@ export const MobileSidebar: React.FC = () => {
 
           {/* Current Page Indicator */}
           <div className="flex items-center gap-3 flex-1 justify-center min-w-0">
-            <div className={`p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} bg-opacity-20 flex-shrink-0`}>
-              <div className={`bg-gradient-to-r ${getCurrentPageInfo().gradient} bg-clip-text text-transparent`}>
+            <div className={`relative p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} shadow-lg transition-all duration-300 flex-shrink-0`}>
+              <div className="text-white">
                 {getCurrentPageInfo().icon}
               </div>
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
             </div>
             <span className="text-white font-semibold text-lg truncate">
               {getCurrentPageInfo().label}
@@ -142,17 +143,25 @@ export const MobileSidebar: React.FC = () => {
           {/* Profile Avatar */}
           <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center flex-shrink-0">
             <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-              {profile?.avatar ? (
+              {(profile?.avatar || profile?.profileImage) ? (
                 <img
-                  src={profile.avatar}
+                  src={profile.avatar || profile.profileImage}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"
+                  onError={(e) => {
+                    // Fallback se a imagem falhar ao carregar
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.nextElementSibling?.setAttribute('style', 'display: flex');
+                  }}
                 />
-              ) : (
-                <span className="text-white font-semibold text-sm">
-                  {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
-                </span>
-              )}
+              ) : null}
+              <span
+                className="text-white font-semibold text-sm flex items-center justify-center w-full h-full"
+                style={{ display: (profile?.avatar || profile?.profileImage) ? 'none' : 'flex' }}
+              >
+                {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+              </span>
             </div>
           </div>
         </div>
@@ -161,7 +170,7 @@ export const MobileSidebar: React.FC = () => {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in"
+          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in will-change-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -198,17 +207,25 @@ export const MobileSidebar: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                    {profile?.avatar ? (
+                    {(profile?.avatar || profile?.profileImage) ? (
                       <img
-                        src={profile.avatar}
+                        src={profile.avatar || profile.profileImage}
                         alt="Profile"
                         className="w-full h-full rounded-full object-cover"
+                        onError={(e) => {
+                          // Fallback se a imagem falhar ao carregar
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.setAttribute('style', 'display: flex');
+                        }}
                       />
-                    ) : (
-                      <span className="text-white font-semibold">
-                        {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
-                      </span>
-                    )}
+                    ) : null}
+                    <span
+                      className="text-white font-semibold flex items-center justify-center w-full h-full"
+                      style={{ display: (profile?.avatar || profile?.profileImage) ? 'none' : 'flex' }}
+                    >
+                      {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                    </span>
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">
@@ -232,29 +249,32 @@ export const MobileSidebar: React.FC = () => {
                     item.id === "social"
                       ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30"
                       : activePage === item.id
-                      ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105"
+                      ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105 shadow-lg"
                       : "hover:bg-gray-800/50 active:scale-95"
                   }`}
                 >
                   <div
-                    className={`p-2 rounded-lg ${
+                    className={`relative p-2 rounded-lg transition-all duration-300 ${
                       activePage === item.id
-                        ? `bg-gradient-to-r ${item.gradient} bg-opacity-20`
+                        ? `bg-gradient-to-r ${item.gradient} shadow-lg`
                         : "bg-gray-700/50"
                     }`}
                   >
                     <div
-                      className={`${
+                      className={`transition-colors duration-300 ${
                         activePage === item.id
-                          ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
+                          ? "text-white"
                           : "text-gray-400"
                       }`}
                     >
                       {item.icon}
                     </div>
+                    {activePage === item.id && (
+                      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                    )}
                   </div>
                   <span
-                    className={`font-medium ${
+                    className={`font-medium transition-colors duration-300 ${
                       item.id === "social"
                         ? "text-gray-400"
                         : activePage === item.id
@@ -268,7 +288,7 @@ export const MobileSidebar: React.FC = () => {
                     )}
                   </span>
                   {activePage === item.id && (
-                    <div className="ml-auto w-2 h-2 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full"></div>
+                    <div className="ml-auto w-2 h-2 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full animate-pulse"></div>
                   )}
                 </button>
               ))}
@@ -280,20 +300,20 @@ export const MobileSidebar: React.FC = () => {
                 onClick={() => setActivePage("settings")}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-gray-800/50 active:scale-95"
               >
-                <div className="p-2 rounded-lg bg-gray-700/50">
-                  <Settings size={20} className="text-gray-400" />
+                <div className="relative p-2 rounded-lg bg-gray-700/50 hover:bg-gray-600/50 transition-colors duration-300">
+                  <Settings size={20} className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300" />
                 </div>
-                <span className="font-medium text-gray-300">Configurações</span>
+                <span className="font-medium text-gray-300 hover:text-white transition-colors duration-300">Configurações</span>
               </button>
 
-              <button 
+              <button
                 onClick={logout}
-                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 active:scale-95 border border-red-500/20"
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 active:scale-95 border border-red-500/20 hover:border-red-500/40 group"
               >
-                <div className="p-2 rounded-lg bg-red-500/20">
-                  <LogOut size={20} className="text-red-400" />
+                <div className="relative p-2 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-all duration-300">
+                  <LogOut size={20} className="text-red-400 group-hover:text-red-300 transition-colors duration-300" />
                 </div>
-                <span className="font-medium text-red-400">Sair</span>
+                <span className="font-medium text-red-400 group-hover:text-red-300 transition-colors duration-300">Sair</span>
               </button>
             </div>
           </div>
@@ -305,3 +325,8 @@ export const MobileSidebar: React.FC = () => {
     </>
   );
 };
+
+const MemoizedMobileSidebar = memo(MobileSidebar);
+MemoizedMobileSidebar.displayName = 'MobileSidebar';
+
+export { MemoizedMobileSidebar as MobileSidebar };

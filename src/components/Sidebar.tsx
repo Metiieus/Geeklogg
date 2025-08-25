@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { useState, useEffect } from "react";
 import {
   Home,
@@ -66,20 +66,20 @@ const navigationItems: NavItem[] = [
 ];
 
 const Sidebar: React.FC = () => {
-  const { activePage, setActivePage } = useAppContext();
-  const { logout, profile } = useAuth();
+  const { activePage, setActivePage, settings } = useAppContext();
+  const { logout, profile, user } = useAuth();
   const { showInfo } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isPremium = profile?.isPremium || false;
 
-  const handleNavigation = (itemId: ActivePage) => {
+  const handleNavigation = useCallback((itemId: ActivePage) => {
     if (itemId === "social") {
       showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
       return;
     }
     setActivePage(itemId);
-  };
+  }, [showInfo, setActivePage]);
 
   return (
     <>
@@ -151,15 +151,24 @@ const Sidebar: React.FC = () => {
                     : "hover:bg-gray-800/50 border border-transparent"
                 }`}
               >
-                {/* Icon com gradiente ativo */}
-                <div
-                  className={`flex items-center justify-center w-6 h-6 ${
-                    activePage === item.id
-                      ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
-                      : "text-gray-200 group-hover:text-white"
-                  }`}
-                >
-                  {item.icon}
+                {/* Icon com gradiente ativo e melhor visual */}
+                <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                  activePage === item.id
+                    ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
+                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                }`}>
+                  <div
+                    className={`${
+                      activePage === item.id
+                        ? "text-white"
+                        : "text-gray-300 group-hover:text-white"
+                    } transition-colors duration-300`}
+                  >
+                    {item.icon}
+                  </div>
+                  {activePage === item.id && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                  )}
                 </div>
 
                 {isExpanded && (
@@ -199,14 +208,23 @@ const Sidebar: React.FC = () => {
                   : "hover:bg-gray-800/50 border border-transparent"
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-6 h-6 ${
-                  activePage === "profile"
-                    ? "text-purple-400"
-                    : "text-gray-200 group-hover:text-white"
-                }`}
-              >
-                <User size={20} />
+              <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                activePage === "profile"
+                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/25"
+                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
+              }`}>
+                <div
+                  className={`${
+                    activePage === "profile"
+                      ? "text-white"
+                      : "text-gray-300 group-hover:text-white"
+                  } transition-colors duration-300`}
+                >
+                  <User size={20} />
+                </div>
+                {activePage === "profile" && (
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                )}
               </div>
               {isExpanded && (
                 <span
@@ -231,14 +249,23 @@ const Sidebar: React.FC = () => {
                   : "hover:bg-gray-800/50 border border-transparent"
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-6 h-6 ${
-                  activePage === "settings"
-                    ? "text-gray-300"
-                    : "text-gray-200 group-hover:text-white"
-                }`}
-              >
-                <Settings size={20} />
+              <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                activePage === "settings"
+                  ? "bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg shadow-gray-500/25"
+                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
+              }`}>
+                <div
+                  className={`${
+                    activePage === "settings"
+                      ? "text-white"
+                      : "text-gray-300 group-hover:text-white"
+                  } transition-colors duration-300`}
+                >
+                  <Settings size={20} />
+                </div>
+                {activePage === "settings" && (
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                )}
               </div>
               {isExpanded && (
                 <span
@@ -258,23 +285,32 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex-shrink-0">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                    {profile?.avatar ? (
+                    {settings?.avatar ? (
                       <img
-                        src={profile.avatar}
-                        alt={profile.name || "Usuário"}
+                        src={settings.avatar}
+                        alt={settings.name || profile?.displayName || "Usuário"}
                         className="w-full h-full object-cover rounded-full"
+                        onError={(e) => {
+                          console.log('Erro ao carregar avatar:', settings.avatar);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
                       />
-                    ) : (
-                      <span className="text-white text-xs font-bold">
-                        {(profile?.name || "U").charAt(0).toUpperCase()}
-                      </span>
-                    )}
+                    ) : null}
+                    <span
+                      className="text-white text-xs font-bold flex items-center justify-center w-full h-full"
+                      style={{ display: settings?.avatar ? 'none' : 'flex' }}
+                    >
+                      {(settings?.name || profile?.displayName || user?.email?.charAt(0) || "U").charAt(0).toUpperCase()}
+                    </span>
                   </div>
                 </div>
                 {isExpanded && (
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">
-                      {profile?.name || "Usuário"}
+                      {profile?.name || profile?.displayName || "Usuário"}
                     </p>
                     <p className="text-slate-400 text-xs truncate">
                       {profile?.isPremium ? "Premium" : "Básico"}
@@ -289,8 +325,10 @@ const Sidebar: React.FC = () => {
               aria-label="Sair da conta"
               className="group w-full flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 border border-transparent hover:border-red-500/30 touch-target"
             >
-              <div className="flex items-center justify-center w-6 h-6 text-gray-200 group-hover:text-red-400">
-                <LogOut size={20} />
+              <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800/50 group-hover:bg-red-500/20 transition-all duration-300">
+                <div className="text-gray-300 group-hover:text-red-400 transition-colors duration-300">
+                  <LogOut size={20} />
+                </div>
               </div>
               {isExpanded && (
                 <span className="ml-3 text-sm font-medium text-gray-200 group-hover:text-red-400 whitespace-nowrap">
@@ -305,4 +343,7 @@ const Sidebar: React.FC = () => {
   );
 };
 
-export { Sidebar };
+const MemoizedSidebar = memo(Sidebar);
+MemoizedSidebar.displayName = 'Sidebar';
+
+export { MemoizedSidebar as Sidebar };
