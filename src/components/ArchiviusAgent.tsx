@@ -594,16 +594,16 @@ ${config.callToAction}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={
-                      isPremium
+                      canAccess
                         ? "Digite sua pergunta épica..."
                         : "Premium necessário..."
                     }
-                    disabled={!isPremium}
+                    disabled={!canAccess}
                     className="flex-1 px-3 sm:px-4 py-2 bg-gray-900/50 border border-gray-600/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:bg-gray-800 disabled:cursor-not-allowed text-sm sm:text-base"
                   />
                   <button
                     onClick={() => handleSendMessage()}
-                    disabled={!isPremium || !inputValue.trim()}
+                    disabled={!canAccess || !inputValue.trim()}
                     className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full flex items-center justify-center hover:from-cyan-600 hover:to-pink-600 transition-colors disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
                   >
                     <Send className="w-4 sm:w-5 h-4 sm:h-5" />
