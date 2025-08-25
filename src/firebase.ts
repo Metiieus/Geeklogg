@@ -110,8 +110,8 @@ if (db) {
   }
 }
 
-// Storage
-export const storage = getStorage(app);
+// Storage - only initialize if app is valid
+export const storage = app ? getStorage(app) : null;
 
 // Mensagem final de status
 if (app) {
