@@ -285,24 +285,25 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex-shrink-0">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                    {(profile?.avatar || profile?.profileImage) ? (
+                    {settings?.avatar ? (
                       <img
-                        src={profile.avatar || profile.profileImage}
-                        alt={profile.name || profile?.displayName || "Usuário"}
+                        src={settings.avatar}
+                        alt={settings.name || profile?.displayName || "Usuário"}
                         className="w-full h-full object-cover rounded-full"
                         onError={(e) => {
-                          // Fallback se a imagem falhar ao carregar
+                          console.log('Erro ao carregar avatar:', settings.avatar);
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';
-                          target.nextElementSibling?.setAttribute('style', 'display: flex');
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
                         }}
                       />
                     ) : null}
                     <span
                       className="text-white text-xs font-bold flex items-center justify-center w-full h-full"
-                      style={{ display: (profile?.avatar || profile?.profileImage) ? 'none' : 'flex' }}
+                      style={{ display: settings?.avatar ? 'none' : 'flex' }}
                     >
-                      {(profile?.name || profile?.displayName || "U").charAt(0).toUpperCase()}
+                      {(settings?.name || profile?.displayName || user?.email?.charAt(0) || "U").charAt(0).toUpperCase()}
                     </span>
                   </div>
                 </div>
