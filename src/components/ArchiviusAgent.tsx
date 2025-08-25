@@ -109,7 +109,7 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Magia suprema garantida!*" :
       setMessages([welcomeMessage]);
       setHasInitialized(true);
     }
-  }, [isOpen, hasInitialized, isPremium, settings.name, mediaItems.length]);
+  }, [isOpen, hasInitialized, canAccess, settings.name, mediaItems.length]);
 
   // Reset quando fechar
   useEffect(() => {
@@ -209,7 +209,7 @@ ${config.callToAction}
   };
 
   const handleAnalyzeProfile = async () => {
-    if (!isPremium) return;
+    if (!canAccess) return;
 
     setIsAnalyzing(true);
 
