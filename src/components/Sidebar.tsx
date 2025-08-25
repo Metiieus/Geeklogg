@@ -151,15 +151,24 @@ const Sidebar: React.FC = () => {
                     : "hover:bg-gray-800/50 border border-transparent"
                 }`}
               >
-                {/* Icon com gradiente ativo */}
-                <div
-                  className={`flex items-center justify-center w-6 h-6 ${
-                    activePage === item.id
-                      ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
-                      : "text-gray-200 group-hover:text-white"
-                  }`}
-                >
-                  {item.icon}
+                {/* Icon com gradiente ativo e melhor visual */}
+                <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                  activePage === item.id
+                    ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
+                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                }`}>
+                  <div
+                    className={`${
+                      activePage === item.id
+                        ? "text-white"
+                        : "text-gray-300 group-hover:text-white"
+                    } transition-colors duration-300`}
+                  >
+                    {item.icon}
+                  </div>
+                  {activePage === item.id && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                  )}
                 </div>
 
                 {isExpanded && (
@@ -199,14 +208,23 @@ const Sidebar: React.FC = () => {
                   : "hover:bg-gray-800/50 border border-transparent"
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-6 h-6 ${
-                  activePage === "profile"
-                    ? "text-purple-400"
-                    : "text-gray-200 group-hover:text-white"
-                }`}
-              >
-                <User size={20} />
+              <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                activePage === "profile"
+                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/25"
+                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
+              }`}>
+                <div
+                  className={`${
+                    activePage === "profile"
+                      ? "text-white"
+                      : "text-gray-300 group-hover:text-white"
+                  } transition-colors duration-300`}
+                >
+                  <User size={20} />
+                </div>
+                {activePage === "profile" && (
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                )}
               </div>
               {isExpanded && (
                 <span
@@ -231,14 +249,23 @@ const Sidebar: React.FC = () => {
                   : "hover:bg-gray-800/50 border border-transparent"
               }`}
             >
-              <div
-                className={`flex items-center justify-center w-6 h-6 ${
-                  activePage === "settings"
-                    ? "text-gray-300"
-                    : "text-gray-200 group-hover:text-white"
-                }`}
-              >
-                <Settings size={20} />
+              <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                activePage === "settings"
+                  ? "bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg shadow-gray-500/25"
+                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
+              }`}>
+                <div
+                  className={`${
+                    activePage === "settings"
+                      ? "text-white"
+                      : "text-gray-300 group-hover:text-white"
+                  } transition-colors duration-300`}
+                >
+                  <Settings size={20} />
+                </div>
+                {activePage === "settings" && (
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                )}
               </div>
               {isExpanded && (
                 <span
@@ -297,8 +324,10 @@ const Sidebar: React.FC = () => {
               aria-label="Sair da conta"
               className="group w-full flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 border border-transparent hover:border-red-500/30 touch-target"
             >
-              <div className="flex items-center justify-center w-6 h-6 text-gray-200 group-hover:text-red-400">
-                <LogOut size={20} />
+              <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800/50 group-hover:bg-red-500/20 transition-all duration-300">
+                <div className="text-gray-300 group-hover:text-red-400 transition-colors duration-300">
+                  <LogOut size={20} />
+                </div>
               </div>
               {isExpanded && (
                 <span className="ml-3 text-sm font-medium text-gray-200 group-hover:text-red-400 whitespace-nowrap">
