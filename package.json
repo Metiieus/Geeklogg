@@ -7,9 +7,12 @@
     "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "start:server": "node server.js",
-    "server": "node server.js"
+    "server": "node server.js",
+    "build:preview": "npm run build && npm run preview",
+    "deploy:netlify": "npm run build && npx netlify deploy --prod --dir=dist",
+    "deploy:firebase": "npm run build && firebase deploy"
   },
   "dependencies": {
     "cors": "^2.8.5",
