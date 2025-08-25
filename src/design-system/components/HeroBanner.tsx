@@ -110,7 +110,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 p-8 md:p-12 lg:p-16">
+      <div className="relative z-10 p-4 sm:p-6 md:p-12 lg:p-16">
         <div className="max-w-4xl mx-auto text-center">
           {/* Title */}
           <motion.h1
