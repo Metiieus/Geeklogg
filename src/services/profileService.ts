@@ -43,13 +43,21 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
 
   if (data.avatarFile instanceof File) {
     console.log("🖼️ Fazendo upload do avatar...");
-    avatarUrl = await storageClient.upload(`users/${uid}/avatar.jpg`, data.avatarFile);
-    console.log("✅ Avatar upload concluído:", avatarUrl);
+    try {
+      avatarUrl = await storageClient.upload(`users/${uid}/avatar.jpg`, data.avatarFile);
+      console.log("✅ Avatar upload concluído:", avatarUrl);
+    } catch (err) {
+      console.warn("⚠️ Erro ao fazer upload do avatar (continuando sem avatar):", err);
+    }
   }
   if (data.coverFile instanceof File) {
     console.log("🖼️ Fazendo upload da capa...");
-    coverUrl = await storageClient.upload(`users/${uid}/cover.jpg`, data.coverFile);
-    console.log("✅ Capa upload concluído:", coverUrl);
+    try {
+      coverUrl = await storageClient.upload(`users/${uid}/cover.jpg`, data.coverFile);
+      console.log("✅ Capa upload concluído:", coverUrl);
+    } catch (err) {
+      console.warn("⚠️ Erro ao fazer upload da capa (continuando sem capa):", err);
+    }
   }
 
   // ---------------------------
