@@ -117,30 +117,30 @@ export const MobileSidebar: React.FC = () => {
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="sm:hidden fixed top-0 left-0 right-0 z-40 backdrop-blur-xl border-b border-white/10" style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}>
-        <div className="safe-area-inset-top flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 backdrop-blur-xl border-b border-white/10" style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}>
+        <div className="safe-area-inset-top flex items-center justify-between px-3 py-3">
           {/* Menu Button */}
           <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transition-all duration-300 active:scale-95 touch-target"
+            className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transition-all duration-300 active:scale-95 touch-target"
           >
-            <Menu size={18} sm:size={20} className="text-white" />
+            <Menu size={20} className="text-white" />
           </button>
 
           {/* Current Page Indicator */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-center">
-            <div className={`p-1.5 sm:p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} bg-opacity-20`}>
+          <div className="flex items-center gap-3 flex-1 justify-center min-w-0">
+            <div className={`p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} bg-opacity-20 flex-shrink-0`}>
               <div className={`bg-gradient-to-r ${getCurrentPageInfo().gradient} bg-clip-text text-transparent`}>
                 {getCurrentPageInfo().icon}
               </div>
             </div>
-            <span className="text-white font-semibold text-base sm:text-lg truncate">
+            <span className="text-white font-semibold text-lg truncate">
               {getCurrentPageInfo().label}
             </span>
           </div>
 
           {/* Profile Avatar */}
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center flex-shrink-0">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center flex-shrink-0">
             <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
               {profile?.avatar ? (
                 <img
@@ -149,7 +149,7 @@ export const MobileSidebar: React.FC = () => {
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
-                <span className="text-white font-semibold text-xs sm:text-sm">
+                <span className="text-white font-semibold text-sm">
                   {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
                 </span>
               )}
