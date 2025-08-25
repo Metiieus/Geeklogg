@@ -51,12 +51,12 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Carregar sugestões inteligentes
   useEffect(() => {
-    if (isPremium && mediaItems.length > 0) {
+    if (canAccess && mediaItems.length > 0) {
       const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
       const suggestions = archiviusService.getSmartSuggestions(userAnalysis);
       setCurrentSuggestions(suggestions);
     }
-  }, [isPremium, mediaItems, reviews, settings]);
+  }, [canAccess, mediaItems, reviews, settings]);
 
   // Filtrar sugestões por categoria
   const getFilteredSuggestions = () => {
@@ -66,6 +66,7 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Embaralhar sugestões
   const shuffleSuggestions = () => {
+    if (!canAccess) return;
     const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
     const newSuggestions = archiviusService.getSmartSuggestions(userAnalysis);
     setCurrentSuggestions([...newSuggestions].sort(() => Math.random() - 0.5));
@@ -73,7 +74,7 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Inicializar com mensagem de boas-vindas inteligente
   useEffect(() => {
-    if (isOpen && !hasInitialized && isPremium) {
+    if (isOpen && !hasInitialized && canAccess) {
       const userContext = generateEnhancedUserContext();
       const userAnalysis = userContext.userAnalysis;
       
