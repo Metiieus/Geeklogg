@@ -412,7 +412,7 @@ ${config.callToAction}
               {/* Messages - responsivo */}
               <div
                 className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50"
-                style={{ height: isPremium ? "calc(100% - 200px)" : "calc(100% - 130px)" }}
+                style={{ height: canAccess ? "calc(100% - 200px)" : "calc(100% - 130px)" }}
               >
                 {messages.length === 0 && (
                   <div className="text-center text-gray-200 mt-4">
