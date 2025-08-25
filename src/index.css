@@ -16,6 +16,9 @@
 /* Melhorias para scroll lock e Capacitor */
 @import "./scroll-lock-improvements.css";
 
+/* Otimizações de performance */
+@import "./styles/performance-optimizations.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
