@@ -30,14 +30,8 @@ const config: CapacitorConfig = {
       style: 'dark',
       resizeOnFullScreen: true,
     },
-    SafeArea: {
-      enabled: true,
-      customColorsForSystemBars: true,
-      statusBarBackgroundColor: '#1e293b',
-      statusBarStyle: 'dark',
-      navigationBarBackgroundColor: '#1e293b',
-      navigationBarStyle: 'dark',
-    },
+    Haptics: {},
+    Network: {},
   },
   android: {
     allowMixedContent: true,
