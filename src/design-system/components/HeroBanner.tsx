@@ -151,12 +151,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           >
             <motion.button
               onClick={onAddMedia}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.05,
                 boxShadow: `0 20px 40px -10px ${activeGradient.accent}40`
               }}
               whileTap={{ scale: 0.95 }}
-              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-[20px] border border-white/30 rounded-full text-white font-semibold text-lg transition-all duration-300 hover:bg-white/25"
+              className="group relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white/20 backdrop-blur-[20px] border border-white/30 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-white/25 mx-4 sm:mx-0"
               style={{
                 boxShadow: shadows.xl,
                 fontFamily: typography.fontFamily.primary,
