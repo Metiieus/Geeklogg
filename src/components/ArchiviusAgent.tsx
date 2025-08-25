@@ -7,7 +7,7 @@ import { useToast } from "../context/ToastContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
-import { hasArchiviusAccess, ARCHIVIUS_CONFIG } from "../config/archivius";
+import { hasArchiviusAccess, canUseArchivius, ARCHIVIUS_CONFIG } from "../config/archivius";
 
 interface Message {
   id: string;
@@ -39,9 +39,9 @@ export const ArchiviusAgent: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Archivius épico restrito para contas autorizadas (fase beta)
-  const isAuthorizedUser = hasArchiviusAccess(profile?.email);
-  const isPremium = isAuthorizedUser || profile?.isPremium;
+  // Archivius disponível para usuários premium
+  const isPremium = profile?.isPremium === true;
+  const canAccess = canUseArchivius(isPremium, !!profile);
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
   // Gerar contexto enriquecido para IA
@@ -51,12 +51,12 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Carregar sugestões inteligentes
   useEffect(() => {
-    if (isPremium && mediaItems.length > 0) {
+    if (canAccess && mediaItems.length > 0) {
       const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
       const suggestions = archiviusService.getSmartSuggestions(userAnalysis);
       setCurrentSuggestions(suggestions);
     }
-  }, [isPremium, mediaItems, reviews, settings]);
+  }, [canAccess, mediaItems, reviews, settings]);
 
   // Filtrar sugestões por categoria
   const getFilteredSuggestions = () => {
@@ -66,6 +66,7 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Embaralhar sugestões
   const shuffleSuggestions = () => {
+    if (!canAccess) return;
     const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
     const newSuggestions = archiviusService.getSmartSuggestions(userAnalysis);
     setCurrentSuggestions([...newSuggestions].sort(() => Math.random() - 0.5));
@@ -73,7 +74,7 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Inicializar com mensagem de boas-vindas inteligente
   useEffect(() => {
-    if (isOpen && !hasInitialized && isPremium) {
+    if (isOpen && !hasInitialized && canAccess) {
       const userContext = generateEnhancedUserContext();
       const userAnalysis = userContext.userAnalysis;
       
@@ -108,7 +109,7 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Magia suprema garantida!*" :
       setMessages([welcomeMessage]);
       setHasInitialized(true);
     }
-  }, [isOpen, hasInitialized, isPremium, settings.name, mediaItems.length]);
+  }, [isOpen, hasInitialized, canAccess, settings.name, mediaItems.length]);
 
   // Reset quando fechar
   useEffect(() => {
@@ -129,11 +130,9 @@ ${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Magia suprema garantida!*" :
     const messageToSend = customPrompt || inputValue;
     if (!messageToSend.trim()) return;
 
-    if (!isPremium) {
+    if (!canAccess) {
       const config = ARCHIVIUS_CONFIG.upgradeMessage;
-      const upgradeMessage = isAuthorizedUser
-        ? "Para usar o Archivius épico, você precisa ser um usuário Premium! 👑"
-        : `# 🔒 **${config.title}**
+      const upgradeMessage = `# 🔒 **${config.title}**
 
 ## ⚔️ **${config.subtitle}**
 
@@ -210,7 +209,7 @@ ${config.callToAction}
   };
 
   const handleAnalyzeProfile = async () => {
-    if (!isPremium) return;
+    if (!canAccess) return;
 
     setIsAnalyzing(true);
 
@@ -252,7 +251,7 @@ ${config.callToAction}
   };
 
   const categoryIcons: Record<string, string> = {
-    recommendation: "⚔️",
+    recommendation: "��️",
     analysis: "🔍", 
     discovery: "🗺️",
     motivation: "🏆"
@@ -260,7 +259,7 @@ ${config.callToAction}
 
   const categoryNames: Record<string, string> = {
     recommendation: "Recomendações",
-    analysis: "Análises",
+    analysis: "An��lises",
     discovery: "Descobertas", 
     motivation: "Desafios"
   };
@@ -277,7 +276,7 @@ ${config.callToAction}
         <motion.button
           onClick={() => setIsOpen(true)}
           className={`group relative flex items-center bg-gray-800/50 backdrop-blur-xl rounded-full shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
-            isPremium ? "border-cyan-500/30" : "border-gray-600/30"
+            canAccess ? "border-cyan-500/30" : "border-gray-600/30"
           }`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -285,7 +284,7 @@ ${config.callToAction}
           {/* Avatar do Archivius - responsivo */}
           <div
             className={`w-12 sm:w-14 h-12 sm:h-14 rounded-full overflow-hidden border-2 ${
-              isPremium ? "border-cyan-400/50" : "border-gray-600/50"
+              canAccess ? "border-cyan-400/50" : "border-gray-600/50"
             }`}
           >
             <img
@@ -300,7 +299,7 @@ ${config.callToAction}
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white text-lg">Archivius</h3>
               <ConditionalPremiumBadge
-                isPremium={isPremium}
+                isPremium={canAccess}
                 variant="icon-only"
                 size="sm"
                 animated={false}
@@ -309,12 +308,12 @@ ${config.callToAction}
             </div>
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-400" : "bg-orange-400"}`}
+                className={`w-2 h-2 rounded-full ${canAccess ? "bg-cyan-400" : "bg-orange-400"}`}
               />
               <span className="text-gray-100 text-sm">
-                {isPremium ? "Oráculo Ativo" : "Premium"}
+                {canAccess ? "Oráculo Ativo" : "Premium"}
               </span>
-              {isPremium && mediaItems.length > 0 && (
+              {canAccess && mediaItems.length > 0 && (
                 <span className="text-cyan-400 text-xs">
                   • {currentSuggestions.length} sugestões
                 </span>
@@ -323,7 +322,7 @@ ${config.callToAction}
           </div>
 
           {/* Indicador de IA */}
-          {isPremium && (
+          {canAccess && (
             <motion.div
               className="absolute -top-0.5 -right-0.5 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full flex items-center justify-center"
               animate={{ rotate: 360 }}
@@ -359,7 +358,7 @@ ${config.callToAction}
               {/* Header */}
               <div
                 className={`p-3 sm:p-4 border-b border-cyan-500/20 ${
-                  isPremium
+                  canAccess
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500"
                     : "bg-gradient-to-r from-gray-600 to-gray-700"
                 }`}
@@ -378,7 +377,7 @@ ${config.callToAction}
                         <h3 className="font-semibold text-white text-sm">
                           Archivius
                         </h3>
-                        {isPremium && (
+                        {canAccess && (
                           <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-300" />
                         )}
                         {hasRealAPI && (
@@ -389,16 +388,14 @@ ${config.callToAction}
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${isPremium ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
+                          className={`w-2 h-2 rounded-full ${canAccess ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
                         />
                         <span className="text-white text-xs sm:text-sm opacity-90">
-                          {isPremium
+                          {canAccess
                             ? hasRealAPI
                               ? "Oráculo Supremo"
                               : "Modo Inteligente"
-                            : isAuthorizedUser
-                              ? "Premium Only"
-                              : "Beta Exclusivo"}
+                            : "Premium Only"}
                         </span>
                       </div>
                     </div>
@@ -415,7 +412,7 @@ ${config.callToAction}
               {/* Messages - responsivo */}
               <div
                 className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50"
-                style={{ height: isPremium ? "calc(100% - 200px)" : "calc(100% - 130px)" }}
+                style={{ height: canAccess ? "calc(100% - 200px)" : "calc(100% - 130px)" }}
               >
                 {messages.length === 0 && (
                   <div className="text-center text-gray-200 mt-4">
@@ -430,12 +427,12 @@ ${config.callToAction}
                       🧙‍♂️ Archivius, o Oráculo
                     </p>
                     <p className="text-xs sm:text-sm mt-2 mb-3 sm:mb-4 px-2">
-                      {isPremium
+                      {canAccess
                         ? "⚔️ Companion IA épico com análise avançada de padrões!"
                         : "👑 Desperte os poderes premium para análises supremas!"}
                     </p>
 
-                    {isPremium && (
+                    {canAccess && (
                       <div className="space-y-3">
                         {/* Botão de Análise Épica */}
                         <button
@@ -597,16 +594,16 @@ ${config.callToAction}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={
-                      isPremium
+                      canAccess
                         ? "Digite sua pergunta épica..."
                         : "Premium necessário..."
                     }
-                    disabled={!isPremium}
+                    disabled={!canAccess}
                     className="flex-1 px-3 sm:px-4 py-2 bg-gray-900/50 border border-gray-600/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:bg-gray-800 disabled:cursor-not-allowed text-sm sm:text-base"
                   />
                   <button
                     onClick={() => handleSendMessage()}
-                    disabled={!isPremium || !inputValue.trim()}
+                    disabled={!canAccess || !inputValue.trim()}
                     className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full flex items-center justify-center hover:from-cyan-600 hover:to-pink-600 transition-colors disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed"
                   >
                     <Send className="w-4 sm:w-5 h-4 sm:h-5" />

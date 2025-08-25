@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { handleCheckout } from '../services/checkoutService';
-import { Crown, Loader2 } from 'lucide-react';
+import { Crown, ExternalLink } from 'lucide-react';
 
 interface CheckoutButtonProps {
   className?: string;
@@ -10,30 +8,25 @@ interface CheckoutButtonProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export default function CheckoutButton({ 
-  className = "", 
+// Link direto do MercadoPago para pagamento
+const MERCADOPAGO_PAYMENT_LINK = 'https://mpago.li/1iUpG5e';
+
+export default function CheckoutButton({
+  className = "",
   children,
   variant = 'gradient',
   size = 'md'
 }: CheckoutButtonProps) {
-  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const handleClick = async () => {
+  const handleClick = () => {
     if (!user) {
       alert('Você precisa estar logado para assinar o premium');
       return;
     }
 
-    if (loading) return;
-
-    setLoading(true);
-    
-    try {
-      await handleCheckout();
-    } finally {
-      setLoading(false);
-    }
+    // Redirecionar diretamente para o link do MercadoPago
+    window.open(MERCADOPAGO_PAYMENT_LINK, '_blank');
   };
 
   const getVariantClasses = () => {
@@ -73,20 +66,12 @@ export default function CheckoutButton({
   return (
     <button
       onClick={handleClick}
-      disabled={loading || !user}
+      disabled={!user}
       className={baseClasses}
     >
-      {loading ? (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Processando...
-        </>
-      ) : (
-        <>
-          <Crown className="w-4 h-4" />
-          {children || 'Assinar Premium - R$ 19,99'}
-        </>
-      )}
+      <Crown className="w-4 h-4" />
+      {children || 'Assinar Premium - R$ 19,99'}
+      <ExternalLink className="w-3 h-3 opacity-70" />
     </button>
   );
 }

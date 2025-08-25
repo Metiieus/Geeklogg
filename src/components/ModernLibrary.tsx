@@ -35,7 +35,7 @@ const statusOptions = [
 const sortOptions = [
   { value: 'updatedAt', label: '🕐 Mais Recentes' },
   { value: 'title', label: '🔤 A-Z' },
-  { value: 'rating', label: '⭐ Avaliação' },
+  { value: 'rating', label: '��� Avaliação' },
   { value: 'hoursSpent', label: '⏱️ Mais Horas' },
 ];
 
@@ -210,7 +210,7 @@ const ModernLibrary: React.FC = () => {
           className="space-y-6"
         >
           {/* Search Bar */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-stretch lg:items-center">
             <div className="flex-1 max-w-2xl">
               <GlassInput
                 placeholder="Buscar por título ou tags..."
@@ -222,13 +222,13 @@ const ModernLibrary: React.FC = () => {
               />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:flex-shrink-0">
               <GlassSelect
                 options={sortOptions}
                 value={sortBy}
                 onChange={(value) => setSortBy(value as any)}
                 placeholder="Ordenar por"
-                className="min-w-[160px]"
+                className="min-w-0 sm:min-w-[140px] lg:min-w-[160px]"
               />
 
               <GlassSelect
@@ -236,7 +236,7 @@ const ModernLibrary: React.FC = () => {
                 value={selectedStatus}
                 onChange={(value) => setSelectedStatus(value as any)}
                 placeholder="Status"
-                className="min-w-[160px]"
+                className="min-w-0 sm:min-w-[140px] lg:min-w-[160px]"
               />
             </div>
           </div>
@@ -254,24 +254,24 @@ const ModernLibrary: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="flex items-center justify-between"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4"
         >
-          <div className="flex items-center gap-4">
-            <span className="text-white/80 text-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <span className="text-white/80 text-base sm:text-lg">
               {filteredAndSortedItems.length} itens encontrados
             </span>
-            
+
             {selectedType !== 'all' && (
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="flex items-center gap-2 px-3 py-1 rounded-full border"
+                className="flex items-center gap-2 px-3 py-1 rounded-full border self-start"
                 style={{
                   background: getCategoryColors(selectedType as MediaType).background,
                   borderColor: getCategoryColors(selectedType as MediaType).border,
                 }}
               >
-                <div 
+                <div
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: getCategoryColors(selectedType as MediaType).primary }}
                 />
@@ -283,31 +283,31 @@ const ModernLibrary: React.FC = () => {
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setViewMode('grid')}
-              className={`p-3 rounded-xl transition-all duration-200 ${
+              className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 touch-target ${
                 viewMode === 'grid'
                   ? 'bg-violet-500/30 text-violet-400 border border-violet-400/50'
                   : 'bg-white/5 text-white/60 border border-white/20 hover:bg-white/10'
               }`}
             >
-              <Grid size={20} />
+              <Grid size={18} className="sm:w-5 sm:h-5" />
             </motion.button>
             
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setViewMode('list')}
-              className={`p-3 rounded-xl transition-all duration-200 ${
+              className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 touch-target ${
                 viewMode === 'list'
                   ? 'bg-violet-500/30 text-violet-400 border border-violet-400/50'
                   : 'bg-white/5 text-white/60 border border-white/20 hover:bg-white/10'
               }`}
             >
-              <List size={20} />
+              <List size={18} className="sm:w-5 sm:h-5" />
             </motion.button>
           </div>
         </motion.div>
@@ -334,8 +334,8 @@ const ModernLibrary: React.FC = () => {
               transition={{ duration: 0.4 }}
               className={
                 viewMode === 'grid'
-                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8'
-                  : 'flex flex-col gap-4'
+                  ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-6 lg:gap-8'
+                  : 'flex flex-col gap-3 sm:gap-4'
               }
             >
               {filteredAndSortedItems.map((item, index) => (
@@ -363,24 +363,24 @@ const ModernLibrary: React.FC = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
-              className="flex flex-col items-center justify-center py-20 text-center"
+              className="flex flex-col items-center justify-center py-12 sm:py-16 lg:py-20 text-center px-4"
             >
               <motion.div
-                animate={{ 
+                animate={{
                   rotate: [0, 10, -10, 0],
                   scale: [1, 1.1, 1]
                 }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="w-24 h-24 bg-gradient-to-br from-violet-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mb-6 border border-white/10"
+                className="w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-br from-violet-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mb-4 sm:mb-6 border border-white/10"
               >
-                <Search className="text-white/40" size={32} />
+                <Search className="text-white/40" size={28} />
               </motion.div>
-              
-              <h3 className="text-2xl font-semibold text-white mb-2">
+
+              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">
                 Nenhum item encontrado
               </h3>
-              
-              <p className="text-white/60 mb-8 max-w-md">
+
+              <p className="text-white/60 mb-6 sm:mb-8 max-w-md text-sm sm:text-base">
                 Tente ajustar sua busca ou filtros, ou adicione novos itens à sua biblioteca
               </p>
               

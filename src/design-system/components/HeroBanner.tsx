@@ -110,14 +110,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 p-8 md:p-12 lg:p-16">
+      <div className="relative z-10 p-4 sm:p-6 md:p-12 lg:p-16">
         <div className="max-w-4xl mx-auto text-center">
           {/* Title */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 px-4 sm:px-0"
             style={{
               fontFamily: typography.fontFamily.primary,
               lineHeight: typography.lineHeight.tight,
@@ -132,7 +132,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto px-4 sm:px-6 md:px-0"
             style={{
               fontFamily: typography.fontFamily.primary,
               lineHeight: typography.lineHeight.normal,
@@ -151,12 +151,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           >
             <motion.button
               onClick={onAddMedia}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.05,
                 boxShadow: `0 20px 40px -10px ${activeGradient.accent}40`
               }}
               whileTap={{ scale: 0.95 }}
-              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-[20px] border border-white/30 rounded-full text-white font-semibold text-lg transition-all duration-300 hover:bg-white/25"
+              className="group relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white/20 backdrop-blur-[20px] border border-white/30 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-white/25 mx-4 sm:mx-0"
               style={{
                 boxShadow: shadows.xl,
                 fontFamily: typography.fontFamily.primary,
