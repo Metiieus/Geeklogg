@@ -16,7 +16,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   onClose,
   children,
   className = '',
-  maxWidth = 'max-w-2xl',
+  maxWidth = 'max-w-full sm:max-w-2xl',
   zIndex = 'z-50'
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -92,7 +92,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   return (
     <div
       ref={overlayRef}
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 ${zIndex} animate-fade-in`}
+      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-0 sm:p-2 md:p-4 ${zIndex} animate-fade-in`}
       style={{
         overflow: 'hidden', // Bloqueia COMPLETAMENTE o scroll da página
         position: 'fixed',
@@ -109,9 +109,9 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className={`w-full ${maxWidth} mx-auto ${className}`}
+        className={`w-full ${maxWidth} mx-auto mt-0 sm:mt-auto mb-auto ${className}`}
         style={{
-          maxHeight: 'calc(100vh - 1rem)', // Modal nunca ultrapassa viewport
+          maxHeight: 'calc(100vh)', // Modal ocupa toda a tela no mobile
           minHeight: 'auto',
           overflow: 'hidden', // Força scroll interno
           display: 'flex',
