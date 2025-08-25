@@ -299,7 +299,7 @@ ${config.callToAction}
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white text-lg">Archivius</h3>
               <ConditionalPremiumBadge
-                isPremium={isPremium}
+                isPremium={canAccess}
                 variant="icon-only"
                 size="sm"
                 animated={false}
@@ -308,7 +308,7 @@ ${config.callToAction}
             </div>
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${isPremium ? "bg-cyan-400" : "bg-orange-400"}`}
+                className={`w-2 h-2 rounded-full ${canAccess ? "bg-cyan-400" : "bg-orange-400"}`}
               />
               <span className="text-gray-100 text-sm">
                 {isPremium ? "Oráculo Ativo" : "Premium"}
