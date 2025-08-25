@@ -66,8 +66,8 @@ const navigationItems: NavItem[] = [
 ];
 
 const Sidebar: React.FC = () => {
-  const { activePage, setActivePage } = useAppContext();
-  const { logout, profile } = useAuth();
+  const { activePage, setActivePage, settings } = useAppContext();
+  const { logout, profile, user } = useAuth();
   const { showInfo } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
 
