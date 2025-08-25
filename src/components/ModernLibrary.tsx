@@ -35,7 +35,7 @@ const statusOptions = [
 const sortOptions = [
   { value: 'updatedAt', label: '🕐 Mais Recentes' },
   { value: 'title', label: '🔤 A-Z' },
-  { value: 'rating', label: '⭐ Avaliação' },
+  { value: 'rating', label: '��� Avaliação' },
   { value: 'hoursSpent', label: '⏱️ Mais Horas' },
 ];
 
@@ -210,7 +210,7 @@ const ModernLibrary: React.FC = () => {
           className="space-y-6"
         >
           {/* Search Bar */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-stretch lg:items-center">
             <div className="flex-1 max-w-2xl">
               <GlassInput
                 placeholder="Buscar por título ou tags..."
@@ -222,13 +222,13 @@ const ModernLibrary: React.FC = () => {
               />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:flex-shrink-0">
               <GlassSelect
                 options={sortOptions}
                 value={sortBy}
                 onChange={(value) => setSortBy(value as any)}
                 placeholder="Ordenar por"
-                className="min-w-[160px]"
+                className="min-w-0 sm:min-w-[140px] lg:min-w-[160px]"
               />
 
               <GlassSelect
@@ -236,7 +236,7 @@ const ModernLibrary: React.FC = () => {
                 value={selectedStatus}
                 onChange={(value) => setSelectedStatus(value as any)}
                 placeholder="Status"
-                className="min-w-[160px]"
+                className="min-w-0 sm:min-w-[140px] lg:min-w-[160px]"
               />
             </div>
           </div>
