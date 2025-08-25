@@ -259,7 +259,7 @@ ${config.callToAction}
 
   const categoryNames: Record<string, string> = {
     recommendation: "Recomendações",
-    analysis: "Análises",
+    analysis: "An��lises",
     discovery: "Descobertas", 
     motivation: "Desafios"
   };
@@ -391,13 +391,11 @@ ${config.callToAction}
                           className={`w-2 h-2 rounded-full ${canAccess ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
                         />
                         <span className="text-white text-xs sm:text-sm opacity-90">
-                          {isPremium
+                          {canAccess
                             ? hasRealAPI
                               ? "Oráculo Supremo"
                               : "Modo Inteligente"
-                            : isAuthorizedUser
-                              ? "Premium Only"
-                              : "Beta Exclusivo"}
+                            : "Premium Only"}
                         </span>
                       </div>
                     </div>
