@@ -388,7 +388,7 @@ ${config.callToAction}
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${isPremium ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
+                          className={`w-2 h-2 rounded-full ${canAccess ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
                         />
                         <span className="text-white text-xs sm:text-sm opacity-90">
                           {isPremium
