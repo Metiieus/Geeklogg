@@ -47,11 +47,14 @@ const missingVars = requiredEnvVars.filter((varName) => {
   );
 });
 
-if (missingVars.length > 0) {
-  console.error("❌ Firebase config incompleta:", missingVars);
-  console.warn("Verifique seu arquivo .env");
+const hasValidConfig = missingVars.length === 0;
+
+if (!hasValidConfig) {
+  console.warn("⚠️ Firebase config incompleta - executando em modo offline");
+  console.warn("Para produção, configure as variáveis Firebase no ambiente");
+  console.log("🔧 Modo offline ativado - dados serão salvos localmente");
 } else {
-  console.log("✅ Todas as variáveis do Firebase estão definidas");
+  console.log("✅ Firebase configurado corretamente");
   console.log("🔧 Firebase config:", {
     apiKey: firebaseConfig.apiKey ? "✅ Definido" : "❌ Indefinido",
     authDomain: firebaseConfig.authDomain ? "✅ Definido" : "❌ Indefinido",
@@ -64,13 +67,22 @@ let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
 
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app, 'geeklog');
-} catch (error) {
-  console.warn("⚠️ Firebase initialization failed:", error);
-  console.warn("App will run in offline mode. Please configure Firebase environment variables.");
+if (hasValidConfig) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app, 'geeklog');
+    console.log("🚀 Firebase inicializado com sucesso");
+  } catch (error) {
+    console.warn("⚠️ Firebase initialization failed:", error);
+    console.warn("Executando em modo offline");
+  }
+} else {
+  console.log("🔄 Executando em modo offline - dados salvos localmente");
+  // Enable offline mode in localStorage service
+  if (typeof window !== 'undefined') {
+    localStorage.setItem("firebase_offline_mode", "true");
+  }
 }
 
 export { app, auth, db };
