@@ -254,24 +254,24 @@ const ModernLibrary: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="flex items-center justify-between"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4"
         >
-          <div className="flex items-center gap-4">
-            <span className="text-white/80 text-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <span className="text-white/80 text-base sm:text-lg">
               {filteredAndSortedItems.length} itens encontrados
             </span>
-            
+
             {selectedType !== 'all' && (
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="flex items-center gap-2 px-3 py-1 rounded-full border"
+                className="flex items-center gap-2 px-3 py-1 rounded-full border self-start"
                 style={{
                   background: getCategoryColors(selectedType as MediaType).background,
                   borderColor: getCategoryColors(selectedType as MediaType).border,
                 }}
               >
-                <div 
+                <div
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: getCategoryColors(selectedType as MediaType).primary }}
                 />
@@ -283,18 +283,18 @@ const ModernLibrary: React.FC = () => {
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setViewMode('grid')}
-              className={`p-3 rounded-xl transition-all duration-200 ${
+              className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 touch-target ${
                 viewMode === 'grid'
                   ? 'bg-violet-500/30 text-violet-400 border border-violet-400/50'
                   : 'bg-white/5 text-white/60 border border-white/20 hover:bg-white/10'
               }`}
             >
-              <Grid size={20} />
+              <Grid size={18} className="sm:w-5 sm:h-5" />
             </motion.button>
             
             <motion.button
