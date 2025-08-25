@@ -301,13 +301,13 @@ const ModernLibrary: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setViewMode('list')}
-              className={`p-3 rounded-xl transition-all duration-200 ${
+              className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 touch-target ${
                 viewMode === 'list'
                   ? 'bg-violet-500/30 text-violet-400 border border-violet-400/50'
                   : 'bg-white/5 text-white/60 border border-white/20 hover:bg-white/10'
               }`}
             >
-              <List size={20} />
+              <List size={18} className="sm:w-5 sm:h-5" />
             </motion.button>
           </div>
         </motion.div>
