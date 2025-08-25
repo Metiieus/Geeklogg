@@ -117,7 +117,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 px-4 sm:px-0"
             style={{
               fontFamily: typography.fontFamily.primary,
               lineHeight: typography.lineHeight.tight,
@@ -132,7 +132,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto px-4 sm:px-6 md:px-0"
             style={{
               fontFamily: typography.fontFamily.primary,
               lineHeight: typography.lineHeight.normal,
