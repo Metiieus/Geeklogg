@@ -13,6 +13,9 @@
 /* Estilos de acessibilidade WCAG */
 @import "./styles/accessibility.css";
 
+/* Melhorias para scroll lock e Capacitor */
+@import "./scroll-lock-improvements.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

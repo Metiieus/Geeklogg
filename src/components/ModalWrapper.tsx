@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useScrollLock } from '../hooks/useScrollLock';
+import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
 
 interface ModalWrapperProps {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // Usar scroll lock aprimorado
-  useScrollLock(isOpen);
+  useImprovedScrollLock(isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -109,9 +109,9 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className={`w-full ${maxWidth} mx-auto mt-0 sm:mt-auto mb-auto ${className}`}
+        className={`w-full ${maxWidth} mx-auto mt-0 sm:mt-auto mb-auto modal-safe-area allow-scroll ${className}`}
         style={{
-          maxHeight: 'calc(100vh)', // Modal ocupa toda a tela no mobile
+          maxHeight: 'calc(var(--vh, 1vh) * 100)', // Usa altura de viewport melhorada
           minHeight: 'auto',
           overflow: 'hidden', // Força scroll interno
           display: 'flex',

@@ -35,6 +35,7 @@ import { ToastProvider } from "./context/ToastContext";
 import { checkAchievements } from "./services/achievementService";
 import { UserProfile } from "./types/social";
 import { useOptimizedContext } from "./hooks/useOptimizedContext";
+import { capacitorService } from "./services/capacitorService";
 
 export type MediaType =
   | "games"
@@ -143,6 +144,14 @@ function App() {
   });
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
+
+  // Initialize Capacitor for mobile
+  useEffect(() => {
+    if (capacitorService.isNativePlatform()) {
+      console.log('📱 Aplicação executando em dispositivo móvel');
+      capacitorService.initialize();
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) return;
