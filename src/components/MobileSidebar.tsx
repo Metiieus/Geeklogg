@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useCallback } from "react";
 import {
   Home,
   BookOpen,
@@ -69,19 +69,19 @@ const navItems: NavItem[] = [
   },
 ];
 
-export const MobileSidebar: React.FC = () => {
+const MobileSidebar: React.FC = () => {
   const { activePage, setActivePage } = useAppContext();
   const { logout, user, profile } = useAuth();
   const { showInfo } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleNavigation = (itemId: ActivePage) => {
+  const handleNavigation = useCallback((itemId: ActivePage) => {
     if (itemId === "social") {
       showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
       return;
     }
     setActivePage(itemId);
-  };
+  }, [showInfo, setActivePage]);
 
   // Close sidebar when page changes
   useEffect(() => {
@@ -170,7 +170,7 @@ export const MobileSidebar: React.FC = () => {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in"
+          className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-fade-in will-change-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -325,3 +325,8 @@ export const MobileSidebar: React.FC = () => {
     </>
   );
 };
+
+const MemoizedMobileSidebar = memo(MobileSidebar);
+MemoizedMobileSidebar.displayName = 'MobileSidebar';
+
+export { MemoizedMobileSidebar as MobileSidebar };
