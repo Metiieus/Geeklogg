@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo, useCallback, useMemo } from "react";
 import { Bell, Settings, User, LogOut, Crown } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
@@ -9,7 +9,7 @@ interface DesktopHeaderProps {
   pageIcon: React.ReactNode;
 }
 
-export const DesktopHeader: React.FC<DesktopHeaderProps> = ({ pageName, pageIcon }) => {
+const DesktopHeader: React.FC<DesktopHeaderProps> = memo(({ pageName, pageIcon }) => {
   const { user, profile, logout } = useAuth();
   const { setActivePage } = useAppContext();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -27,13 +27,13 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({ pageName, pageIcon
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleUserMenuToggle = () => {
+  const handleUserMenuToggle = useCallback(() => {
     setShowUserMenu(!showUserMenu);
-  };
+  }, [showUserMenu]);
 
-  const handleMenuAction = (action: string) => {
+  const handleMenuAction = useCallback((action: string) => {
     setShowUserMenu(false);
-    
+
     switch (action) {
       case 'profile':
         setActivePage('profile');
@@ -45,10 +45,17 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({ pageName, pageIcon
         logout();
         break;
     }
-  };
+  }, [setActivePage, logout]);
 
-  const displayName = profile?.name || profile?.displayName || user?.displayName || user?.email?.split("@")[0] || "Usuário";
-  const displayAvatar = profile?.avatar || profile?.profileImage;
+  const displayName = useMemo(() =>
+    profile?.name || profile?.displayName || user?.displayName || user?.email?.split("@")[0] || "Usuário",
+    [profile?.name, profile?.displayName, user?.displayName, user?.email]
+  );
+
+  const displayAvatar = useMemo(() =>
+    profile?.avatar || profile?.profileImage,
+    [profile?.avatar, profile?.profileImage]
+  );
 
   return (
     <header className="hidden md:flex fixed top-0 right-0 left-20 z-30 h-16 backdrop-blur-xl border-b border-white/10 bg-slate-900/95">
@@ -181,4 +188,8 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({ pageName, pageIcon
       </div>
     </header>
   );
-};
+});
+
+DesktopHeader.displayName = 'DesktopHeader';
+
+export { DesktopHeader };
