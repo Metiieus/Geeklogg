@@ -1,0 +1,175 @@
+/* Otimizações de Performance CSS */
+
+/* Melhorar compositing para elementos animados */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-auto {
+  will-change: auto;
+}
+
+/* Otimização de blur effects */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Aceleração de hardware para transformações */
+.transform-gpu {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Otimização de scroll suave */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Otimização de imagens */
+.optimized-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  contain: layout style paint;
+}
+
+/* Contenimento de layout para sidebars */
+.sidebar-contain {
+  contain: layout style paint;
+}
+
+/* Otimização de gradientes */
+.gradient-optimized {
+  background-attachment: fixed;
+  will-change: background-position;
+}
+
+/* Otimização de sombras */
+.shadow-optimized {
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+}
+
+/* Prefetching de recursos */
+.prefetch-dns {
+  /* Para ser usado em links que precisam de DNS prefetch */
+}
+
+/* Otimização de fonts */
+.font-display-swap {
+  font-display: swap;
+}
+
+/* CSS containment para componentes isolados */
+.component-contain {
+  contain: layout style paint;
+}
+
+/* Otimização de animações */
+.animation-optimized {
+  animation-fill-mode: both;
+  animation-play-state: running;
+  will-change: transform, opacity;
+}
+
+/* Reduzir repaints em hover states */
+.hover-optimized {
+  transition-property: transform, opacity, background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Otimização para mobile */
+@media (max-width: 768px) {
+  .mobile-optimized {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Reduzir blur em mobile para melhor performance */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* Otimização para motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .respect-motion-preference {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Lazy loading para elementos fora da viewport */
+.lazy-load {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 300px;
+}
+
+/* Otimização de fontes variáveis */
+.variable-font-optimized {
+  font-variation-settings: normal;
+  font-feature-settings: normal;
+}
+
+/* Performance hints para navegadores */
+.performance-hints {
+  /* Hint para o navegador sobre elementos críticos */
+  rendering: optimizeSpeed;
+}
+
+/* Grid e Flexbox otimizados */
+.flex-optimized {
+  display: flex;
+  contain: layout style;
+}
+
+.grid-optimized {
+  display: grid;
+  contain: layout style;
+}
+
+/* Otimização de z-index layering */
+.layer-optimized {
+  isolation: isolate;
+}
+
+/* Scroll snap otimizado */
+.scroll-snap-optimized {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+/* Cache de elementos repetitivos */
+.cache-optimized {
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Otimização para dispositivos de alta densidade */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .high-dpi-optimized {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Preload crítico */
+.critical-resource {
+  /* Para elementos que devem ser carregados prioritariamente */
+  importance: high;
+}
