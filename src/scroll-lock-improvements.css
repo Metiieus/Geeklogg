@@ -1,0 +1,165 @@
+/* Melhorias para scroll lock mais suave */
+
+/* Quando o scroll está bloqueado */
+body.scroll-locked {
+  touch-action: none;
+  -webkit-overflow-scrolling: auto;
+  overscroll-behavior: none;
+}
+
+/* Permitir scroll interno em elementos específicos */
+.allow-scroll,
+.modal-scroll {
+  touch-action: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+}
+
+/* Suavizar transições de scroll lock */
+body {
+  transition: position 0.1s ease;
+}
+
+/* Garantir que modais com scroll interno funcionem */
+.modal-content .allow-scroll {
+  max-height: 70vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+/* Melhor handling de 100vh em mobile */
+:root {
+  --vh: 1vh;
+}
+
+.mobile-full-height {
+  height: calc(var(--vh) * 100);
+  min-height: calc(var(--vh) * 100);
+}
+
+/* Safe area handling específico para modais */
+.modal-safe-area {
+  padding-top: max(env(safe-area-inset-top), 1rem);
+  padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  padding-left: max(env(safe-area-inset-left), 1rem);
+  padding-right: max(env(safe-area-inset-right), 1rem);
+}
+
+/* Melhorar performance de animações em mobile */
+@media (max-width: 768px) {
+  .performance-optimized {
+    will-change: auto;
+    transform: none;
+    transition: none;
+  }
+  
+  /* Reduzir backdrop blur em dispositivos móveis */
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    backdrop-filter: none;
+    background-color: rgba(15, 23, 42, 0.85) !important;
+  }
+}
+
+/* Otimizações para Capacitor */
+.capacitor-app {
+  /* Evitar bounce em iOS */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
+.capacitor-app body {
+  /* Garantir que não há scroll horizontal */
+  overflow-x: hidden;
+  /* Melhorar rendering em WebView */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* StatusBar safe area */
+.status-bar-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Keyboard safe area */
+.keyboard-safe {
+  padding-bottom: env(keyboard-inset-height, 0);
+}
+
+/* Melhorar touch responsiveness */
+.touch-responsive {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Botões com melhor área de toque */
+.mobile-button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 16px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Inputs otimizados para mobile */
+.mobile-input {
+  font-size: 16px; /* Evita zoom no iOS */
+  padding: 12px 16px;
+  border-radius: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Scroll containers otimizados */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Melhorar performance de listas longas */
+.virtual-list {
+  contain: layout style paint;
+  will-change: scroll-position;
+}
+
+/* Otimizações para WebView do Capacitor */
+@media screen and (max-device-width: 768px) {
+  /* Reduzir complexidade visual em telas pequenas */
+  .complex-gradient {
+    background: #1e293b !important;
+  }
+  
+  .complex-shadow {
+    box-shadow: none !important;
+  }
+  
+  /* Simplificar animações */
+  .animate-bounce,
+  .animate-pulse,
+  .animate-spin {
+    animation-duration: 0.5s !important;
+  }
+}
+
+/* Dark mode para status bar do sistema */
+@media (prefers-color-scheme: dark) {
+  meta[name="theme-color"] {
+    content: "#1e293b";
+  }
+}
+
+/* Melhorar acessibilidade para usuários com motion reduzido */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-locked {
+    transition: none !important;
+  }
+  
+  .modal-content {
+    animation: none !important;
+    transition: none !important;
+  }
+}
