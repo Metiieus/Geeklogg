@@ -169,19 +169,19 @@ export const GlassSelect: React.FC<GlassSelectProps> = ({
         onBlur={() => setIsFocused(false)}
       >
         {/* Selected Value */}
-        <div className="flex items-center h-12 px-4">
-          <div className={`text-white/60 mr-3 transition-colors duration-200 ${isOpen ? 'text-violet-400' : ''}`}>
+        <div className="flex items-center h-11 sm:h-12 px-3 sm:px-4">
+          <div className={`text-white/60 mr-2 sm:mr-3 transition-colors duration-200 ${isOpen ? 'text-violet-400' : ''}`}>
             {icon}
           </div>
-          
-          <span className={`flex-1 text-white ${!selectedOption ? 'text-white/50' : ''}`}>
+
+          <span className={`flex-1 text-white text-sm sm:text-base ${!selectedOption ? 'text-white/50' : ''} truncate`}>
             {selectedOption?.label || placeholder}
           </span>
-          
+
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="text-white/60"
+            className="text-white/60 flex-shrink-0 ml-2"
           >
             <ChevronDown size={18} />
           </motion.div>
