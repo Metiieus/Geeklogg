@@ -5,6 +5,10 @@ import { getUserId } from "./utils";
 class StorageClient {
   private storage = storage;
 
+  isAvailable(): boolean {
+    return !!this.storage;
+  }
+
   createRef(path: string) {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
