@@ -363,24 +363,24 @@ const ModernLibrary: React.FC = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
-              className="flex flex-col items-center justify-center py-20 text-center"
+              className="flex flex-col items-center justify-center py-12 sm:py-16 lg:py-20 text-center px-4"
             >
               <motion.div
-                animate={{ 
+                animate={{
                   rotate: [0, 10, -10, 0],
                   scale: [1, 1.1, 1]
                 }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="w-24 h-24 bg-gradient-to-br from-violet-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mb-6 border border-white/10"
+                className="w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-br from-violet-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mb-4 sm:mb-6 border border-white/10"
               >
-                <Search className="text-white/40" size={32} />
+                <Search className="text-white/40" size={28} />
               </motion.div>
-              
-              <h3 className="text-2xl font-semibold text-white mb-2">
+
+              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">
                 Nenhum item encontrado
               </h3>
-              
-              <p className="text-white/60 mb-8 max-w-md">
+
+              <p className="text-white/60 mb-6 sm:mb-8 max-w-md text-sm sm:text-base">
                 Tente ajustar sua busca ou filtros, ou adicione novos itens à sua biblioteca
               </p>
               
