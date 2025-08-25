@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { useState, useEffect } from "react";
 import {
   Home,
@@ -73,13 +73,13 @@ const Sidebar: React.FC = () => {
 
   const isPremium = profile?.isPremium || false;
 
-  const handleNavigation = (itemId: ActivePage) => {
+  const handleNavigation = useCallback((itemId: ActivePage) => {
     if (itemId === "social") {
       showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
       return;
     }
     setActivePage(itemId);
-  };
+  }, [showInfo, setActivePage]);
 
   return (
     <>
@@ -342,4 +342,7 @@ const Sidebar: React.FC = () => {
   );
 };
 
-export { Sidebar };
+const MemoizedSidebar = memo(Sidebar);
+MemoizedSidebar.displayName = 'Sidebar';
+
+export { MemoizedSidebar as Sidebar };
