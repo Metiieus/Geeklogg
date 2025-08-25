@@ -358,7 +358,7 @@ ${config.callToAction}
               {/* Header */}
               <div
                 className={`p-3 sm:p-4 border-b border-cyan-500/20 ${
-                  isPremium
+                  canAccess
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500"
                     : "bg-gradient-to-r from-gray-600 to-gray-700"
                 }`}
@@ -377,7 +377,7 @@ ${config.callToAction}
                         <h3 className="font-semibold text-white text-sm">
                           Archivius
                         </h3>
-                        {isPremium && (
+                        {canAccess && (
                           <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-300" />
                         )}
                         {hasRealAPI && (
@@ -393,7 +393,7 @@ ${config.callToAction}
                         <span className="text-white text-xs sm:text-sm opacity-90">
                           {isPremium
                             ? hasRealAPI
-                              ? "Or��culo Supremo"
+                              ? "Oráculo Supremo"
                               : "Modo Inteligente"
                             : isAuthorizedUser
                               ? "Premium Only"
