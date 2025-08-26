@@ -354,6 +354,7 @@ function App() {
   return (
     <Router>
       <ToastProvider>
+        <PerformanceOptimizer />
         <AppProvider value={contextValue}>
           <Routes>
             <Route path="/premium/success" element={<PremiumSuccessPage />} />
