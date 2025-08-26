@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload } from 'lucide-react';
-import { FavoriteItem, UserSettings } from '../../App';
+import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload, Library } from 'lucide-react';
+import { FavoriteItem, UserSettings, MediaItem } from '../../App';
+import { useAppContext } from '../../context/AppContext';
+import { LibrarySelector } from './LibrarySelector';
 
 interface EditFavoritesModalProps {
   favorites: UserSettings['favorites'];
@@ -14,9 +16,34 @@ type Category = keyof UserSettings['favorites'];
 
 export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorites, onSave, onClose }) => {
   const [local, setLocal] = useState({ ...favorites });
+  const [showLibrarySelector, setShowLibrarySelector] = useState<'games' | 'movies' | null>(null);
+  const { mediaItems } = useAppContext();
+
+  const handleLibrarySelection = (category: 'games' | 'movies', selectedItems: MediaItem[]) => {
+    const favoriteItems = selectedItems.map(item => ({
+      id: item.id,
+      name: item.title,
+      image: item.cover || ''
+    }));
+
+    setLocal(prev => ({
+      ...prev,
+      [category]: favoriteItems
+    }));
+  };
+
+  const getCurrentSelectedIds = (category: 'games' | 'movies') => {
+    return local[category].map(item => item.id);
+  };
 
   const addItem = (cat: Category) => {
-    setLocal(prev => ({ ...prev, [cat]: [...prev[cat], emptyItem()] }));
+    setLocal(prev => {
+      // Limitar a 3 itens por categoria
+      if (prev[cat].length >= 3) {
+        return prev;
+      }
+      return { ...prev, [cat]: [...prev[cat], emptyItem()] };
+    });
   };
 
   const updateItem = (cat: Category, index: number, field: keyof FavoriteItem, value: string) => {
@@ -62,7 +89,21 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
 
   const renderCategory = (cat: Category, title: string) => (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-white">{title}</h3>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">{local[cat].length}/3</span>
+          {(cat === 'games' || cat === 'movies') && (
+            <button
+              onClick={() => setShowLibrarySelector(cat)}
+              className="flex items-center gap-1 px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 rounded-lg text-cyan-400 text-xs transition-colors"
+            >
+              <Library size={14} />
+              Da Biblioteca
+            </button>
+          )}
+        </div>
+      </div>
       {local[cat].map((item, idx) => (
         <div key={item.id} className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-lg">
           <div className="w-16 h-16 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
@@ -100,8 +141,18 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
           </div>
         </div>
       ))}
-      <button type="button" onClick={() => addItem(cat)} className="flex items-center gap-2 text-purple-400 hover:text-purple-500">
-        <Plus size={18} /> Adicionar
+      <button
+        type="button"
+        onClick={() => addItem(cat)}
+        disabled={local[cat].length >= 3}
+        className={`flex items-center gap-2 transition-colors ${
+          local[cat].length >= 3
+            ? 'text-slate-500 cursor-not-allowed'
+            : 'text-purple-400 hover:text-purple-500'
+        }`}
+      >
+        <Plus size={18} />
+        {local[cat].length >= 3 ? 'Máximo 3 itens' : 'Adicionar'}
       </button>
     </div>
   );
@@ -134,13 +185,13 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base"
+                className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors text-sm sm:text-base"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base"
+                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <Save size={18} /> Salvar
               </button>
@@ -148,6 +199,17 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
           </div>
         </form>
       </div>
+
+      {/* Library Selector Modal */}
+      {showLibrarySelector && (
+        <LibrarySelector
+          mediaType={showLibrarySelector}
+          onSelect={(items) => handleLibrarySelection(showLibrarySelector, items)}
+          onClose={() => setShowLibrarySelector(null)}
+          maxSelection={3}
+          selectedItems={getCurrentSelectedIds(showLibrarySelector)}
+        />
+      )}
     </div>
   );
 };

@@ -11,7 +11,7 @@ interface DesktopHeaderProps {
 
 const DesktopHeader: React.FC<DesktopHeaderProps> = memo(({ pageName, pageIcon }) => {
   const { user, profile, logout } = useAuth();
-  const { setActivePage } = useAppContext();
+  const { setActivePage, settings } = useAppContext();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -48,13 +48,13 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(({ pageName, pageIcon }
   }, [setActivePage, logout]);
 
   const displayName = useMemo(() =>
-    profile?.name || profile?.displayName || user?.displayName || user?.email?.split("@")[0] || "Usuário",
-    [profile?.name, profile?.displayName, user?.displayName, user?.email]
+    settings?.name || profile?.name || profile?.displayName || user?.displayName || user?.email?.split("@")[0] || "Usuário",
+    [settings?.name, profile?.name, profile?.displayName, user?.displayName, user?.email]
   );
 
   const displayAvatar = useMemo(() =>
-    profile?.avatar || profile?.profileImage,
-    [profile?.avatar, profile?.profileImage]
+    profile?.avatar || profile?.profileImage || settings?.avatar,
+    [profile?.avatar, profile?.profileImage, settings?.avatar]
   );
 
   return (

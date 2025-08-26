@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Trophy, Crown, Star, Zap, LogOut, Bell, Edit } from "lucide-react";
+import { Trophy, Crown, Star, Zap, LogOut, Bell, Edit, BarChart3 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
@@ -7,6 +7,8 @@ import { AchievementModal } from "./AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
+import { FavoritesCarousel } from "./FavoritesCarousel";
+import { ProfileSummary } from "./ProfileSummary";
 import { saveProfile } from "../services/profileService"; 
 import {
   getUserNotifications,
@@ -17,7 +19,6 @@ import { Notification } from "../types/social";
 import { saveProfile as saveProfileService } from "../services/profileService";
 import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
-import MercadoPagoButton from "./MercadoPagoButton";
 import { formatDate, normalizeTimestamp } from "../utils/dateUtils";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 
@@ -29,8 +30,8 @@ const Profile: React.FC = () => {
   const [selectedAchievement, setSelectedAchievement] =
     useState<AchievementNode | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "info" | "achievements" | "notifications"
-  >("info");
+    "info" | "summary" | "achievements" | "notifications"
+  >("summary");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
@@ -64,7 +65,7 @@ const Profile: React.FC = () => {
     console.log("💾 Salvando favoritos:", updated);
     setSettings(updated);
     if (!user?.uid) {
-      console.error("Usuário não autenticado");
+      console.error("Usu��rio não autenticado");
       return;
     }
     await saveSettings(user.uid, updated);
@@ -189,6 +190,17 @@ const Profile: React.FC = () => {
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg">
         <button
+          onClick={() => setActiveTab("summary")}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            activeTab === "summary"
+              ? "bg-purple-600 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <BarChart3 size={16} />
+          Resumo
+        </button>
+        <button
           onClick={() => setActiveTab("info")}
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             activeTab === "info"
@@ -256,12 +268,6 @@ const Profile: React.FC = () => {
                   </p>
                 </div>
               </div>
-              {!profile?.isPremium && (
-                <MercadoPagoButton className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center">
-                  <Zap className="w-4 sm:w-5 h-4 sm:h-5" />
-                  Assinar Agora
-                </MercadoPagoButton>
-              )}
             </div>
 
             {/* Premium Features - responsivo */}
@@ -404,30 +410,32 @@ const Profile: React.FC = () => {
                 Editar Favoritos
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
-                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
-                  Personagens
-                </h4>
-                {renderCards(settings.favorites.characters)}
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+              <FavoritesCarousel
+                items={settings.favorites.characters}
+                title="Personagens"
+                color="text-purple-400"
+              />
 
-              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
-                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
-                  Jogos
-                </h4>
-                {renderCards(settings.favorites.games)}
-              </div>
+              <FavoritesCarousel
+                items={settings.favorites.games}
+                title="Jogos"
+                color="text-cyan-400"
+              />
 
-              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
-                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
-                  Filmes
-                </h4>
-                {renderCards(settings.favorites.movies)}
-              </div>
+              <FavoritesCarousel
+                items={settings.favorites.movies}
+                title="Filmes & Séries"
+                color="text-pink-400"
+              />
             </div>
           </div>
         </div>
+      )}
+
+      {/* Summary Tab */}
+      {activeTab === "summary" && (
+        <ProfileSummary />
       )}
 
       {/* Achievements Tab */}

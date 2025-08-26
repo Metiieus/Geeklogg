@@ -310,7 +310,7 @@ const Sidebar: React.FC = () => {
                 {isExpanded && (
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">
-                      {profile?.name || profile?.displayName || "Usuário"}
+                      {settings?.name || profile?.name || profile?.displayName || "Usuário"}
                     </p>
                     <p className="text-slate-400 text-xs truncate">
                       {profile?.isPremium ? "Premium" : "Básico"}
