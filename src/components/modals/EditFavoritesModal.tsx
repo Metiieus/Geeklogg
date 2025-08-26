@@ -23,7 +23,7 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
       .filter(item => item.type === 'games')
       .filter(item => (item.rating && item.rating >= 8) || item.status === 'completed')
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 6)
+      .slice(0, 3)
       .map(item => ({
         id: item.id,
         name: item.title,
@@ -35,7 +35,7 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
       .filter(item => item.type === 'movies' || item.type === 'series' || item.type === 'anime')
       .filter(item => (item.rating && item.rating >= 8) || item.status === 'completed')
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 6)
+      .slice(0, 3)
       .map(item => ({
         id: item.id,
         name: item.title,
