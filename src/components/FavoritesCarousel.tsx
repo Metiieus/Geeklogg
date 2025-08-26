@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { FavoriteItem } from '../App';
 
