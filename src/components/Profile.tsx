@@ -398,27 +398,24 @@ const Profile: React.FC = () => {
                 Editar Favoritos
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
-                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
-                  Personagens
-                </h4>
-                {renderCards(settings.favorites.characters)}
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+              <FavoritesCarousel
+                items={settings.favorites.characters}
+                title="Personagens"
+                color="text-purple-400"
+              />
 
-              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
-                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
-                  Jogos
-                </h4>
-                {renderCards(settings.favorites.games)}
-              </div>
+              <FavoritesCarousel
+                items={settings.favorites.games}
+                title="Jogos"
+                color="text-cyan-400"
+              />
 
-              <div className="bg-slate-800 p-3 sm:p-4 rounded-xl w-full min-w-0">
-                <h4 className="text-white font-medium mb-2 text-center text-sm sm:text-base">
-                  Filmes
-                </h4>
-                {renderCards(settings.favorites.movies)}
-              </div>
+              <FavoritesCarousel
+                items={settings.favorites.movies}
+                title="Filmes & Séries"
+                color="text-pink-400"
+              />
             </div>
           </div>
         </div>
