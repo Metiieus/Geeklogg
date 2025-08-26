@@ -128,19 +128,19 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                     }`}
                   >
                     {/* Cover */}
-                    <div className="w-12 h-16 bg-slate-700 rounded overflow-hidden flex-shrink-0">
+                    <div className="w-10 h-12 sm:w-12 sm:h-16 bg-slate-700 rounded overflow-hidden flex-shrink-0">
                       {item.cover ? (
                         <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500">
-                          <Search size={16} />
+                          <Search size={14} className="sm:w-4 sm:h-4" />
                         </div>
                       )}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-white font-medium text-sm line-clamp-2">{item.title}</h4>
+                      <h4 className="text-white font-medium text-xs sm:text-sm line-clamp-2">{item.title}</h4>
                       <div className="flex items-center gap-2 mt-1">
                         {item.rating && (
                           <div className="flex items-center gap-1">
