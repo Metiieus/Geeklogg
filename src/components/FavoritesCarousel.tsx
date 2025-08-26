@@ -37,11 +37,11 @@ export const FavoritesCarousel: React.FC<FavoritesCarouselProps> = ({ items, tit
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-4 border border-white/10 overflow-hidden relative group">
+    <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/10 overflow-hidden relative group">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-white font-semibold flex items-center gap-2">
-          <Star className={`w-4 h-4 ${color}`} />
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <h4 className="text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
+          <Star className={`w-3 h-3 sm:w-4 sm:h-4 ${color}`} />
           {title}
         </h4>
         <div className="flex items-center gap-1">
