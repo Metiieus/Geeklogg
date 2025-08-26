@@ -25,6 +25,7 @@ import { NotificationCenter } from "./components/NotificationCenter";
 import PremiumSuccessPage from "./components/PremiumSuccessPage";
 import PremiumFailure from "./components/PremiumFailure";
 import PremiumPending from "./components/PremiumPending";
+import PerformanceOptimizer from "./components/PerformanceOptimizer";
 
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
