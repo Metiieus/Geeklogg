@@ -53,7 +53,13 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
   };
 
   const addItem = (cat: Category) => {
-    setLocal(prev => ({ ...prev, [cat]: [...prev[cat], emptyItem()] }));
+    setLocal(prev => {
+      // Limitar a 3 itens por categoria
+      if (prev[cat].length >= 3) {
+        return prev;
+      }
+      return { ...prev, [cat]: [...prev[cat], emptyItem()] };
+    });
   };
 
   const updateItem = (cat: Category, index: number, field: keyof FavoriteItem, value: string) => {
