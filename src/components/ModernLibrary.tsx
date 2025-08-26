@@ -5,6 +5,7 @@ import { useAppContext } from '../context/AppContext';
 import { MediaType, Status } from '../App';
 import type { MediaItem } from '../App';
 import { useToast } from '../context/ToastContext';
+import useDebounce from '../hooks/useDebounce';
 
 // Design System Components
 import { HeroBanner } from '../design-system/components/HeroBanner';
@@ -48,6 +49,9 @@ const ModernLibrary: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
+
+  // Debounce search query para melhor performance
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
@@ -71,12 +75,12 @@ const ModernLibrary: React.FC = () => {
       filtered = filtered.filter((item) => item.status === selectedStatus);
     }
 
-    if (searchQuery) {
+    if (debouncedSearchQuery) {
       filtered = filtered.filter(
         (item) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
           item.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase()),
+            tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase()),
           ),
       );
     }
@@ -96,7 +100,7 @@ const ModernLibrary: React.FC = () => {
     });
 
     return filtered;
-  }, [mediaItems, selectedType, selectedStatus, searchQuery, sortBy]);
+  }, [mediaItems, selectedType, selectedStatus, debouncedSearchQuery, sortBy]);
 
   // Filter options for categories
   const filterOptions = useMemo(() => {

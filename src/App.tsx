@@ -25,6 +25,7 @@ import { NotificationCenter } from "./components/NotificationCenter";
 import PremiumSuccessPage from "./components/PremiumSuccessPage";
 import PremiumFailure from "./components/PremiumFailure";
 import PremiumPending from "./components/PremiumPending";
+import PerformanceOptimizer from "./components/PerformanceOptimizer";
 
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
@@ -353,6 +354,7 @@ function App() {
   return (
     <Router>
       <ToastProvider>
+        <PerformanceOptimizer />
         <AppProvider value={contextValue}>
           <Routes>
             <Route path="/premium/success" element={<PremiumSuccessPage />} />
@@ -377,7 +379,7 @@ function App() {
               pageName={getPageInfo().name}
               pageIcon={getPageInfo().icon}
             />
-            <main className="flex-1 w-full md:ml-20 pt-16 md:pt-16 pb-20 md:pb-4 overflow-x-hidden">
+            <main className="flex-1 w-full md:ml-20 pt-16 md:pt-16 pb-20 md:pb-4 overflow-x-hidden performance-boost">
               <ErrorBoundary>
                 <Suspense
                   fallback={

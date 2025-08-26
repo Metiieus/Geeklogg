@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   BookOpen,
   MessageSquare,
@@ -35,7 +35,7 @@ const mediaTypeLabels = {
   movies: 'Filmes'
 };
 
-export const ProfileSummary: React.FC = () => {
+const ProfileSummary: React.FC = () => {
   const { mediaItems, reviews, milestones } = useAppContext();
 
   // Estatísticas principais
@@ -267,3 +267,6 @@ export const ProfileSummary: React.FC = () => {
     </div>
   );
 };
+
+// Exportar versão memoizada para performance
+export default memo(ProfileSummary);
