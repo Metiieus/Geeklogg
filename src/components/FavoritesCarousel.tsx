@@ -8,7 +8,7 @@ interface FavoritesCarouselProps {
   color: string;
 }
 
-export const FavoritesCarousel: React.FC<FavoritesCarouselProps> = ({ items, title, color }) => {
+const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, title, color }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!items.length) {
