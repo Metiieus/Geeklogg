@@ -86,7 +86,7 @@ const Statistics: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 space-y-6 md:space-y-8 relative">
       {/* Fragmentos animados no fundo */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         {[...Array(15)].map((_, i) => (
           <div
             key={i}
