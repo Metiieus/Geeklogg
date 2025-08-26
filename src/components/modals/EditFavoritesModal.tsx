@@ -19,39 +19,21 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
   const [showLibrarySelector, setShowLibrarySelector] = useState<'games' | 'movies' | null>(null);
   const { mediaItems } = useAppContext();
 
-  const populateFromLibrary = () => {
-    // Pegar os melhores jogos (rating >= 8 ou sem rating mas marcados como favoritos/completed)
-    const topGames = mediaItems
-      .filter(item => item.type === 'games')
-      .filter(item => (item.rating && item.rating >= 8) || item.status === 'completed')
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 3)
-      .map(item => ({
-        id: item.id,
-        name: item.title,
-        image: item.cover || ''
-      }));
+  const handleLibrarySelection = (category: 'games' | 'movies', selectedItems: MediaItem[]) => {
+    const favoriteItems = selectedItems.map(item => ({
+      id: item.id,
+      name: item.title,
+      image: item.cover || ''
+    }));
 
-    // Pegar os melhores filmes/séries (rating >= 8 ou sem rating mas marcados como favoritos/completed)
-    const topMovies = mediaItems
-      .filter(item => item.type === 'movies' || item.type === 'series' || item.type === 'anime')
-      .filter(item => (item.rating && item.rating >= 8) || item.status === 'completed')
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 3)
-      .map(item => ({
-        id: item.id,
-        name: item.title,
-        image: item.cover || ''
-      }));
+    setLocal(prev => ({
+      ...prev,
+      [category]: favoriteItems
+    }));
+  };
 
-    // Atualizar favoritos apenas se houver itens para adicionar
-    if (topGames.length > 0 || topMovies.length > 0) {
-      setLocal(prev => ({
-        ...prev,
-        games: topGames.length > 0 ? topGames : prev.games,
-        movies: topMovies.length > 0 ? topMovies : prev.movies
-      }));
-    }
+  const getCurrentSelectedIds = (category: 'games' | 'movies') => {
+    return local[category].map(item => item.id);
   };
 
   const addItem = (cat: Category) => {
