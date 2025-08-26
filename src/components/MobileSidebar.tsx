@@ -143,9 +143,9 @@ const MobileSidebar: React.FC = () => {
           {/* Profile Avatar */}
           <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center flex-shrink-0">
             <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-              {(profile?.avatar || profile?.profileImage) ? (
+              {(profile?.avatar || profile?.profileImage || settings?.avatar) ? (
                 <img
-                  src={profile.avatar || profile.profileImage}
+                  src={profile?.avatar || profile?.profileImage || settings?.avatar}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"
                   onError={(e) => {
@@ -158,7 +158,7 @@ const MobileSidebar: React.FC = () => {
               ) : null}
               <span
                 className="text-white font-semibold text-sm flex items-center justify-center w-full h-full"
-                style={{ display: (profile?.avatar || profile?.profileImage) ? 'none' : 'flex' }}
+                style={{ display: (profile?.avatar || profile?.profileImage || settings?.avatar) ? 'none' : 'flex' }}
               >
                 {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
               </span>
@@ -207,9 +207,9 @@ const MobileSidebar: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                    {(profile?.avatar || profile?.profileImage) ? (
+                    {(profile?.avatar || profile?.profileImage || settings?.avatar) ? (
                       <img
-                        src={profile.avatar || profile.profileImage}
+                        src={profile?.avatar || profile?.profileImage || settings?.avatar}
                         alt="Profile"
                         className="w-full h-full rounded-full object-cover"
                         onError={(e) => {
@@ -222,7 +222,7 @@ const MobileSidebar: React.FC = () => {
                     ) : null}
                     <span
                       className="text-white font-semibold flex items-center justify-center w-full h-full"
-                      style={{ display: (profile?.avatar || profile?.profileImage) ? 'none' : 'flex' }}
+                      style={{ display: (profile?.avatar || profile?.profileImage || settings?.avatar) ? 'none' : 'flex' }}
                     >
                       {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
                     </span>
