@@ -64,7 +64,7 @@ const Profile: React.FC = () => {
     console.log("💾 Salvando favoritos:", updated);
     setSettings(updated);
     if (!user?.uid) {
-      console.error("Usuário não autenticado");
+      console.error("Usu��rio não autenticado");
       return;
     }
     await saveSettings(user.uid, updated);
@@ -256,12 +256,6 @@ const Profile: React.FC = () => {
                   </p>
                 </div>
               </div>
-              {!profile?.isPremium && (
-                <MercadoPagoButton className="bg-gradient-to-r from-cyan-500 to-pink-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center">
-                  <Zap className="w-4 sm:w-5 h-4 sm:h-5" />
-                  Assinar Agora
-                </MercadoPagoButton>
-              )}
             </div>
 
             {/* Premium Features - responsivo */}
