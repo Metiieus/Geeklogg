@@ -8,6 +8,7 @@ import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
 import { FavoritesCarousel } from "./FavoritesCarousel";
+import { ProfileSummary } from "./ProfileSummary";
 import { saveProfile } from "../services/profileService"; 
 import {
   getUserNotifications,
