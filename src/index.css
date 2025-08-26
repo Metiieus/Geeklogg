@@ -122,3 +122,89 @@
 .card-shimmer:hover::before {
   left: 100%;
 }
+
+/* === OTIMIZAÇÕES AVANÇADAS DE PERFORMANCE === */
+
+/* Performance boost geral */
+.performance-boost {
+  transform: translateZ(0);
+  will-change: transform;
+  contain: layout style paint;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Virtual scrolling optimization */
+.virtual-scroll-container {
+  height: 100%;
+  overflow: auto;
+  contain: strict;
+}
+
+.virtual-scroll-item {
+  contain: layout style paint;
+}
+
+/* Memory optimization para listas grandes */
+.list-optimized {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px;
+}
+
+/* Component isolation */
+.component-isolate {
+  isolation: isolate;
+  contain: layout style paint;
+}
+
+/* Reduce layout thrashing */
+.layout-stable {
+  contain: layout;
+  will-change: contents;
+}
+
+/* Optimize paint operations */
+.paint-optimized {
+  contain: paint;
+  will-change: opacity, transform;
+}
+
+/* Critical resources above fold */
+.critical-above-fold {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
+
+/* Non-critical below fold */
+.non-critical-below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
+}
+
+/* Animation performance */
+.animate-performant {
+  will-change: transform, opacity;
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+}
+
+/* Scroll performance */
+.scroll-performant {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* CPU optimization */
+.cpu-optimized {
+  contain: size layout style paint;
+  content-visibility: auto;
+}
+
+/* GPU layers optimization */
+.gpu-layer {
+  transform: translateZ(0);
+  will-change: transform;
+  isolation: isolate;
+}
