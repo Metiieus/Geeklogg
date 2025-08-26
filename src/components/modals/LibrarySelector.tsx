@@ -141,14 +141,14 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <h4 className="text-white font-medium text-xs sm:text-sm line-clamp-2">{item.title}</h4>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1 sm:gap-2 mt-1 flex-wrap">
                         {item.rating && (
                           <div className="flex items-center gap-1">
-                            <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+                            <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full" />
                             <span className="text-yellow-400 text-xs">{item.rating}</span>
                           </div>
                         )}
-                        <span className={`text-xs px-2 py-1 rounded-full ${
+                        <span className={`text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${
                           item.status === 'completed' ? 'bg-green-500/20 text-green-400' :
                           item.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-400' :
                           item.status === 'planned' ? 'bg-blue-500/20 text-blue-400' :
@@ -162,14 +162,14 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                     </div>
 
                     {/* Selection indicator */}
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                    <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                       isSelected
                         ? 'bg-purple-500 border-purple-500'
                         : canSelect
                         ? 'border-slate-400'
                         : 'border-slate-600'
                     }`}>
-                      {isSelected && <Check size={14} className="text-white" />}
+                      {isSelected && <Check size={12} className="text-white sm:w-3.5 sm:h-3.5" />}
                     </div>
                   </button>
                 );
