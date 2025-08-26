@@ -199,6 +199,17 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
           </div>
         </form>
       </div>
+
+      {/* Library Selector Modal */}
+      {showLibrarySelector && (
+        <LibrarySelector
+          mediaType={showLibrarySelector}
+          onSelect={(items) => handleLibrarySelection(showLibrarySelector, items)}
+          onClose={() => setShowLibrarySelector(null)}
+          maxSelection={3}
+          selectedItems={getCurrentSelectedIds(showLibrarySelector)}
+        />
+      )}
     </div>
   );
 };
