@@ -119,7 +119,7 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                     key={item.id}
                     onClick={() => handleToggleItem(item.id)}
                     disabled={!canSelect}
-                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all text-left ${
+                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border transition-all text-left touch-target ${
                       isSelected
                         ? 'bg-purple-500/20 border-purple-500/50'
                         : canSelect
