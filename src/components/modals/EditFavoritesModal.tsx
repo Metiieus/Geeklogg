@@ -105,7 +105,10 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
 
   const renderCategory = (cat: Category, title: string) => (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-white">{title}</h3>
+        <span className="text-xs text-slate-400">{local[cat].length}/3</span>
+      </div>
       {local[cat].map((item, idx) => (
         <div key={item.id} className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-lg">
           <div className="w-16 h-16 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
