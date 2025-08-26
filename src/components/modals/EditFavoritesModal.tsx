@@ -16,6 +16,7 @@ type Category = keyof UserSettings['favorites'];
 
 export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorites, onSave, onClose }) => {
   const [local, setLocal] = useState({ ...favorites });
+  const [showLibrarySelector, setShowLibrarySelector] = useState<'games' | 'movies' | null>(null);
   const { mediaItems } = useAppContext();
 
   const populateFromLibrary = () => {
