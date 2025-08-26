@@ -53,8 +53,8 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(({ pageName, pageIcon }
   );
 
   const displayAvatar = useMemo(() =>
-    profile?.avatar || profile?.profileImage,
-    [profile?.avatar, profile?.profileImage]
+    profile?.avatar || profile?.profileImage || settings?.avatar,
+    [profile?.avatar, profile?.profileImage, settings?.avatar]
   );
 
   return (
