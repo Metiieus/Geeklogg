@@ -75,12 +75,12 @@ const ModernLibrary: React.FC = () => {
       filtered = filtered.filter((item) => item.status === selectedStatus);
     }
 
-    if (searchQuery) {
+    if (debouncedSearchQuery) {
       filtered = filtered.filter(
         (item) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
           item.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase()),
+            tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase()),
           ),
       );
     }
