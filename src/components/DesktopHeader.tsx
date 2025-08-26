@@ -11,7 +11,7 @@ interface DesktopHeaderProps {
 
 const DesktopHeader: React.FC<DesktopHeaderProps> = memo(({ pageName, pageIcon }) => {
   const { user, profile, logout } = useAuth();
-  const { setActivePage } = useAppContext();
+  const { setActivePage, settings } = useAppContext();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
