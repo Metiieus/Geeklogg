@@ -188,49 +188,49 @@ const Profile: React.FC = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg">
+      <div className="flex flex-col sm:flex-row gap-1 sm:gap-1 bg-slate-800/50 p-1 rounded-lg">
         <button
           onClick={() => setActiveTab("summary")}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
             activeTab === "summary"
               ? "bg-purple-600 text-white"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <BarChart3 size={16} />
-          Resumo
+          <BarChart3 size={14} className="sm:w-4 sm:h-4" />
+          <span className="hidden xs:inline sm:inline">Resumo</span>
         </button>
         <button
           onClick={() => setActiveTab("info")}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
             activeTab === "info"
               ? "bg-purple-600 text-white"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          Informações
+          <span className="text-xs sm:text-sm">Info</span>
         </button>
         <button
           onClick={() => setActiveTab("achievements")}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
             activeTab === "achievements"
               ? "bg-purple-600 text-white"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Trophy size={16} />
-          Conquistas
+          <Trophy size={14} className="sm:w-4 sm:h-4" />
+          <span className="hidden xs:inline sm:inline">Conquistas</span>
         </button>
         <button
           onClick={() => setActiveTab("notifications")}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
             activeTab === "notifications"
               ? "bg-purple-600 text-white"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Bell size={16} />
-          Notificações
+          <Bell size={14} className="sm:w-4 sm:h-4" />
+          <span className="hidden xs:inline sm:inline">Notif.</span>
         </button>
       </div>
       {/* Tab Content */}
