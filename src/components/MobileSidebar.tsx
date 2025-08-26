@@ -70,7 +70,7 @@ const navItems: NavItem[] = [
 ];
 
 const MobileSidebar: React.FC = () => {
-  const { activePage, setActivePage } = useAppContext();
+  const { activePage, setActivePage, settings } = useAppContext();
   const { logout, user, profile } = useAuth();
   const { showInfo } = useToast();
   const [isOpen, setIsOpen] = useState(false);
