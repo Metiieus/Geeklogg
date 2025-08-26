@@ -13,16 +13,16 @@ export const FavoritesCarousel: React.FC<FavoritesCarouselProps> = ({ items, tit
 
   if (!items.length) {
     return (
-      <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-        <h4 className="text-white font-semibold mb-4 text-center flex items-center justify-center gap-2">
-          <Star className={`w-4 h-4 ${color}`} />
+      <div className="bg-slate-800/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/10">
+        <h4 className="text-white font-semibold mb-3 sm:mb-4 text-center flex items-center justify-center gap-2 text-sm sm:text-base">
+          <Star className={`w-3 h-3 sm:w-4 sm:h-4 ${color}`} />
           {title}
         </h4>
-        <div className="text-center text-slate-400 py-8">
-          <div className={`w-12 h-12 rounded-full ${color.replace('text-', 'bg-').replace('-400', '-500/20')} flex items-center justify-center mx-auto mb-2`}>
-            <Star className={`w-6 h-6 ${color.replace('-400', '-500')}`} />
+        <div className="text-center text-slate-400 py-6 sm:py-8">
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${color.replace('text-', 'bg-').replace('-400', '-500/20')} flex items-center justify-center mx-auto mb-2`}>
+            <Star className={`w-5 h-5 sm:w-6 sm:h-6 ${color.replace('-400', '-500')}`} />
           </div>
-          <p className="text-sm">Nenhum favorito ainda</p>
+          <p className="text-xs sm:text-sm">Nenhum favorito ainda</p>
         </div>
       </div>
     );
