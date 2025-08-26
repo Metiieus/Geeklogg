@@ -107,9 +107,9 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
         </div>
 
         {/* Items Grid */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto min-h-0">
+        <div className="flex-1 p-3 sm:p-6 overflow-y-auto min-h-0">
           {filteredItems.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {filteredItems.map((item) => {
                 const isSelected = localSelected.includes(item.id);
                 const canSelect = localSelected.length < maxSelection || isSelected;
