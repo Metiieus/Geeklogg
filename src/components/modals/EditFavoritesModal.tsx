@@ -146,8 +146,18 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
           </div>
         </div>
       ))}
-      <button type="button" onClick={() => addItem(cat)} className="flex items-center gap-2 text-purple-400 hover:text-purple-500">
-        <Plus size={18} /> Adicionar
+      <button
+        type="button"
+        onClick={() => addItem(cat)}
+        disabled={local[cat].length >= 3}
+        className={`flex items-center gap-2 transition-colors ${
+          local[cat].length >= 3
+            ? 'text-slate-500 cursor-not-allowed'
+            : 'text-purple-400 hover:text-purple-500'
+        }`}
+      >
+        <Plus size={18} />
+        {local[cat].length >= 3 ? 'Máximo 3 itens' : 'Adicionar'}
       </button>
     </div>
   );
