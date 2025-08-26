@@ -137,3 +137,17 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
     </div>
   );
 };
+
+// Exportar versão memoizada para performance
+export const FavoritesCarousel = memo(FavoritesCarouselComponent, (prevProps, nextProps) => {
+  return (
+    prevProps.items.length === nextProps.items.length &&
+    prevProps.title === nextProps.title &&
+    prevProps.color === nextProps.color &&
+    prevProps.items.every((item, index) =>
+      item.id === nextProps.items[index]?.id &&
+      item.name === nextProps.items[index]?.name &&
+      item.image === nextProps.items[index]?.image
+    )
+  );
+});
