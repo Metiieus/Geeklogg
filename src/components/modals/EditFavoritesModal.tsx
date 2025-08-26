@@ -91,7 +91,18 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">{title}</h3>
-        <span className="text-xs text-slate-400">{local[cat].length}/3</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">{local[cat].length}/3</span>
+          {(cat === 'games' || cat === 'movies') && (
+            <button
+              onClick={() => setShowLibrarySelector(cat)}
+              className="flex items-center gap-1 px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 rounded-lg text-cyan-400 text-xs transition-colors"
+            >
+              <Library size={14} />
+              Da Biblioteca
+            </button>
+          )}
+        </div>
       </div>
       {local[cat].map((item, idx) => (
         <div key={item.id} className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-lg">
