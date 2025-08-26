@@ -208,7 +208,7 @@ const Profile: React.FC = () => {
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <span className="text-xs sm:text-sm">Info</span>
+          <span className="text-xs sm:text-sm">Perfil</span>
         </button>
         <button
           onClick={() => setActiveTab("achievements")}
