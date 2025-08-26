@@ -1,10 +1,11 @@
 import React from 'react';
-import { 
-  BookOpen, 
-  MessageSquare, 
-  Clock, 
-  Star, 
-  TrendingUp, 
+import {
+  BookOpen,
+  MessageSquare,
+  Clock,
+  BarChart3,
+  Star,
+  TrendingUp,
   Trophy,
   Target,
   Gamepad2,
