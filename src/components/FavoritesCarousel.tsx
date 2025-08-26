@@ -38,7 +38,7 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
   };
 
   return (
-    <div className="bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/60 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden relative group hover:border-white/30">
+    <div className="bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/60 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden relative group hover:border-white/30 component-isolate gpu-layer">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h4 className="text-white font-bold flex items-center gap-2 text-sm sm:text-base bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
