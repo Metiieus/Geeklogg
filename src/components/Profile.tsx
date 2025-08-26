@@ -30,8 +30,8 @@ const Profile: React.FC = () => {
   const [selectedAchievement, setSelectedAchievement] =
     useState<AchievementNode | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "info" | "achievements" | "notifications"
-  >("info");
+    "info" | "summary" | "achievements" | "notifications"
+  >("summary");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
