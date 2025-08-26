@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload } from 'lucide-react';
-import { FavoriteItem, UserSettings } from '../../App';
+import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload, Wand2 } from 'lucide-react';
+import { FavoriteItem, UserSettings, MediaItem } from '../../App';
+import { useAppContext } from '../../context/AppContext';
 
 interface EditFavoritesModalProps {
   favorites: UserSettings['favorites'];
