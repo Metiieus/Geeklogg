@@ -15,6 +15,42 @@ type Category = keyof UserSettings['favorites'];
 
 export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorites, onSave, onClose }) => {
   const [local, setLocal] = useState({ ...favorites });
+  const { mediaItems } = useAppContext();
+
+  const populateFromLibrary = () => {
+    // Pegar os melhores jogos (rating >= 8 ou sem rating mas marcados como favoritos/completed)
+    const topGames = mediaItems
+      .filter(item => item.type === 'games')
+      .filter(item => (item.rating && item.rating >= 8) || item.status === 'completed')
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 6)
+      .map(item => ({
+        id: item.id,
+        name: item.title,
+        image: item.cover || ''
+      }));
+
+    // Pegar os melhores filmes/séries (rating >= 8 ou sem rating mas marcados como favoritos/completed)
+    const topMovies = mediaItems
+      .filter(item => item.type === 'movies' || item.type === 'series' || item.type === 'anime')
+      .filter(item => (item.rating && item.rating >= 8) || item.status === 'completed')
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 6)
+      .map(item => ({
+        id: item.id,
+        name: item.title,
+        image: item.cover || ''
+      }));
+
+    // Atualizar favoritos apenas se houver itens para adicionar
+    if (topGames.length > 0 || topMovies.length > 0) {
+      setLocal(prev => ({
+        ...prev,
+        games: topGames.length > 0 ? topGames : prev.games,
+        movies: topMovies.length > 0 ? topMovies : prev.movies
+      }));
+    }
+  };
 
   const addItem = (cat: Category) => {
     setLocal(prev => ({ ...prev, [cat]: [...prev[cat], emptyItem()] }));
