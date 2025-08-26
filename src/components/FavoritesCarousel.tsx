@@ -84,10 +84,10 @@ export const FavoritesCarousel: React.FC<FavoritesCarouselProps> = ({ items, tit
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {items.map((item, index) => (
-              <div key={item.id} className="w-full flex-shrink-0 px-2">
-                <div className="bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-xl p-4 border border-white/5 hover:border-white/20 transition-all duration-300 hover:scale-105 group/card">
+              <div key={item.id} className="w-full flex-shrink-0 px-1 sm:px-2">
+                <div className="bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/5 hover:border-white/20 transition-all duration-300 hover:scale-105 group/card">
                   {/* Image */}
-                  <div className="relative w-full h-32 bg-slate-700 rounded-lg overflow-hidden mb-3">
+                  <div className="relative w-full h-24 sm:h-32 bg-slate-700 rounded-md sm:rounded-lg overflow-hidden mb-2 sm:mb-3">
                     {item.image ? (
                       <img
                         src={item.image}
@@ -96,7 +96,7 @@ export const FavoritesCarousel: React.FC<FavoritesCarouselProps> = ({ items, tit
                       />
                     ) : (
                       <div className={`w-full h-full flex items-center justify-center ${color.replace('text-', 'text-').replace('-400', '-300')}`}>
-                        <Star size={24} />
+                        <Star size={18} className="sm:w-6 sm:h-6" />
                       </div>
                     )}
                     {/* Gradient overlay */}
@@ -104,12 +104,12 @@ export const FavoritesCarousel: React.FC<FavoritesCarouselProps> = ({ items, tit
                   </div>
 
                   {/* Title */}
-                  <h5 className="text-white font-medium text-sm text-center leading-tight">
+                  <h5 className="text-white font-medium text-xs sm:text-sm text-center leading-tight line-clamp-2">
                     {item.name}
                   </h5>
-                  
+
                   {/* Decorative line */}
-                  <div className={`w-full h-0.5 mt-2 bg-gradient-to-r ${color.replace('text-', 'from-').replace('-400', '-500')} to-transparent opacity-50`} />
+                  <div className={`w-full h-0.5 mt-1.5 sm:mt-2 bg-gradient-to-r ${color.replace('text-', 'from-').replace('-400', '-500')} to-transparent opacity-50`} />
                 </div>
               </div>
             ))}
