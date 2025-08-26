@@ -190,6 +190,17 @@ const Profile: React.FC = () => {
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg">
         <button
+          onClick={() => setActiveTab("summary")}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            activeTab === "summary"
+              ? "bg-purple-600 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <BarChart3 size={16} />
+          Resumo
+        </button>
+        <button
           onClick={() => setActiveTab("info")}
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             activeTab === "info"
