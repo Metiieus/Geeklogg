@@ -267,3 +267,6 @@ export const ProfileSummary: React.FC = () => {
     </div>
   );
 };
+
+// Exportar versão memoizada para performance
+export default memo(ProfileSummary);
