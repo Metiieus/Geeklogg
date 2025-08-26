@@ -35,7 +35,7 @@ const mediaTypeLabels = {
   movies: 'Filmes'
 };
 
-export const ProfileSummary: React.FC = () => {
+const ProfileSummary: React.FC = () => {
   const { mediaItems, reviews, milestones } = useAppContext();
 
   // Estatísticas principais
