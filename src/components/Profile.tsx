@@ -433,6 +433,11 @@ const Profile: React.FC = () => {
         </div>
       )}
 
+      {/* Summary Tab */}
+      {activeTab === "summary" && (
+        <ProfileSummary />
+      )}
+
       {/* Achievements Tab */}
       {activeTab === "achievements" && (
         <AchievementTree onAchievementClick={setSelectedAchievement} />
