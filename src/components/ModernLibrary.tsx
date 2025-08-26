@@ -100,7 +100,7 @@ const ModernLibrary: React.FC = () => {
     });
 
     return filtered;
-  }, [mediaItems, selectedType, selectedStatus, searchQuery, sortBy]);
+  }, [mediaItems, selectedType, selectedStatus, debouncedSearchQuery, sortBy]);
 
   // Filter options for categories
   const filterOptions = useMemo(() => {
