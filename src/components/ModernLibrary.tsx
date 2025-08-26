@@ -5,6 +5,7 @@ import { useAppContext } from '../context/AppContext';
 import { MediaType, Status } from '../App';
 import type { MediaItem } from '../App';
 import { useToast } from '../context/ToastContext';
+import useDebounce from '../hooks/useDebounce';
 
 // Design System Components
 import { HeroBanner } from '../design-system/components/HeroBanner';
