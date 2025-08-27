@@ -1,126 +1,91 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
 
 interface ModalWrapperProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  className?: string;
   maxWidth?: string;
-  zIndex?: string;
+  className?: string;
+  overlay?: boolean;
+  closeOnEscape?: boolean;
+  closeOnOverlayClick?: boolean;
 }
 
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   isOpen,
   onClose,
   children,
+  maxWidth = 'max-w-4xl',
   className = '',
-  maxWidth = 'max-w-full sm:max-w-2xl',
-  zIndex = 'z-50'
+  overlay = true,
+  closeOnEscape = true,
+  closeOnOverlayClick = true,
 }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  // Usar scroll lock aprimorado
+  // Apply scroll lock when modal is open
   useImprovedScrollLock(isOpen);
 
+  // Handle escape key
   useEffect(() => {
-    if (isOpen) {
-      // Prevent body scroll when modal is open
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = 'hidden';
-      document.body.style.paddingRight = `${scrollBarWidth}px`;
-      
-      // Scroll to top immediately when modal opens
-      window.scrollTo({ top: 0, behavior: 'auto' });
-      
-      // Focus trap
-      const focusableElements = modalRef.current?.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements?.[0] as HTMLElement;
-      const lastElement = focusableElements?.[focusableElements.length - 1] as HTMLElement;
+    if (!isOpen || !closeOnEscape) return;
 
-      const handleTabKey = (e: KeyboardEvent) => {
-        if (e.key === 'Tab') {
-          if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
-              e.preventDefault();
-              lastElement?.focus();
-            }
-          } else {
-            if (document.activeElement === lastElement) {
-              e.preventDefault();
-              firstElement?.focus();
-            }
-          }
-        }
-      };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
 
-      const handleEscapeKey = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          onClose();
-        }
-      };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, closeOnEscape, onClose]);
 
-      document.addEventListener('keydown', handleTabKey);
-      document.addEventListener('keydown', handleEscapeKey);
-      
-      // Focus first element after modal opens
-      setTimeout(() => {
-        firstElement?.focus();
-      }, 100);
-
-      return () => {
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        document.removeEventListener('keydown', handleTabKey);
-        document.removeEventListener('keydown', handleEscapeKey);
-      };
-    }
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
+  // Handle overlay click
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) {
+    if (closeOnOverlayClick && e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div
-      ref={overlayRef}
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-0 sm:p-2 md:p-4 ${zIndex} animate-fade-in`}
-      style={{
-        overflow: 'hidden', // Bloqueia COMPLETAMENTE o scroll da página
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-      }}
-      onClick={handleOverlayClick}
-    >
+    <AnimatePresence>
       <motion.div
-        ref={modalRef}
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-        className={`w-full ${maxWidth} mx-auto mt-0 sm:mt-auto mb-auto modal-safe-area allow-scroll ${className}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
         style={{
-          maxHeight: 'calc(var(--vh, 1vh) * 100)', // Usa altura de viewport melhorada
-          minHeight: 'auto',
-          overflow: 'hidden', // Força scroll interno
-          display: 'flex',
-          flexDirection: 'column'
+          backgroundColor: overlay ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
+          backdropFilter: overlay ? 'blur(8px)' : 'none',
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleOverlayClick}
       >
-        {children}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ 
+            duration: 0.3, 
+            type: "spring", 
+            damping: 25, 
+            stiffness: 200 
+          }}
+          className={`
+            w-full ${maxWidth} 
+            max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)]
+            ${className}
+            modal-scroll allow-scroll
+          `}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {children}
+        </motion.div>
       </motion.div>
-    </div>
+    </AnimatePresence>
   );
 };
+
+export default ModalWrapper;

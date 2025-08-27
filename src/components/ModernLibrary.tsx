@@ -24,6 +24,8 @@ import { AddMediaOptions } from './AddMediaOptions';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { deleteMedia } from '../services/mediaService';
 import { ConfirmationModal } from './ConfirmationModal';
+import { ModalWrapper } from './ModalWrapper';
+import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
@@ -43,6 +45,9 @@ const sortOptions = [
 const ModernLibrary: React.FC = () => {
   const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
+
+  // Apply scroll lock when modals are open
+  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
 
   // State
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
@@ -418,39 +423,16 @@ const ModernLibrary: React.FC = () => {
       {/* Modals */}
       <AnimatePresence>
         {showAddOptions && (
-          <motion.div
+          <ModalWrapper
             key="add-options-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed bg-black/70"
-            style={{
-              zIndex: 9999,
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '1rem'
-            }}
+            isOpen={showAddOptions}
+            onClose={() => setShowAddOptions(false)}
+            maxWidth="max-w-4xl"
+            className=""
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 0 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 0 }}
-              className="bg-slate-800 rounded-2xl border border-white/20 w-full max-w-4xl p-6 relative"
-              style={{
-                maxHeight: 'calc(100vh - 2rem)',
-                overflow: 'auto',
-                maxWidth: 'calc(100vw - 2rem)',
-                margin: 'auto'
-              }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">
+            <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-4 sm:p-6 relative modal-scroll allow-scroll">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-white">
                   Adicionar Nova Mídia
                 </h2>
                 <button
@@ -468,8 +450,8 @@ const ModernLibrary: React.FC = () => {
                   setShowAddOptions(false);
                 }}
               />
-            </motion.div>
-          </motion.div>
+            </div>
+          </ModalWrapper>
         )}
 
 

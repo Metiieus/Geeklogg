@@ -68,8 +68,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       isOpen={isOpen}
       onClose={onCancel}
       maxWidth="max-w-md"
-      className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 overflow-hidden shadow-2xl"
+      className="modal-desktop-small modal-performance modal-interactive"
     >
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/20 overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/20">
           <div className="flex items-center gap-3">
@@ -110,6 +111,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             {confirmText}
           </button>
         </div>
+      </div>
     </ModalWrapper>
   );
 };

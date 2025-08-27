@@ -4,21 +4,24 @@ import { useAppContext } from "../../context/AppContext";
 import { Review } from "../../App";
 import { addReview } from "../../services/reviewService";
 import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
-import { useScrollLock } from "../../hooks/useScrollLock";
+import { ModalWrapper } from '../ModalWrapper';
+import { useImprovedScrollLock } from '../../hooks/useImprovedScrollLock';
 
 interface AddReviewModalProps {
   onClose: () => void;
   onSave: (review: Review) => void;
+  isOpen?: boolean;
 }
 
 export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   onClose,
   onSave,
+  isOpen = true,
 }) => {
   const { mediaItems } = useAppContext();
 
-  // Bloquear scroll do body quando modal estiver aberto
-  useScrollLock(true);
+  // Apply scroll lock
+  useImprovedScrollLock(isOpen);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -58,25 +61,13 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        overflow: 'hidden' // BLOQUEIA scroll da página
-      }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="max-w-2xl"
+      className="modal-desktop-medium modal-performance modal-interactive"
     >
-      <div
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full max-w-2xl my-auto animate-slide-up flex flex-col"
-        style={{
-          maxHeight: 'calc(100vh - 2rem)', // Garante que o modal não ultrapasse a viewport
-          minHeight: 'auto'
-        }}
-      >
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full flex flex-col modal-h-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20">
           <h2 className="text-xl sm:text-2xl font-bold text-white">Nova Resenha</h2>
@@ -211,6 +202,6 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </ModalWrapper>
   );
 };

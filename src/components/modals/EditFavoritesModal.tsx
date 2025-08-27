@@ -3,18 +3,21 @@ import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload, Library } from '
 import { FavoriteItem, UserSettings, MediaItem } from '../../App';
 import { useAppContext } from '../../context/AppContext';
 import { LibrarySelector } from './LibrarySelector';
+import { ModalWrapper } from '../ModalWrapper';
+import { useImprovedScrollLock } from '../../hooks/useImprovedScrollLock';
 
 interface EditFavoritesModalProps {
   favorites: UserSettings['favorites'];
   onSave: (fav: UserSettings['favorites']) => void;
   onClose: () => void;
+  isOpen?: boolean;
 }
 
 const emptyItem = (): FavoriteItem => ({ id: Date.now().toString(), name: '', image: '' });
 
 type Category = keyof UserSettings['favorites'];
 
-export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorites, onSave, onClose }) => {
+export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorites, onSave, onClose, isOpen = true }) => {
   const [local, setLocal] = useState({ ...favorites });
   const [showLibrarySelector, setShowLibrarySelector] = useState<'games' | 'movies' | null>(null);
   const { mediaItems } = useAppContext();
@@ -162,15 +165,17 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
     </div>
   );
 
+  // Apply scroll lock
+  useImprovedScrollLock(isOpen);
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in">
-      <div
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full overflow-hidden animate-slide-up flex flex-col"
-        style={{
-          maxHeight: 'calc(100vh - 2rem)',
-          minHeight: 'auto'
-        }}
-      >
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="max-w-3xl"
+      className="modal-desktop-medium modal-performance modal-interactive"
+    >
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full overflow-hidden flex flex-col modal-h-auto">
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
           <h2 className="text-xl sm:text-2xl font-bold text-white">Editar Favoritos</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target">
@@ -215,6 +220,6 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
           selectedItems={getCurrentSelectedIds(showLibrarySelector)}
         />
       )}
-    </div>
+    </ModalWrapper>
   );
 };

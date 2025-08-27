@@ -18,6 +18,8 @@ import {
   ExternalMediaResult,
   externalMediaService,
 } from "../../services/externalMediaService";
+import { ModalWrapper } from '../ModalWrapper';
+import { useImprovedScrollLock } from '../../hooks/useImprovedScrollLock';
 
 interface AddMediaFromSearchModalProps {
   onClose: () => void;
@@ -280,20 +282,18 @@ export const AddMediaFromSearchModal: React.FC<
     showSuccess("Imagem restaurada", "Imagem original da busca restaurada");
   };
 
+  // Apply scroll lock
+  useImprovedScrollLock(true);
+
   return (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            overflow: 'hidden' // BLOQUEIA scroll da página
-          }}
-        >
+    <ModalWrapper
+      isOpen={true}
+      onClose={onClose}
+      maxWidth="max-w-5xl"
+      className="modal-desktop-large modal-performance"
+    >
       <div
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-4xl w-full my-auto overflow-hidden animate-slide-up flex flex-col"
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full overflow-hidden flex flex-col"
         style={{
           maxHeight: 'calc(100vh - 2rem)',
           minHeight: 'auto'
@@ -320,13 +320,13 @@ export const AddMediaFromSearchModal: React.FC<
           </button>
         </div>
 
-                <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 safe-area-inset">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 safe-area-inset">
           {/* Preview da mídia - sidebar responsiva */}
-          <div className="lg:w-80 p-3 sm:p-6 border-b lg:border-b-0 lg:border-r border-white/20 bg-slate-800/50 flex-shrink-0">
-            <div className="space-y-4">
+          <div className="lg:w-80 xl:w-96 p-3 sm:p-6 border-b lg:border-b-0 lg:border-r border-white/20 bg-slate-800/50 flex-shrink-0 modal-sidebar">
+            <div className="space-y-3 sm:space-y-4">
               {/* Imagem de capa */}
               <div className="relative">
-                <div className="w-full h-40 sm:h-64 lg:h-72 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="w-full h-40 sm:h-48 lg:h-60 xl:h-72 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
                   {formData.coverPreview ? (
                     <img
                       src={formData.coverPreview}
@@ -364,7 +364,7 @@ export const AddMediaFromSearchModal: React.FC<
 
                 {externalResult.year && (
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
-                    <Calendar size={14} sm:size={16} />
+                    <Calendar size={14} className="sm:w-4 sm:h-4" />
                     <span>{externalResult.year}</span>
                   </div>
                 )}
@@ -372,7 +372,7 @@ export const AddMediaFromSearchModal: React.FC<
                 {externalResult.authors &&
                   externalResult.authors.length > 0 && (
                     <div className="flex items-center gap-2 text-slate-400 text-sm">
-                      <Users size={14} sm:size={16} />
+                      <Users size={14} className="sm:w-4 sm:h-4" />
                       <span className="truncate">
                         {externalResult.authors.slice(0, 2).join(", ")}
                       </span>
@@ -381,7 +381,7 @@ export const AddMediaFromSearchModal: React.FC<
 
                 {externalResult.pageCount && (
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
-                    <Book size={14} sm:size={16} />
+                    <Book size={14} className="sm:w-4 sm:h-4" />
                     <span>{externalResult.pageCount} páginas</span>
                   </div>
                 )}
@@ -422,247 +422,246 @@ export const AddMediaFromSearchModal: React.FC<
           </div>
 
           {/* Formulário - área principal */}
-                    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <div className="flex-1 flex flex-col overflow-hidden min-h-0 modal-main modal-scroll-desktop">
             <form
               id="search-media-form"
               onSubmit={handleSubmit}
               className="flex-1 flex flex-col overflow-hidden min-h-0"
             >
-              <div className="flex-1 p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-y-auto min-h-0 safe-area-padding-bottom">
-              {/* Informações básicas */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Título *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Status *
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => handleChange("status", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  >
-                    {Object.entries(statusLabels).map(([key, label]) => (
-                      <option key={key} value={key}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Avaliação e progresso */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Avaliação (0-10)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    value={formData.rating}
-                    onChange={(e) => handleChange("rating", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="8.5"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Horas Gastas
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    value={formData.hoursSpent}
-                    onChange={(e) => handleChange("hoursSpent", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="25.5"
-                  />
-                </div>
-              </div>
-
-              {/* Páginas (apenas para livros) */}
-              {formData.type === "books" && (
+              <div className="flex-1 p-3 sm:p-6 space-y-3 sm:space-y-6 overflow-y-auto min-h-0 safe-area-padding-bottom modal-form-grid-desktop">
+                {/* Informações básicas */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Páginas Totais
+                      Título *
                     </label>
                     <input
-                      type="number"
-                      min="1"
-                      value={formData.totalPages}
-                      onChange={(e) =>
-                        handleChange("totalPages", e.target.value)
-                      }
+                      type="text"
+                      required
+                      value={formData.title}
+                      onChange={(e) => handleChange("title", e.target.value)}
                       className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Página Atual
+                      Status *
+                    </label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => handleChange("status", e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      {Object.entries(statusLabels).map(([key, label]) => (
+                        <option key={key} value={key}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Avaliação e progresso */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Avaliação (0-10)
                     </label>
                     <input
                       type="number"
                       min="0"
-                      value={formData.currentPage}
-                      onChange={(e) =>
-                        handleChange("currentPage", e.target.value)
-                      }
+                      max="10"
+                      step="0.1"
+                      value={formData.rating}
+                      onChange={(e) => handleChange("rating", e.target.value)}
                       className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="8.5"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Horas Gastas
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      value={formData.hoursSpent}
+                      onChange={(e) => handleChange("hoursSpent", e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="25.5"
                     />
                   </div>
                 </div>
-              )}
 
-              {/* Datas */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Data de Início
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => handleChange("startDate", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Data de Conclusão
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.endDate}
-                    onChange={(e) => handleChange("endDate", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Plataforma
-                </label>
-                <input
-                  type="text"
-                  value={formData.platform}
-                  onChange={(e) => handleChange("platform", e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Steam, Netflix, Físico, etc."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Tags
-                </label>
-                <input
-                  type="text"
-                  value={formData.tags}
-                  onChange={(e) => handleChange("tags", e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Link Externo
-                </label>
-                <input
-                  type="url"
-                  value={formData.externalLink}
-                  onChange={(e) => handleChange("externalLink", e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="https://..."
-                />
-              </div>
-
-              {/* Seção de imagem personalizada */}
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Personalizar Imagem de Capa
-                </label>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <label
-                      className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
-                        isUploading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "cursor-pointer hover:bg-slate-700"
-                      }`}
-                    >
-                      {isUploading ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <Upload size={18} />
-                      )}
-                      {isUploading ? "Processando..." : "Upload Nova Imagem"}
+                {/* Páginas (apenas para livros) */}
+                {formData.type === "books" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                        Páginas Totais
+                      </label>
                       <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        disabled={isUploading}
+                        type="number"
+                        min="1"
+                        value={formData.totalPages}
+                        onChange={(e) =>
+                          handleChange("totalPages", e.target.value)
+                        }
+                        className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
-                    </label>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                        Página Atual
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={formData.currentPage}
+                        onChange={(e) =>
+                          handleChange("currentPage", e.target.value)
+                        }
+                        className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                  </div>
+                )}
 
-                    {!formData.useExternalImage && externalResult.image && (
-                      <button
-                        type="button"
-                        onClick={handleRestoreExternalImage}
-                        className="px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg text-blue-300 hover:bg-blue-500/30 transition-colors"
-                      >
-                        Restaurar Original
-                      </button>
-                    )}
+                {/* Datas */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Data de Início
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => handleChange("startDate", e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
                   </div>
 
-                  <p className="text-xs text-slate-400">
-                    Faça upload de uma imagem personalizada ou use a imagem
-                    original encontrada na busca. Imagens personalizadas têm
-                    prioridade sobre as originais.
-                  </p>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Data de Conclusão
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.endDate}
+                      onChange={(e) => handleChange("endDate", e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Plataforma
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.platform}
+                    onChange={(e) => handleChange("platform", e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="Steam, Netflix, Físico, etc."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Tags
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.tags}
+                    onChange={(e) => handleChange("tags", e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Link Externo
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.externalLink}
+                    onChange={(e) => handleChange("externalLink", e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="https://..."
+                  />
+                </div>
+
+                {/* Seção de imagem personalizada */}
+                <div className="form-full-width">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Personalizar Imagem de Capa
+                  </label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <label
+                        className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
+                          isUploading
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer hover:bg-slate-700"
+                        }`}
+                      >
+                        {isUploading ? (
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <Upload size={18} />
+                        )}
+                        {isUploading ? "Processando..." : "Upload Nova Imagem"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          disabled={isUploading}
+                        />
+                      </label>
+
+                      {!formData.useExternalImage && externalResult.image && (
+                        <button
+                          type="button"
+                          onClick={handleRestoreExternalImage}
+                          className="px-4 py-2 bg-blue-500/20 border border-blue-500/50 rounded-lg text-blue-300 hover:bg-blue-500/30 transition-colors"
+                        >
+                          Restaurar Original
+                        </button>
+                      )}
+                    </div>
+
+                    <p className="text-xs text-slate-400">
+                      Faça upload de uma imagem personalizada ou use a imagem
+                      original encontrada na busca. Imagens personalizadas têm
+                      prioridade sobre as originais.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="form-full-width">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Descrição / Notas
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => handleChange("description", e.target.value)}
+                    rows={4}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                    placeholder="Adicione suas impressões, notas ou uma descrição personalizada..."
+                  />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Descrição / Notas
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                  placeholder="Adicione suas impressões, notas ou uma descrição personalizada..."
-                />
-              </div>
-
-                            </div>
             </form>
 
             {/* Actions - Fixed at bottom */}
             <div className="flex-shrink-0 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent p-3 sm:p-6 border-t border-white/20 safe-area-padding-bottom">
-              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 modal-form-actions-desktop">
                 <button
                   type="button"
                   onClick={onClose}
@@ -692,6 +691,6 @@ export const AddMediaFromSearchModal: React.FC<
           </div>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   );
 };
