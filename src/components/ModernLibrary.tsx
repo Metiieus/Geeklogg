@@ -483,6 +483,7 @@ const ModernLibrary: React.FC = () => {
 
         {/* Delete Confirmation Modal */}
         <ConfirmationModal
+          key="delete-confirmation-modal"
           isOpen={showDeleteConfirm}
           title="Excluir Item"
           message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa aç��o não pode ser desfeita!` : ''}
