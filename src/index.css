@@ -13,6 +13,9 @@
 /* Melhorias de responsividade para modais no desktop */
 @import "./modal-desktop-improvements.css";
 
+/* Utilitários responsivos para modais */
+@import "./components/responsive-modal-helpers.css";
+
 /* Estilos de acessibilidade WCAG */
 @import "./styles/accessibility.css";
 

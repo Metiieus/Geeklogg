@@ -1,0 +1,291 @@
+/* ===== UTILITÁRIOS RESPONSIVOS PARA MODAIS ===== */
+
+/* Classes utilitárias para diferentes tamanhos de modal */
+.modal-xs {
+  max-width: 320px;
+}
+
+.modal-sm {
+  max-width: 480px;
+}
+
+.modal-md {
+  max-width: 640px;
+}
+
+.modal-lg {
+  max-width: 768px;
+}
+
+.modal-xl {
+  max-width: 1024px;
+}
+
+.modal-2xl {
+  max-width: 1280px;
+}
+
+/* Classes para altura dos modais */
+.modal-h-auto {
+  height: auto;
+  max-height: calc(100vh - 2rem);
+}
+
+.modal-h-full {
+  height: calc(100vh - 2rem);
+}
+
+.modal-h-3/4 {
+  height: 75vh;
+}
+
+.modal-h-1/2 {
+  height: 50vh;
+}
+
+/* ===== RESPONSIVIDADE ESPECIFICA PARA DESKTOP ===== */
+
+@media (min-width: 768px) {
+  .md\:modal-padding-lg {
+    padding: 2rem;
+  }
+
+  .md\:modal-gap-lg {
+    gap: 2rem;
+  }
+
+  .md\:modal-text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Layout específico para desktop */
+  .lg\:modal-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .lg\:modal-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+  }
+
+  .lg\:modal-sidebar-fixed {
+    position: sticky;
+    top: 0;
+    height: fit-content;
+  }
+
+  .lg\:modal-main-scroll {
+    overflow-y: auto;
+    max-height: calc(100vh - 4rem);
+  }
+
+  /* Padding otimizado para desktop */
+  .lg\:modal-padding-xl {
+    padding: 3rem;
+  }
+
+  /* Margins otimizados */
+  .lg\:modal-margin-auto {
+    margin: auto;
+  }
+
+  /* Espaçamento entre elementos */
+  .lg\:modal-space-y-8 > * + * {
+    margin-top: 2rem;
+  }
+
+  /* Botões maiores no desktop */
+  .lg\:modal-button-lg {
+    padding: 0.875rem 2rem;
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  /* Ultra-wide e 4K optimizations */
+  .xl\:modal-max-w-6xl {
+    max-width: 72rem;
+  }
+
+  .xl\:modal-padding-2xl {
+    padding: 4rem;
+  }
+
+  .xl\:modal-text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* ===== ANIMAÇÕES ESPECÍFICAS PARA MODAIS ===== */
+
+.modal-enter {
+  animation: modalEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-exit {
+  animation: modalExit 0.2s ease-in;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+
+/* ===== ESTADOS INTERATIVOS ===== */
+
+.modal-interactive-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(168, 85, 247, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-interactive-focus:focus-within {
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(168, 85, 247, 0.3);
+}
+
+/* ===== OTIMIZAÇÕES DE ACESSIBILIDADE ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-enter,
+  .modal-exit,
+  .modal-interactive-hover:hover {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .modal-backdrop-enhanced {
+    background: rgba(0, 0, 0, 0.95);
+  }
+  
+  .modal-border-enhanced {
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* ===== UTILITÁRIOS DE SCROLL ===== */
+
+.modal-scroll-smooth {
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.modal-scroll-smooth::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-scroll-smooth::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scroll-smooth::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.modal-scroll-smooth::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== BACKDROP VARIANTS ===== */
+
+.modal-backdrop-light {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.modal-backdrop-medium {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.modal-backdrop-heavy {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+/* ===== LOADING STATES ===== */
+
+.modal-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid rgba(168, 85, 247, 1);
+  border-radius: 50%;
+  animation: modalLoadingSpin 1s linear infinite;
+  z-index: 11;
+}
+
+@keyframes modalLoadingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== TOAST E NOTIFICATION OVERLAYS ===== */
+
+.modal-with-toast {
+  position: relative;
+  z-index: 1000;
+}
+
+.modal-toast-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.modal-toast-container > * {
+  pointer-events: auto;
+}
