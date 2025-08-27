@@ -10,6 +10,9 @@
 /* FORÇA MODAL NO CENTRO DA VIEWPORT MOBILE */
 @import "./modal-mobile-center-force.css";
 
+/* Melhorias de responsividade para modais no desktop */
+@import "./modal-desktop-improvements.css";
+
 /* Estilos de acessibilidade WCAG */
 @import "./styles/accessibility.css";
 
