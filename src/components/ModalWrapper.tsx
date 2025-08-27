@@ -74,8 +74,9 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
             stiffness: 200 
           }}
           className={`
-            w-full ${maxWidth} 
+            w-full ${maxWidth}
             max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)]
+            overflow-y-auto
             ${className}
             modal-scroll allow-scroll
           `}
