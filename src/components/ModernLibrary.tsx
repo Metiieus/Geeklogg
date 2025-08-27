@@ -61,8 +61,8 @@ const ModernLibrary: React.FC = () => {
   // Debounce search query para melhor performance
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // Apply scroll lock when modals are open (temporarily disabled for debug)
-  // useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
+  // Apply scroll lock when modals are open
+  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
 
   // Filtered and sorted items
   const filteredAndSortedItems = useMemo(() => {
