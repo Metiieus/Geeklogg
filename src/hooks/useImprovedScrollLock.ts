@@ -14,87 +14,89 @@ export const useImprovedScrollLock = (isLocked: boolean) => {
     width: string;
     overflow: string;
   } | null>(null);
+  const originalViewportRef = useRef<string>('');
 
   useEffect(() => {
-    if (isLocked) {
-      // Salvar posição atual e estilos originais
-      scrollYRef.current = window.scrollY;
-      const body = document.body;
-      
-      originalStylesRef.current = {
-        position: body.style.position,
-        top: body.style.top,
-        left: body.style.left,
-        right: body.style.right,
-        width: body.style.width,
-        overflow: body.style.overflow,
-      };
+    if (!isLocked) return;
 
-      // Aplicar estilos para bloquear scroll de forma mais suave
-      body.style.position = 'fixed';
-      body.style.top = `-${scrollYRef.current}px`;
-      body.style.left = '0';
-      body.style.right = '0';
-      body.style.width = '100%';
-      body.style.overflow = 'hidden';
+    // Salvar posição atual e estilos originais
+    scrollYRef.current = window.scrollY;
+    const body = document.body;
 
-      // Adicionar classe para CSS customizado
-      body.classList.add('scroll-locked');
+    originalStylesRef.current = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
 
-      // Para iOS - configurar viewport
-      const viewport = document.querySelector('meta[name="viewport"]');
-      const originalViewport = viewport?.getAttribute('content') || '';
-      
-      if (viewport) {
-        viewport.setAttribute('content', originalViewport + ', user-scalable=no');
+    // Aplicar estilos para bloquear scroll de forma mais suave
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollYRef.current}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+
+    // Adicionar classe para CSS customizado
+    body.classList.add('scroll-locked');
+
+    // Para iOS - configurar viewport
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      originalViewportRef.current = viewport.getAttribute('content') || '';
+      viewport.setAttribute('content', originalViewportRef.current + ', user-scalable=no');
+    }
+
+    // Função mais suave de prevenção
+    const preventScroll = (e: TouchEvent) => {
+      // Permitir scroll dentro de elementos com classe 'allow-scroll'
+      let target = e.target as Element;
+      while (target && target !== document.body) {
+        if (target.classList?.contains('allow-scroll') ||
+            target.classList?.contains('modal-scroll')) {
+          return;
+        }
+        target = target.parentElement as Element;
       }
 
-      // Função mais suave de prevenção
-      const preventScroll = (e: TouchEvent) => {
-        // Permitir scroll dentro de elementos com classe 'allow-scroll'
-        let target = e.target as Element;
-        while (target && target !== document.body) {
-          if (target.classList?.contains('allow-scroll') || 
-              target.classList?.contains('modal-scroll')) {
-            return;
-          }
-          target = target.parentElement as Element;
-        }
-        
-        // Prevenir apenas scroll na página principal
-        if (e.touches.length > 1) return; // Permitir gestos multi-touch
-        e.preventDefault();
-      };
+      // Prevenir apenas scroll na página principal
+      if (e.touches.length > 1) return; // Permitir gestos multi-touch
+      e.preventDefault();
+    };
 
-      // Adicionar listener apenas para touchmove
-      document.addEventListener('touchmove', preventScroll, { passive: false });
+    // Adicionar listener apenas para touchmove
+    document.addEventListener('touchmove', preventScroll, { passive: false });
 
-      return () => {
-        // Restaurar estilos originais
-        const body = document.body;
-        if (originalStylesRef.current) {
-          Object.assign(body.style, originalStylesRef.current);
-        }
+    // Cleanup function
+    return () => {
+      // Restaurar estilos originais
+      const body = document.body;
+      if (originalStylesRef.current) {
+        Object.assign(body.style, originalStylesRef.current);
+      }
 
-        // Remover classe
-        body.classList.remove('scroll-locked');
+      // Remover classe
+      body.classList.remove('scroll-locked');
 
-        // Restaurar viewport
-        if (viewport) {
-          viewport.setAttribute('content', originalViewport);
-        }
+      // Restaurar viewport
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport && originalViewportRef.current) {
+        viewport.setAttribute('content', originalViewportRef.current);
+      }
 
-        // Remover listener
-        document.removeEventListener('touchmove', preventScroll);
+      // Remover listener
+      document.removeEventListener('touchmove', preventScroll);
 
-        // Restaurar posição de scroll de forma suave
-        requestAnimationFrame(() => {
-          window.scrollTo({
-            top: scrollYRef.current,
-            behavior: 'auto'
-          });
+      // Restaurar posição de scroll de forma suave
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: scrollYRef.current,
+          behavior: 'auto'
         });
-      };
-    }
+      });
+    };
   }, [isLocked]);
 };
