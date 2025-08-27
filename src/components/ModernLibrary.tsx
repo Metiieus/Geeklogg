@@ -46,23 +46,23 @@ const ModernLibrary: React.FC = () => {
   const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
 
-  // Apply scroll lock when modals are open
-  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
-
   // State
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
-
-  // Debounce search query para melhor performance
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
   const [hasConnectionError, setHasConnectionError] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
+
+  // Debounce search query para melhor performance
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Apply scroll lock when modals are open
+  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
 
   // Filtered and sorted items
   const filteredAndSortedItems = useMemo(() => {
