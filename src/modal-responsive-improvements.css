@@ -1,0 +1,277 @@
+/* ===== MELHORIAS RESPONSIVAS ESPECÍFICAS PARA MODAIS DE MÍDIA ===== */
+
+/* Correções para modais de adicionar/editar mídia */
+.modal-media-form {
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile - Layout vertical otimizado */
+@media (max-width: 640px) {
+  .modal-media-form {
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem;
+    border-radius: 1rem;
+  }
+
+  /* Header compacto em mobile */
+  .modal-media-header {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .modal-media-header h1 {
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+
+  .modal-media-header p {
+    font-size: 0.75rem;
+    display: none; /* Ocultar subtítulo em mobile muito pequeno */
+  }
+
+  /* Formulário responsivo */
+  .modal-media-form-content {
+    padding: 0.75rem;
+    gap: 1rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Grid sempre em coluna única em mobile */
+  .modal-media-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  /* Inputs otimizados para mobile */
+  .modal-media-input {
+    padding: 0.75rem 1rem;
+    font-size: 16px; /* Evita zoom no iOS */
+    border-radius: 0.5rem;
+  }
+
+  /* Textarea menor em mobile */
+  .modal-media-textarea {
+    rows: 3;
+    min-height: 80px;
+  }
+
+  /* Botões de ação em mobile */
+  .modal-media-actions {
+    padding: 1rem;
+    gap: 0.75rem;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.8));
+  }
+
+  .modal-media-button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    min-height: 44px;
+    border-radius: 0.75rem;
+  }
+
+  /* Upload de imagem responsivo */
+  .modal-media-upload {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+
+  .modal-media-preview {
+    width: 6rem;
+    height: 8rem;
+  }
+}
+
+/* Tablet - Layout intermediário */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .modal-media-form {
+    max-width: 90vw;
+    max-height: 85vh;
+  }
+
+  .modal-media-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .modal-media-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 1.5rem;
+  }
+
+  .modal-media-button {
+    width: auto;
+    min-width: 120px;
+  }
+}
+
+/* Desktop - Layout otimizado */
+@media (min-width: 1024px) {
+  .modal-media-form {
+    max-width: 80vw;
+    max-height: 90vh;
+  }
+
+  .modal-media-header {
+    padding: 2rem;
+  }
+
+  .modal-media-form-content {
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .modal-media-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .modal-media-actions {
+    padding: 2rem;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .modal-media-button {
+    width: auto;
+    min-width: 140px;
+    padding: 0.875rem 2rem;
+  }
+
+  /* Preview maior no desktop */
+  .modal-media-preview {
+    width: 8rem;
+    height: 10rem;
+  }
+}
+
+/* Ultra-wide - Máximo aproveitamento */
+@media (min-width: 1440px) {
+  .modal-media-form {
+    max-width: 75vw;
+  }
+
+  .modal-media-form-content {
+    padding: 2.5rem;
+  }
+
+  .modal-media-grid {
+    gap: 2rem;
+  }
+}
+
+/* Orientação landscape em mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal-media-form {
+    max-height: calc(100vh - 0.5rem);
+    margin: 0.25rem;
+  }
+
+  .modal-media-header {
+    padding: 0.75rem;
+  }
+
+  .modal-media-header h1 {
+    font-size: 1rem;
+  }
+
+  .modal-media-form-content {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .modal-media-actions {
+    padding: 0.75rem;
+    flex-direction: row;
+  }
+
+  .modal-media-button {
+    width: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Safe area support */
+@media (max-width: 640px) {
+  .modal-media-safe-area {
+    padding-top: max(env(safe-area-inset-top), 1rem);
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+    padding-left: max(env(safe-area-inset-left), 1rem);
+    padding-right: max(env(safe-area-inset-right), 1rem);
+  }
+
+  .modal-media-actions {
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+}
+
+/* Melhorar performance em mobile */
+@media (max-width: 768px) {
+  .modal-media-form {
+    will-change: auto;
+    transform: none;
+  }
+
+  /* Reduzir backdrop blur em mobile */
+  .modal-media-backdrop {
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  /* Simplificar gradientes em mobile */
+  .modal-media-bg {
+    background: #1e293b !important;
+  }
+}
+
+/* Focus e acessibilidade */
+.modal-media-input:focus,
+.modal-media-textarea:focus,
+.modal-media-select:focus {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* Touch targets otimizados */
+.modal-media-touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animações reduzidas para melhor performance */
+@media (prefers-reduced-motion: reduce) {
+  .modal-media-form {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .modal-media-form {
+    border: 2px solid #ffffff;
+    background: #000000;
+  }
+
+  .modal-media-input,
+  .modal-media-textarea,
+  .modal-media-select {
+    border: 2px solid #ffffff;
+    background: #000000;
+    color: #ffffff;
+  }
+}

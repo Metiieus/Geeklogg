@@ -5,6 +5,8 @@ import { addMedia } from "../services/mediaService";
 import { useToast } from "../context/ToastContext";
 import { validateFile, compressImage } from "../utils/fileValidation";
 import { sanitizeText, sanitizeUrl, sanitizeTags } from "../utils/sanitizer";
+import { ModalWrapper } from "./ModalWrapper";
+import { useImprovedScrollLock } from "../hooks/useImprovedScrollLock";
 
 interface AddMediaPageProps {
   onSave: (item: MediaItem) => void;
@@ -44,6 +46,9 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
     coverFile: undefined as File | undefined,
     description: "",
   });
+
+  // Apply scroll lock for modal behavior
+  useImprovedScrollLock(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,33 +209,43 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 sm:p-6">
-      <div className="max-w-4xl mx-auto">
+    <ModalWrapper
+      isOpen={true}
+      onClose={onBack}
+      maxWidth="max-w-4xl"
+      className="modal-desktop-large modal-performance"
+    >
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={onBack}
-            className="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl border border-slate-600/50 transition-colors"
-            type="button"
-          >
-            <ArrowLeft size={20} className="text-white" />
-          </button>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
-              Adicionar Nova Mídia
-            </h1>
-            <p className="text-slate-400 mt-1">
-              Adicione um novo item à sua biblioteca
-            </p>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+            <button
+              onClick={onBack}
+              className="p-2 sm:p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl border border-slate-600/50 transition-colors flex-shrink-0 touch-target"
+              type="button"
+            >
+              <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-white" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white truncate">
+                Adicionar Nova Mídia
+              </h1>
+              <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">
+                Adicione um novo item à sua biblioteca
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Form */}
-        <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-lg rounded-2xl border border-white/20 overflow-hidden">
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-6">
+        <form 
+          onSubmit={handleSubmit} 
+          className="flex-1 flex flex-col overflow-hidden min-h-0"
+        >
+          <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll">
+            <div className="space-y-4 sm:space-y-6">
               {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Título *
@@ -240,7 +255,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     required
                     value={formData.title}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="Digite o título da mídia"
                   />
                 </div>
@@ -252,7 +267,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                   <select
                     value={formData.type}
                     onChange={(e) => handleChange("type", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   >
                     {Object.entries(mediaTypeLabels).map(([key, label]) => (
                       <option key={key} value={key}>
@@ -263,7 +278,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Status *
@@ -271,7 +286,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                   <select
                     value={formData.status}
                     onChange={(e) => handleChange("status", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   >
                     <option value="planned">Planejado</option>
                     <option value="in-progress">Em Progresso</option>
@@ -288,14 +303,14 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     type="text"
                     value={formData.platform}
                     onChange={(e) => handleChange("platform", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="Steam, Netflix, etc."
                   />
                 </div>
               </div>
 
               {/* Rating & Hours */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Avaliação (0-10)
@@ -307,7 +322,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     step="0.1"
                     value={formData.rating}
                     onChange={(e) => handleChange("rating", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="8.5"
                   />
                 </div>
@@ -322,14 +337,14 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     step="0.5"
                     value={formData.hoursSpent}
                     onChange={(e) => handleChange("hoursSpent", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="25.5"
                   />
                 </div>
               </div>
 
               {formData.type === "books" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">
                       Páginas Totais
@@ -339,7 +354,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                       min="1"
                       value={formData.totalPages}
                       onChange={(e) => handleChange("totalPages", e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                       placeholder="350"
                     />
                   </div>
@@ -352,7 +367,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                       min="0"
                       value={formData.currentPage}
                       onChange={(e) => handleChange("currentPage", e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                       placeholder="42"
                     />
                   </div>
@@ -360,7 +375,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
               )}
 
               {/* Dates */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Data de Início
@@ -369,7 +384,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => handleChange("startDate", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   />
                 </div>
 
@@ -381,7 +396,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => handleChange("endDate", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   />
                 </div>
               </div>
@@ -395,7 +410,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                   type="text"
                   value={formData.tags}
                   onChange={(e) => handleChange("tags", e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
                 />
               </div>
@@ -409,7 +424,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                   type="url"
                   value={formData.externalLink}
                   onChange={(e) => handleChange("externalLink", e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   placeholder="https://store.steampowered.com/..."
                 />
               </div>
@@ -420,9 +435,9 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                   Imagem de Capa
                 </label>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center sm:justify-start">
                     <label
-                      className={`flex items-center gap-2 px-6 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors cursor-pointer ${
+                      className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors cursor-pointer text-sm sm:text-base touch-target ${
                         isUploading
                           ? "opacity-50 cursor-not-allowed"
                           : "hover:bg-slate-700"
@@ -431,7 +446,7 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                       {isUploading ? (
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       ) : (
-                        <Upload size={18} />
+                        <Upload size={16} className="sm:w-5 sm:h-5" />
                       )}
                       {isUploading ? "Processando..." : "Fazer Upload da Imagem"}
                       <input
@@ -444,11 +459,11 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                     </label>
                   </div>
                   {formData.coverPreview && (
-                    <div className="mt-3 flex justify-center">
+                    <div className="mt-3 flex justify-center overflow-hidden">
                       <img
                         src={formData.coverPreview}
                         alt="Preview"
-                        className="w-32 h-40 object-cover rounded-lg"
+                        className="w-24 sm:w-32 h-32 sm:h-40 object-cover rounded-lg"
                       />
                     </div>
                   )}
@@ -463,26 +478,28 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                 <textarea
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                  rows={3}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none text-sm sm:text-base"
                   placeholder="Breve descrição ou notas..."
                 />
               </div>
             </div>
+          </div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-700/50">
+          {/* Actions - Fixed at bottom */}
+          <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-3 sm:p-4 md:p-6 border-t border-white/20 safe-area-padding-bottom">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={onBack}
-                className="px-6 py-3 text-slate-300 hover:text-white transition-colors"
+                className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base touch-target"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSaving || isUploading}
-                className={`px-6 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                className={`w-full sm:w-auto px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base touch-target ${
                   isSaving || isUploading
                     ? "bg-slate-600 cursor-not-allowed"
                     : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25"
@@ -491,14 +508,14 @@ export const AddMediaPage: React.FC<AddMediaPageProps> = ({
                 {isSaving ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  <Save size={18} />
+                  <Save size={16} className="sm:w-5 sm:h-5" />
                 )}
                 {isSaving ? "Salvando..." : "Salvar Mídia"}
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
-    </div>
+    </ModalWrapper>
   );
 };

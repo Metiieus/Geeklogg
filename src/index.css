@@ -25,6 +25,9 @@
 /* Otimizações de performance */
 @import "./styles/performance-optimizations.css";
 
+/* Melhorias responsivas para modais de mídia */
+@import "./modal-responsive-improvements.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
