@@ -423,7 +423,7 @@ const ModernLibrary: React.FC = () => {
       {/* Modals */}
       <AnimatePresence>
         {showAddOptions && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4">
+          <div key="add-options-modal" className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4">
             {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
