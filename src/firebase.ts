@@ -8,15 +8,15 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Configuração do Firebase
+// Configuração do Firebase (usa variáveis de ambiente quando disponíveis, com fallback seguro para valores públicos fornecidos)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBIQIUNwk_wmMj5IprvMjlbJaitxofLk1M",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "geeklog-26b2c.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "geeklog-26b2c",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "geeklog-26b2c.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "367690608897",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:367690608897:web:4b7e084e60ad8cdb8deb00",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-KC9X0WP28Z"
 };
 
 // Verificação de conectividade
@@ -27,27 +27,22 @@ const checkConnectivity = () => {
   return true; // Assume online se não puder verificar
 };
 
-// Verifica se todas as variáveis obrigatórias estão definidas
-const requiredEnvVars = [
-  "VITE_FIREBASE_API_KEY",
-  "VITE_FIREBASE_AUTH_DOMAIN",
-  "VITE_FIREBASE_PROJECT_ID",
-  "VITE_FIREBASE_STORAGE_BUCKET",
-  "VITE_FIREBASE_MESSAGING_SENDER_ID",
-  "VITE_FIREBASE_APP_ID",
+// Validar configuração efetiva (não apenas env)
+const requiredConfigKeys: (keyof typeof firebaseConfig)[] = [
+  "apiKey",
+  "authDomain",
+  "projectId",
+  "storageBucket",
+  "messagingSenderId",
+  "appId",
 ];
 
-const missingVars = requiredEnvVars.filter((varName) => {
-  const value = import.meta.env[varName];
-  // Check for missing, empty, or placeholder-like values
-  return (
-    !value ||
-    value.trim() === "" ||
-    /^your[_-]/i.test(value)
-  );
+const missingConfig = requiredConfigKeys.filter((k) => {
+  const value = (firebaseConfig as any)[k];
+  return !value || String(value).trim() === "";
 });
 
-const hasValidConfig = missingVars.length === 0;
+const hasValidConfig = missingConfig.length === 0;
 
 if (!hasValidConfig) {
   console.warn("⚠️ Firebase config incompleta - executando em modo offline");

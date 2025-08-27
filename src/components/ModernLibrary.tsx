@@ -46,23 +46,23 @@ const ModernLibrary: React.FC = () => {
   const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
 
-  // Apply scroll lock when modals are open
-  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
-
   // State
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<Status | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
-
-  // Debounce search query para melhor performance
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showAddOptions, setShowAddOptions] = useState(false);
   const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
   const [hasConnectionError, setHasConnectionError] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
+
+  // Debounce search query para melhor performance
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Apply scroll lock when modals are open
+  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
 
   // Filtered and sorted items
   const filteredAndSortedItems = useMemo(() => {
@@ -423,35 +423,49 @@ const ModernLibrary: React.FC = () => {
       {/* Modals */}
       <AnimatePresence>
         {showAddOptions && (
-          <ModalWrapper
-            key="add-options-modal"
-            isOpen={showAddOptions}
-            onClose={() => setShowAddOptions(false)}
-            maxWidth="max-w-4xl"
-            className=""
-          >
-            <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-4 sm:p-6 relative modal-scroll allow-scroll">
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-white">
-                  Adicionar Nova Mídia
-                </h2>
-                <button
-                  onClick={() => setShowAddOptions(false)}
-                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-                >
-                  <Plus className="text-slate-400 rotate-45" size={20} />
-                </button>
-              </div>
+          <div key="add-options-modal" className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4">
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => setShowAddOptions(false)}
+            />
 
-              <AddMediaOptions
-                onExternalResultSelect={handleExternalResultSelect}
-                onManualAdd={() => {
-                  navigateToAddMedia();
-                  setShowAddOptions(false);
-                }}
-              />
-            </div>
-          </ModalWrapper>
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
+              className="relative z-10 w-full max-w-4xl max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    Adicionar Nova Mídia
+                  </h2>
+                  <button
+                    onClick={() => setShowAddOptions(false)}
+                    className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                  >
+                    <Plus className="text-slate-400 rotate-45" size={20} />
+                  </button>
+                </div>
+
+                <AddMediaOptions
+                  onExternalResultSelect={handleExternalResultSelect}
+                  onManualAdd={() => {
+                    navigateToAddMedia();
+                    setShowAddOptions(false);
+                  }}
+                />
+              </div>
+            </motion.div>
+          </div>
         )}
 
 
@@ -469,6 +483,7 @@ const ModernLibrary: React.FC = () => {
 
         {/* Delete Confirmation Modal */}
         <ConfirmationModal
+          key="delete-confirmation-modal"
           isOpen={showDeleteConfirm}
           title="Excluir Item"
           message={itemToDelete ? `Vai apagar "${itemToDelete.title}" mesmo? 🗑️\n\nEssa aç��o não pode ser desfeita!` : ''}
