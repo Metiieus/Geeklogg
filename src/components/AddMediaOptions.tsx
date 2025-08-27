@@ -123,16 +123,16 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+    <div className="flex flex-col sm:flex-row lg:flex-row gap-3 sm:gap-4 lg:gap-6 max-w-4xl mx-auto">
       {/* Busca online */}
       <button
         onClick={() => setIsSearchMode(true)}
-        className="flex-1 flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-200"
+        className="flex-1 flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-200 modal-interactive"
       >
-        <Search size={20} className="sm:w-6 sm:h-6 flex-shrink-0" />
+        <Search size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7 flex-shrink-0" />
         <div className="text-center sm:text-left min-w-0">
-          <div className="font-semibold text-sm sm:text-base">Buscar Online</div>
-          <div className="text-xs sm:text-sm opacity-90 truncate">
+          <div className="font-semibold text-sm sm:text-base lg:text-lg">Buscar Online</div>
+          <div className="text-xs sm:text-sm lg:text-base opacity-90 truncate">
             Google Books, TMDb, IGDB
           </div>
         </div>
@@ -141,12 +141,12 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
       {/* Adição manual */}
       <button
         onClick={onManualAdd}
-        className="flex-1 flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 bg-slate-700/50 border border-slate-600 rounded-xl text-white hover:bg-slate-700 transition-all duration-200"
+        className="flex-1 flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 lg:p-8 bg-slate-700/50 border border-slate-600 rounded-xl text-white hover:bg-slate-700 transition-all duration-200 modal-interactive"
       >
-        <Plus size={20} className="sm:w-6 sm:h-6 flex-shrink-0" />
+        <Plus size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7 flex-shrink-0" />
         <div className="text-center sm:text-left min-w-0">
-          <div className="font-semibold text-sm sm:text-base">Adicionar Manualmente</div>
-          <div className="text-xs sm:text-sm text-slate-400 truncate">
+          <div className="font-semibold text-sm sm:text-base lg:text-lg">Adicionar Manualmente</div>
+          <div className="text-xs sm:text-sm lg:text-base text-slate-400 truncate">
             Criar entrada personalizada
           </div>
         </div>
