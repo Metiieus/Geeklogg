@@ -8,15 +8,15 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Configuração do Firebase
+// Configuração do Firebase (usa variáveis de ambiente quando disponíveis, com fallback seguro para valores públicos fornecidos)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBIQIUNwk_wmMj5IprvMjlbJaitxofLk1M",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "geeklog-26b2c.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "geeklog-26b2c",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "geeklog-26b2c.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "367690608897",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:367690608897:web:4b7e084e60ad8cdb8deb00",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-KC9X0WP28Z"
 };
 
 // Verificação de conectividade
