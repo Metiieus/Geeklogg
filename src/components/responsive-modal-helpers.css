@@ -35,11 +35,11 @@
   height: calc(100vh - 2rem);
 }
 
-.modal-h-3/4 {
+.modal-h-75 {
   height: 75vh;
 }
 
-.modal-h-1/2 {
+.modal-h-50 {
   height: 50vh;
 }
 
