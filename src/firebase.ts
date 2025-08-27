@@ -27,27 +27,22 @@ const checkConnectivity = () => {
   return true; // Assume online se não puder verificar
 };
 
-// Verifica se todas as variáveis obrigatórias estão definidas
-const requiredEnvVars = [
-  "VITE_FIREBASE_API_KEY",
-  "VITE_FIREBASE_AUTH_DOMAIN",
-  "VITE_FIREBASE_PROJECT_ID",
-  "VITE_FIREBASE_STORAGE_BUCKET",
-  "VITE_FIREBASE_MESSAGING_SENDER_ID",
-  "VITE_FIREBASE_APP_ID",
+// Validar configuração efetiva (não apenas env)
+const requiredConfigKeys: (keyof typeof firebaseConfig)[] = [
+  "apiKey",
+  "authDomain",
+  "projectId",
+  "storageBucket",
+  "messagingSenderId",
+  "appId",
 ];
 
-const missingVars = requiredEnvVars.filter((varName) => {
-  const value = import.meta.env[varName];
-  // Check for missing, empty, or placeholder-like values
-  return (
-    !value ||
-    value.trim() === "" ||
-    /^your[_-]/i.test(value)
-  );
+const missingConfig = requiredConfigKeys.filter((k) => {
+  const value = (firebaseConfig as any)[k];
+  return !value || String(value).trim() === "";
 });
 
-const hasValidConfig = missingVars.length === 0;
+const hasValidConfig = missingConfig.length === 0;
 
 if (!hasValidConfig) {
   console.warn("⚠️ Firebase config incompleta - executando em modo offline");
