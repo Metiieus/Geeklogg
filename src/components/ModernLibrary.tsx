@@ -332,7 +332,7 @@ const ModernLibrary: React.FC = () => {
                 className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 w-full p-6 shadow-2xl">
+                <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 w-full max-w-4xl max-h-[80vh] overflow-y-auto p-6 shadow-2xl">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-white">Adicionar Nova Mídia</h2>
                     <button
