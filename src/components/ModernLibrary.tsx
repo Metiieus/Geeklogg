@@ -431,7 +431,8 @@ const ModernLibrary: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-[9998]"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
               onClick={() => setShowAddOptions(false)}
             />
 
@@ -442,7 +443,18 @@ const ModernLibrary: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-[90vw] max-w-lg max-h-[80vh] overflow-y-auto"
+              className="fixed z-[9999] overflow-y-auto"
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 9999,
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                minWidth: '300px',
+                maxWidth: '90vw'
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6">
