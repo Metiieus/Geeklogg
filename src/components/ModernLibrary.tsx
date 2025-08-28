@@ -12,6 +12,7 @@ import { MediaCard } from '../design-system/components/MediaCard';
 import { AddMediaOptions } from './AddMediaOptions';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
 import { ExternalMediaResult } from '../services/externalMediaService';
+import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
