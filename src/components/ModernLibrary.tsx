@@ -12,7 +12,7 @@ import useDebounce from '../hooks/useDebounce';
 
 import { HeroBanner } from '../design-system/components/HeroBanner';
 import { MediaCard } from '../design-system/components/MediaCard';
-import { GlassInput, GlassSelect, GlassFilterBar } from '../design-system/components/GlassInput';
+import { GlassInput, GlassSelect, GlassContainer } from '../design-system/components/GlassInput';
 import { TribalDivider, NeonOrnament, FloatingParticles } from '../design-system/components/NeonPatterns';
 import { getCategoryColors, shadows } from '../design-system/tokens';
 
