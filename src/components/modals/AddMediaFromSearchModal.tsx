@@ -392,9 +392,9 @@ export const AddMediaFromSearchModal: React.FC<
                   </div>
                 )}
 
-                {externalResult.genres && externalResult.genres.length > 0 && (
+                {selectedResult.genres && selectedResult.genres.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
-                    {externalResult.genres.slice(0, 3).map((genre, index) => (
+                    {selectedResult.genres.slice(0, 3).map((genre, index) => (
                       <span
                         key={index}
                         className="text-xs px-2 py-1 bg-purple-500/20 text-purple-300 rounded"
