@@ -266,7 +266,7 @@ const ModernLibrary: React.FC = () => {
               </p>
               {!debouncedSearchQuery && (
                 <button
-                  onClick={() => navigateToAddMedia()}
+                  onClick={() => setShowAddOptions(true)}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium rounded-xl hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg"
                 >
                   <Plus size={20} />
