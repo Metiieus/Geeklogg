@@ -100,13 +100,13 @@ export const AddMediaFromSearchModal: React.FC<
       try {
         let details: Partial<ExternalMediaResult> = {};
 
-        if (externalResult.originalType === "movie") {
+        if (selectedResult.originalType === "movie") {
           details = await externalMediaService.getMovieDetails(
-            externalResult.tmdbId,
+            selectedResult.tmdbId,
           );
-        } else if (externalResult.originalType === "tv") {
+        } else if (selectedResult.originalType === "tv") {
           details = await externalMediaService.getTvShowDetails(
-            externalResult.tmdbId,
+            selectedResult.tmdbId,
           );
         }
 
