@@ -1,24 +1,14 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, Filter, Grid, List, SortAsc } from 'lucide-react';
+import { Search, Plus, Grid, List } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, Status } from '../App';
 import type { MediaItem } from '../App';
 import { useToast } from '../context/ToastContext';
 import useDebounce from '../hooks/useDebounce';
 
-import { HeroBanner } from '../design-system/components/HeroBanner';
+// Import only safe components
 import { MediaCard } from '../design-system/components/MediaCard';
-import { GlassInput, GlassSelect, GlassContainer } from '../design-system/components/GlassInput';
-import { TribalDivider, NeonOrnament, FloatingParticles } from '../design-system/components/NeonPatterns';
-
-import { ConnectivityError } from './ConnectivityError';
-import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
-import { AddMediaOptions } from './AddMediaOptions';
-import { ExternalMediaResult } from '../services/externalMediaService';
-import { deleteMedia } from '../services/mediaService';
-import { ConfirmationModal } from './ConfirmationModal';
-import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
@@ -36,7 +26,7 @@ const sortOptions = [
 ];
 
 const ModernLibrary: React.FC = () => {
-  const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
+  const { mediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
 
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
@@ -44,179 +34,210 @@ const ModernLibrary: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showAddOptions, setShowAddOptions] = useState(false);
-  const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
-  const [hasConnectionError, setHasConnectionError] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
 
   const filteredAndSortedItems = useMemo(() => {
-    const uniqueItems = mediaItems.filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index);
+    const uniqueItems = mediaItems.filter((item, index, arr) => 
+      arr.findIndex(i => i.id === item.id) === index
+    );
     let filtered = uniqueItems;
 
-    if (selectedType !== 'all') filtered = filtered.filter((item) => item.type === selectedType);
-    if (selectedStatus !== 'all') filtered = filtered.filter((item) => item.status === selectedStatus);
+    if (selectedType !== 'all') {
+      filtered = filtered.filter((item) => item.type === selectedType);
+    }
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter((item) => item.status === selectedStatus);
+    }
 
     if (debouncedSearchQuery) {
       filtered = filtered.filter((item) =>
         item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-        item.tags.some((tag) => tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
+        (item.tags && item.tags.some((tag) => 
+          tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+        ))
       );
     }
 
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'title': return a.title.localeCompare(b.title);
-        case 'rating': return (b.rating || 0) - (a.rating || 0);
-        case 'hoursSpent': return (b.hoursSpent || 0) - (a.hoursSpent || 0);
-        default: return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        case 'title': 
+          return a.title.localeCompare(b.title);
+        case 'rating': 
+          return (b.rating || 0) - (a.rating || 0);
+        case 'hoursSpent': 
+          return (b.hoursSpent || 0) - (a.hoursSpent || 0);
+        default: 
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
       }
     });
 
     return filtered;
   }, [mediaItems, selectedType, selectedStatus, debouncedSearchQuery, sortBy]);
 
-  const handleDeleteItem = useCallback((item: MediaItem) => {
-    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
-      showError('Erro', 'ID do item é inválido. Não é possível excluir este item.');
-      return;
-    }
-    setItemToDelete(item);
-    setShowDeleteConfirm(true);
-  }, [showError]);
-
-  const confirmDelete = useCallback(async () => {
-    if (!itemToDelete) return;
-    try {
-      await deleteMedia(itemToDelete.id);
-      setMediaItems(mediaItems.filter(mediaItem => mediaItem.id !== itemToDelete.id));
-      showSuccess('Item removido com sucesso!');
-      setHasConnectionError(false);
-    } catch (err: any) {
-      console.error('Erro ao excluir mídia', err);
-      if (err.message?.includes('fetch') || err.message?.includes('network') || err.name === 'TypeError') {
-        setHasConnectionError(true);
-        showError('Erro de Conectividade', 'Verifique sua conexão com a internet e tente novamente.');
-      } else {
-        showError('Erro ao remover mídia', err.message || 'Não foi possível excluir o item');
-      }
-    } finally {
-      setItemToDelete(null);
-      setShowDeleteConfirm(false);
-    }
-  }, [itemToDelete, mediaItems, setMediaItems, showSuccess, showError]);
-
-  const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
-    setSelectedExternalResult(result);
-    setShowAddOptions(false);
-  }, []);
-
-  const handleAddFromSearch = useCallback((newItem: MediaItem) => {
-    setMediaItems([...mediaItems, newItem]);
-    setSelectedExternalResult(null);
-  }, [mediaItems, setMediaItems]);
-
   return (
-    <div className="relative overflow-hidden">
-      <FloatingParticles count={8} color="cyan" />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
-          <HeroBanner
-            title="Minha Biblioteca"
-            subtitle="Organize sua jornada geek com estilo e inteligência"
-            onAddMedia={() => {
-              window.scrollTo(0, 0);
-              setShowAddOptions(true);
+    <div className="relative overflow-hidden min-h-screen">
+      {/* Floating Particles Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-cyan-400/20 rounded-full"
+            animate={{
+              x: [0, 100, 0],
+              y: [0, -100, 0],
+              opacity: [0.2, 0.8, 0.2],
+            }}
+            transition={{
+              duration: 15 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
             }}
           />
-        </motion.div>
-        <TribalDivider variant="complex" color="cyan" />
+        ))}
+      </div>
 
-        {/* Barra de Filtros e Controles */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* Hero Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.8 }}
+          className="text-center relative"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 via-cyan-500/10 to-magenta-500/20 rounded-3xl blur-3xl" />
+          <div className="relative">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 bg-gradient-to-r from-violet-400 via-cyan-400 to-magenta-400 bg-clip-text text-transparent">
+              Minha Biblioteca
+            </h1>
+            <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+              Organize sua jornada geek com estilo e inteligência
+            </p>
+            <button
+              onClick={() => navigateToAddMedia()}
+              className="group relative inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-500 via-cyan-500 to-magenta-500 text-white font-medium rounded-2xl hover:from-violet-400 hover:via-cyan-400 hover:to-magenta-400 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-105"
+            >
+              <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+              Adicionar Mídia
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-600 via-cyan-600 to-magenta-600 opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-300" />
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Tribal Divider */}
+        <div className="flex justify-center py-8">
+          <svg width="200" height="20" viewBox="0 0 200 20" className="text-cyan-400">
+            <path
+              d="M0 10 Q50 5 100 10 T200 10"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              opacity="0.6"
+            />
+            <circle cx="100" cy="10" r="3" fill="currentColor" opacity="0.8" />
+          </svg>
+        </div>
+
+        {/* Search and Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
+          className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-6 shadow-xl"
         >
-          <GlassContainer className="p-6 mb-8">
-            <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-              <div className="flex-1">
-                <GlassInput
-                  icon={Search}
+          <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60" size={18} />
+                <input
+                  type="text"
                   placeholder="Buscar por título ou tags..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full"
+                  className="w-full h-12 pl-12 pr-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-cyan-400 focus:bg-white/10 transition-all duration-200"
                 />
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <GlassSelect
-                  value={selectedType}
-                  onChange={(value) => setSelectedType(value as MediaType | 'all')}
-                  options={[
-                    { value: 'all', label: 'Todos os Tipos' },
-                    { value: 'anime', label: '🎭 Anime' },
-                    { value: 'series', label: '📺 Séries' },
-                    { value: 'games', label: '🎮 Games' },
-                    { value: 'movies', label: '🎬 Filmes' },
-                    { value: 'books', label: '📖 Livros' },
-                  ]}
-                />
-                <GlassSelect
-                  value={selectedStatus}
-                  onChange={(value) => setSelectedStatus(value as Status | 'all')}
-                  options={statusOptions}
-                />
-                <GlassSelect
-                  value={sortBy}
-                  onChange={(value) => setSortBy(value as 'title' | 'rating' | 'hoursSpent' | 'updatedAt')}
-                  options={sortOptions}
-                />
-                <div className="flex bg-white/5 border border-white/20 rounded-xl p-1">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-lg transition-all ${
-                      viewMode === 'grid'
-                        ? 'bg-cyan-500 text-white shadow-lg'
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Grid size={18} />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-lg transition-all ${
-                      viewMode === 'list'
-                        ? 'bg-cyan-500 text-white shadow-lg'
-                        : 'text-white/60 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <List size={18} />
-                  </button>
-                </div>
               </div>
             </div>
-          </GlassContainer>
+            
+            <div className="flex flex-col sm:flex-row gap-3">
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value as MediaType | 'all')}
+                className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-violet-400 min-w-[140px]"
+              >
+                <option value="all">Todos os Tipos</option>
+                <option value="anime">🎭 Anime</option>
+                <option value="series">📺 Séries</option>
+                <option value="games">🎮 Games</option>
+                <option value="movies">🎬 Filmes</option>
+                <option value="books">📖 Livros</option>
+              </select>
+
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value as Status | 'all')}
+                className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-violet-400 min-w-[140px]"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-violet-400 min-w-[140px]"
+              >
+                {sortOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+
+              <div className="flex bg-white/5 border border-white/20 rounded-xl p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-lg transition-all ${
+                    viewMode === 'grid'
+                      ? 'bg-cyan-500 text-white shadow-lg'
+                      : 'text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <Grid size={18} />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-lg transition-all ${
+                    viewMode === 'list'
+                      ? 'bg-cyan-500 text-white shadow-lg'
+                      : 'text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <List size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
-        {/* Grade de Mídias */}
+        {/* Content */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.6 }}
         >
-          {hasConnectionError && <ConnectivityError />}
-          
           {filteredAndSortedItems.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-16"
-            >
-              <NeonOrnament variant="circle" color="cyan" className="mx-auto mb-6" />
+            <div className="text-center py-16">
+              <div className="relative mx-auto mb-8">
+                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-violet-500 via-cyan-500 to-magenta-500 rounded-full flex items-center justify-center">
+                  <Search className="text-white" size={32} />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-cyan-500 to-magenta-500 rounded-full blur-xl opacity-20" />
+              </div>
               <h3 className="text-2xl font-semibold text-white mb-3">
                 {debouncedSearchQuery ? 'Nenhum resultado encontrado' : 'Sua biblioteca está vazia'}
               </h3>
@@ -228,14 +249,14 @@ const ModernLibrary: React.FC = () => {
               </p>
               {!debouncedSearchQuery && (
                 <button
-                  onClick={() => setShowAddOptions(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium rounded-xl hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg hover:shadow-cyan-500/25"
+                  onClick={() => navigateToAddMedia()}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium rounded-xl hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg"
                 >
                   <Plus size={20} />
                   Adicionar Primeira Mídia
                 </button>
               )}
-            </motion.div>
+            </div>
           ) : (
             <div
               className={
@@ -262,7 +283,7 @@ const ModernLibrary: React.FC = () => {
                       item={item}
                       viewMode={viewMode}
                       onEdit={() => navigateToEditMedia(item)}
-                      onDelete={() => handleDeleteItem(item)}
+                      onDelete={() => {}}
                     />
                   </motion.div>
                 ))}
@@ -270,70 +291,6 @@ const ModernLibrary: React.FC = () => {
             </div>
           )}
         </motion.div>
-
-        {/* Modais */}
-        <AnimatePresence>
-          {showAddOptions && (
-            <>
-              <motion.div
-                key="add-options-overlay"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
-                onClick={() => setShowAddOptions(false)}
-              />
-              <motion.div
-                key="add-options-content"
-                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-2xl max-h-[80vh] overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6">
-                  <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <h2 className="text-xl sm:text-2xl font-bold text-white">Adicionar Nova Mídia</h2>
-                    <button
-                      onClick={() => setShowAddOptions(false)}
-                      className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-                    >
-                      <Plus className="text-slate-400 rotate-45" size={20} />
-                    </button>
-                  </div>
-                  <AddMediaOptions
-                    onExternalResultSelect={handleExternalResultSelect}
-                    onManualAdd={() => {
-                      navigateToAddMedia();
-                      setShowAddOptions(false);
-                    }}
-                  />
-                </div>
-              </motion.div>
-            </>
-          )}
-
-          {selectedExternalResult && (
-            <AddMediaFromSearchModal
-              selectedResult={selectedExternalResult}
-              onAdd={handleAddFromSearch}
-              onClose={() => setSelectedExternalResult(null)}
-            />
-          )}
-
-          {showDeleteConfirm && itemToDelete && (
-            <ConfirmationModal
-              isOpen={showDeleteConfirm}
-              onConfirm={confirmDelete}
-              onCancel={() => {
-                setShowDeleteConfirm(false);
-                setItemToDelete(null);
-              }}
-              title="Confirmar Exclusão"
-              message={`Tem certeza que deseja excluir "${itemToDelete.title}"? Esta ação não pode ser desfeita.`}
-              confirmText="Excluir"
-              confirmVariant="danger"
-            />
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );
