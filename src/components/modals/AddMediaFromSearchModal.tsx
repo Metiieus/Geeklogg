@@ -368,10 +368,10 @@ export const AddMediaFromSearchModal: React.FC<
                   {selectedResult.title}
                 </h3>
 
-                {externalResult.year && (
+                {selectedResult.year && (
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
                     <Calendar size={14} className="sm:w-4 sm:h-4" />
-                    <span>{externalResult.year}</span>
+                    <span>{selectedResult.year}</span>
                   </div>
                 )}
 
