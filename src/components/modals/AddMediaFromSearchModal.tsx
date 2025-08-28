@@ -38,16 +38,22 @@ export const AddMediaFromSearchModal: React.FC<
   AddMediaFromSearchModalProps
 > = ({ onClose, onAdd, selectedResult }) => {
   const { showError, showSuccess, showWarning } = useToast();
+
+  // Validação de segurança
+  if (!selectedResult) {
+    return null;
+  }
+
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [formData, setFormData] = useState({
-    title: externalResult.title || "",
-    type: getMediaTypeFromResult(externalResult),
+    title: selectedResult.title || "",
+    type: getMediaTypeFromResult(selectedResult),
     status: "planned" as Status,
     rating: "",
     hoursSpent: "",
-    totalPages: externalResult.pageCount?.toString() || "",
+    totalPages: selectedResult.pageCount?.toString() || "",
     currentPage: "",
     startDate: "",
     endDate: "",
