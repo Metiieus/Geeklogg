@@ -134,7 +134,7 @@ export const AddMediaFromSearchModal: React.FC<
     };
 
     loadAdditionalDetails();
-  }, [externalResult]);
+  }, [selectedResult]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
