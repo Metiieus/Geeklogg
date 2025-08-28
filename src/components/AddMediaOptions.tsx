@@ -1,156 +1,189 @@
-import React, { useState } from "react";
-import { Search, Plus, X } from "lucide-react";
-import { MediaType } from "../App";
-import { MediaSearchBar } from "./MediaSearchBar";
-import { ExternalMediaResult } from "../services/externalMediaService";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-interface AddMediaOptionsProps {
-  onExternalResultSelect: (result: ExternalMediaResult) => void;
-  onManualAdd: () => void;
+type AddMediaOptionsProps = {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onPickImage?: () => void;
+  onPickVideo?: () => void;
+  onPickAudio?: () => void;
+  // Optional custom trigger. If omitted, a default button is rendered.
+  trigger?: (props: { onClick: () => void }) => React.ReactNode;
+};
+
+function useControllableState(
+  controlled: boolean | undefined,
+  onChange: ((open: boolean) => void) | undefined,
+  initial = false
+) {
+  const [uncontrolled, setUncontrolled] = useState<boolean>(initial);
+  const isControlled = typeof controlled === 'boolean';
+  const value = isControlled ? (controlled as boolean) : uncontrolled;
+
+  const setValue = useCallback(
+    (next: boolean) => {
+      if (!isControlled) setUncontrolled(next);
+      onChange?.(next);
+    },
+    [isControlled, onChange]
+  );
+
+  return [value, setValue] as const;
 }
 
-export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
-  onExternalResultSelect,
-  onManualAdd,
-}) => {
-  const [isSearchMode, setIsSearchMode] = useState(false);
-  const [selectedType, setSelectedType] = useState<MediaType>("anime");
+function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title?: string; children: React.ReactNode }) {
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
-  // Função para detectar automaticamente o tipo baseado na query
-  const detectTypeFromQuery = (query: string): MediaType => {
-    const lowerQuery = query.toLowerCase();
+  useEffect(() => {
+    const el = document.createElement('div');
+    el.setAttribute('data-portal', 'add-media-modal');
+    document.body.appendChild(el);
+    setContainer(el);
+    return () => {
+      document.body.removeChild(el);
+    };
+  }, []);
 
-    // Animes populares e palavras-chave
-    const animeKeywords = [
-      'one piece', 'naruto', 'dragon ball', 'attack on titan', 'demon slayer',
-      'my hero academia', 'jujutsu kaisen', 'chainsaw man', 'death note',
-      'fullmetal alchemist', 'hunter x hunter', 'bleach', 'pokemon',
-      'sailor moon', 'evangelion', 'cowboy bebop', 'anime', 'manga'
-    ];
+  // Lock body scroll while open
+  useEffect(() => {
+    if (!open) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [open]);
 
-    // Games e palavras-chave de jogos
-    const gameKeywords = [
-      'call of duty', 'minecraft', 'fortnite', 'league of legends', 'gta',
-      'god of war', 'cyberpunk', 'witcher', 'zelda', 'mario', 'sonic',
-      'final fantasy', 'resident evil', 'assassins creed', 'game'
-    ];
+  // Close on Escape key
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open, onClose]);
 
-    // Filmes e séries
-    const movieSeriesKeywords = [
-      'movie', 'film', 'series', 'season', 'episode', 'netflix', 'marvel',
-      'dc comics', 'star wars', 'harry potter', 'lord of the rings'
-    ];
+  if (!open || !container) return null;
 
-    // Livros
-    const bookKeywords = [
-      'book', 'novel', 'livro', 'romance', 'biografia', 'autobiography',
-      'cookbook', 'manual', 'guide', 'textbook'
-    ];
-
-    if (animeKeywords.some(keyword => lowerQuery.includes(keyword))) {
-      return "anime";
-    }
-
-    if (gameKeywords.some(keyword => lowerQuery.includes(keyword))) {
-      return "games";
-    }
-
-    if (bookKeywords.some(keyword => lowerQuery.includes(keyword))) {
-      return "books";
-    }
-
-    if (movieSeriesKeywords.some(keyword => lowerQuery.includes(keyword))) {
-      return "movies";
-    }
-
-    // Se não detectar, mantém anime como padrão (mais comum)
-    return selectedType;
-  };
-
-  const handleResultSelect = (result: ExternalMediaResult) => {
-    onExternalResultSelect(result);
-    setIsSearchMode(false);
-  };
-
-  const handleTypeChange = (newType: MediaType) => {
-    setSelectedType(newType);
-  };
-
-  if (isSearchMode) {
-    return (
-      <div className="space-y-3 sm:space-y-4">
-        {/* Header da busca */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
-            <Search className="text-purple-400 flex-shrink-0 mt-1" size={20} />
-            <div className="min-w-0 flex-1">
-              <h2 className="text-lg sm:text-xl font-bold text-white">
-                Buscar Mídia Online
-              </h2>
-              <p className="text-slate-400 text-xs sm:text-sm">
-                Encontre livros, filmes, séries e jogos
-              </p>
-            </div>
-          </div>
+  return createPortal(
+    <div
+      aria-modal="true"
+      role="dialog"
+      aria-label={title || 'Adicionar mídia'}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)'
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: '#fff',
+          color: '#111827',
+          borderRadius: 12,
+          width: 'min(92vw, 520px)',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+          padding: 16
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>{title || 'Adicionar mídia'}</h2>
           <button
-            onClick={() => setIsSearchMode(false)}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors flex-shrink-0"
+            onClick={onClose}
+            aria-label="Fechar"
+            style={{ border: 'none', background: 'transparent', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}
           >
-            <X className="text-slate-400" size={18} />
+            ×
           </button>
         </div>
-
-        {/* Barra de busca */}
-        <MediaSearchBar
-          selectedType={selectedType}
-          onTypeChange={handleTypeChange}
-          onResultSelect={handleResultSelect}
-          placeholder="Digite o nome da mídia que deseja adicionar..."
-        />
-
-        {/* Opção manual */}
-        <div className="flex items-center justify-center pt-3 sm:pt-4 border-t border-white/20">
-          <button
-            onClick={onManualAdd}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-slate-400 hover:text-white transition-colors text-sm sm:text-base"
-          >
-            <Plus size={14} className="sm:w-4 sm:h-4" />
-            Ou adicione manualmente
-          </button>
-        </div>
+        <div style={{ marginTop: 12 }}>{children}</div>
       </div>
+    </div>,
+    container
+  );
+}
+
+export function AddMediaOptions({
+  isOpen,
+  onOpenChange,
+  onPickImage,
+  onPickVideo,
+  onPickAudio,
+  trigger
+}: AddMediaOptionsProps) {
+  const [open, setOpen] = useControllableState(isOpen, onOpenChange, false);
+
+  const handleOpen = useCallback(() => setOpen(true), [setOpen]);
+  const handleClose = useCallback(() => setOpen(false), [setOpen]);
+
+  const Trigger = useMemo(() => {
+    if (trigger) return trigger({ onClick: handleOpen });
+    return (
+      <button
+        type="button"
+        onClick={handleOpen}
+        style={{
+          borderRadius: 8,
+          padding: '8px 12px',
+          background: '#2563eb',
+          color: '#fff',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+      >
+        Adicionar mídia
+      </button>
     );
-  }
+  }, [handleOpen, trigger]);
 
   return (
-    <div className="flex flex-col sm:flex-row lg:flex-row gap-3 sm:gap-4 lg:gap-6 max-w-4xl mx-auto">
-      {/* Busca online */}
-      <button
-        onClick={() => setIsSearchMode(true)}
-        className="flex-1 flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-200 modal-interactive"
-      >
-        <Search size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7 flex-shrink-0" />
-        <div className="text-center sm:text-left min-w-0">
-          <div className="font-semibold text-sm sm:text-base lg:text-lg">Buscar Online</div>
-          <div className="text-xs sm:text-sm lg:text-base opacity-90 truncate">
-            Google Books, TMDb, IGDB
-          </div>
+    <>
+      {Trigger}
+      <Modal open={open} onClose={handleClose} title="Adicionar mídia">
+        <div style={{ display: 'grid', gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => {
+              onPickImage?.();
+              handleClose();
+            }}
+            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}
+          >
+            Imagem
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onPickVideo?.();
+              handleClose();
+            }}
+            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}
+          >
+            Vídeo
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onPickAudio?.();
+              handleClose();
+            }}
+            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}
+          >
+            Áudio
+          </button>
         </div>
-      </button>
-
-      {/* Adição manual */}
-      <button
-        onClick={onManualAdd}
-        className="flex-1 flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 lg:p-8 bg-slate-700/50 border border-slate-600 rounded-xl text-white hover:bg-slate-700 transition-all duration-200 modal-interactive"
-      >
-        <Plus size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7 flex-shrink-0" />
-        <div className="text-center sm:text-left min-w-0">
-          <div className="font-semibold text-sm sm:text-base lg:text-lg">Adicionar Manualmente</div>
-          <div className="text-xs sm:text-sm lg:text-base text-slate-400 truncate">
-            Criar entrada personalizada
-          </div>
-        </div>
-      </button>
-    </div>
+      </Modal>
+    </>
   );
-};
+}
+
+export default AddMediaOptions;

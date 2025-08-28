@@ -339,23 +339,28 @@ const ModernLibrary: React.FC = () => {
       {/* Modais */}
       <AnimatePresence>
         {showAddOptions && (
-          <>
+          <div
+            className="fixed inset-0 z-[9999] grid place-items-center pointer-events-none"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Adicionar nova mídia"
+          >
             {/* Overlay */}
             <motion.div
               key="overlay-add"
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9998]"
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowAddOptions(false)}
             />
-            {/* Modal centralizado */}
+            {/* Modal centralizado sem translate */}
             <motion.div
               key="modal-add"
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-3xl max-h-[80vh] overflow-y-auto"
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative pointer-events-auto w-full max-w-3xl max-h-[80vh] overflow-y-auto"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.25, type: 'spring', damping: 24, stiffness: 220 }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -380,7 +385,7 @@ const ModernLibrary: React.FC = () => {
                 />
               </div>
             </motion.div>
-          </>
+          </div>
         )}
 
         {selectedExternalResult && (
