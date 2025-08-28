@@ -133,7 +133,10 @@ const ModernLibrary: React.FC = () => {
               Organize sua jornada geek com estilo e inteligência
             </p>
             <button
-              onClick={() => navigateToAddMedia()}
+              onClick={() => {
+                window.scrollTo(0, 0);
+                setShowAddOptions(true);
+              }}
               className="group relative inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-500 via-cyan-500 to-magenta-500 text-white font-medium rounded-2xl hover:from-violet-400 hover:via-cyan-400 hover:to-magenta-400 transition-all duration-300 shadow-2xl hover:shadow-cyan-500/25 transform hover:scale-105"
             >
               <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
