@@ -252,6 +252,36 @@ export const GlassSelect: React.FC<GlassSelectProps> = ({
   );
 };
 
+// ============= GLASS CONTAINER =============
+
+interface GlassContainerProps {
+  children: React.ReactNode;
+  className?: string;
+  variant?: 'default' | 'light' | 'dark';
+}
+
+export const GlassContainer: React.FC<GlassContainerProps> = ({
+  children,
+  className = '',
+  variant = 'default',
+}) => {
+  const variantClasses = {
+    default: `${glassmorphism.backdrop} ${glassmorphism.background} ${glassmorphism.border}`,
+    light: `${glassmorphism.light.backdrop} ${glassmorphism.light.background} ${glassmorphism.light.border}`,
+    dark: `${glassmorphism.backdrop} bg-black/20 border-white/10`,
+  };
+
+  return (
+    <div className={`
+      ${variantClasses[variant]}
+      rounded-xl transition-all duration-200
+      ${className}
+    `}>
+      {children}
+    </div>
+  );
+};
+
 // ============= GLASS FILTER BAR =============
 
 interface FilterOption {
@@ -261,23 +291,35 @@ interface FilterOption {
 }
 
 interface GlassFilterBarProps {
-  options: FilterOption[];
-  selected: string[];
-  onChange: (selected: string[]) => void;
+  options?: FilterOption[];
+  selected?: string[];
+  onChange?: (selected: string[]) => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const GlassFilterBar: React.FC<GlassFilterBarProps> = ({
   options,
-  selected,
+  selected = [],
   onChange,
   className = '',
+  children,
 }) => {
+  // Se não tem options mas tem children, age como container
+  if (!options && children) {
+    return <GlassContainer className={className}>{children}</GlassContainer>;
+  }
+
+  // Se não tem options, retorna container vazio
+  if (!options) {
+    return <GlassContainer className={className} />;
+  }
+
   const toggleFilter = (id: string) => {
     if (selected.includes(id)) {
-      onChange(selected.filter(s => s !== id));
+      onChange?.(selected.filter(s => s !== id));
     } else {
-      onChange([...selected, id]);
+      onChange?.([...selected, id]);
     }
   };
 
@@ -285,7 +327,7 @@ export const GlassFilterBar: React.FC<GlassFilterBarProps> = ({
     <div className={`flex flex-wrap gap-3 ${className}`}>
       {options.map((option) => {
         const isSelected = selected.includes(option.id);
-        
+
         return (
           <motion.button
             key={option.id}
@@ -295,8 +337,8 @@ export const GlassFilterBar: React.FC<GlassFilterBarProps> = ({
             className={`
               relative px-4 py-2 rounded-full border transition-all duration-200
               ${glassmorphism.backdrop}
-              ${isSelected 
-                ? 'bg-gradient-to-r from-violet-500/30 to-cyan-500/30 border-violet-400/50 text-white shadow-lg' 
+              ${isSelected
+                ? 'bg-gradient-to-r from-violet-500/30 to-cyan-500/30 border-violet-400/50 text-white shadow-lg'
                 : 'bg-white/5 border-white/20 text-white/80 hover:bg-white/10 hover:border-white/30'
               }
             `}
