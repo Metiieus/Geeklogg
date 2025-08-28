@@ -453,8 +453,12 @@ const ModernLibrary: React.FC = () => {
                 overflowY: 'auto',
                 minWidth: '300px',
                 maxWidth: '90vw',
-                margin: 0,
-                padding: 0
+                margin: '0 !important',
+                padding: '0 !important',
+                bottom: 'auto !important',
+                right: 'auto !important',
+                display: 'block',
+                visibility: 'visible'
               }}
               onClick={(e) => e.stopPropagation()}
             >
