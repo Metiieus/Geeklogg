@@ -329,7 +329,7 @@ const ModernLibrary: React.FC = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-4xl max-h-[80vh] overflow-y-auto mx-4"
+                className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 w-full p-6 shadow-2xl">
