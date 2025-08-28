@@ -145,7 +145,7 @@ const ModernLibrary: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          <GlassFilterBar className="p-6 mb-8">
+          <GlassContainer className="p-6 mb-8">
             <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
               <div className="flex-1">
                 <GlassInput
@@ -204,7 +204,7 @@ const ModernLibrary: React.FC = () => {
                 </div>
               </div>
             </div>
-          </GlassFilterBar>
+          </GlassContainer>
         </motion.div>
 
         {/* Grade de Mídias */}
