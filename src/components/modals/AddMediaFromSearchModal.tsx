@@ -36,7 +36,7 @@ const statusLabels = {
 
 export const AddMediaFromSearchModal: React.FC<
   AddMediaFromSearchModalProps
-> = ({ onClose, onSave, externalResult }) => {
+> = ({ onClose, onAdd, selectedResult }) => {
   const { showError, showSuccess, showWarning } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
