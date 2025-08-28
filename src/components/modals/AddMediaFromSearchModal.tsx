@@ -94,7 +94,7 @@ export const AddMediaFromSearchModal: React.FC<
   // Carregar detalhes adicionais quando o modal abre
   useEffect(() => {
     const loadAdditionalDetails = async () => {
-      if (externalResult.source !== "tmdb" || !externalResult.tmdbId) return;
+      if (selectedResult.source !== "tmdb" || !selectedResult.tmdbId) return;
 
       setIsLoadingDetails(true);
       try {
