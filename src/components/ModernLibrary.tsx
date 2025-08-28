@@ -353,6 +353,14 @@ const ModernLibrary: React.FC = () => {
               </motion.div>
             </>
           )}
+
+          {selectedExternalResult && (
+            <AddMediaFromSearchModal
+              selectedResult={selectedExternalResult}
+              onAdd={handleAddFromSearch}
+              onClose={() => setSelectedExternalResult(null)}
+            />
+          )}
         </AnimatePresence>
       </div>
     </div>
