@@ -65,7 +65,7 @@ export const AddMediaFromSearchModal: React.FC<
     coverPreview: selectedResult.image || "",
     coverFile: undefined as File | undefined,
     // Flag para indicar se deve usar imagem externa ou uploaded
-    useExternalImage: !!externalResult.image,
+    useExternalImage: !!selectedResult.image,
   });
 
   // Determinar tipo de mídia baseado no resultado externo
