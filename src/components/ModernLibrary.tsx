@@ -28,7 +28,7 @@ const sortOptions = [
 ];
 
 const ModernLibrary: React.FC = () => {
-  const { mediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
+  const { mediaItems, setMediaItems, navigateToAddMedia, navigateToEditMedia } = useAppContext();
   const { showError, showSuccess } = useToast();
 
   const [selectedType, setSelectedType] = useState<MediaType | 'all'>('all');
@@ -36,8 +36,20 @@ const ModernLibrary: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'rating' | 'hoursSpent' | 'updatedAt'>('updatedAt');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showAddOptions, setShowAddOptions] = useState(false);
+  const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
+    setSelectedExternalResult(result);
+    setShowAddOptions(false);
+  }, []);
+
+  const handleAddFromSearch = useCallback((newItem: MediaItem) => {
+    setMediaItems([...mediaItems, newItem]);
+    setSelectedExternalResult(null);
+  }, [mediaItems, setMediaItems]);
 
   const filteredAndSortedItems = useMemo(() => {
     const uniqueItems = mediaItems.filter((item, index, arr) => 
