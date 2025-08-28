@@ -385,10 +385,10 @@ export const AddMediaFromSearchModal: React.FC<
                     </div>
                   )}
 
-                {externalResult.pageCount && (
+                {selectedResult.pageCount && (
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
                     <Book size={14} className="sm:w-4 sm:h-4" />
-                    <span>{externalResult.pageCount} páginas</span>
+                    <span>{selectedResult.pageCount} páginas</span>
                   </div>
                 )}
 
