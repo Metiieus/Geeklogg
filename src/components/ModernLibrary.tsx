@@ -443,7 +443,7 @@ const ModernLibrary: React.FC = () => {
               className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6">
+              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6 sm:block flex flex-col justify-start items-center">
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold text-white">
                     Adicionar Nova Mídia
