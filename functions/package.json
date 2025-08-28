@@ -3,7 +3,7 @@
   "description": "Cloud Functions for Firebase",
   "main": "server.cjs",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "dependencies": {
     "cors": "^2.8.5",
