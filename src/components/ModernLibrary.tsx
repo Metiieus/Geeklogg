@@ -420,7 +420,7 @@ const ModernLibrary: React.FC = () => {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Modals - Rendered outside main container */}
       <AnimatePresence>
         {showAddOptions && (
           <motion.div
