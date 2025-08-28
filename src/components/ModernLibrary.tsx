@@ -14,7 +14,7 @@ import { ExternalMediaResult } from '../services/externalMediaService';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
-  { value: 'completed', label: '✅ Concluído' },
+  { value: 'completed', label: '✅ Conclu��do' },
   { value: 'in-progress', label: '⏳ Em Progresso' },
   { value: 'dropped', label: '❌ Abandonado' },
   { value: 'planned', label: '📅 Planejado' },
@@ -308,6 +308,51 @@ const ModernLibrary: React.FC = () => {
             </div>
           )}
         </motion.div>
+
+        {/* Modal de Adicionar Mídia */}
+        <AnimatePresence>
+          {showAddOptions && (
+            <>
+              <motion.div
+                key="add-options-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
+                onClick={() => setShowAddOptions(false)}
+              />
+              <motion.div
+                key="add-options-content"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-4xl max-h-[80vh] overflow-y-auto mx-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 w-full p-6 shadow-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-white">Adicionar Nova Mídia</h2>
+                    <button
+                      onClick={() => setShowAddOptions(false)}
+                      className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                    >
+                      <X className="text-slate-400" size={20} />
+                    </button>
+                  </div>
+                  <AddMediaOptions
+                    onExternalResultSelect={handleExternalResultSelect}
+                    onManualAdd={() => {
+                      navigateToAddMedia();
+                      setShowAddOptions(false);
+                    }}
+                  />
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
