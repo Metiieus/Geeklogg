@@ -23,8 +23,8 @@ import { useImprovedScrollLock } from '../../hooks/useImprovedScrollLock';
 
 interface AddMediaFromSearchModalProps {
   onClose: () => void;
-  onSave: (item: MediaItem) => void;
-  externalResult: ExternalMediaResult;
+  onAdd: (item: MediaItem) => void;
+  selectedResult: ExternalMediaResult;
 }
 
 const statusLabels = {
@@ -36,30 +36,36 @@ const statusLabels = {
 
 export const AddMediaFromSearchModal: React.FC<
   AddMediaFromSearchModalProps
-> = ({ onClose, onSave, externalResult }) => {
+> = ({ onClose, onAdd, selectedResult }) => {
   const { showError, showSuccess, showWarning } = useToast();
+
+  // Validação de segurança
+  if (!selectedResult) {
+    return null;
+  }
+
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [formData, setFormData] = useState({
-    title: externalResult.title || "",
-    type: getMediaTypeFromResult(externalResult),
+    title: selectedResult.title || "",
+    type: getMediaTypeFromResult(selectedResult),
     status: "planned" as Status,
     rating: "",
     hoursSpent: "",
-    totalPages: externalResult.pageCount?.toString() || "",
+    totalPages: selectedResult.pageCount?.toString() || "",
     currentPage: "",
     startDate: "",
     endDate: "",
     platform: "",
-    tags: externalResult.genres?.join(", ") || "",
+    tags: selectedResult.genres?.join(", ") || "",
     externalLink: "",
-    description: externalResult.description || "",
+    description: selectedResult.description || "",
     // Dados da imagem
-    coverPreview: externalResult.image || "",
+    coverPreview: selectedResult.image || "",
     coverFile: undefined as File | undefined,
     // Flag para indicar se deve usar imagem externa ou uploaded
-    useExternalImage: !!externalResult.image,
+    useExternalImage: !!selectedResult.image,
   });
 
   // Determinar tipo de mídia baseado no resultado externo
@@ -88,19 +94,19 @@ export const AddMediaFromSearchModal: React.FC<
   // Carregar detalhes adicionais quando o modal abre
   useEffect(() => {
     const loadAdditionalDetails = async () => {
-      if (externalResult.source !== "tmdb" || !externalResult.tmdbId) return;
+      if (selectedResult.source !== "tmdb" || !selectedResult.tmdbId) return;
 
       setIsLoadingDetails(true);
       try {
         let details: Partial<ExternalMediaResult> = {};
 
-        if (externalResult.originalType === "movie") {
+        if (selectedResult.originalType === "movie") {
           details = await externalMediaService.getMovieDetails(
-            externalResult.tmdbId,
+            selectedResult.tmdbId,
           );
-        } else if (externalResult.originalType === "tv") {
+        } else if (selectedResult.originalType === "tv") {
           details = await externalMediaService.getTvShowDetails(
-            externalResult.tmdbId,
+            selectedResult.tmdbId,
           );
         }
 
@@ -128,7 +134,7 @@ export const AddMediaFromSearchModal: React.FC<
     };
 
     loadAdditionalDetails();
-  }, [externalResult]);
+  }, [selectedResult]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,8 +191,8 @@ export const AddMediaFromSearchModal: React.FC<
         // Se não há upload e há imagem externa, usar a URL
         ...(!formData.coverFile &&
           formData.useExternalImage &&
-          externalResult.image && {
-            cover: externalResult.image,
+          selectedResult.image && {
+            cover: selectedResult.image,
           }),
       };
 
@@ -196,7 +202,7 @@ export const AddMediaFromSearchModal: React.FC<
         "Mídia adicionada!",
         `${formData.title} foi adicionado à sua biblioteca`,
       );
-      onSave(newItem);
+      onAdd(newItem);
     } catch (error: any) {
       console.error("Erro ao adicionar mídia:", error);
       showError(
@@ -271,11 +277,11 @@ export const AddMediaFromSearchModal: React.FC<
   };
 
   const handleRestoreExternalImage = () => {
-    if (!externalResult.image) return;
+    if (!selectedResult.image) return;
 
     setFormData((prev) => ({
       ...prev,
-      coverPreview: externalResult.image!,
+      coverPreview: selectedResult.image!,
       coverFile: undefined,
       useExternalImage: true,
     }));
@@ -359,36 +365,36 @@ export const AddMediaFromSearchModal: React.FC<
               {/* Informações da busca */}
               <div className="space-y-2 sm:space-y-3">
                 <h3 className="font-bold text-white text-base sm:text-lg line-clamp-2">
-                  {externalResult.title}
+                  {selectedResult.title}
                 </h3>
 
-                {externalResult.year && (
+                {selectedResult.year && (
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
                     <Calendar size={14} className="sm:w-4 sm:h-4" />
-                    <span>{externalResult.year}</span>
+                    <span>{selectedResult.year}</span>
                   </div>
                 )}
 
-                {externalResult.authors &&
-                  externalResult.authors.length > 0 && (
+                {selectedResult.authors &&
+                  selectedResult.authors.length > 0 && (
                     <div className="flex items-center gap-2 text-slate-400 text-sm">
                       <Users size={14} className="sm:w-4 sm:h-4" />
                       <span className="truncate">
-                        {externalResult.authors.slice(0, 2).join(", ")}
+                        {selectedResult.authors.slice(0, 2).join(", ")}
                       </span>
                     </div>
                   )}
 
-                {externalResult.pageCount && (
+                {selectedResult.pageCount && (
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
                     <Book size={14} className="sm:w-4 sm:h-4" />
-                    <span>{externalResult.pageCount} páginas</span>
+                    <span>{selectedResult.pageCount} páginas</span>
                   </div>
                 )}
 
-                {externalResult.genres && externalResult.genres.length > 0 && (
+                {selectedResult.genres && selectedResult.genres.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
-                    {externalResult.genres.slice(0, 3).map((genre, index) => (
+                    {selectedResult.genres.slice(0, 3).map((genre, index) => (
                       <span
                         key={index}
                         className="text-xs px-2 py-1 bg-purple-500/20 text-purple-300 rounded"
@@ -403,16 +409,16 @@ export const AddMediaFromSearchModal: React.FC<
                 <div className="pt-3 border-t border-slate-600">
                   <span
                     className={`text-xs px-2 py-1 rounded ${
-                      externalResult.source === "google-books"
+                      selectedResult.source === "google-books"
                         ? "bg-blue-500/20 text-blue-400"
-                        : externalResult.source === "rawg"
+                        : selectedResult.source === "rawg"
                         ? "bg-purple-500/20 text-purple-400"
                         : "bg-green-500/20 text-green-400"
                     }`}
                   >
-                    {externalResult.source === "google-books"
+                    {selectedResult.source === "google-books"
                       ? "Google Books"
-                      : externalResult.source === "rawg"
+                      : selectedResult.source === "rawg"
                       ? "RAWG"
                       : "TMDb"}
                   </span>
@@ -625,7 +631,7 @@ export const AddMediaFromSearchModal: React.FC<
                         />
                       </label>
 
-                      {!formData.useExternalImage && externalResult.image && (
+                      {!formData.useExternalImage && selectedResult.image && (
                         <button
                           type="button"
                           onClick={handleRestoreExternalImage}
