@@ -202,7 +202,7 @@ export const AddMediaFromSearchModal: React.FC<
         "Mídia adicionada!",
         `${formData.title} foi adicionado à sua biblioteca`,
       );
-      onSave(newItem);
+      onAdd(newItem);
     } catch (error: any) {
       console.error("Erro ao adicionar mídia:", error);
       showError(
