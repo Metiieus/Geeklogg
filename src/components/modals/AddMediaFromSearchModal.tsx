@@ -365,7 +365,7 @@ export const AddMediaFromSearchModal: React.FC<
               {/* Informações da busca */}
               <div className="space-y-2 sm:space-y-3">
                 <h3 className="font-bold text-white text-base sm:text-lg line-clamp-2">
-                  {externalResult.title}
+                  {selectedResult.title}
                 </h3>
 
                 {externalResult.year && (
