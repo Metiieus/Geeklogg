@@ -277,11 +277,11 @@ export const AddMediaFromSearchModal: React.FC<
   };
 
   const handleRestoreExternalImage = () => {
-    if (!externalResult.image) return;
+    if (!selectedResult.image) return;
 
     setFormData((prev) => ({
       ...prev,
-      coverPreview: externalResult.image!,
+      coverPreview: selectedResult.image!,
       coverFile: undefined,
       useExternalImage: true,
     }));
