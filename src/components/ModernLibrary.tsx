@@ -313,26 +313,29 @@ const ModernLibrary: React.FC = () => {
         {/* Modal de Adicionar Mídia */}
         <AnimatePresence>
           {showAddOptions && (
-            <>
+            <motion.div
+              key="add-options-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+              onClick={() => setShowAddOptions(false)}
+            >
               <motion.div
-                key="add-options-overlay"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
-                onClick={() => setShowAddOptions(false)}
-              />
-              <motion.div
-                key="add-options-content"
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{
+                  duration: 0.3,
+                  type: "spring",
+                  damping: 25,
+                  stiffness: 200
+                }}
+                className="w-full max-w-4xl max-h-[calc(100vh-2rem)] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 w-full max-w-4xl max-h-[80vh] overflow-y-auto p-6 shadow-2xl">
+                <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-2xl">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-white">Adicionar Nova Mídia</h2>
                     <button
@@ -351,7 +354,7 @@ const ModernLibrary: React.FC = () => {
                   />
                 </div>
               </motion.div>
-            </>
+            </motion.div>
           )}
 
           {selectedExternalResult && (
