@@ -4,7 +4,7 @@ import { Sidebar } from "./components/Sidebar";
 import { MobileSidebar } from "./components/MobileSidebar";
 import { DesktopHeader } from "./components/DesktopHeader";
 const Dashboard = lazy(() => import("./components/Dashboard"));
-const Library = lazy(() => import("./components/ModernLibraryFixed"));
+const Library = lazy(() => import("./components/ModernLibrary"));
 const Reviews = lazy(() => import("./components/Reviews"));
 const Timeline = lazy(() => import("./components/Timeline"));
 const Statistics = lazy(() => import("./components/Statistics"));
