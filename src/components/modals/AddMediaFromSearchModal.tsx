@@ -409,16 +409,16 @@ export const AddMediaFromSearchModal: React.FC<
                 <div className="pt-3 border-t border-slate-600">
                   <span
                     className={`text-xs px-2 py-1 rounded ${
-                      externalResult.source === "google-books"
+                      selectedResult.source === "google-books"
                         ? "bg-blue-500/20 text-blue-400"
-                        : externalResult.source === "rawg"
+                        : selectedResult.source === "rawg"
                         ? "bg-purple-500/20 text-purple-400"
                         : "bg-green-500/20 text-green-400"
                     }`}
                   >
-                    {externalResult.source === "google-books"
+                    {selectedResult.source === "google-books"
                       ? "Google Books"
-                      : externalResult.source === "rawg"
+                      : selectedResult.source === "rawg"
                       ? "RAWG"
                       : "TMDb"}
                   </span>
