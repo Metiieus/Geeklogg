@@ -443,7 +443,6 @@ const ModernLibrary: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed z-[9999] overflow-y-auto"
               style={{
                 position: 'fixed',
                 top: '50%',
@@ -453,7 +452,9 @@ const ModernLibrary: React.FC = () => {
                 maxHeight: '80vh',
                 overflowY: 'auto',
                 minWidth: '300px',
-                maxWidth: '90vw'
+                maxWidth: '90vw',
+                margin: 0,
+                padding: 0
               }}
               onClick={(e) => e.stopPropagation()}
             >
