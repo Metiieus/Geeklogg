@@ -191,8 +191,8 @@ export const AddMediaFromSearchModal: React.FC<
         // Se não há upload e há imagem externa, usar a URL
         ...(!formData.coverFile &&
           formData.useExternalImage &&
-          externalResult.image && {
-            cover: externalResult.image,
+          selectedResult.image && {
+            cover: selectedResult.image,
           }),
       };
 
