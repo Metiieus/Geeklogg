@@ -420,20 +420,19 @@ const ModernLibrary: React.FC = () => {
         </div>
       </div>
 
-      {/* Modals - Rendered outside main container */}
+      {/* Modals */}
       <AnimatePresence>
         {showAddOptions && (
-          <motion.div
-            key="add-options-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-            onClick={() => setShowAddOptions(false)}
-          >
+          <div key="add-options-modal" className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4">
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => setShowAddOptions(false)}
+            />
 
             {/* Modal Content */}
             <motion.div
@@ -441,10 +440,10 @@ const ModernLibrary: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
-              className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              className="relative z-10 w-full max-w-4xl max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6">
+              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full flex flex-col justify-center items-start p-4 sm:p-6 pb-[26px]">
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold text-white">
                     Adicionar Nova Mídia
@@ -466,7 +465,7 @@ const ModernLibrary: React.FC = () => {
                 />
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
 
 
