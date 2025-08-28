@@ -423,24 +423,26 @@ const ModernLibrary: React.FC = () => {
       {/* Modals */}
       <AnimatePresence>
         {showAddOptions && (
-          <div key="add-options-modal" className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <>
             {/* Overlay */}
             <motion.div
+              key="add-options-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm"
               onClick={() => setShowAddOptions(false)}
             />
 
             {/* Modal Content */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              key="add-options-content"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
-              className="relative z-10 w-[90vw] max-w-lg max-h-[90vh] overflow-y-auto mx-auto"
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-[90vw] max-w-lg max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6">
@@ -465,7 +467,7 @@ const ModernLibrary: React.FC = () => {
                 />
               </div>
             </motion.div>
-          </div>
+          </>
         )}
 
 
