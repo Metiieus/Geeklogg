@@ -58,11 +58,11 @@ export const AddMediaFromSearchModal: React.FC<
     startDate: "",
     endDate: "",
     platform: "",
-    tags: externalResult.genres?.join(", ") || "",
+    tags: selectedResult.genres?.join(", ") || "",
     externalLink: "",
-    description: externalResult.description || "",
+    description: selectedResult.description || "",
     // Dados da imagem
-    coverPreview: externalResult.image || "",
+    coverPreview: selectedResult.image || "",
     coverFile: undefined as File | undefined,
     // Flag para indicar se deve usar imagem externa ou uploaded
     useExternalImage: !!externalResult.image,
