@@ -162,11 +162,10 @@ const ModernLibrary: React.FC = () => {
                   options={[
                     { value: 'all', label: 'Todos os Tipos' },
                     { value: 'anime', label: '🎭 Anime' },
-                    { value: 'manga', label: '📚 Mangá' },
-                    { value: 'game', label: '🎮 Game' },
-                    { value: 'movie', label: '🎬 Filme' },
-                    { value: 'tv', label: '📺 TV' },
-                    { value: 'book', label: '📖 Livro' },
+                    { value: 'series', label: '📺 Séries' },
+                    { value: 'games', label: '🎮 Games' },
+                    { value: 'movies', label: '🎬 Filmes' },
+                    { value: 'books', label: '📖 Livros' },
                   ]}
                 />
                 <GlassSelect
