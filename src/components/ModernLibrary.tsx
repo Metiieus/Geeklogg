@@ -439,26 +439,34 @@ const ModernLibrary: React.FC = () => {
             {/* Modal Content */}
             <motion.div
               key="add-options-content"
+              id="modal-adicionar-midia-center"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
+              className="modal-center-force"
               style={{
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 9999,
-                maxHeight: '80vh',
-                overflowY: 'auto',
-                minWidth: '300px',
-                maxWidth: '90vw',
+                position: 'fixed !important',
+                top: '50% !important',
+                left: '50% !important',
+                transform: 'translate(-50%, -50%) !important',
+                zIndex: '9999 !important',
+                maxHeight: '80vh !important',
+                overflowY: 'auto !important',
+                minWidth: '300px !important',
+                maxWidth: '90vw !important',
                 margin: '0 !important',
                 padding: '0 !important',
                 bottom: 'auto !important',
                 right: 'auto !important',
-                display: 'block',
-                visibility: 'visible'
+                display: 'block !important',
+                visibility: 'visible !important',
+                width: 'auto !important',
+                height: 'auto !important',
+                inset: 'auto !important',
+                flex: 'none !important',
+                alignItems: 'initial !important',
+                justifyContent: 'initial !important'
               }}
               onClick={(e) => e.stopPropagation()}
             >
