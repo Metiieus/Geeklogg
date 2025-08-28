@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, Grid, List } from 'lucide-react';
+import { Search, Plus, Grid, List, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, Status } from '../App';
 import type { MediaItem } from '../App';
 import { useToast } from '../context/ToastContext';
 import useDebounce from '../hooks/useDebounce';
 
-// Import only safe components
+// Import components
 import { MediaCard } from '../design-system/components/MediaCard';
+import { AddMediaOptions } from './AddMediaOptions';
+import { ExternalMediaResult } from '../services/externalMediaService';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
