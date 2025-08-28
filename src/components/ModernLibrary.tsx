@@ -42,6 +42,9 @@ const ModernLibrary: React.FC = () => {
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
+  // Scroll lock para modal
+  useImprovedScrollLock(showAddOptions || !!selectedExternalResult);
+
   const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
     setSelectedExternalResult(result);
     setShowAddOptions(false);
