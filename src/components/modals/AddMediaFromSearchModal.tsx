@@ -23,8 +23,8 @@ import { useImprovedScrollLock } from '../../hooks/useImprovedScrollLock';
 
 interface AddMediaFromSearchModalProps {
   onClose: () => void;
-  onSave: (item: MediaItem) => void;
-  externalResult: ExternalMediaResult;
+  onAdd: (item: MediaItem) => void;
+  selectedResult: ExternalMediaResult;
 }
 
 const statusLabels = {
