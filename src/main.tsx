@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "./modal-center-force.css";
 import { AuthProvider } from "./context/AuthContext";
 import { initializeViewportHeight } from "./utils/viewportHeight";
 
