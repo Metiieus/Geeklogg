@@ -371,4 +371,5 @@ export const GlassFilterBar: React.FC<GlassFilterBarProps> = ({
   );
 };
 
+export { GlassContainer };
 export default GlassInput;
