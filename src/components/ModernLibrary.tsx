@@ -3,7 +3,7 @@
 // Imports (mantidos iguais ao original)
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, Filter, Grid, List, SortAsc } from 'lucide-react';
+import { Search, Plus, Grid, List } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { MediaType, Status } from '../App';
 import type { MediaItem } from '../App';
