@@ -631,7 +631,7 @@ export const AddMediaFromSearchModal: React.FC<
                         />
                       </label>
 
-                      {!formData.useExternalImage && externalResult.image && (
+                      {!formData.useExternalImage && selectedResult.image && (
                         <button
                           type="button"
                           onClick={handleRestoreExternalImage}
