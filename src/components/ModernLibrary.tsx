@@ -10,11 +10,12 @@ import useDebounce from '../hooks/useDebounce';
 // Import components
 import { MediaCard } from '../design-system/components/MediaCard';
 import { AddMediaOptions } from './AddMediaOptions';
+import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
 import { ExternalMediaResult } from '../services/externalMediaService';
 
 const statusOptions = [
   { value: 'all', label: 'Todos os Status' },
-  { value: 'completed', label: '✅ Conclu��do' },
+  { value: 'completed', label: '✅ Concluído' },
   { value: 'in-progress', label: '⏳ Em Progresso' },
   { value: 'dropped', label: '❌ Abandonado' },
   { value: 'planned', label: '📅 Planejado' },
