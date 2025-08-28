@@ -1,4 +1,3 @@
-
 /* ModernLibrary.tsx - Corrigido para centralizar o modal corretamente */
 
 // Imports (mantidos iguais ao original)
@@ -140,6 +139,144 @@ const ModernLibrary: React.FC = () => {
         </motion.div>
         <TribalDivider variant="complex" color="cyan" />
 
+        {/* Barra de Filtros e Controles */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          <GlassFilterBar className="p-6 mb-8">
+            <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+              <div className="flex-1">
+                <GlassInput
+                  icon={Search}
+                  placeholder="Buscar por título ou tags..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <GlassSelect
+                  value={selectedType}
+                  onChange={(value) => setSelectedType(value as MediaType | 'all')}
+                  options={[
+                    { value: 'all', label: 'Todos os Tipos' },
+                    { value: 'anime', label: '🎭 Anime' },
+                    { value: 'manga', label: '📚 Mangá' },
+                    { value: 'game', label: '🎮 Game' },
+                    { value: 'movie', label: '🎬 Filme' },
+                    { value: 'tv', label: '📺 TV' },
+                    { value: 'book', label: '📖 Livro' },
+                  ]}
+                />
+                <GlassSelect
+                  value={selectedStatus}
+                  onChange={(value) => setSelectedStatus(value as Status | 'all')}
+                  options={statusOptions}
+                />
+                <GlassSelect
+                  value={sortBy}
+                  onChange={(value) => setSortBy(value as 'title' | 'rating' | 'hoursSpent' | 'updatedAt')}
+                  options={sortOptions}
+                />
+                <div className="flex bg-white/5 border border-white/20 rounded-xl p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-lg transition-all ${
+                      viewMode === 'grid'
+                        ? 'bg-cyan-500 text-white shadow-lg'
+                        : 'text-white/60 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Grid size={18} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-lg transition-all ${
+                      viewMode === 'list'
+                        ? 'bg-cyan-500 text-white shadow-lg'
+                        : 'text-white/60 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <List size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </GlassFilterBar>
+        </motion.div>
+
+        {/* Grade de Mídias */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
+          {hasConnectionError && <ConnectivityError />}
+
+          {filteredAndSortedItems.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-16"
+            >
+              <NeonOrnament variant="circle" color="cyan" className="mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-white mb-3">
+                {debouncedSearchQuery ? 'Nenhum resultado encontrado' : 'Sua biblioteca está vazia'}
+              </h3>
+              <p className="text-white/60 mb-8 max-w-md mx-auto">
+                {debouncedSearchQuery
+                  ? 'Tente ajustar os filtros ou termos de busca'
+                  : 'Comece adicionando suas primeiras mídias para organizar sua jornada geek!'
+                }
+              </p>
+              {!debouncedSearchQuery && (
+                <button
+                  onClick={() => setShowAddOptions(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium rounded-xl hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg hover:shadow-cyan-500/25"
+                >
+                  <Plus size={20} />
+                  Adicionar Primeira Mídia
+                </button>
+              )}
+            </motion.div>
+          ) : (
+            <div
+              className={
+                viewMode === 'grid'
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                  : 'space-y-4'
+              }
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredAndSortedItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.05,
+                      layout: { duration: 0.3 }
+                    }}
+                  >
+                    <MediaCard
+                      item={item}
+                      viewMode={viewMode}
+                      onEdit={() => navigateToEditMedia(item)}
+                      onDelete={() => handleDeleteItem(item)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Modais */}
         <AnimatePresence>
           {showAddOptions && (
             <>
@@ -177,6 +314,29 @@ const ModernLibrary: React.FC = () => {
                 </div>
               </motion.div>
             </>
+          )}
+
+          {selectedExternalResult && (
+            <AddMediaFromSearchModal
+              selectedResult={selectedExternalResult}
+              onAdd={handleAddFromSearch}
+              onClose={() => setSelectedExternalResult(null)}
+            />
+          )}
+
+          {showDeleteConfirm && itemToDelete && (
+            <ConfirmationModal
+              isOpen={showDeleteConfirm}
+              onConfirm={confirmDelete}
+              onCancel={() => {
+                setShowDeleteConfirm(false);
+                setItemToDelete(null);
+              }}
+              title="Confirmar Exclusão"
+              message={`Tem certeza que deseja excluir "${itemToDelete.title}"? Esta ação não pode ser desfeita.`}
+              confirmText="Excluir"
+              confirmVariant="danger"
+            />
           )}
         </AnimatePresence>
       </div>
