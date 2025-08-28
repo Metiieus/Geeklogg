@@ -423,27 +423,54 @@ const ModernLibrary: React.FC = () => {
       {/* Modals */}
       <AnimatePresence>
         {showAddOptions && (
-          <div key="add-options-modal" className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4">
+          <>
             {/* Overlay */}
             <motion.div
+              key="add-options-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-[9998]"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
               onClick={() => setShowAddOptions(false)}
             />
 
             {/* Modal Content */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              key="add-options-content"
+              id="modal-adicionar-midia-center"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3, type: "spring", damping: 25, stiffness: 200 }}
-              className="relative z-10 w-full max-w-4xl max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto"
+              className="modal-center-force"
+              style={{
+                position: 'fixed !important',
+                top: '50% !important',
+                left: '50% !important',
+                transform: 'translate(-50%, -50%) !important',
+                zIndex: '9999 !important',
+                maxHeight: '80vh !important',
+                overflowY: 'auto !important',
+                minWidth: '300px !important',
+                maxWidth: '90vw !important',
+                margin: '0 !important',
+                padding: '0 !important',
+                bottom: 'auto !important',
+                right: 'auto !important',
+                display: 'block !important',
+                visibility: 'visible !important',
+                width: 'auto !important',
+                height: 'auto !important',
+                inset: 'auto !important',
+                flex: 'none !important',
+                alignItems: 'initial !important',
+                justifyContent: 'initial !important'
+              }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-4 sm:p-6">
+              <div className="bg-slate-800 rounded-2xl border border-white/20 w-full p-6">
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold text-white">
                     Adicionar Nova Mídia
@@ -465,7 +492,7 @@ const ModernLibrary: React.FC = () => {
                 />
               </div>
             </motion.div>
-          </div>
+          </>
         )}
 
 

@@ -1,0 +1,41 @@
+/* Força centralização específica do modal Adicionar Nova Mídia */
+#modal-adicionar-midia-center,
+.modal-center-force {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  min-width: 300px !important;
+  max-width: 90vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  bottom: auto !important;
+  right: auto !important;
+  display: block !important;
+  visibility: visible !important;
+  width: auto !important;
+  height: auto !important;
+  inset: auto !important;
+  flex: none !important;
+  align-items: initial !important;
+  justify-content: initial !important;
+  align-self: initial !important;
+  justify-self: initial !important;
+}
+
+/* Anula qualquer container flexbox que possa interferir */
+#modal-adicionar-midia-center {
+  all: unset !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  min-width: 300px !important;
+  max-width: 90vw !important;
+}
