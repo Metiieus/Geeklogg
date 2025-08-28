@@ -375,12 +375,12 @@ export const AddMediaFromSearchModal: React.FC<
                   </div>
                 )}
 
-                {externalResult.authors &&
-                  externalResult.authors.length > 0 && (
+                {selectedResult.authors &&
+                  selectedResult.authors.length > 0 && (
                     <div className="flex items-center gap-2 text-slate-400 text-sm">
                       <Users size={14} className="sm:w-4 sm:h-4" />
                       <span className="truncate">
-                        {externalResult.authors.slice(0, 2).join(", ")}
+                        {selectedResult.authors.slice(0, 2).join(", ")}
                       </span>
                     </div>
                   )}
