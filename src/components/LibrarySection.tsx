@@ -218,29 +218,59 @@ export default function LibrarySection() {
 
   return (
     <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen">
-      {/* Header Moderno */}
+      {/* Header com Barra de Pesquisa Integrada */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8"
+        className="flex flex-col gap-6 mb-8"
       >
-        <div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-2">
-            Minha Biblioteca
-          </h1>
-          <p className="text-white/60 text-lg">{filtered.length} itens na sua coleção</p>
+        {/* Título */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-2">
+              Minha Biblioteca
+            </h1>
+            <p className="text-white/60 text-lg">{filtered.length} itens na sua coleção</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActivePage("add-media")}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold text-white"
+            >
+              <IconPlus className="w-5 h-5" /> Adicionar Manualmente
+            </motion.button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setActivePage("add-media")}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 shadow-lg shadow-cyan-600/25 font-semibold"
-          >
-            <IconPlus className="w-5 h-5" /> Adicionar
-          </motion.button>
-
+        {/* Barra de Pesquisa Online Integrada */}
+        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+          <div className="flex-1 relative">
+            <input
+              placeholder="Buscar mídia online (livros, filmes, jogos...)..."
+              className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-16 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
+            />
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
+              <IconSearch className="w-6 h-6" />
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                // Abrir modal de busca online
+                console.log('Abrir busca online');
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.03 2 10.67 2 15.31 6.48 19.33 12 19.33c5.52 0 10-4.02 10-8.66C22 6.03 17.52 2 12 2zm0 14.33c-3.31 0-6-2.18-6-4.86S8.69 6.61 12 6.61s6 2.18 6 4.86-2.69 4.86-6 4.86z"/>
+                <path d="M8 12h8M12 8v8"/>
+              </svg>
+              Buscar Online
+            </motion.button>
+          </div>
         </div>
       </motion.div>
 
@@ -319,7 +349,7 @@ export default function LibrarySection() {
         </motion.section>
       )}
 
-      {/* Barra de busca e ordenação */}
+      {/* Barra de busca local e ordenação */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -330,11 +360,13 @@ export default function LibrarySection() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por título, tags ou descrição..."
-            className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-12 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
+            placeholder="Filtrar sua biblioteca por título, tags ou descrição..."
+            className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-12 py-4 text-lg outline-none focus:border-emerald-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
           />
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-            <IconSearch className="w-5 h-5" />
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 7h18M3 12h12M3 17h6"/>
+            </svg>
           </div>
           {query && (
             <button
@@ -351,7 +383,7 @@ export default function LibrarySection() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortKey)}
-            className="bg-slate-800/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-cyan-400/50 backdrop-blur-sm text-white min-w-48"
+            className="bg-slate-800/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-emerald-400/50 backdrop-blur-sm text-white min-w-48"
           >
             <option value="updatedAt">Mais Recentes</option>
             <option value="createdAt">Data de Inclusão</option>
