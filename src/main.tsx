@@ -2,24 +2,19 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import "./modal-center-force.css";
-import "./modal-scroll-fixes.css";
-import { AuthProvider } from "./context/AuthContext";
-import { ToastProvider } from "./context/ToastContext";
-import { initializeViewportHeight } from "./utils/viewportHeight";
 
-// Inicializar proteções de segurança
-// import "./utils/consoleProtection"; // Desabilitado para debug
+console.log('Main.tsx carregado');
 
-// Inicializar viewport height para mobile
-initializeViewportHeight();
+const rootElement = document.getElementById("root");
+console.log('Root element:', rootElement);
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <AuthProvider>
-      <ToastProvider>
-        <App />
-      </ToastProvider>
-    </AuthProvider>
-  </StrictMode>,
-);
+if (rootElement) {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+  console.log('App renderizado');
+} else {
+  console.error('Root element não encontrado!');
+}
