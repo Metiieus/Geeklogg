@@ -111,7 +111,7 @@ const defaultSettings: UserSettings = {
   },
 };
 
-// Componente principal da aplicaç��o autenticada
+// Componente principal da aplicação autenticada
 const AuthenticatedApp: React.FC = () => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -157,7 +157,7 @@ const AuthenticatedApp: React.FC = () => {
       case 'add-media':
         return <AddMediaPage />;
       case 'edit-media':
-        return <EditMediaPageWrapper />;
+        return <EditMediaPlaceholder />;
       case 'profile':
         return <Profile />;
       default:
