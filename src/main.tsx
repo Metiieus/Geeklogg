@@ -5,6 +5,7 @@ import "./index.css";
 import "./modal-center-force.css";
 import "./modal-scroll-fixes.css";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 import { initializeViewportHeight } from "./utils/viewportHeight";
 
 // Inicializar proteções de segurança
