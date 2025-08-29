@@ -63,6 +63,7 @@ export interface MediaItem {
   externalLink?: string;
   type: MediaType;
   description?: string;
+  isFeatured?: boolean;
   createdAt: string;
   updatedAt: string;
 }

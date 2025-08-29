@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Search, X, Loader, AlertCircle, Book, Film, Tv, Gamepad2 } from "lucide-react";
+import { Search, X, AlertCircle, Book, Film, Tv, Gamepad2 } from "lucide-react";
 import { MediaType } from "../App";
 import {
   externalMediaService,
@@ -15,9 +15,11 @@ interface MediaSearchBarProps {
 }
 
 const mediaTypeOptions = [
-  { value: "books", label: "Livros", icon: Book },
+  { value: "anime", label: "Anime", icon: Film },
   { value: "movies", label: "Filmes", icon: Film },
+  { value: "series", label: "Séries", icon: Tv },
   { value: "games", label: "Jogos", icon: Gamepad2 },
+  { value: "books", label: "Livros", icon: Book },
 ] as const;
 
 export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
@@ -72,26 +74,6 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Função para detectar automaticamente o tipo baseado na query
-  const detectTypeFromQuery = useCallback((query: string, currentType: MediaType): MediaType => {
-    const lowerQuery = query.toLowerCase();
-
-    // Animes populares e palavras-chave
-    const animeKeywords = [
-      'one piece', 'naruto', 'dragon ball', 'attack on titan', 'demon slayer',
-      'my hero academia', 'jujutsu kaisen', 'chainsaw man', 'death note',
-      'fullmetal alchemist', 'hunter x hunter', 'bleach', 'pokemon',
-      'sailor moon', 'evangelion', 'cowboy bebop', 'anime', 'manga'
-    ];
-
-    if (animeKeywords.some(keyword => lowerQuery.includes(keyword))) {
-      return "anime";
-    }
-
-    // Mantém o tipo selecionado se não detectar automaticamente
-    return currentType;
   }, []);
 
   // Função de busca com debounce
@@ -154,21 +136,52 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
         setIsLoading(false);
       }
     },
-    [apiStatus, showError, showWarning, detectTypeFromQuery, onTypeChange],
+    [apiStatus, showError, showWarning],
   );
 
   // Debounce da busca
   const handleInputChange = (value: string) => {
+    let finalType: MediaType = selectedType;
+    // Detectar tags como #anime, #filme, #serie, #jogo
+    const tagMatch = value.match(/#(anime|filme|filmes|serie|série|series|jogo|jogos|game|games|livro|livros)/i);
+    if (tagMatch) {
+      const tag = tagMatch[1].toLowerCase();
+      switch (tag) {
+        case 'anime':
+          finalType = 'anime';
+          break;
+        case 'filme':
+        case 'filmes':
+          finalType = 'movies';
+          break;
+        case 'serie':
+        case 'série':
+        case 'series':
+          finalType = 'series';
+          break;
+        case 'jogo':
+        case 'jogos':
+        case 'game':
+        case 'games':
+          finalType = 'games';
+          break;
+        case 'livro':
+        case 'livros':
+          finalType = 'books';
+          break;
+      }
+      onTypeChange(finalType);
+      value = value.replace(tagMatch[0], '').trim();
+    }
+
     setQuery(value);
 
-    // Limpar timeout anterior
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Configurar novo timeout
     timeoutRef.current = setTimeout(() => {
-      performSearch(value, selectedType);
+      performSearch(value, finalType);
     }, 500);
   };
 
@@ -295,6 +308,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
                           src={result.image}
                           alt={result.title}
                           className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display =
                               "none";

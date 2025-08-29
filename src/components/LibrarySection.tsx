@@ -3,8 +3,10 @@ import { useAppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
 import { MediaCard } from '../design-system/components/MediaCard';
 import type { MediaItemDS } from '../design-system/components/MediaCard';
-import { AddMediaSearchModal } from './modals/AddMediaSearchModal';
 import type { ExternalMediaResult } from '../services/externalMediaService';
+import { MediaSearchBar } from './MediaSearchBar';
+import { AddMediaModal } from './modals/AddMediaModal';
+import EditFeaturedModal from './modals/EditFeaturedModal';
 
 // Tipos do seu app (ajuste se os nomes diferirem)
 type MediaType = "games" | "anime" | "series" | "books" | "movies";
@@ -26,6 +28,7 @@ type MediaItem = {
   externalLink?: string;
   type: MediaType;
   description?: string;
+  isFeatured?: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -47,13 +50,6 @@ const convertToDesignSystemItem = (item: MediaItem): MediaItemDS => ({
 });
 
 // ---------------------------------------------
-// Ícones inline (sem libs)
-const IconGrid = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
-);
-const IconSearch = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20l-6-6zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-);
 const IconPlus = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>
 );
@@ -106,10 +102,10 @@ type SortKey = "updatedAt" | "rating" | "title" | "createdAt";
 export default function LibrarySection() {
   const {
     mediaItems = [],
+    setMediaItems,
     setActivePage,
     setEditingMediaItem,
     settings,
-    addMediaItem,
   } = useAppContext();
 
   const [query, setQuery] = useState("");
@@ -117,7 +113,9 @@ export default function LibrarySection() {
   const [statuses, setStatuses] = useState<Set<Status>>(new Set());
   const [onlyFav, setOnlyFav] = useState(false); // se você tiver flag de favorito, plugue aqui
   const [sortBy, setSortBy] = useState<SortKey>(settings?.defaultLibrarySort as SortKey || "updatedAt");
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchType, setSearchType] = useState<MediaType>('games');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
 
   const q = useDeferredValue(query.trim().toLowerCase());
 
@@ -171,14 +169,12 @@ export default function LibrarySection() {
       description: result.description,
       tags: result.genres || [],
       externalLink: result.link,
+      isFeatured: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    if (addMediaItem) {
-      addMediaItem(newItem);
-    }
-    setIsSearchModalOpen(false);
+    setMediaItems(prev => [...prev, newItem]);
   };
 
   // ---------- Empty state
@@ -203,35 +199,19 @@ export default function LibrarySection() {
 
             {/* Barra de Pesquisa Online */}
             <div className="max-w-2xl mx-auto mb-6">
-              <div className="flex-1 relative">
-                <input
-                  placeholder="Buscar mídia online (livros, filmes, jogos...)..."
-                  className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-16 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-                  <IconSearch className="w-6 h-6" />
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsSearchModalOpen(true)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="m21 21-4.35-4.35"/>
-                <path d="M11 15a4 4 0 0 0 4-4"/>
-              </svg>
-                  Buscar Online
-                </motion.button>
-              </div>
+              <MediaSearchBar
+                selectedType={searchType}
+                onTypeChange={setSearchType}
+                onResultSelect={handleSearchResultSelect}
+                placeholder="Buscar mídia online..."
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setActivePage("add-media")}
+                onClick={() => setIsAddModalOpen(true)}
                 className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold"
               >
                 <IconPlus /> Adicionar Manualmente
@@ -239,19 +219,14 @@ export default function LibrarySection() {
             </div>
           </motion.div>
         </div>
-
-        {/* Search Modal */}
-        <AddMediaSearchModal
-          isOpen={isSearchModalOpen}
-          onClose={() => setIsSearchModalOpen(false)}
-          onResultSelect={handleSearchResultSelect}
-        />
       </div>
     );
   }
 
   // Obter items destacados
   const featuredItems = useMemo(() => {
+    const custom = filtered.filter(item => item.isFeatured);
+    if (custom.length > 0) return custom.slice(0, 6);
     return filtered
       .filter(item => item.rating && item.rating >= 8)
       .slice(0, 6);
@@ -289,7 +264,7 @@ export default function LibrarySection() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setActivePage("add-media")}
+              onClick={() => setIsAddModalOpen(true)}
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold text-white"
             >
               <IconPlus className="w-5 h-5" /> Adicionar Manualmente
@@ -299,26 +274,13 @@ export default function LibrarySection() {
 
         {/* Barra de Pesquisa Online Integrada */}
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-          <div className="flex-1 relative">
-            <input
-              placeholder="Buscar mídia online (livros, filmes, jogos...)..."
-              className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-16 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
+          <div className="flex-1">
+            <MediaSearchBar
+              selectedType={searchType}
+              onTypeChange={setSearchType}
+              onResultSelect={handleSearchResultSelect}
+              placeholder="Buscar mídia online..."
             />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-              <IconSearch className="w-6 h-6" />
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsSearchModalOpen(true)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.03 2 10.67 2 15.31 6.48 19.33 12 19.33c5.52 0 10-4.02 10-8.66C22 6.03 17.52 2 12 2zm0 14.33c-3.31 0-6-2.18-6-4.86S8.69 6.61 12 6.61s6 2.18 6 4.86-2.69 4.86-6 4.86z"/>
-                <path d="M8 12h8M12 8v8"/>
-              </svg>
-              Buscar Online
-            </motion.button>
           </div>
         </div>
       </motion.div>
@@ -331,7 +293,15 @@ export default function LibrarySection() {
           transition={{ delay: 0.2 }}
           className="mb-12"
         >
-          <h2 className="text-2xl font-bold mb-6 text-white/90">Destaques da Coleção</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-white/90">Destaques da Coleção</h2>
+            <button
+              onClick={() => setIsFeaturedModalOpen(true)}
+              className="text-sm px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300"
+            >
+              Editar
+            </button>
+          </div>
           <div className="overflow-x-auto pb-4">
             <div className="flex gap-6 w-max">
               {featuredItems.map((item, index) => (
@@ -355,6 +325,7 @@ export default function LibrarySection() {
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         loading="lazy"
+                        referrerPolicy="no-referrer"
                         onError={(e) => {
                           console.log('Image load error for item:', item.title, 'URL:', item.cover);
                           const target = e.target as HTMLImageElement;
@@ -590,6 +561,7 @@ export default function LibrarySection() {
                           alt={bestItem.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          referrerPolicy="no-referrer"
                           onError={(e) => {
                             console.log('Image load error for best item:', bestItem.title, 'URL:', bestItem.cover);
                             const target = e.target as HTMLImageElement;
@@ -682,11 +654,21 @@ export default function LibrarySection() {
         </div>
       )}
 
-      {/* Search Modal */}
-      <AddMediaSearchModal
-        isOpen={isSearchModalOpen}
-        onClose={() => setIsSearchModalOpen(false)}
-        onResultSelect={handleSearchResultSelect}
+      {isAddModalOpen && (
+        <AddMediaModal
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={(item) => {
+            setMediaItems(prev => [...prev, { ...item, isFeatured: false }]);
+          }}
+        />
+      )}
+      <EditFeaturedModal
+        isOpen={isFeaturedModalOpen}
+        selectedIds={mediaItems.filter(i => i.isFeatured).map(i => i.id)}
+        onClose={() => setIsFeaturedModalOpen(false)}
+        onSave={(ids) => {
+          setMediaItems(prev => prev.map(it => ({ ...it, isFeatured: ids.includes(it.id) })));
+        }}
       />
     </div>
   );
@@ -712,6 +694,7 @@ function CardGrid({ item, onOpen }: { item: MediaItem; onOpen(): void }) {
             alt={item.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             loading="lazy"
+            referrerPolicy="no-referrer"
             onError={() => setImageError(true)}
           />
         ) : (
