@@ -34,7 +34,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
     >
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 pt-6 pb-6 border-b border-white/20 flex-shrink-0">
           <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
             <div className="min-w-0 flex-1">
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
@@ -55,7 +55,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
         </div>
 
         {/* Search Content */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto min-h-0">
+        <div className="flex-1 pt-16 px-6 pb-48 mb-14 overflow-y-auto min-h-0">
           <div className="max-w-3xl mx-auto">
             <MediaSearchBar
               selectedType={selectedType}
