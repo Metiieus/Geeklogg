@@ -3,6 +3,8 @@ import { useAppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
 import { MediaCard } from '../design-system/components/MediaCard';
 import type { MediaItemDS } from '../design-system/components/MediaCard';
+import { AddMediaSearchModal } from './modals/AddMediaSearchModal';
+import type { ExternalMediaResult } from '../services/externalMediaService';
 
 // Tipos do seu app (ajuste se os nomes diferirem)
 type MediaType = "games" | "anime" | "series" | "books" | "movies";
@@ -107,6 +109,7 @@ export default function LibrarySection() {
     setActivePage,
     setEditingMediaItem,
     settings,
+    addMediaItem,
   } = useAppContext();
 
   const [query, setQuery] = useState("");
@@ -114,6 +117,7 @@ export default function LibrarySection() {
   const [statuses, setStatuses] = useState<Set<Status>>(new Set());
   const [onlyFav, setOnlyFav] = useState(false); // se você tiver flag de favorito, plugue aqui
   const [sortBy, setSortBy] = useState<SortKey>(settings?.defaultLibrarySort as SortKey || "updatedAt");
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const q = useDeferredValue(query.trim().toLowerCase());
 
@@ -154,6 +158,27 @@ export default function LibrarySection() {
       if (next.has(value)) next.delete(value); else next.add(value);
       return next;
     });
+  };
+
+  const handleSearchResultSelect = (result: ExternalMediaResult) => {
+    // Converter resultado externo para MediaItem e adicionar
+    const newItem: MediaItem = {
+      id: crypto.randomUUID(),
+      title: result.title,
+      cover: result.image,
+      type: result.type as MediaType,
+      status: 'planned' as Status,
+      description: result.description,
+      tags: result.genres || [],
+      externalLink: result.link,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (addMediaItem) {
+      addMediaItem(newItem);
+    }
+    setIsSearchModalOpen(false);
   };
 
   // ---------- Empty state
@@ -258,10 +283,7 @@ export default function LibrarySection() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                // Abrir modal de busca online
-                console.log('Abrir busca online');
-              }}
+              onClick={() => setIsSearchModalOpen(true)}
               className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -632,6 +654,13 @@ export default function LibrarySection() {
           </div>
         </div>
       )}
+
+      {/* Search Modal */}
+      <AddMediaSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        onResultSelect={handleSearchResultSelect}
+      />
     </div>
   );
 }
