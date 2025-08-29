@@ -20,10 +20,8 @@ const PerformanceOptimizer: React.FC = () => {
       document.head.appendChild(link);
     });
 
-    // 2. Prefetch de recursos que podem ser usados em breve
-    const prefetchResources = [
-      '/api/health', // Health check
-    ];
+    // 2. Prefetch de recursos que podem ser usados em breve (desativado para evitar chamadas a backend inexistente em dev)
+    const prefetchResources: string[] = [];
 
     prefetchResources.forEach(resource => {
       const link = document.createElement('link');
