@@ -32,7 +32,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    title: item.title,
+    title: item.title || "",
     type: item.type,
     status: item.status,
     rating: item.rating?.toString() || "",
@@ -42,7 +42,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
     startDate: item.startDate || "",
     endDate: item.endDate || "",
     platform: item.platform || "",
-    tags: item.tags.join(", "),
+    tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
     externalLink: item.externalLink || "",
     coverPreview: item.cover || "",
     coverFile: undefined as File | undefined,
