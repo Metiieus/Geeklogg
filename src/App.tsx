@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Star, Clock, Edit, Trash2, ExternalLink, Play, Book, 
-  Film, Gamepad2, MoreHorizontal, Calendar, Award 
+  Film, Gamepad2
 } from 'lucide-react';
-import { colors, gradients, shadows, animations, getCategoryColors, getCategoryGradient } from './design-system/tokens';
+import { shadows, getCategoryColors, getCategoryGradient } from './design-system/tokens';
 
 export interface MediaItemDS {
   id: string;
@@ -79,7 +79,6 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   variant = 'default',
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const categoryColors = getCategoryColors(item.type);
