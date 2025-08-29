@@ -16,7 +16,9 @@ initializeViewportHeight();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <ToastProvider>
+        <App />
+      </ToastProvider>
     </AuthProvider>
   </StrictMode>,
 );
