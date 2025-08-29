@@ -509,8 +509,14 @@ export default function LibrarySection() {
                           alt={bestItem.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          onError={(e) => {
+                            console.log('Image load error for best item:', bestItem.title, 'URL:', bestItem.cover);
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
                         />
-                      ) : (
+                      ) : null}
+                      {!bestItem.cover && (
                         <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
                           <div className="text-center">
                             <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[bestItem.type]} flex items-center justify-center mb-3 mx-auto`}>
