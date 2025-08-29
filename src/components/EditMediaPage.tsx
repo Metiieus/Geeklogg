@@ -277,12 +277,12 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         </div>
 
         {/* Form */}
-        <form 
-          onSubmit={handleSubmit} 
+        <form
+          onSubmit={handleSubmit}
           className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
-          <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll">
-            <div className="space-y-4 sm:space-y-6">
+          <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll allow-scroll" style={{ touchAction: 'auto' }}>
+            <div className="space-y-4 sm:space-y-6 pb-safe">
               {/* Basic Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
@@ -294,7 +294,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     required
                     value={formData.title}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base transition-all duration-200"
                     placeholder="Digite o título da mídia"
                   />
                 </div>
