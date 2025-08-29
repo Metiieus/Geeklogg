@@ -567,8 +567,14 @@ export default function LibrarySection() {
                                 alt={item.title}
                                 className="w-full h-full object-cover"
                                 loading="lazy"
+                                onError={(e) => {
+                                  console.log('Image load error for recent item:', item.title, 'URL:', item.cover);
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
                               />
-                            ) : (
+                            ) : null}
+                            {!item.cover && (
                               <div className="w-full h-full flex items-center justify-center">
                                 <span className="text-white/60 text-xs font-bold">{item.title.charAt(0)}</span>
                               </div>
