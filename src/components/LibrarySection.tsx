@@ -276,8 +276,14 @@ export default function LibrarySection() {
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         loading="lazy"
+                        onError={(e) => {
+                          console.log('Image load error for item:', item.title, 'URL:', item.cover);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
-                    ) : (
+                    ) : null}
+                    {!item.cover && (
                       <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
                         <div className="text-center">
                           <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-2 mx-auto`}>
