@@ -1,5 +1,8 @@
 import React, { useMemo, useState, useDeferredValue } from "react";
 import { useAppContext } from "../context/AppContext";
+import { motion } from "framer-motion";
+import { MediaCard } from '../design-system/components/MediaCard';
+import type { MediaItemDS } from '../design-system/components/MediaCard';
 
 // Tipos do seu app (ajuste se os nomes diferirem)
 type MediaType = "games" | "anime" | "series" | "books" | "movies";
@@ -24,6 +27,22 @@ type MediaItem = {
   createdAt: string;
   updatedAt: string;
 };
+
+// Converter MediaItem para MediaItemDS
+const convertToDesignSystemItem = (item: MediaItem): MediaItemDS => ({
+  id: item.id,
+  title: item.title,
+  cover: item.cover,
+  type: item.type,
+  status: item.status,
+  rating: item.rating,
+  hoursSpent: item.hoursSpent,
+  currentPage: item.currentPage,
+  totalPages: item.totalPages,
+  tags: item.tags,
+  externalLink: item.externalLink,
+  synopsis: item.description
+});
 
 // ---------------------------------------------
 // Ícones inline (sem libs)
@@ -53,8 +72,8 @@ const IconType: Record<MediaType, JSX.Element> = {
 // Status -> estilização
 const statusBadge: Record<Status, { label: string; cls: string }> = {
   "completed": { label: "Concluído", cls: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/20" },
-  "in-progress": { label: "Em progresso", cls: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-400/20" },
-  "dropped": { label: "Dropado", cls: "bg-rose-500/15 text-rose-300 ring-1 ring-rose-400/20" },
+  "in-progress": { label: "Em Progresso", cls: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-400/20" },
+  "dropped": { label: "Abandonado", cls: "bg-rose-500/15 text-rose-300 ring-1 ring-rose-400/20" },
   "planned": { label: "Planejado", cls: "bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20" },
 };
 
@@ -64,6 +83,14 @@ const typePill: Record<MediaType, string> = {
   series: "from-indigo-500/20 to-indigo-400/10 text-indigo-300",
   books: "from-amber-500/20 to-amber-400/10 text-amber-300",
   movies: "from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300",
+};
+
+const typeLabels: Record<MediaType, string> = {
+  games: "Games",
+  anime: "Anime",
+  series: "Séries",
+  books: "Livros",
+  movies: "Filmes",
 };
 
 function toStars(r?: number) {
@@ -136,62 +163,116 @@ export default function LibrarySection() {
   // ---------- Empty state
   if (!mediaItems || mediaItems.length === 0) {
     return (
-      <div className="p-6 md:p-8 text-white">
-        <div className="rounded-3xl bg-gradient-to-b from-slate-800/60 to-slate-900/60 border border-white/5 p-8 md:p-12 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-30 pointer-events-none"
-               style={{ background: "radial-gradient(1200px 400px at 20% -10%, rgba(6,182,212,0.12), transparent 40%), radial-gradient(1000px 300px at 80% 120%, rgba(139,92,246,0.12), transparent 40%)" }}/>
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">Minha Biblioteca</h1>
-          <p className="mt-3 text-white/70 max-w-xl">
-            Organize sua jornada geek com estilo e inteligência.
-          </p>
-          <div className="mt-6">
-            <button
-              onClick={() => setActivePage("add-media")}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 transition shadow-lg shadow-cyan-600/20"
-            >
-              <IconPlus /> Adicionar Mídia
-            </button>
-          </div>
+      <div className="p-4 md:p-8 text-white min-h-screen">
+        <div className="rounded-3xl bg-gradient-to-br from-slate-800/40 via-slate-900/60 to-slate-800/40 border border-white/10 p-8 md:p-12 relative overflow-hidden backdrop-blur-xl">
+          <div className="absolute inset-0 opacity-20 pointer-events-none"
+               style={{ background: "radial-gradient(1200px 400px at 20% -10%, rgba(6,182,212,0.15), transparent 40%), radial-gradient(1000px 300px at 80% 120%, rgba(139,92,246,0.15), transparent 40%)" }}/>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-4">
+              Minha Biblioteca
+            </h1>
+            <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8">
+              Organize sua jornada geek com estilo e inteligência. Comece adicionando seus primeiros itens!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActivePage("add-media")}
+                className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 shadow-lg shadow-cyan-600/25 font-semibold"
+              >
+                <IconPlus /> Adicionar Mídia
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-300 backdrop-blur-sm font-semibold"
+              >
+                <IconSearch /> Buscar Online
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
+  // Obter items destacados
+  const featuredItems = useMemo(() => {
+    return filtered
+      .filter(item => item.rating && item.rating >= 8)
+      .slice(0, 6);
+  }, [filtered]);
+
+  const recentItems = useMemo(() => {
+    return filtered
+      .slice(0, 8);
+  }, [filtered]);
+
+  const bestItem = useMemo(() => {
+    return filtered
+      .filter(item => item.rating && item.rating >= 9)
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
+  }, [filtered]);
+
   return (
-    <div className="p-4 md:p-6 text-white">
-      {/* Header + Ações */}
-      <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6 mb-6">
-        <div className="flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold">Biblioteca</h1>
-          <p className="text-white/60 mt-1">{filtered.length} itens encontrados</p>
+    <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen">
+      {/* Header Moderno */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8"
+      >
+        <div>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-2">
+            Minha Biblioteca
+          </h1>
+          <p className="text-white/60 text-lg">{filtered.length} itens na sua coleção</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
+        <div className="flex flex-wrap items-center gap-3">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setActivePage("add-media")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 transition"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 shadow-lg shadow-cyan-600/25 font-semibold"
           >
-            <IconPlus /> Adicionar
-          </button>
+            <IconPlus className="w-5 h-5" /> Adicionar
+          </motion.button>
 
-          <div className="flex p-1 rounded-xl bg-white/5 border border-white/10">
+          <div className="flex p-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
             <button
               onClick={() => setView("grid")}
-              className={`px-3 py-2 rounded-lg flex items-center gap-2 ${view === "grid" ? "bg-white/10" : "hover:bg-white/5"}`}
-              title="Grade"
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 ${
+                view === "grid"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "hover:bg-white/5 text-white/70 hover:text-white"
+              }`}
+              title="Visualização em Grade"
             >
-              <IconGrid />
+              <IconGrid className="w-4 h-4" />
+              <span className="hidden sm:inline">Grade</span>
             </button>
             <button
               onClick={() => setView("list")}
-              className={`px-3 py-2 rounded-lg flex items-center gap-2 ${view === "list" ? "bg-white/10" : "hover:bg-white/5"}`}
-              title="Lista"
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 ${
+                view === "list"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "hover:bg-white/5 text-white/70 hover:text-white"
+              }`}
+              title="Visualização em Lista"
             >
-              <IconList />
+              <IconList className="w-4 h-4" />
+              <span className="hidden sm:inline">Lista</span>
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Barra de busca e ordenação */}
       <div className="flex flex-col md:flex-row gap-3 md:items-center mb-4">
