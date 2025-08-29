@@ -49,9 +49,6 @@ const convertToDesignSystemItem = (item: MediaItem): MediaItemDS => ({
 const IconGrid = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
 );
-const IconList = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/></svg>
-);
 const IconSearch = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20l-6-6zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
 );
@@ -113,7 +110,6 @@ export default function LibrarySection() {
   } = useAppContext();
 
   const [query, setQuery] = useState("");
-  const [view, setView] = useState<"grid" | "list">("grid");
   const [types, setTypes] = useState<Set<MediaType>>(new Set()); // vazio = todos
   const [statuses, setStatuses] = useState<Set<Status>>(new Set());
   const [onlyFav, setOnlyFav] = useState(false); // se você tiver flag de favorito, plugue aqui
@@ -245,32 +241,6 @@ export default function LibrarySection() {
             <IconPlus className="w-5 h-5" /> Adicionar
           </motion.button>
 
-          <div className="flex p-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-            <button
-              onClick={() => setView("grid")}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 ${
-                view === "grid"
-                  ? "bg-white/15 text-white shadow-sm"
-                  : "hover:bg-white/5 text-white/70 hover:text-white"
-              }`}
-              title="Visualização em Grade"
-            >
-              <IconGrid className="w-4 h-4" />
-              <span className="hidden sm:inline">Grade</span>
-            </button>
-            <button
-              onClick={() => setView("list")}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 ${
-                view === "list"
-                  ? "bg-white/15 text-white shadow-sm"
-                  : "hover:bg-white/5 text-white/70 hover:text-white"
-              }`}
-              title="Visualização em Lista"
-            >
-              <IconList className="w-4 h-4" />
-              <span className="hidden sm:inline">Lista</span>
-            </button>
-          </div>
         </div>
       </motion.div>
 
@@ -478,58 +448,36 @@ export default function LibrarySection() {
               <span className="text-white/60">{filtered.length} itens</span>
             </div>
 
-            {view === "grid" ? (
-              <motion.div
-                layout
-                className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4"
-              >
-                {filtered.map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <MediaCard
-                      item={convertToDesignSystemItem(item)}
-                      onEdit={(dsItem) => {
-                        const originalItem = mediaItems.find(mi => mi.id === dsItem.id);
-                        if (originalItem) {
-                          setEditingMediaItem(originalItem);
-                          setActivePage("edit-media");
-                        }
-                      }}
-                      onDelete={(dsItem) => {
-                        // Implementar delete
-                        console.log('Delete:', dsItem.id);
-                      }}
-                      variant="default"
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div layout className="space-y-4">
-                {filtered.map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <CardList
-                      item={item}
-                      onOpen={() => {
-                        setEditingMediaItem(item);
+            <motion.div
+              layout
+              className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4"
+            >
+              {filtered.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <MediaCard
+                    item={convertToDesignSystemItem(item)}
+                    onEdit={(dsItem) => {
+                      const originalItem = mediaItems.find(mi => mi.id === dsItem.id);
+                      if (originalItem) {
+                        setEditingMediaItem(originalItem);
                         setActivePage("edit-media");
-                      }}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
+                      }
+                    }}
+                    onDelete={(dsItem) => {
+                      // Implementar delete
+                      console.log('Delete:', dsItem.id);
+                    }}
+                    variant="default"
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
 
           {/* Sidebar com Destaques */}
