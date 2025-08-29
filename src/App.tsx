@@ -11,7 +11,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import AccountDeletion from './components/AccountDeletion';
 import Profile from './components/Profile';
 import AddMediaPage from './components/AddMediaPage';
-import EditMediaPage from './components/EditMediaPage';
+import EditMediaPageWrapper from './components/EditMediaPageWrapper';
 import { LandingPage } from './components/LandingPage';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
