@@ -75,3 +75,5 @@ export const AddMediaPage: React.FC = () => {
     </div>
   );
 };
+
+export default AddMediaPage;

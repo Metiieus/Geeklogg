@@ -1,16 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+
 export type MediaKind = "games" | "movies" | "series" | "books" | "anime";
 export interface RadiantMediaCardProps {
   title: string;
   imageUrl: string;
-  kind: MediaKind;          // games | movies | series | books | anime
-  genre?: string;           // opcional (ex.: "Action", "Fantasy"...)
+  kind: MediaKind;     // games | movies | series | books | anime
+  genre?: string;      // opcional
   onClick?: () => void;
 }
 
-/** Paletas por tipo */
+/** Paletas por tipo (moldura neon) */
 const PALETTES: Record<MediaKind, { from: string; to: string; ring: string; accent: string }> = {
   games:  { from: "#0ea5e9", to: "#9333ea", ring: "rgba(147,51,234,.55)", accent: "#22d3ee" },
   movies: { from: "#f59e0b", to: "#ef4444", ring: "rgba(245,158,11,.55)", accent: "#f97316" },
