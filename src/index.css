@@ -16,6 +16,9 @@
 /* Utilitários responsivos para modais */
 @import "./components/responsive-modal-helpers.css";
 
+/* Estilos responsivos para biblioteca */
+@import "./styles/library-responsive.css";
+
 /* Estilos de acessibilidade WCAG */
 @import "./styles/accessibility.css";
 

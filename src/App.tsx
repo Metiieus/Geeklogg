@@ -11,6 +11,7 @@ const Settings = lazy(() => import("./components/Settings"));
 const Profile = lazy(() => import("./components/Profile"));
 const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
 const AccountDeletion = lazy(() => import("./components/AccountDeletion"));
+import { LibrarySection } from "./components/LibrarySection";
 import { SocialFeed } from "./components/SocialFeed";
 import { AddMediaPage } from "./components/AddMediaPage";
 import { EditMediaPage } from "./components/EditMediaPage";
@@ -119,6 +120,7 @@ export type ActivePage =
   | "social"
   | "add-media"
   | "edit-media"
+  | "library"
   | "privacy-policy"
   | "account-deletion";
 
@@ -299,6 +301,8 @@ function App() {
     switch (activePage) {
       case "dashboard":
         return <Dashboard />;
+      case "library":
+        return <LibrarySection />;
       case "reviews":
         return <Reviews />;
       case "timeline":
