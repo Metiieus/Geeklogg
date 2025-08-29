@@ -157,7 +157,7 @@ const AuthenticatedApp: React.FC = () => {
       case 'add-media':
         return <AddMediaPage />;
       case 'edit-media':
-        return <EditMediaPage />;
+        return <EditMediaPageWrapper />;
       case 'profile':
         return <Profile />;
       default:
