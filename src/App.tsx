@@ -10,8 +10,14 @@ import Settings from './components/Settings';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import AccountDeletion from './components/AccountDeletion';
 import Profile from './components/Profile';
+import AddMediaPage from './components/AddMediaPage';
+import EditMediaPage from './components/EditMediaPage';
+import { LandingPage } from './components/LandingPage';
+import { Login } from './components/Login';
+import { Register } from './components/Register';
 import { AppProvider } from './context/AppContext';
 import { useOptimizedContext } from './hooks/useOptimizedContext';
+import { useAuth } from './context/AuthContext';
 import { Home, BookOpen, MessageSquare, Clock, BarChart3, Settings as SettingsIcon, Users, User } from 'lucide-react';
 
 export type MediaType = 'games' | 'anime' | 'series' | 'books' | 'movies';
@@ -105,7 +111,8 @@ const defaultSettings: UserSettings = {
   },
 };
 
-const App: React.FC = () => {
+// Componente principal da aplicação autenticada
+const AuthenticatedApp: React.FC = () => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -147,6 +154,10 @@ const App: React.FC = () => {
         return <PrivacyPolicy />;
       case 'account-deletion':
         return <AccountDeletion />;
+      case 'add-media':
+        return <AddMediaPage />;
+      case 'edit-media':
+        return <EditMediaPage />;
       case 'profile':
         return <Profile />;
       default:
@@ -178,13 +189,75 @@ const App: React.FC = () => {
         <Sidebar />
         <div className="md:ml-20 xl:ml-64">
           <DesktopHeader pageName={pageMeta.name} pageIcon={pageMeta.icon} />
-          <main className="px-4 sm:px-6 md:px-8 py-6">
+          <main className="px-4 sm:px-6 md:px-8 py-6 pt-20 md:pt-6">
             {PageComponent}
           </main>
         </div>
         <MobileNav />
       </div>
     </AppProvider>
+  );
+};
+
+// Componente principal que gerencia autenticação
+const App: React.FC = () => {
+  const { user, loading } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-lg">Carregando GeekLog...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login modal
+  if (showLogin) {
+    return (
+      <div className="min-h-screen bg-gray-900">
+        <Login 
+          onCancel={() => setShowLogin(false)}
+          onRegister={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Show register modal
+  if (showRegister) {
+    return (
+      <div className="min-h-screen bg-gray-900">
+        <Register 
+          onCancel={() => setShowRegister(false)}
+          onLogin={() => {
+            setShowRegister(false);
+            setShowLogin(true);
+          }}
+        />
+      </div>
+    );
+  }
+
+  // User is authenticated - show main app
+  if (user) {
+    return <AuthenticatedApp />;
+  }
+
+  // User is not authenticated - show landing page
+  return (
+    <LandingPage
+      onLogin={() => setShowLogin(true)}
+      onRegister={() => setShowRegister(true)}
+    />
   );
 };
 
