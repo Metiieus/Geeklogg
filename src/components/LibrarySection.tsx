@@ -733,52 +733,94 @@ function CardGrid({ item, onOpen }: { item: MediaItem; onOpen(): void }) {
 
 function CardList({ item, onOpen }: { item: MediaItem; onOpen(): void }) {
   const status = statusBadge[item.status];
+  const [imageError, setImageError] = useState(false);
+
   return (
-    <button
+    <motion.button
       onClick={onOpen}
-      className="group w-full text-left bg-slate-900/60 border border-white/8 rounded-2xl overflow-hidden hover:-translate-y-0.5 transition shadow-lg shadow-black/20"
+      whileHover={{ scale: 1.02, y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      className="group w-full text-left bg-gradient-to-r from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:shadow-xl hover:shadow-cyan-500/10"
     >
       <div className="flex">
-        <div className="relative w-28 sm:w-40 aspect-[3/4] shrink-0 bg-slate-800/60">
-          {item.cover ? (
-            <img src={item.cover} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
-          ) : null}
-          <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-[11px] bg-gradient-to-br ${typePill[item.type]} border border-white/10 flex items-center gap-1.5`}>
-            {IconType[item.type]} {labelType(item.type)}
-          </div>
-        </div>
-        <div className="p-4 sm:p-5 flex-1">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="text-lg font-semibold">{item.title}</div>
-              <div className="mt-1 text-sm text-white/60 flex flex-wrap gap-3">
-                {item.platform && <span>🎮 {item.platform}</span>}
-                {item.hoursSpent ? <span>⏱ {item.hoursSpent}h</span> : null}
-                {item.totalPages ? <span>📖 {item.currentPage ?? 0}/{item.totalPages}</span> : null}
-                <span className={`${status.cls} px-2 py-0.5 rounded-full text-[11px]`}>{status.label}</span>
+        <div className="relative w-24 sm:w-32 lg:w-40 aspect-[3/4] shrink-0 bg-slate-800/60">
+          {!imageError && item.cover ? (
+            <img
+              src={item.cover}
+              alt={item.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
+              <div className="text-center">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-1 mx-auto`}>
+                  {IconType[item.type]}
+                </div>
+                <span className="text-white/80 font-bold text-sm">{item.title.charAt(0)}</span>
               </div>
             </div>
-            <div className="text-yellow-300 bg-black/30 px-2 py-1 rounded-full text-sm inline-flex items-center gap-1">
-              <IconStar /> {(item.rating ?? 0).toFixed(1)}
+          )}
+
+          {/* Type badge */}
+          <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-[10px] sm:text-[11px] bg-gradient-to-br ${typePill[item.type]} border border-white/10 flex items-center gap-1`}>
+            <span className="w-3 h-3">{IconType[item.type]}</span>
+            <span className="hidden sm:inline">{typeLabels[item.type]}</span>
+          </div>
+
+          {/* Rating badge */}
+          {item.rating && (
+            <div className="absolute top-2 right-2 text-yellow-300 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full text-xs inline-flex items-center gap-1">
+              <IconStar className="w-3 h-3" />
+              <span className="font-bold">{item.rating}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="p-3 sm:p-4 lg:p-5 flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base sm:text-lg font-semibold text-white truncate">{item.title}</h3>
+              <div className="mt-1 flex flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm text-white/60">
+                {item.platform && <span className="flex items-center gap-1">🎮 {item.platform}</span>}
+                {item.hoursSpent ? <span className="flex items-center gap-1">⏱ {item.hoursSpent}h</span> : null}
+                {item.totalPages ? (
+                  <span className="flex items-center gap-1">
+                    📖 {item.currentPage ?? 0}/{item.totalPages}
+                    <span className="ml-1 text-cyan-400">({Math.round(((item.currentPage ?? 0) / item.totalPages) * 100)}%)</span>
+                  </span>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Status badge */}
+            <div className={`px-3 py-1.5 rounded-full text-xs font-medium ${status.cls} shrink-0`}>
+              {status.label}
             </div>
           </div>
 
           {item.description ? (
-            <p className="mt-2 text-sm text-white/70 line-clamp-2">{item.description}</p>
+            <p className="text-xs sm:text-sm text-white/70 line-clamp-2 mb-3">{item.description}</p>
           ) : null}
 
           {item.tags?.length ? (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {item.tags.slice(0, 6).map(t => (
-                <span key={t} className="text-[11px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/70">
+            <div className="flex flex-wrap gap-1.5">
+              {item.tags.slice(0, 4).map(t => (
+                <span key={t} className="text-[10px] sm:text-[11px] px-2 py-1 rounded-full bg-white/10 border border-white/10 text-white/70">
                   #{t}
                 </span>
               ))}
+              {item.tags.length > 4 && (
+                <span className="text-[10px] sm:text-[11px] px-2 py-1 rounded-full bg-white/5 border border-white/10 text-white/50">
+                  +{item.tags.length - 4}
+                </span>
+              )}
             </div>
           ) : null}
         </div>
       </div>
-    </button>
+    </motion.button>
   );
 }
 
