@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Sidebar } from "./components/Sidebar";
 import { MobileSidebar } from "./components/MobileSidebar";
 import { DesktopHeader } from "./components/DesktopHeader";
@@ -30,7 +30,8 @@ import PerformanceOptimizer from "./components/PerformanceOptimizer";
 import { getMedias } from "./services/mediaService";
 import { getReviews } from "./services/reviewService";
 import { getMilestones } from "./services/milestoneService";
-import { loadProfile } from "./services/profileService";
+
+import { getSettings } from "./services/settingsService";
 import { AppProvider } from "./context/AppContext";
 import { useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
@@ -160,46 +161,42 @@ function App() {
     if (!user) return;
 
     const loadData = async () => {
-      const [mItems, revs, miles, prefs] = await Promise.all([
+      const [mItems, revs, miles] = await Promise.all([
         getMedias(),
         getReviews(),
         getMilestones(),
-        loadProfile(),
       ]);
       setMediaItems(mItems);
       setReviews(revs);
       setMilestones(miles);
-      if (prefs) {
-        const normalizedSettings = {
-          name: prefs.name || "Usuário",
-          bio: prefs.bio || "",
-          avatar: prefs.avatar || "",
-          cover: prefs.cover || "",
-          defaultLibrarySort: prefs.defaultLibrarySort || "updatedAt",
-          favorites: {
-            characters: Array.isArray(prefs.favorites?.characters)
-              ? prefs.favorites.characters
-              : [],
-            games: Array.isArray(prefs.favorites?.games)
-              ? prefs.favorites.games
-              : [],
-            movies: Array.isArray(prefs.favorites?.movies)
-              ? prefs.favorites.movies
-              : [],
-          },
+      
+      // Carregar configurações separadamente
+      const userSettings = await getSettings(user.uid);
+      let localSettings: UserSettings | null = null;
+      
+      if (userSettings) {
+        // Converter para o tipo local UserSettings
+        localSettings = {
+          name: userSettings.name || "Usuário",
+          bio: userSettings.bio || "",
+          avatar: userSettings.avatar,
+          cover: userSettings.cover,
+          favorites: userSettings.favorites || { characters: [], games: [], movies: [] },
+          defaultLibrarySort: userSettings.defaultLibrarySort || "updatedAt",
+          theme: userSettings.theme,
         };
-
-        setSettings(normalizedSettings);
+        setSettings(localSettings);
       }
 
-      if (mItems.length > 0 || revs.length > 0 || prefs) {
+      if (mItems.length > 0 || revs.length > 0 || localSettings) {
         try {
           const newAchievements = await checkAchievements(
             mItems,
             revs,
-            prefs || settings,
+            localSettings || settings,
           );
           if (newAchievements.length > 0) {
+            console.log('Novas conquistas desbloqueadas:', newAchievements);
           }
         } catch (error) {
           console.error("Erro ao verificar conquistas:", error);
@@ -210,17 +207,22 @@ function App() {
     loadData();
   }, [user]);
 
+  useEffect(() => {
+    if (settings) {
+      // Aplicar configurações quando disponíveis
+      console.log('Configurações aplicadas:', settings);
+    }
+  }, [settings]);
+
   // Global error handler for fetch failures
   useEffect(() => {
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      if (event.reason?.message?.includes('fetch') || event.reason?.name === 'TypeError') {
-        console.warn('Network error detected:', event.reason);
-        event.preventDefault(); // Prevent console error spam
-      }
+    const handleFetchError = (event: Event) => {
+      console.error('Fetch error detected:', event);
+      // Aqui você pode implementar lógica de retry ou notificação
     };
 
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-    return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener('unhandledrejection', handleFetchError);
+    return () => window.removeEventListener('unhandledrejection', handleFetchError);
   }, []);
 
   const contextValue = useOptimizedContext({
@@ -329,11 +331,11 @@ function App() {
             onBack={() => setActivePage("dashboard")}
           />
         );
-      case "edit-media":
+              case "edit-media":
         return editingMediaItem ? (
           <EditMediaPage
             item={editingMediaItem}
-            onSave={(updatedItem) => {
+            onSave={(updatedItem: MediaItem) => {
               setMediaItems(prev =>
                 prev.map(item => item.id === updatedItem.id ? updatedItem : item)
               );

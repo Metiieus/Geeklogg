@@ -1,6 +1,5 @@
 import React from "react";
-import { X, Calendar, Trophy, Star } from "lucide-react";
-import { motion } from "framer-motion";
+import { X, Trophy, Star, Zap, Target, Award } from "lucide-react";
 import { AchievementNode } from "../types/achievements";
 import { ModalWrapper } from "./ModalWrapper";
 

@@ -23,7 +23,7 @@ const AccountDeletion: React.FC = () => {
     try {
       await deleteAccount();
       showSuccess('Conta excluída com sucesso');
-    } catch (error) {
+    } catch {
       showError('Erro ao excluir conta. Tente novamente.');
       setIsDeleting(false);
     }
@@ -51,7 +51,7 @@ const AccountDeletion: React.FC = () => {
       URL.revokeObjectURL(url);
       setHasExportedData(true);
       showSuccess('Dados exportados com sucesso');
-    } catch (error) {
+    } catch {
       showError('Erro ao exportar dados');
     }
   };

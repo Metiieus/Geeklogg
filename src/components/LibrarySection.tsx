@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useDeferredValue } from "react";
+import React, { useMemo, useState, useDeferredValue, useCallback } from "react";
 import { useAppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
 import { MediaCard } from '../design-system/components/MediaCard';
@@ -29,6 +29,7 @@ type MediaItem = {
   type: MediaType;
   description?: string;
   isFeatured?: boolean;
+  isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -194,17 +195,17 @@ export default function LibrarySection() {
       id: crypto.randomUUID(),
       title: result.title,
       cover: result.image,
-      type: result.type as MediaType,
+      type: (result.originalType as MediaType) || 'books',
       status: 'planned' as Status,
       description: result.description,
       tags: result.genres || [],
-      externalLink: result.link,
+      externalLink: result.officialWebsite,
       isFeatured: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    setMediaItems(prev => [...prev, newItem]);
+    setMediaItems((prev: MediaItem[]) => [...prev, newItem]);
   };
 
   // ---------- Empty state
@@ -258,25 +259,9 @@ export default function LibrarySection() {
     )
   }
 
-  // Obter items destacados
-  const featuredItems = useMemo(() => {
-    const custom = filtered.filter(item => item.isFeatured);
-    if (custom.length > 0) return custom.slice(0, 6);
-    return filtered
-      .filter(item => item.rating && item.rating >= 8)
-      .slice(0, 6);
-  }, [filtered]);
 
-  const recentItems = useMemo(() => {
-    return filtered
-      .slice(0, 8);
-  }, [filtered]);
 
-  const bestItem = useMemo(() => {
-    return filtered
-      .filter(item => item.rating && item.rating >= 9)
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
-  }, [filtered]);
+
 
   return (
     <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen">

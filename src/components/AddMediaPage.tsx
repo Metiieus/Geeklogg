@@ -15,7 +15,11 @@ import { useToast } from "../context/ToastContext";
  * quando o usuário escolhe um resultado externo, abre o modal de confirmação.
  */
 export const AddMediaPage: React.FC = () => {
-  const { mediaItems, setMediaItems, navigateToEditMedia } = useAppContext() as any;
+  const { mediaItems, setMediaItems, navigateToEditMedia } = useAppContext() as {
+    mediaItems: MediaItem[];
+    setMediaItems: (items: MediaItem[]) => void;
+    navigateToEditMedia: (item: MediaItem) => void;
+  };
   const { showSuccess, showError } = useToast();
 
   const [selectedResult, setSelectedResult] = useState<ExternalMediaResult | null>(null);
