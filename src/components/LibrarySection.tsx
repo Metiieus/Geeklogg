@@ -642,55 +642,92 @@ export default function LibrarySection() {
 
 function CardGrid({ item, onOpen }: { item: MediaItem; onOpen(): void }) {
   const status = statusBadge[item.status];
+  const [imageError, setImageError] = useState(false);
+
   return (
-    <button
+    <motion.button
       onClick={onOpen}
-      className="group text-left bg-slate-900/60 border border-white/8 rounded-2xl overflow-hidden hover:-translate-y-0.5 transition shadow-lg shadow-black/20 hover:shadow-cyan-500/10"
+      whileHover={{ y: -8, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="group text-left bg-gradient-to-b from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-white/20 backdrop-blur-xl"
     >
-      <div className="relative aspect-[3/4] bg-slate-800/60">
-        {item.cover ? (
-          <img src={item.cover} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+      <div className="relative aspect-[3/4] bg-slate-800/60 overflow-hidden">
+        {!imageError && item.cover ? (
+          <img
+            src={item.cover}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+            onError={() => setImageError(true)}
+          />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-white/50">Sem capa</div>
+          <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
+            <div className="text-center">
+              <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-3 mx-auto`}>
+                {IconType[item.type]}
+              </div>
+              <span className="text-white/80 font-bold text-xl">{item.title.charAt(0)}</span>
+            </div>
+          </div>
         )}
-        {/* Gradiente */}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 to-transparent" />
-        {/* Type pill */}
-        <div className={`absolute top-2 left-2 px-2.5 py-1 rounded-full text-[11px] font-medium bg-gradient-to-br ${typePill[item.type]} border border-white/10 flex items-center gap-1.5`}>
-          {IconType[item.type]} {labelType(item.type)}
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+        {/* Type badge */}
+        <div className={`absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-br ${typePill[item.type]} border border-white/20 flex items-center gap-2 backdrop-blur-sm`}>
+          {IconType[item.type]}
+          <span className="hidden sm:inline">{typeLabels[item.type]}</span>
         </div>
-        {/* Nota */}
-        <div className="absolute top-2 right-2 flex items-center gap-1 text-yellow-300 bg-black/40 px-2 py-1 rounded-full text-xs">
-          <IconStar /> {(item.rating ?? 0).toFixed(1)}
-        </div>
+
+        {/* Rating */}
+        {item.rating && (
+          <div className="absolute top-3 right-3 flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-sm border border-yellow-500/30">
+            <IconStar className="w-4 h-4" />
+            <span className="font-bold">{item.rating}</span>
+          </div>
+        )}
+
         {/* Status */}
-        <div className={`absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[11px] font-medium ${status.cls}`}>
+        <div className={`absolute bottom-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium ${status.cls} backdrop-blur-sm`}>
           {status.label}
         </div>
+
+        {/* Progress for books */}
+        {item.type === 'books' && item.totalPages && (
+          <div className="absolute bottom-3 right-3 text-white/80 bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-xs font-medium">
+            {Math.round(((item.currentPage ?? 0) / item.totalPages) * 100)}%
+          </div>
+        )}
       </div>
-      <div className="p-3">
-        <div className="font-semibold truncate">{item.title}</div>
-        <div className="mt-1 text-xs text-white/60 flex items-center gap-3">
-          {item.hoursSpent ? (<span>⏱ {item.hoursSpent}h</span>) : null}
-          {item.totalPages ? (<span>📖 {item.currentPage ?? 0}/{item.totalPages}</span>) : null}
-          {item.platform ? (<span>🎮 {item.platform}</span>) : null}
+
+      <div className="p-4">
+        <h3 className="font-semibold text-lg text-white leading-tight line-clamp-2 mb-2">{item.title}</h3>
+
+        <div className="flex items-center justify-between text-xs text-white/60">
+          <div className="flex items-center gap-3">
+            {item.hoursSpent ? (<span className="flex items-center gap-1">⏱ {item.hoursSpent}h</span>) : null}
+            {item.totalPages ? (<span className="flex items-center gap-1">📖 {item.currentPage ?? 0}/{item.totalPages}</span>) : null}
+            {item.platform ? (<span className="flex items-center gap-1">🎮 {item.platform}</span>) : null}
+          </div>
         </div>
+
         {item.tags?.length ? (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {item.tags.slice(0, 3).map(t => (
-              <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/70">
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {item.tags.slice(0, 2).map(t => (
+              <span key={t} className="text-[10px] px-2 py-1 rounded-full bg-white/10 border border-white/10 text-white/70">
                 #{t}
               </span>
             ))}
-            {item.tags.length > 3 && (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/60">
-                +{item.tags.length - 3}
+            {item.tags.length > 2 && (
+              <span className="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-white/10 text-white/50">
+                +{item.tags.length - 2}
               </span>
             )}
           </div>
         ) : null}
       </div>
-    </button>
+    </motion.button>
   );
 }
 
