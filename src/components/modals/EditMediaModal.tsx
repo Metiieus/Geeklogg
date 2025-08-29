@@ -34,7 +34,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
     startDate: item.startDate || "",
     endDate: item.endDate || "",
     platform: item.platform || "",
-    tags: item.tags.join(", "),
+    tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
     externalLink: item.externalLink || "",
     coverPreview: item.cover || "",
     coverFile: undefined as File | undefined,
@@ -67,9 +67,11 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
       tags: formData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0),
+        ? formData.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
+        : [],
       externalLink: formData.externalLink || undefined,
       description: formData.description || undefined,
       coverFile: formData.coverFile,
@@ -94,9 +96,11 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
       tags: formData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0),
+        ? formData.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
+        : [],
       externalLink: formData.externalLink || undefined,
       cover: updateRes.cover ?? item.cover,
       description: formData.description || undefined,

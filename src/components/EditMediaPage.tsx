@@ -32,7 +32,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    title: item.title,
+    title: item.title || "",
     type: item.type,
     status: item.status,
     rating: item.rating?.toString() || "",
@@ -42,7 +42,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
     startDate: item.startDate || "",
     endDate: item.endDate || "",
     platform: item.platform || "",
-    tags: item.tags.join(", "),
+    tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
     externalLink: item.externalLink || "",
     coverPreview: item.cover || "",
     coverFile: undefined as File | undefined,
@@ -115,9 +115,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         endDate: formData.endDate || undefined,
         platform: formData.platform?.trim() || undefined,
         tags: formData.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+          ? formData.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter((tag) => tag.length > 0)
+          : [],
         externalLink: formData.externalLink?.trim() || undefined,
         description: formData.description?.trim() || undefined,
         coverFile: formData.coverFile,
@@ -142,9 +144,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         endDate: formData.endDate || undefined,
         platform: formData.platform?.trim() || undefined,
         tags: formData.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+          ? formData.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter((tag) => tag.length > 0)
+          : [],
         externalLink: formData.externalLink?.trim() || undefined,
         cover: updateRes.cover ?? item.cover,
         description: formData.description?.trim() || undefined,
@@ -252,11 +256,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
     >
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0 safe-area-padding-top">
           <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
             <button
               onClick={onBack}
-              className="p-2 sm:p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl border border-slate-600/50 transition-colors flex-shrink-0 touch-target"
+              className="p-2 sm:p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl border border-slate-600/50 transition-colors flex-shrink-0 touch-target no-zoom"
               type="button"
             >
               <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-white" />
@@ -273,12 +277,12 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         </div>
 
         {/* Form */}
-        <form 
-          onSubmit={handleSubmit} 
+        <form
+          onSubmit={handleSubmit}
           className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
-          <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll">
-            <div className="space-y-4 sm:space-y-6">
+          <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll allow-scroll" style={{ touchAction: 'auto' }}>
+            <div className="space-y-4 sm:space-y-6 pb-safe">
               {/* Basic Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
@@ -290,7 +294,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     required
                     value={formData.title}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base transition-all duration-200"
                     placeholder="Digite o título da mídia"
                   />
                 </div>
@@ -302,7 +306,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                   <select
                     value={formData.type}
                     onChange={(e) => handleChange("type", e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base mobile-input transition-all duration-200"
                   >
                     {Object.entries(mediaTypeLabels).map(([key, label]) => (
                       <option key={key} value={key}>
@@ -534,10 +538,10 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
               <button
                 type="submit"
                 disabled={isSaving || isUploading}
-                className={`w-full sm:w-auto px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base touch-target ${
+                className={`w-full sm:w-auto px-6 py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-base font-semibold touch-target no-zoom ${
                   isSaving || isUploading
                     ? "bg-slate-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25"
+                    : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25 active:scale-95"
                 } text-white`}
               >
                 {isSaving ? (
