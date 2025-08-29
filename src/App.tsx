@@ -206,9 +206,6 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                 </motion.button>
               )}
 
-              {onQuickAction && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
               {item.externalLink && (
                 <motion.a
                   href={item.externalLink}
@@ -375,10 +372,10 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         animate={{
           opacity: isHovered ? 1 : 0,
           scale: isHovered ? 1 : 0.8,
-          <MobileSidebar />
+        }}
         transition={{ duration: 0.3 }}
         className="absolute inset-0 rounded-2xl pointer-events-none"
-        </div>
+        style={{
           background: `linear-gradient(135deg, ${categoryColors.primary}20, transparent)`,
           filter: 'blur(20px)',
         }}
