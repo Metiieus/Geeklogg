@@ -1,0 +1,312 @@
+/* Melhorias específicas para a seção de biblioteca */
+
+/* Otimizações para carousel de destaques */
+.featured-carousel-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-carousel-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 1rem;
+}
+
+.featured-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.featured-item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  will-change: transform;
+  contain: layout style paint;
+}
+
+/* Melhorias para capas de mídia */
+.media-cover-container {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+}
+
+.media-cover-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  transition: opacity 0.3s ease;
+}
+
+.media-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.media-cover-image:hover {
+  transform: scale(1.05);
+}
+
+/* Otimizações para modais de biblioteca */
+.library-modal-layout {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+@media (min-width: 1024px) {
+  .library-modal-layout {
+    flex-direction: row;
+    max-height: 85vh;
+  }
+}
+
+.library-modal-sidebar {
+  flex-shrink: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.library-modal-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.library-modal-form {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Melhorias para grid responsivo */
+.library-grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+@media (max-width: 640px) {
+  .library-grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .library-grid-responsive {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Otimizações para filtros */
+.library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .library-filters {
+    justify-content: flex-start;
+  }
+}
+
+.filter-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(6, 182, 212, 0.3));
+  border-color: rgba(139, 92, 246, 0.5);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* Melhorias para sidebar de detalhes */
+.library-sidebar {
+  position: sticky;
+  top: 1.5rem;
+  height: fit-content;
+}
+
+.library-sidebar-item {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.library-sidebar-item:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Otimizações para performance em mobile */
+@media (max-width: 768px) {
+  .library-performance-optimized {
+    will-change: auto;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Reduzir blur effects em mobile */
+  .library-backdrop-blur {
+    backdrop-filter: blur(8px);
+  }
+
+  /* Simplificar gradientes em mobile */
+  .library-gradient-simple {
+    background: #1e293b !important;
+  }
+
+  /* Otimizar animações */
+  .library-animation-reduced {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Melhorias para touch targets */
+.library-touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Safe area support */
+.library-safe-area {
+  padding-top: max(env(safe-area-inset-top), 1rem);
+  padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  padding-left: max(env(safe-area-inset-left), 1rem);
+  padding-right: max(env(safe-area-inset-right), 1rem);
+}
+
+/* Melhorias para acessibilidade */
+.library-focus-visible:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .library-high-contrast {
+    border: 2px solid #ffffff !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .library-no-motion {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .media-card:hover {
+    transform: none !important;
+  }
+}
+
+/* Loading states */
+.library-skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: library-shimmer 1.5s infinite;
+}
+
+@keyframes library-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Otimizações para scroll suave */
+.library-smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Container queries para componentes adaptativos */
+@container (max-width: 320px) {
+  .library-compact {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .library-compact .media-card {
+    aspect-ratio: 2/3;
+  }
+  
+  .library-compact .media-card-title {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+}
+
+/* Melhorias para landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .library-landscape {
+    padding: 0.5rem 1rem;
+  }
+  
+  .library-landscape .media-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .library-landscape .featured-carousel-track {
+    gap: 1rem;
+  }
+}

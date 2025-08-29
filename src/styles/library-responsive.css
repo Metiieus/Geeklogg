@@ -5,6 +5,7 @@
   padding: 1rem;
   max-width: 100%;
   overflow-x: hidden;
+  contain: layout style paint;
 }
 
 .library-hero {
@@ -29,6 +30,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   padding: 0.5rem;
+  contain: layout style;
 }
 
 .media-card {
@@ -36,6 +38,8 @@
   border-radius: 1rem;
   overflow: hidden;
   transition: all 0.3s ease;
+  contain: layout style paint;
+  will-change: transform;
 }
 
 .media-card-content {
@@ -46,6 +50,49 @@
   font-size: 0.875rem;
   line-height: 1.25;
   margin-bottom: 0.5rem;
+}
+
+/* Featured carousel optimizations */
+.featured-carousel {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.featured-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.featured-item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* Modal improvements for mobile */
+@media (max-width: 768px) {
+  .modal-library {
+    margin: 0.5rem;
+    max-height: calc(100vh - 1rem);
+    border-radius: 1rem;
+  }
+
+  .modal-library-content {
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-library-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .modal-library-preview {
+    aspect-ratio: 3/4;
+    max-height: 200px;
+  }
 }
 
 /* Search and Filters - Mobile */
@@ -117,6 +164,14 @@
     padding: 1.5rem;
   }
 
+  .modal-library-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .featured-carousel {
+    padding: 0 1rem;
+  }
   .library-hero h1 {
     font-size: 3rem;
   }
@@ -165,6 +220,14 @@
     padding: 2rem;
   }
 
+  .modal-library-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .featured-carousel {
+    padding: 0 2rem;
+  }
   .library-hero h1 {
     font-size: 4rem;
   }
@@ -216,6 +279,9 @@
     font-size: 5rem;
   }
 }
+  .modal-library-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
 
 /* Ultra-wide */
 @media (min-width: 1536px) {
@@ -223,6 +289,9 @@
     grid-template-columns: repeat(6, 1fr);
   }
 }
+  .modal-library-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
 
 /* List View Specific Styles */
 .media-list {

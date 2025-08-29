@@ -1,414 +1,387 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Sidebar } from "./components/Sidebar";
-import { MobileSidebar } from "./components/MobileSidebar";
-import { DesktopHeader } from "./components/DesktopHeader";
-const Dashboard = lazy(() => import("./components/Dashboard"));
-const Reviews = lazy(() => import("./components/Reviews"));
-const Timeline = lazy(() => import("./components/Timeline"));
-const Statistics = lazy(() => import("./components/Statistics"));
-const Settings = lazy(() => import("./components/Settings"));
-const Profile = lazy(() => import("./components/Profile"));
-const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
-const AccountDeletion = lazy(() => import("./components/AccountDeletion"));
-import LibrarySection from "./components/LibrarySection";
-import { SocialFeed } from "./components/SocialFeed";
-import { AddMediaPage } from "./components/AddMediaPage";
-import { EditMediaPage } from "./components/EditMediaPage";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { Login } from "./components/Login";
-import { Register } from "./components/Register";
-import { LandingPage } from "./components/LandingPage";
-import { ArchiviusAgent } from "./components/ArchiviusAgent";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Star, Clock, Edit, Trash2, ExternalLink, Play, Book, 
+  Film, Gamepad2, MoreHorizontal, Calendar, Award 
+} from 'lucide-react';
+import { colors, gradients, shadows, animations, getCategoryColors, getCategoryGradient } from '../tokens';
 
-import { NotificationCenter } from "./components/NotificationCenter";
-import PremiumSuccessPage from "./components/PremiumSuccessPage";
-import PremiumFailure from "./components/PremiumFailure";
-import PremiumPending from "./components/PremiumPending";
-import PerformanceOptimizer from "./components/PerformanceOptimizer";
-
-import { getMedias } from "./services/mediaService";
-import { getReviews } from "./services/reviewService";
-import { getMilestones } from "./services/milestoneService";
-
-import { getSettings } from "./services/settingsService";
-import { AppProvider } from "./context/AppContext";
-import { useAuth } from "./context/AuthContext";
-import { ToastProvider } from "./context/ToastContext";
-import { checkAchievements } from "./services/achievementService";
-import { UserProfile } from "./types/social";
-import { useOptimizedContext } from "./hooks/useOptimizedContext";
-import { capacitorService } from "./services/capacitorService";
-
-export type MediaType =
-  | "games"
-  | "anime"
-  | "series"
-  | "books"
-  | "movies";
-export type Status = "completed" | "in-progress" | "dropped" | "planned";
-
-export interface MediaItem {
+export interface MediaItemDS {
   id: string;
   title: string;
   cover?: string;
-  platform?: string;
-  status: Status;
+  type: 'games' | 'anime' | 'series' | 'books' | 'movies';
+  status: 'completed' | 'in-progress' | 'dropped' | 'planned';
   rating?: number;
   hoursSpent?: number;
-  totalPages?: number;
   currentPage?: number;
-  startDate?: string;
-  endDate?: string;
+  totalPages?: number;
   tags: string[];
   externalLink?: string;
-  type: MediaType;
-  description?: string;
-  isFeatured?: boolean;
-  isFavorite?: boolean;
-  createdAt: string;
-  updatedAt: string;
+  releaseDate?: string;
+  synopsis?: string;
 }
 
-export interface Review {
-  id: string;
-  mediaId: string;
-  title: string;
-  content: string;
-  rating: number;
-  isFavorite: boolean;
-  image?: string;
-  createdAt: string;
-  updatedAt: string;
+interface MediaCardProps {
+  item: MediaItemDS;
+  onEdit?: (item: MediaItemDS) => void;
+  onDelete?: (item: MediaItemDS) => void;
+  onQuickAction?: (item: MediaItemDS) => void;
+  className?: string;
+  variant?: 'default' | 'compact' | 'featured';
 }
 
-export interface Milestone {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  icon: string;
-  mediaId?: string;
-  image?: string;
-  createdAt: string;
-}
+const statusConfig = {
+  completed: {
+    label: 'CONCLUÍDO',
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-500/20',
+    border: 'border-emerald-500/30',
+    icon: '✅',
+  },
+  'in-progress': {
+    label: 'EM PROGRESSO',
+    color: 'text-blue-400',
+    bg: 'bg-blue-500/20',
+    border: 'border-blue-500/30',
+    icon: '⏳',
+  },
+  dropped: {
+    label: 'ABANDONADO',
+    color: 'text-red-400',
+    bg: 'bg-red-500/20',
+    border: 'border-red-500/30',
+    icon: '❌',
+  },
+  planned: {
+    label: 'PLANEJADO',
+    color: 'text-purple-400',
+    bg: 'bg-purple-500/20',
+    border: 'border-purple-500/30',
+    icon: '📅',
+  },
+};
 
-export interface FavoriteItem {
-  id: string;
-  name: string;
-  image?: string;
-}
+const typeIcons = {
+  games: Gamepad2,
+  anime: Play,
+  series: Film,
+  books: Book,
+  movies: Film,
+};
 
-export interface UserSettings {
-  name: string;
-  avatar?: string;
-  cover?: string;
-  bio?: string;
-  favorites: {
-    characters: FavoriteItem[];
-    games: FavoriteItem[];
-    movies: FavoriteItem[];
-  };
-  defaultLibrarySort: string;
-  theme?: string;
-}
+export const MediaCard: React.FC<MediaCardProps> = ({
+  item,
+  onEdit,
+  onDelete,
+  onQuickAction,
+  className = '',
+  variant = 'default',
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-export type ActivePage =
-  | "dashboard"
-  | "reviews"
-  | "timeline"
-  | "statistics"
-  | "profile"
-  | "settings"
-  | "social"
-  | "add-media"
-  | "edit-media"
-  | "library"
-  | "privacy-policy"
-  | "account-deletion";
+  const categoryColors = getCategoryColors(item.type);
+  const categoryGradient = getCategoryGradient(item.type);
+  const statusInfo = statusConfig[item.status];
+  const TypeIcon = typeIcons[item.type];
 
-type ViewMode = "landing" | "login" | "register";
-
-function App() {
-  const { user, loading } = useAuth();
-  const [activePage, setActivePage] = useState<ActivePage>("dashboard");
-  const [currentView, setCurrentView] = useState<ViewMode>("landing");
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-    const [settings, setSettings] = useState<UserSettings>({
-    name: "Usuário",
-    bio: "",
-    favorites: {
-      characters: [],
-      games: [],
-      movies: [],
-    },
-    theme: "dark",
-    defaultLibrarySort: "updatedAt",
-  });
-  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
-
-  // Initialize Capacitor for mobile
-  useEffect(() => {
-    if (capacitorService.isNativePlatform()) {
-      console.log('📱 Aplicação executando em dispositivo móvel');
-      capacitorService.initialize();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const loadData = async () => {
-      const [mItems, revs, miles] = await Promise.all([
-        getMedias(),
-        getReviews(),
-        getMilestones(),
-      ]);
-      setMediaItems(mItems);
-      setReviews(revs);
-      setMilestones(miles);
-      
-      // Carregar configurações separadamente
-      const userSettings = await getSettings(user.uid);
-      let localSettings: UserSettings | null = null;
-      
-      if (userSettings) {
-        // Converter para o tipo local UserSettings
-        localSettings = {
-          name: userSettings.name || "Usuário",
-          bio: userSettings.bio || "",
-          avatar: userSettings.avatar,
-          cover: userSettings.cover,
-          favorites: userSettings.favorites || { characters: [], games: [], movies: [] },
-          defaultLibrarySort: userSettings.defaultLibrarySort || "updatedAt",
-          theme: userSettings.theme,
-        };
-        setSettings(localSettings);
-      }
-
-      if (mItems.length > 0 || revs.length > 0 || localSettings) {
-        try {
-          const newAchievements = await checkAchievements(
-            mItems,
-            revs,
-            localSettings || settings,
-          );
-          if (newAchievements.length > 0) {
-            console.log('Novas conquistas desbloqueadas:', newAchievements);
-          }
-        } catch (error) {
-          console.error("Erro ao verificar conquistas:", error);
-        }
-      }
-    };
-
-    loadData();
-  }, [user]);
-
-  useEffect(() => {
-    if (settings) {
-      // Aplicar configurações quando disponíveis
-      console.log('Configurações aplicadas:', settings);
-    }
-  }, [settings]);
-
-  // Global error handler for fetch failures
-  useEffect(() => {
-    const handleFetchError = (event: Event) => {
-      console.error('Fetch error detected:', event);
-      // Aqui você pode implementar lógica de retry ou notificação
-    };
-
-    window.addEventListener('unhandledrejection', handleFetchError);
-    return () => window.removeEventListener('unhandledrejection', handleFetchError);
-  }, []);
-
-  const contextValue = useOptimizedContext({
-    mediaItems,
-    setMediaItems,
-    reviews,
-    setReviews,
-    milestones,
-    setMilestones,
-    settings,
-    setSettings,
-    activePage,
-    setActivePage,
-    selectedUser,
-    setSelectedUser,
-    editingMediaItem,
-    setEditingMediaItem,
-  });
-
-  if (loading) {
-    return null;
-  }
-
-  if (!user) {
-    return (
-      <Router>
-        <ToastProvider>
-          <Routes>
-            <Route path="/premium/success" element={<PremiumSuccessPage />} />
-            <Route path="/premium/failure" element={<PremiumFailure />} />
-            <Route path="/premium/pending" element={<PremiumPending />} />
-            <Route path="*" element={
-              <>
-                {currentView === "landing" && (
-                  <LandingPage
-                    onLogin={() => setCurrentView("login")}
-                    onRegister={() => setCurrentView("register")}
-                  />
-                )}
-                {currentView === "login" && (
-                  <Login
-                    onCancel={() => setCurrentView("landing")}
-                    onRegister={() => setCurrentView("register")}
-                  />
-                )}
-                {currentView === "register" && (
-                  <Register
-                    onCancel={() => setCurrentView("landing")}
-                    onLogin={() => setCurrentView("login")}
-                  />
-                )}
-              </>
-            } />
-          </Routes>
-        </ToastProvider>
-      </Router>
-    );
-  }
-
-  const getPageInfo = () => {
-    const pages = {
-      dashboard: { name: "Dashboard", icon: React.createElement('div', { className: 'text-cyan-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z' }))) },
-      library: { name: "Biblioteca", icon: React.createElement('div', { className: 'text-pink-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z' }))) },
-      reviews: { name: "Resenhas", icon: React.createElement('div', { className: 'text-purple-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z' }))) },
-      timeline: { name: "Jornada", icon: React.createElement('div', { className: 'text-indigo-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z' }), React.createElement('path', { d: 'm12.5 7-1 0 0 6 5.25 3.15.75-1.23-4.5-2.67z' }))) },
-      statistics: { name: "Estatísticas", icon: React.createElement('div', { className: 'text-cyan-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z' }))) },
-      social: { name: "Social", icon: React.createElement('div', { className: 'text-pink-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63a1.5 1.5 0 0 0-1.42-1.01c-.8 0-1.54.5-1.85 1.26l-1.92 5.44c-.22.6-.71 1.94-.71 1.94H16c-1.11 0-2 .89-2 2v5h2v-4h4zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9v-2c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v2h1.5v7h4z' }))) },
-      profile: { name: "Perfil", icon: React.createElement('div', { className: 'text-purple-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' }))) },
-      settings: { name: "Configurações", icon: React.createElement('div', { className: 'text-gray-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z' }))) },
-      "add-media": { name: "Adicionar Mídia", icon: React.createElement('div', { className: 'text-green-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z' }))) },
-      "edit-media": { name: "Editar Mídia", icon: React.createElement('div', { className: 'text-yellow-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z' }))) },
-      "privacy-policy": { name: "Política de Privacidade", icon: React.createElement('div', { className: 'text-blue-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z' }))) },
-      "account-deletion": { name: "Exclusão de Conta", icon: React.createElement('div', { className: 'text-red-400' }, React.createElement('svg', { width: 20, height: 20, fill: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { d: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z' }))) }
-    };
-    return pages[activePage] || pages.dashboard;
-  };
-
-  const renderPage = () => {
-    switch (activePage) {
-      case "dashboard":
-        return <Dashboard />;
-      case "library":
-        return <LibrarySection />;
-      case "reviews":
-        return <Reviews />;
-      case "timeline":
-        return <Timeline />;
-      case "statistics":
-        return <Statistics />;
-      case "profile":
-        return <Profile />;
-      case "settings":
-        return <Settings />;
-      case "privacy-policy":
-        return <PrivacyPolicy />;
-      case "account-deletion":
-        return <AccountDeletion />;
-      case "social":
-        return <SocialFeed />;
-      case "add-media":
-        return (
-          <AddMediaPage
-            onSave={(item) => {
-              setMediaItems(prev => [...prev, item]);
-            }}
-            onBack={() => setActivePage("dashboard")}
-          />
-        );
-              case "edit-media":
-        return editingMediaItem ? (
-          <EditMediaPage
-            item={editingMediaItem}
-            onSave={(updatedItem: MediaItem) => {
-              setMediaItems(prev =>
-                prev.map(item => item.id === updatedItem.id ? updatedItem : item)
-              );
-              setEditingMediaItem(null);
-            }}
-            onBack={() => {
-              setEditingMediaItem(null);
-              setActivePage("dashboard");
-            }}
-          />
-        ) : (
-          <Dashboard />
-        );
-      default:
-        return <Dashboard />;
-    }
-  };
+  const cardHeight = variant === 'compact' ? 'h-80' : variant === 'featured' ? 'h-96' : 'h-[420px]';
 
   return (
-    <Router>
-      <ToastProvider>
-        <PerformanceOptimizer />
-        <AppProvider value={contextValue}>
-          <Routes>
-            <Route path="/premium/success" element={<PremiumSuccessPage />} />
-            <Route path="/premium/failure" element={<PremiumFailure />} />
-            <Route path="/premium/pending" element={<PremiumPending />} />
-            <Route path="*" element={
-              <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #111827 0%, #1F2937 50%, #111827 100%)' }}>
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-5 md:top-20 left-2 md:left-20 w-24 md:w-64 h-24 md:h-64 rounded-full blur-xl md:blur-3xl" style={{ backgroundColor: 'rgba(6, 182, 212, 0.1)' }}></div>
-            <div className="absolute bottom-5 md:bottom-20 right-2 md:right-20 w-32 md:w-96 h-32 md:h-96 rounded-full blur-xl md:blur-3xl" style={{ backgroundColor: 'rgba(236, 72, 153, 0.1)' }}></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 md:w-48 h-16 md:h-48 rounded-full blur-lg md:blur-xl" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)' }}></div>
-            <div className="hidden md:block absolute top-0 left-1/4 w-80 h-80 rounded-full blur-3xl" style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%)' }}></div>
-            <div className="hidden md:block absolute bottom-0 right-1/4 w-72 h-72 rounded-full blur-3xl" style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%)' }}></div>
-            <div className="absolute top-3 md:top-10 right-3 md:right-10 w-6 md:w-16 h-6 md:h-16 rotate-45 opacity-30" style={{ backgroundColor: 'rgba(6, 182, 212, 0.2)' }}></div>
-            <div className="absolute bottom-20 md:bottom-10 left-3 md:left-10 w-4 md:w-12 h-4 md:h-12 rotate-12 opacity-25" style={{ backgroundColor: 'rgba(236, 72, 153, 0.2)' }}></div>
-            <div className="absolute top-1/3 left-1 md:left-10 w-3 md:w-8 h-3 md:h-8 -rotate-45 opacity-35" style={{ backgroundColor: 'rgba(139, 92, 246, 0.2)' }}></div>
-            <div className="absolute bottom-1/3 right-1 md:right-10 w-4 md:w-12 h-4 md:h-12 -rotate-12 opacity-30" style={{ backgroundColor: 'rgba(139, 92, 246, 0.15)' }}></div>
-          </div>
-          <div className="relative z-10 flex min-h-screen">
-            <Sidebar />
-            <DesktopHeader
-              pageName={getPageInfo().name}
-              pageIcon={getPageInfo().icon}
-            />
-            <main className="flex-1 w-full md:ml-20 pt-16 md:pt-16 pb-20 md:pb-4 overflow-x-hidden performance-boost">
-              <ErrorBoundary>
-                <Suspense
-                  fallback={
-                    <div className="p-4 sm:p-6 text-center text-white">
-                      <div className="animate-pulse">Carregando...</div>
-                    </div>
-                  }
-                >
-                  <div className="p-2 sm:p-4 md:p-6 max-w-full" key={activePage}>
-                    {renderPage()}
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-            </main>
-          </div>
-                    <MobileSidebar />
-          <ArchiviusAgent />
-          <NotificationCenter />
-              </div>
-            } />
-          </Routes>
-        </AppProvider>
-      </ToastProvider>
-    </Router>
-  );
-}
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      whileHover={{ 
+        y: -8,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className={`
+        group relative ${cardHeight} rounded-2xl overflow-hidden cursor-pointer
+        border border-white/10 backdrop-blur-sm
+        transition-all duration-300 ease-out
+        ${className}
+      `}
+      style={{
+        background: `linear-gradient(135deg, ${categoryColors.background}, rgba(17, 24, 39, 0.8))`,
+        boxShadow: isHovered 
+          ? shadows.glow[item.type as keyof typeof shadows.glow] || shadows.xl
+          : shadows.lg,
+      }}
+    >
+      {/* Background Gradient */}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{ background: categoryGradient }}
+      />
 
-export default App;
+      {/* Cover Image Section */}
+      <div className="relative h-2/3 overflow-hidden">
+        {!imageError && item.cover ? (
+          <motion.img
+            src={item.cover}
+            alt={item.title}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700/50 to-slate-800/80">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0.6 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="flex flex-col items-center gap-3"
+            >
+              <div 
+                className="w-16 h-16 rounded-full flex items-center justify-center"
+                style={{ background: categoryGradient }}
+              >
+                <TypeIcon size={24} className="text-white" />
+              </div>
+              <span className="text-white/80 font-bold text-xl">
+                {item.title.charAt(0)}
+              </span>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* Type Badge */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 bg-black/50 backdrop-blur-sm rounded-full border border-white/20"
+        >
+          <TypeIcon size={14} className="text-white" />
+          <span className="text-white text-xs font-medium uppercase tracking-wide">
+            {item.type}
+          </span>
+        </motion.div>
+
+        {/* Rating Badge */}
+        {item.rating && (
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30"
+          >
+            <Star size={12} className="text-yellow-400 fill-current" />
+            <span className="text-white text-sm font-bold">{item.rating}</span>
+          </motion.div>
+        )}
+
+        {/* Desktop Action Menu (hover) */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-black/60 flex items-center justify-center gap-3 hidden md:flex"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {onEdit && (
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(item);
+                  }}
+                  className="p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-white hover:bg-white/30 transition-all duration-200"
+                  title="Editar"
+                >
+                  <Edit size={18} />
+                </motion.button>
+              )}
+
+              {item.externalLink && (
+                <motion.a
+                  href={item.externalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.1, rotate: -5 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-white hover:bg-white/30 transition-all duration-200"
+                >
+                  <ExternalLink size={18} />
+                </motion.a>
+              )}
+
+              {onQuickAction && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onQuickAction(item);
+                  }}
+                  className="p-3 bg-gradient-to-r from-violet-500/30 to-cyan-500/30 backdrop-blur-sm rounded-full border border-violet-400/50 text-white hover:from-violet-500/40 hover:to-cyan-500/40 transition-all duration-200"
+                >
+                  <Play size={18} />
+                </motion.button>
+              )}
+
+              {onDelete && (
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(item);
+                  }}
+                  className="p-3 bg-red-500/30 backdrop-blur-sm rounded-full border border-red-500/50 text-white hover:bg-red-500/40 transition-all duration-200"
+                >
+                  <Trash2 size={18} />
+                </motion.button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Action Buttons (always visible) */}
+        <div className="absolute top-3 right-3 flex gap-1.5 md:hidden">
+          {onEdit && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(item);
+              }}
+              className="p-2.5 bg-slate-900/85 backdrop-blur-sm rounded-xl border border-slate-600/50 text-slate-200 hover:text-white hover:bg-slate-800/95 transition-all duration-200 shadow-xl"
+            >
+              <Edit size={16} />
+            </motion.button>
+          )}
+          {onDelete && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(item);
+              }}
+              className="p-2.5 bg-red-900/85 backdrop-blur-sm rounded-xl border border-red-600/50 text-red-200 hover:text-white hover:bg-red-800/95 transition-all duration-200 shadow-xl"
+            >
+              <Trash2 size={16} />
+            </motion.button>
+          )}
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="relative h-1/3 p-4 bg-gradient-to-t from-black/90 to-black/60 backdrop-blur-sm">
+        <div className="flex flex-col h-full justify-between">
+          {/* Title */}
+          <div>
+            <motion.h3
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-white font-bold text-lg leading-tight mb-2 line-clamp-2"
+            >
+              {item.title}
+            </motion.h3>
+
+            {/* Status Badge */}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className={`
+                inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium
+                ${statusInfo.bg} ${statusInfo.border} ${statusInfo.color} border
+              `}
+            >
+              <span>{statusInfo.icon}</span>
+              <span>{statusInfo.label}</span>
+            </motion.div>
+          </div>
+
+          {/* Bottom Info */}
+          <div className="flex items-center justify-between">
+            {/* Progress/Stats */}
+            <div className="flex items-center gap-3 text-white/60">
+              {item.hoursSpent && (
+                <div className="flex items-center gap-1">
+                  <Clock size={12} />
+                  <span className="text-xs">{item.hoursSpent}h</span>
+                </div>
+              )}
+
+              {item.type === 'books' && item.totalPages && (
+                <div className="flex items-center gap-1">
+                  <Book size={12} />
+                  <span className="text-xs">
+                    {Math.round(((item.currentPage || 0) / item.totalPages) * 100)}%
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Main Tag */}
+            {item.tags.length > 0 && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="px-2 py-1 text-xs bg-white/10 backdrop-blur-sm rounded-full text-white/80 border border-white/20"
+              >
+                {item.tags[0]}
+                {item.tags.length > 1 && (
+                  <span className="ml-1 text-white/50">+{item.tags.length - 1}</span>
+                )}
+              </motion.span>
+            )}
+          </div>
+        </div>
+
+        {/* Progress Bar for Books */}
+        {item.type === 'books' && item.totalPages && (
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="absolute bottom-0 left-0 right-0 h-1 bg-black/20"
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ 
+                width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%` 
+              }}
+              transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500"
+            />
+          </motion.div>
+        )}
+      </div>
+
+      {/* Hover Glow Effect */}
+      <motion.div
+        animate={{
+          opacity: isHovered ? 1 : 0,
+          scale: isHovered ? 1 : 0.8,
+        }}
+        transition={{ duration: 0.3 }}
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{
+          background: `linear-gradient(135deg, ${categoryColors.primary}20, transparent)`,
+          filter: 'blur(20px)',
+        }}
+      />
+    </motion.div>
+  );
+};
+
+export default MediaCard;
