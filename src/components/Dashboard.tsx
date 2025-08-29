@@ -155,7 +155,7 @@ const Dashboard: React.FC = () => {
                   Nenhum item na sua biblioteca ainda
                 </p>
                 <button
-                  onClick={() => setActivePage("library")}
+                  onClick={() => setActivePage("add-media")}
                   className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-200"
                 >
                   Adicionar Primeiro Item
