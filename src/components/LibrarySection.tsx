@@ -552,28 +552,30 @@ export default function LibrarySection() {
                   transition={{ delay: Math.min(index * 0.05, 0.5) }}
                   className="relative"
                 >
-                  <MediaCard
-                    item={convertToDesignSystemItem(item)}
-                    onEdit={(dsItem) => {
-                      const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
-                      if (originalItem) {
-                        handleEditItem(originalItem)
-                      }
-                    }}
-                    onDelete={(dsItem) => {
-                      const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
-                      if (originalItem) {
-                        setItemToDelete(originalItem)
-                      }
-                    }}
-                    onQuickAction={(dsItem) => {
-                      const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
-                      if (originalItem) {
-                        setSelectedMediaForDetail(originalItem)
-                      }
-                    }}
-                    variant="default"
-                  />
+                  {item && item.type && item.status && (
+                    <MediaCard
+                      item={convertToDesignSystemItem(item)}
+                      onEdit={(dsItem) => {
+                        const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
+                        if (originalItem) {
+                          handleEditItem(originalItem)
+                        }
+                      }}
+                      onDelete={(dsItem) => {
+                        const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
+                        if (originalItem) {
+                          setItemToDelete(originalItem)
+                        }
+                      }}
+                      onQuickAction={(dsItem) => {
+                        const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
+                        if (originalItem) {
+                          setSelectedMediaForDetail(originalItem)
+                        }
+                      }}
+                      variant="default"
+                    />
+                  )}
                 </motion.div>
               ))}
             </motion.div>

@@ -4,7 +4,7 @@ import {
   Star, Clock, Edit, Trash2, ExternalLink, Play, Book, 
   Film, Gamepad2, MoreHorizontal, Calendar, Award 
 } from 'lucide-react';
-import { colors, gradients, shadows, animations, getCategoryColors, getCategoryGradient } from '../tokens';
+import { colors, gradients, shadows, animations, getCategoryColors, getCategoryGradient } from './design-system/tokens';
 
 export interface MediaItemDS {
   id: string;
