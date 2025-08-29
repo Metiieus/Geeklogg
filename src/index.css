@@ -31,6 +31,8 @@
 /* Melhorias responsivas para modais de mídia */
 @import "./modal-responsive-improvements.css";
 
+/* Melhorias específicas para biblioteca */
+@import "./library-specific-improvements.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
