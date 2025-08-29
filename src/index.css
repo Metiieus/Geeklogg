@@ -1,41 +1,13 @@
-/* Melhorias de responsividade mobile */
-@import "./mobile-improvements.css";
-
-/* Correções específicas para modais em mobile */
-@import "./modal-mobile-fixes.css";
-
-/* CORREÇÃO CRÍTICA - Bloquear scroll da página em modais */
-@import "./modal-critical-fix.css";
-
-/* FORÇA MODAL NO CENTRO DA VIEWPORT MOBILE */
-@import "./modal-mobile-center-force.css";
-
-/* Melhorias de responsividade para modais no desktop */
-@import "./modal-desktop-improvements.css";
-
-/* Utilitários responsivos para modais */
-@import "./components/responsive-modal-helpers.css";
-
-/* Estilos responsivos para biblioteca */
-@import "./styles/library-responsive.css";
-
-/* Estilos de acessibilidade WCAG */
-@import "./styles/accessibility.css";
-
-/* Melhorias para scroll lock e Capacitor */
-@import "./scroll-lock-improvements.css";
-
-/* Otimizações de performance */
-@import "./styles/performance-optimizations.css";
-
-/* Melhorias responsivas para modais de mídia */
-@import "./modal-responsive-improvements.css";
-
-/* Melhorias específicas para biblioteca */
-@import "./library-specific-improvements.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Basic body styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
 
 /* Touch targets for mobile */
 .touch-target {
@@ -43,182 +15,33 @@
   min-width: 44px;
 }
 
-/* Breakpoint xs personalizado */
-@media (min-width: 375px) {
-  .xs\:inline {
-    display: inline;
-  }
-  .xs\:flex {
-    display: flex;
-  }
-}
-
-/* Melhorias para navegação mobile */
-@media (max-width: 640px) {
-  .mobile-nav-vertical {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .mobile-nav-button {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.75rem;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-  }
-
-  .mobile-nav-button svg {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-/* Animações para FavoritesCarousel */
-@keyframes gentle-glow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-@keyframes subtle-pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-}
-
-.carousel-glow {
-  animation: gentle-glow 3s ease-in-out infinite;
-}
-
-.carousel-pulse {
-  animation: subtle-pulse 2s ease-in-out infinite;
-}
-
-/* Melhorias para texto gradiente */
-.text-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Efeito de brilho nos cards */
-.card-shimmer {
-  position: relative;
+/* Utility classes */
+.line-clamp-1 {
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
-.card-shimmer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  transition: left 0.8s ease;
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.card-shimmer:hover::before {
-  left: 100%;
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
-/* === OTIMIZAÇÕES AVANÇADAS DE PERFORMANCE === */
-
-/* Performance boost geral */
-.performance-boost {
-  transform: translateZ(0);
-  will-change: transform;
-  contain: layout style paint;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+/* Safe area for mobile devices */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Virtual scrolling optimization */
-.virtual-scroll-container {
-  height: 100%;
-  overflow: auto;
-  contain: strict;
-}
-
-.virtual-scroll-item {
-  contain: layout style paint;
-}
-
-/* Memory optimization para listas grandes */
-.list-optimized {
-  content-visibility: auto;
-  contain-intrinsic-size: 200px;
-}
-
-/* Component isolation */
-.component-isolate {
-  isolation: isolate;
-  contain: layout style paint;
-}
-
-/* Reduce layout thrashing */
-.layout-stable {
-  contain: layout;
-  will-change: contents;
-}
-
-/* Optimize paint operations */
-.paint-optimized {
-  contain: paint;
-  will-change: opacity, transform;
-}
-
-/* Critical resources above fold */
-.critical-above-fold {
-  content-visibility: visible;
-  contain-intrinsic-size: none;
-}
-
-/* Non-critical below fold */
-.non-critical-below-fold {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 500px;
-}
-
-/* Animation performance */
-.animate-performant {
-  will-change: transform, opacity;
-  animation-fill-mode: both;
-  backface-visibility: hidden;
-}
-
-/* Scroll performance */
-.scroll-performant {
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  scroll-behavior: smooth;
-}
-
-/* CPU optimization */
-.cpu-optimized {
-  contain: size layout style paint;
-  content-visibility: auto;
-}
-
-/* GPU layers optimization */
-.gpu-layer {
-  transform: translateZ(0);
-  will-change: transform;
-  isolation: isolate;
+.safe-area-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
