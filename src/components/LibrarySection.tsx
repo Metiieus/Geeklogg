@@ -274,23 +274,96 @@ export default function LibrarySection() {
         </div>
       </motion.div>
 
+      {/* Carousel de Destaques */}
+      {featuredItems.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-white/90">Destaques da Coleção</h2>
+          <div className="overflow-x-auto pb-4">
+            <div className="flex gap-6 w-max">
+              {featuredItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  className="w-48 flex-shrink-0"
+                >
+                  <div
+                    className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-2"
+                    onClick={() => {
+                      setEditingMediaItem(item);
+                      setActivePage("edit-media");
+                    }}
+                  >
+                    {item.cover ? (
+                      <img
+                        src={item.cover}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-2 mx-auto`}>
+                            {IconType[item.type]}
+                          </div>
+                          <span className="text-white/80 font-bold text-lg">{item.title.charAt(0)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+                    {/* Rating badge */}
+                    {item.rating && (
+                      <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
+                        <IconStar className="w-3 h-3 text-yellow-400" />
+                        <span className="text-white text-sm font-bold">{item.rating}</span>
+                      </div>
+                    )}
+
+                    {/* Title */}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2">
+                        {item.title}
+                      </h3>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+      )}
+
       {/* Barra de busca e ordenação */}
-      <div className="flex flex-col md:flex-row gap-3 md:items-center mb-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="flex flex-col lg:flex-row gap-4 lg:items-center mb-6"
+      >
         <div className="flex-1 relative">
-          <IconSearch />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por título ou tags..."
-            className="w-full bg-slate-800/60 border border-white/10 rounded-xl px-10 py-3 outline-none focus:border-cyan-400/40 placeholder-white/40"
+            placeholder="Buscar por título, tags ou descrição..."
+            className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-12 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
           />
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50">
-            <IconSearch />
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
+            <IconSearch className="w-5 h-5" />
           </div>
           {query && (
             <button
               onClick={() => setQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/90"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/90 text-xl"
               aria-label="Limpar busca"
             >
               ×
@@ -298,97 +371,267 @@ export default function LibrarySection() {
           )}
         </div>
 
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as SortKey)}
-          className="bg-slate-800/60 border border-white/10 rounded-xl px-3 py-3 outline-none focus:border-cyan-400/40"
-        >
-          <option value="updatedAt">Mais recentes</option>
-          <option value="createdAt">Data de inclusão</option>
-          <option value="rating">Maior nota</option>
-          <option value="title">Título (A–Z)</option>
-        </select>
-      </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as SortKey)}
+            className="bg-slate-800/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-cyan-400/50 backdrop-blur-sm text-white min-w-48"
+          >
+            <option value="updatedAt">Mais Recentes</option>
+            <option value="createdAt">Data de Inclusão</option>
+            <option value="rating">Maior Nota</option>
+            <option value="title">Título (A–Z)</option>
+          </select>
+        </div>
+      </motion.div>
 
       {/* Filtros */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {(["games","anime","series","books","movies"] as MediaType[]).map(t => (
-          <button
-            key={t}
-            onClick={() => toggleSet(setTypes, t)}
-            className={`px-3 py-2 rounded-full text-sm bg-gradient-to-br ${typePill[t]} border ${types.has(t) ? "border-white/30 ring-2 ring-white/20" : "border-white/10 hover:border-white/20"}`}
-          >
-            <span className="inline-flex items-center gap-2">
-              {IconType[t]} {labelType(t)}
-            </span>
-          </button>
-        ))}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="flex flex-wrap gap-3 mb-8"
+      >
+        <div className="flex flex-wrap gap-2">
+          {(["games","anime","series","books","movies"] as MediaType[]).map(t => (
+            <button
+              key={t}
+              onClick={() => toggleSet(setTypes, t)}
+              className={`px-4 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-br ${typePill[t]} border transition-all duration-200 ${
+                types.has(t)
+                  ? "border-white/30 ring-2 ring-white/20 scale-105 shadow-lg"
+                  : "border-white/10 hover:border-white/20 hover:scale-105"
+              }`}
+            >
+              <span className="inline-flex items-center gap-2">
+                {IconType[t]} {typeLabels[t]}
+              </span>
+            </button>
+          ))}
+        </div>
 
-        <span className="mx-2 opacity-40">|</span>
+        <div className="hidden lg:block w-px h-8 bg-white/20 my-auto"></div>
 
-        {(["completed","in-progress","dropped","planned"] as Status[]).map(s => (
-          <button
-            key={s}
-            onClick={() => toggleSet(setStatuses, s)}
-            className={`px-3 py-2 rounded-full text-sm border ${statuses.has(s) ? "bg-white/10 border-white/30" : "bg-white/5 border-white/10 hover:border-white/20"}`}
-          >
-            {statusBadge[s].label}
-          </button>
-        ))}
+        <div className="flex flex-wrap gap-2">
+          {(["completed","in-progress","dropped","planned"] as Status[]).map(s => (
+            <button
+              key={s}
+              onClick={() => toggleSet(setStatuses, s)}
+              className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
+                statuses.has(s)
+                  ? "bg-white/15 border-white/30 text-white scale-105 shadow-lg"
+                  : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-white/80 hover:scale-105"
+              }`}
+            >
+              {statusBadge[s].label}
+            </button>
+          ))}
+        </div>
 
-        <span className="mx-2 opacity-40">|</span>
+        <div className="hidden lg:block w-px h-8 bg-white/20 my-auto"></div>
 
         <button
           onClick={() => setOnlyFav(v => !v)}
-          className={`px-3 py-2 rounded-full text-sm border inline-flex items-center gap-2 ${onlyFav ? "bg-yellow-500/10 border-yellow-400/30 text-yellow-300" : "bg-white/5 border-white/10 hover:border-white/20"}`}
+          className={`px-4 py-2.5 rounded-xl text-sm font-medium border inline-flex items-center gap-2 transition-all duration-200 ${
+            onlyFav
+              ? "bg-yellow-500/15 border-yellow-400/30 text-yellow-300 scale-105 shadow-lg"
+              : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-white/80 hover:scale-105"
+          }`}
           title="Apenas favoritos"
         >
-          <IconStar /> Favoritos
+          <IconStar className="w-4 h-4" /> Favoritos
         </button>
 
         {(types.size || statuses.size || onlyFav || query) ? (
           <button
             onClick={() => { setTypes(new Set()); setStatuses(new Set()); setOnlyFav(false); setQuery(""); }}
-            className="ml-auto px-3 py-2 rounded-full text-sm bg-white/5 border border-white/10 hover:bg-white/10"
+            className="ml-auto px-4 py-2.5 rounded-xl text-sm font-medium bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 transition-all duration-200"
           >
-            Limpar filtros
+            Limpar Filtros
           </button>
         ) : null}
-      </div>
+      </motion.div>
 
-      {/* Lista */}
+      {/* Layout Principal */}
       {filtered.length === 0 ? (
-        <div className="p-8 text-center text-white/70">
-          Nada por aqui. Tente ajustar os filtros.
-        </div>
-      ) : view === "grid" ? (
-        <div
-          className="grid gap-4 sm:gap-5"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))" }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-16"
         >
-          {filtered.map(item => (
-            <CardGrid
-              key={item.id}
-              item={item}
-              onOpen={() => {
-                setEditingMediaItem(item);
-                setActivePage("edit-media");
-              }}
-            />
-          ))}
-        </div>
+          <div className="text-6xl mb-4">📚</div>
+          <h3 className="text-xl font-semibold text-white/90 mb-2">Nenhum item encontrado</h3>
+          <p className="text-white/60 mb-6">Tente ajustar os filtros ou adicionar novos itens à sua biblioteca</p>
+          <button
+            onClick={() => { setTypes(new Set()); setStatuses(new Set()); setOnlyFav(false); setQuery(""); }}
+            className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all duration-200"
+          >
+            Limpar Filtros
+          </button>
+        </motion.div>
       ) : (
-        <div className="space-y-3">
-          {filtered.map(item => (
-            <CardList
-              key={item.id}
-              item={item}
-              onOpen={() => {
-                setEditingMediaItem(item);
-                setActivePage("edit-media");
-              }}
-            />
-          ))}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+          {/* Coleção Principal */}
+          <div className="xl:col-span-3">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white/90">Coleção Completa</h2>
+              <span className="text-white/60">{filtered.length} itens</span>
+            </div>
+
+            {view === "grid" ? (
+              <motion.div
+                layout
+                className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4"
+              >
+                {filtered.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <MediaCard
+                      item={convertToDesignSystemItem(item)}
+                      onEdit={(dsItem) => {
+                        const originalItem = mediaItems.find(mi => mi.id === dsItem.id);
+                        if (originalItem) {
+                          setEditingMediaItem(originalItem);
+                          setActivePage("edit-media");
+                        }
+                      }}
+                      onDelete={(dsItem) => {
+                        // Implementar delete
+                        console.log('Delete:', dsItem.id);
+                      }}
+                      variant="default"
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div layout className="space-y-4">
+                {filtered.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <CardList
+                      item={item}
+                      onOpen={() => {
+                        setEditingMediaItem(item);
+                        setActivePage("edit-media");
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Sidebar com Destaques */}
+          <div className="xl:col-span-1">
+            <div className="sticky top-6 space-y-8">
+              {/* Melhor Item */}
+              {bestItem && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <h3 className="text-xl font-bold text-white/90 mb-4">Destaque</h3>
+                  <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+                    <div className="aspect-[3/4] rounded-xl overflow-hidden mb-4 cursor-pointer hover:scale-105 transition-transform duration-300"
+                         onClick={() => {
+                           setEditingMediaItem(bestItem);
+                           setActivePage("edit-media");
+                         }}>
+                      {bestItem.cover ? (
+                        <img
+                          src={bestItem.cover}
+                          alt={bestItem.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[bestItem.type]} flex items-center justify-center mb-3 mx-auto`}>
+                              {IconType[bestItem.type]}
+                            </div>
+                            <span className="text-white/80 font-bold text-2xl">{bestItem.title.charAt(0)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <h4 className="font-semibold text-white mb-2 line-clamp-2">{bestItem.title}</h4>
+                    {bestItem.rating && (
+                      <div className="flex items-center gap-2 text-yellow-400 mb-3">
+                        <IconStar className="w-4 h-4" />
+                        <span className="font-bold">{bestItem.rating}/10</span>
+                      </div>
+                    )}
+                    <div className={`inline-block px-3 py-1.5 rounded-full text-xs font-medium ${statusBadge[bestItem.status].cls}`}>
+                      {statusBadge[bestItem.status].label}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Itens Recentes */}
+              {recentItems.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <h3 className="text-xl font-bold text-white/90 mb-4">Recentes</h3>
+                  <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+                    <div className="space-y-3">
+                      {recentItems.slice(0, 5).map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
+                          onClick={() => {
+                            setEditingMediaItem(item);
+                            setActivePage("edit-media");
+                          }}
+                        >
+                          <div className="w-12 h-16 rounded-lg overflow-hidden bg-slate-700/50 flex-shrink-0">
+                            {item.cover ? (
+                              <img
+                                src={item.cover}
+                                alt={item.title}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <span className="text-white/60 text-xs font-bold">{item.title.charAt(0)}</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white/90 text-sm font-medium truncate">{item.title}</p>
+                            <p className="text-white/60 text-xs">{typeLabels[item.type]}</p>
+                          </div>
+                          {item.rating && (
+                            <div className="flex items-center gap-1 text-yellow-400">
+                              <IconStar className="w-3 h-3" />
+                              <span className="text-xs font-bold">{item.rating}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -507,8 +750,8 @@ function labelType(t: MediaType) {
   switch (t) {
     case "games": return "Games";
     case "anime": return "Anime";
-    case "series": return "Series";
-    case "books": return "Books";
-    case "movies": return "Movies";
+    case "series": return "Séries";
+    case "books": return "Livros";
+    case "movies": return "Filmes";
   }
 }
