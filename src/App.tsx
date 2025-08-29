@@ -149,10 +149,27 @@ const App: React.FC = () => {
         return <AccountDeletion />;
       case 'profile':
         return <Profile />;
-      // fallback
       default:
         return <Dashboard />;
     }
+  }, [activePage]);
+
+  const pageMeta = useMemo(() => {
+    const map: Record<ActivePage, { name: string; icon: React.ReactNode }> = {
+      'dashboard': { name: 'Dashboard', icon: <Home size={16} /> },
+      'library': { name: 'Biblioteca', icon: <BookOpen size={16} /> },
+      'reviews': { name: 'Resenhas', icon: <MessageSquare size={16} /> },
+      'timeline': { name: 'Jornada', icon: <Clock size={16} /> },
+      'statistics': { name: 'Estatísticas', icon: <BarChart3 size={16} /> },
+      'social': { name: 'Social', icon: <Users size={16} /> },
+      'settings': { name: 'Configurações', icon: <SettingsIcon size={16} /> },
+      'privacy-policy': { name: 'Privacidade', icon: <SettingsIcon size={16} /> },
+      'account-deletion': { name: 'Excluir Conta', icon: <SettingsIcon size={16} /> },
+      'add-media': { name: 'Adicionar Mídia', icon: <BookOpen size={16} /> },
+      'edit-media': { name: 'Editar Mídia', icon: <BookOpen size={16} /> },
+      'profile': { name: 'Perfil', icon: <User size={16} /> },
+    };
+    return map[activePage] || map['dashboard'];
   }, [activePage]);
 
   return (
@@ -160,7 +177,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-gray-900 text-white">
         <Sidebar />
         <div className="md:ml-20 xl:ml-64">
-          <DesktopHeader />
+          <DesktopHeader pageName={pageMeta.name} pageIcon={pageMeta.icon} />
           <main className="px-4 sm:px-6 md:px-8 py-6">
             {PageComponent}
           </main>
