@@ -268,7 +268,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
         {/* Dropdown de resultados */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl max-h-80 sm:max-h-96 overflow-y-auto z-50 animate-slide-up">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl max-h-80 sm:max-h-96 overflow-y-auto z-[9999] animate-slide-up">
             {hasError ? (
               <div className="flex items-center gap-3 p-4 text-red-400">
                 <AlertCircle size={20} />
