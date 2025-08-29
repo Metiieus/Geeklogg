@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { DesktopHeader } from './components/DesktopHeader';
-import Sidebar from './components/Sidebar';
+import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import Dashboard from './components/Dashboard';
 import ModernLibrary from './components/ModernLibrary';
