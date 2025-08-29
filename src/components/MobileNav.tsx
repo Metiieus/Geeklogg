@@ -28,12 +28,6 @@ const navItems: NavItem[] = [
     gradient: "from-cyan-400 to-blue-500",
   },
   {
-    id: "library",
-    icon: <BookOpen size={20} />,
-    label: "Biblioteca",
-    gradient: "from-pink-400 to-purple-500",
-  },
-  {
     id: "reviews",
     icon: <MessageSquare size={20} />,
     label: "Reviews",

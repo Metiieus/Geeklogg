@@ -52,7 +52,7 @@ export const useOptimizedContext = (props: UseOptimizedContextProps) => {
   );
 
   const navigateBack = useMemo(
-    () => () => setActivePage("library"),
+    () => () => setActivePage("dashboard"),
     [setActivePage]
   );
 

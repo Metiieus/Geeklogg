@@ -4,7 +4,6 @@ import { Sidebar } from "./components/Sidebar";
 import { MobileSidebar } from "./components/MobileSidebar";
 import { DesktopHeader } from "./components/DesktopHeader";
 const Dashboard = lazy(() => import("./components/Dashboard"));
-const Library = lazy(() => import("./components/ModernLibrary"));
 const Reviews = lazy(() => import("./components/Reviews"));
 const Timeline = lazy(() => import("./components/Timeline"));
 const Statistics = lazy(() => import("./components/Statistics"));
@@ -112,7 +111,6 @@ export interface UserSettings {
 
 export type ActivePage =
   | "dashboard"
-  | "library"
   | "reviews"
   | "timeline"
   | "statistics"
@@ -301,8 +299,6 @@ function App() {
     switch (activePage) {
       case "dashboard":
         return <Dashboard />;
-      case "library":
-        return <Library />;
       case "reviews":
         return <Reviews />;
       case "timeline":
@@ -325,7 +321,7 @@ function App() {
             onSave={(item) => {
               setMediaItems(prev => [...prev, item]);
             }}
-            onBack={() => setActivePage("library")}
+            onBack={() => setActivePage("dashboard")}
           />
         );
       case "edit-media":
@@ -340,11 +336,11 @@ function App() {
             }}
             onBack={() => {
               setEditingMediaItem(null);
-              setActivePage("library");
+              setActivePage("dashboard");
             }}
           />
         ) : (
-          <Library />
+          <Dashboard />
         );
       default:
         return <Dashboard />;
