@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import DesktopHeader from './components/DesktopHeader';
+import { DesktopHeader } from './components/DesktopHeader';
 import Sidebar from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import Dashboard from './components/Dashboard';
@@ -12,6 +12,7 @@ import AccountDeletion from './components/AccountDeletion';
 import Profile from './components/Profile';
 import { AppProvider } from './context/AppContext';
 import { useOptimizedContext } from './hooks/useOptimizedContext';
+import { Home, BookOpen, MessageSquare, Clock, BarChart3, Settings as SettingsIcon, Users, User } from 'lucide-react';
 
 export type MediaType = 'games' | 'anime' | 'series' | 'books' | 'movies';
 export type Status = 'completed' | 'in-progress' | 'dropped' | 'planned';
