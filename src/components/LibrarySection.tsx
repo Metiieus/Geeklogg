@@ -1,38 +1,37 @@
-"use client"
-
-import React, { useMemo, useState, useDeferredValue, useCallback } from "react"
-import { useAppContext } from "../context/AppContext"
-import { motion } from "framer-motion"
-import { MediaCard } from "../design-system/components/MediaCard"
-import type { MediaItemDS } from "../design-system/components/MediaCard"
-import { AddMediaSearchModal } from "./modals/AddMediaSearchModal"
-import type { ExternalMediaResult } from "../services/externalMediaService"
-import { CardGrid } from "./CardGrid" // Import CardGrid component
+import React, { useMemo, useState, useDeferredValue } from "react";
+import { useAppContext } from "../context/AppContext";
+import { motion } from "framer-motion";
+import { MediaCard } from '../design-system/components/MediaCard';
+import type { MediaItemDS } from '../design-system/components/MediaCard';
+import type { ExternalMediaResult } from '../services/externalMediaService';
+import { MediaSearchBar } from './MediaSearchBar';
+import { AddMediaModal } from './modals/AddMediaModal';
+import EditFeaturedModal from './modals/EditFeaturedModal';
 
 // Tipos do seu app (ajuste se os nomes diferirem)
 type MediaType = "games" | "anime" | "series" | "books" | "movies"
 type Status = "completed" | "in-progress" | "dropped" | "planned"
 
 type MediaItem = {
-  id: string
-  title: string
-  cover?: string
-  platform?: string
-  status: Status
-  rating?: number // 0-10
-  hoursSpent?: number
-  totalPages?: number
-  currentPage?: number
-  startDate?: string
-  endDate?: string
-  tags: string[]
-  externalLink?: string
-  type: MediaType
-  description?: string
-  createdAt: string
-  updatedAt: string
-  isFavorite?: boolean // Declare isFavorite property
-}
+  id: string;
+  title: string;
+  cover?: string;
+  platform?: string;
+  status: Status;
+  rating?: number; // 0-10
+  hoursSpent?: number;
+  totalPages?: number;
+  currentPage?: number;
+  startDate?: string;
+  endDate?: string;
+  tags: string[];
+  externalLink?: string;
+  type: MediaType;
+  description?: string;
+  isFeatured?: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 
 // Converter MediaItem para MediaItemDS
 const convertToDesignSystemItem = (item: MediaItem): MediaItemDS => ({
@@ -51,64 +50,19 @@ const convertToDesignSystemItem = (item: MediaItem): MediaItemDS => ({
 })
 
 // ---------------------------------------------
-// Ícones inline (sem libs)
-const IconGrid = React.memo(() => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z" />
-  </svg>
-))
-IconGrid.displayName = "IconGrid"
-
-const IconSearch = React.memo(() => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20l-6-6zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-  </svg>
-))
-IconSearch.displayName = "IconSearch"
-
-const IconPlus = React.memo(() => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
-  </svg>
-))
-IconPlus.displayName = "IconPlus"
-
-const IconStar = React.memo(() => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21z" />
-  </svg>
-))
-IconStar.displayName = "IconStar"
-
-const IconType: Record<MediaType, React.ReactElement> = {
-  games: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M6 8h12a4 4 0 110 8H6a4 4 0 110-8zm2 2H7v1H6v1h1v1h1v-1h1v-1H8v-1zm8 1a1 1 0 100 2 1 1 0 000-2zm-2-1a1 1 0 100 2 1 1 0 000-2z" />
-    </svg>
-  ),
-  anime: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2C6.48 2 2 6.03 2 10.67 2 15.31 6.48 19.33 12 19.33c5.52 0 10-4.02 10-8.66C22 6.03 17.52 2 12 2zm-4 9a1.33 1.33 0 110-2.67A1.33 1.33 0 018 11zm8 0a1.33 1.33 0 110-2.67A1.33 1.33 0 0116 11zM8.67 14h6.66c-.73 1.6-2.4 2.67-3.33 2.67S9.4 15.6 8.67 14z" />
-    </svg>
-  ),
-  series: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M4 6h16v12H4z" />
-      <path d="M2 18h20v2H2z" />
-    </svg>
-  ),
-  books: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18 2H8a2 2 0 00-2 2v16a2 2 0 012 2h10a2 2 0 012-2V4a2 2 0 00-2-2zm0 18H8V4h10v16z" />
-      <path d="M6 2H5a3 3 0 00-3 3v16a3 3 0 013 3h1" />
-    </svg>
-  ),
-  movies: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M4 4h3l2 4H6l-2-4zm5 0h3l2 4h-3l-2-4zm5 0h3l2 4h-3l-2-4zM4 10h16v10H4V10z" />
-    </svg>
-  ),
-}
+const IconPlus = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>
+);
+const IconStar = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21 16.54 13.97 22 9.24 14.81 8.63 12 2 9.19 8.63 2 9.24 7.46 13.97 5.82 21z"/></svg>
+);
+const IconType: Record<MediaType, JSX.Element> = {
+  games: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 8h12a4 4 0 110 8H6a4 4 0 110-8zm2 2H7v1H6v1h1v1h1v-1h1v-1H8v-1zm8 1a1 1 0 100 2 1 1 0 000-2zm-2-1a1 1 0 100 2 1 1 0 000-2z"/></svg>,
+  anime: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.03 2 10.67 2 15.31 6.48 19.33 12 19.33c5.52 0 10-4.02 10-8.66C22 6.03 17.52 2 12 2zm-4 9a1.33 1.33 0 110-2.67A1.33 1.33 0 018 11zm8 0a1.33 1.33 0 110-2.67A1.33 1.33 0 0116 11zM8.67 14h6.66c-.73 1.6-2.4 2.67-3.33 2.67S9.4 15.6 8.67 14z"/></svg>,
+  series: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v12H4z"/><path d="M2 18h20v2H2z"/></svg>,
+  books: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H8a2 2 0 00-2 2v16a2 2 0 012 2h10a2 2 0 012-2V4a2 2 0 00-2-2zm0 18H8V4h10v16z"/><path d="M6 2H5a3 3 0 00-3 3v16a3 3 0 013 3h1"/></svg>,
+  movies: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h3l2 4H6l-2-4zm5 0h3l2 4h-3l-2-4zm5 0h3l2 4h-3l-2-4zM4 10h16v10H4V10z"/></svg>,
+};
 
 // Status -> estilização
 const statusBadge: Record<Status, { label: string; cls: string }> = {
@@ -146,14 +100,22 @@ function toStars(r?: number) {
 type SortKey = "updatedAt" | "rating" | "title" | "createdAt"
 
 export default function LibrarySection() {
-  const { mediaItems = [], setActivePage, setEditingMediaItem, settings, addMediaItem } = useAppContext()
+  const {
+    mediaItems = [],
+    setMediaItems,
+    setActivePage,
+    setEditingMediaItem,
+    settings,
+  } = useAppContext();
 
-  const [query, setQuery] = useState("")
-  const [types, setTypes] = useState<Set<MediaType>>(new Set()) // vazio = todos
-  const [statuses, setStatuses] = useState<Set<Status>>(new Set())
-  const [onlyFav, setOnlyFav] = useState(false) // se você tiver flag de favorito, plugue aqui
-  const [sortBy, setSortBy] = useState<SortKey>((settings?.defaultLibrarySort as SortKey) || "updatedAt")
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
+  const [query, setQuery] = useState("");
+  const [types, setTypes] = useState<Set<MediaType>>(new Set()); // vazio = todos
+  const [statuses, setStatuses] = useState<Set<Status>>(new Set());
+  const [onlyFav, setOnlyFav] = useState(false); // se você tiver flag de favorito, plugue aqui
+  const [sortBy, setSortBy] = useState<SortKey>(settings?.defaultLibrarySort as SortKey || "updatedAt");
+  const [searchType, setSearchType] = useState<MediaType>('games');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
 
   const q = useDeferredValue(query.trim().toLowerCase())
 
@@ -226,52 +188,24 @@ export default function LibrarySection() {
     })
   }, [])
 
-  const handleSearchResultSelect = useCallback(
-    (result: ExternalMediaResult) => {
-      try {
-        const newItem: MediaItem = {
-          id: crypto.randomUUID(),
-          title: result.title || "Título não disponível",
-          cover: result.image,
-          type: (result.type as MediaType) || "games",
-          status: "planned" as Status,
-          description: result.description,
-          tags: result.genres || [],
-          externalLink: result.link,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
+  const handleSearchResultSelect = (result: ExternalMediaResult) => {
+    // Converter resultado externo para MediaItem e adicionar
+    const newItem: MediaItem = {
+      id: crypto.randomUUID(),
+      title: result.title,
+      cover: result.image,
+      type: result.type as MediaType,
+      status: 'planned' as Status,
+      description: result.description,
+      tags: result.genres || [],
+      externalLink: result.link,
+      isFeatured: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-        if (addMediaItem) {
-          addMediaItem(newItem)
-        }
-      } catch (error) {
-        console.error("Erro ao adicionar item da busca:", error)
-      } finally {
-        setIsSearchModalOpen(false)
-      }
-    },
-    [addMediaItem],
-  )
-
-  const handleAddMedia = useCallback(() => {
-    setActivePage("add-media")
-  }, [setActivePage])
-
-  const handleEditItem = useCallback(
-    (item: MediaItem) => {
-      setEditingMediaItem(item)
-      setActivePage("edit-media")
-    },
-    [setEditingMediaItem, setActivePage],
-  )
-
-  const clearFilters = useCallback(() => {
-    setTypes(new Set())
-    setStatuses(new Set())
-    setOnlyFav(false)
-    setQuery("")
-  }, [])
+    setMediaItems(prev => [...prev, newItem]);
+  };
 
   // ---------- Empty state
   if (!mediaItems || mediaItems.length === 0) {
@@ -300,37 +234,19 @@ export default function LibrarySection() {
 
             {/* Barra de Pesquisa Online */}
             <div className="max-w-2xl mx-auto mb-6">
-              <div className="flex-1 relative">
-                <input
-                  placeholder="Buscar mídia online (livros, filmes, jogos...)..."
-                  className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-16 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-                  aria-label="Campo de busca online"
-                />
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-                  <IconSearch />
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsSearchModalOpen(true)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
-                  aria-label="Abrir busca online"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.35-4.35" />
-                    <path d="M11 15a4 4 0 0 0 4-4" />
-                  </svg>
-                  Buscar Online
-                </motion.button>
-              </div>
+              <MediaSearchBar
+                selectedType={searchType}
+                onTypeChange={setSearchType}
+                onResultSelect={handleSearchResultSelect}
+                placeholder="Buscar mídia online..."
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleAddMedia}
+                onClick={() => setIsAddModalOpen(true)}
                 className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold"
               >
                 <IconPlus /> Adicionar Manualmente
@@ -338,16 +254,29 @@ export default function LibrarySection() {
             </div>
           </motion.div>
         </div>
-
-        {/* Search Modal */}
-        <AddMediaSearchModal
-          isOpen={isSearchModalOpen}
-          onClose={() => setIsSearchModalOpen(false)}
-          onResultSelect={handleSearchResultSelect}
-        />
       </div>
     )
   }
+
+  // Obter items destacados
+  const featuredItems = useMemo(() => {
+    const custom = filtered.filter(item => item.isFeatured);
+    if (custom.length > 0) return custom.slice(0, 6);
+    return filtered
+      .filter(item => item.rating && item.rating >= 8)
+      .slice(0, 6);
+  }, [filtered]);
+
+  const recentItems = useMemo(() => {
+    return filtered
+      .slice(0, 8);
+  }, [filtered]);
+
+  const bestItem = useMemo(() => {
+    return filtered
+      .filter(item => item.rating && item.rating >= 9)
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
+  }, [filtered]);
 
   return (
     <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen">
@@ -366,7 +295,7 @@ export default function LibrarySection() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleAddMedia}
+              onClick={() => setIsAddModalOpen(true)}
               className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold text-white"
             >
               <IconPlus /> Adicionar Manualmente
@@ -376,28 +305,13 @@ export default function LibrarySection() {
 
         {/* Barra de Pesquisa Online Integrada */}
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-          <div className="flex-1 relative">
-            <input
-              placeholder="Buscar mídia online (livros, filmes, jogos...)..."
-              className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-16 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-              aria-label="Campo de busca online"
+          <div className="flex-1">
+            <MediaSearchBar
+              selectedType={searchType}
+              onTypeChange={setSearchType}
+              onResultSelect={handleSearchResultSelect}
+              placeholder="Buscar mídia online..."
             />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-              <IconSearch />
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsSearchModalOpen(true)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
-              aria-label="Abrir busca online"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.03 2 10.67 2 15.31 6.48 19.33 12 19.33c5.52 0 10-4.02 10-8.66C22 6.03 17.52 2 12 2zm0 14.33c-3.31 0-6-2.18-6-4.86S8.69 6.61 12 6.61s6 2.18 6 4.86-2.69 4.86-6 4.86z" />
-                <path d="M8 12h8M12 8v8" />
-              </svg>
-              Buscar Online
-            </motion.button>
           </div>
         </div>
       </motion.div>
@@ -410,7 +324,15 @@ export default function LibrarySection() {
           transition={{ delay: 0.2 }}
           className="mb-12"
         >
-          <h2 className="text-2xl font-bold mb-6 text-white/90">Destaques da Coleção</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-white/90">Destaques da Coleção</h2>
+            <button
+              onClick={() => setIsFeaturedModalOpen(true)}
+              className="text-sm px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300"
+            >
+              Editar
+            </button>
+          </div>
           <div className="overflow-x-auto pb-4">
             <div className="flex gap-6 w-max">
               {featuredItems.map((item, index) => (
@@ -421,7 +343,56 @@ export default function LibrarySection() {
                   transition={{ delay: 0.1 * index }}
                   className="w-48 flex-shrink-0"
                 >
-                  <CardGrid item={item} onOpen={() => handleEditItem(item)} />
+                  <div
+                    className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-2"
+                    onClick={() => {
+                      setEditingMediaItem(item);
+                      setActivePage("edit-media");
+                    }}
+                  >
+                    {item.cover ? (
+                      <img
+                        src={item.cover}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          console.log('Image load error for item:', item.title, 'URL:', item.cover);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                    ) : null}
+                    {!item.cover && (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-2 mx-auto`}>
+                            {IconType[item.type]}
+                          </div>
+                          <span className="text-white/80 font-bold text-lg">{item.title.charAt(0)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+                    {/* Rating badge */}
+                    {item.rating && (
+                      <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
+                        <IconStar className="w-3 h-3 text-yellow-400" />
+                        <span className="text-white text-sm font-bold">{item.rating}</span>
+                      </div>
+                    )}
+
+                    {/* Title */}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2">
+                        {item.title}
+                      </h3>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -629,6 +600,7 @@ export default function LibrarySection() {
                           alt={bestItem.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          referrerPolicy="no-referrer"
                           onError={(e) => {
                             console.log("Image load error for best item:", bestItem.title, "URL:", bestItem.cover)
                             const target = e.target as HTMLImageElement
@@ -727,12 +699,127 @@ export default function LibrarySection() {
         </div>
       )}
 
-      {/* Search Modal */}
-      <AddMediaSearchModal
-        isOpen={isSearchModalOpen}
-        onClose={() => setIsSearchModalOpen(false)}
-        onResultSelect={handleSearchResultSelect}
+      {isAddModalOpen && (
+        <AddMediaModal
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={(item) => {
+            setMediaItems(prev => [...prev, { ...item, isFeatured: false }]);
+          }}
+        />
+      )}
+      <EditFeaturedModal
+        isOpen={isFeaturedModalOpen}
+        selectedIds={mediaItems.filter(i => i.isFeatured).map(i => i.id)}
+        onClose={() => setIsFeaturedModalOpen(false)}
+        onSave={(ids) => {
+          setMediaItems(prev => prev.map(it => ({ ...it, isFeatured: ids.includes(it.id) })));
+        }}
       />
     </div>
-  )
+  );
+}
+
+// ---------------- Cards
+
+function CardGrid({ item, onOpen }: { item: MediaItem; onOpen(): void }) {
+  const status = statusBadge[item.status];
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <motion.button
+      onClick={onOpen}
+      whileHover={{ y: -8, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="group text-left bg-gradient-to-b from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-white/20 backdrop-blur-xl"
+    >
+      <div className="relative aspect-[3/4] bg-slate-800/60 overflow-hidden">
+        {!imageError && item.cover ? (
+          <img
+            src={item.cover}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
+            <div className="text-center">
+              <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-3 mx-auto`}>
+                {IconType[item.type]}
+              </div>
+              <span className="text-white/80 font-bold text-xl">{item.title.charAt(0)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+        {/* Type badge */}
+        <div className={`absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-br ${typePill[item.type]} border border-white/20 flex items-center gap-2 backdrop-blur-sm`}>
+          {IconType[item.type]}
+          <span className="hidden sm:inline">{typeLabels[item.type]}</span>
+        </div>
+
+        {/* Rating */}
+        {item.rating && (
+          <div className="absolute top-3 right-3 flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-sm border border-yellow-500/30">
+            <IconStar className="w-4 h-4" />
+            <span className="font-bold">{item.rating}</span>
+          </div>
+        )}
+
+        {/* Status */}
+        <div className={`absolute bottom-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium ${status.cls} backdrop-blur-sm`}>
+          {status.label}
+        </div>
+
+        {/* Progress for books */}
+        {item.type === 'books' && item.totalPages && (
+          <div className="absolute bottom-3 right-3 text-white/80 bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-xs font-medium">
+            {Math.round(((item.currentPage ?? 0) / item.totalPages) * 100)}%
+          </div>
+        )}
+      </div>
+
+      <div className="p-4">
+        <h3 className="font-semibold text-lg text-white leading-tight line-clamp-2 mb-2">{item.title}</h3>
+
+        <div className="flex items-center justify-between text-xs text-white/60">
+          <div className="flex items-center gap-3">
+            {item.hoursSpent ? (<span className="flex items-center gap-1">⏱ {item.hoursSpent}h</span>) : null}
+            {item.totalPages ? (<span className="flex items-center gap-1">📖 {item.currentPage ?? 0}/{item.totalPages}</span>) : null}
+            {item.platform ? (<span className="flex items-center gap-1">🎮 {item.platform}</span>) : null}
+          </div>
+        </div>
+
+        {item.tags?.length ? (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {item.tags.slice(0, 2).map(t => (
+              <span key={t} className="text-[10px] px-2 py-1 rounded-full bg-white/10 border border-white/10 text-white/70">
+                #{t}
+              </span>
+            ))}
+            {item.tags.length > 2 && (
+              <span className="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-white/10 text-white/50">
+                +{item.tags.length - 2}
+              </span>
+            )}
+          </div>
+        ) : null}
+      </div>
+    </motion.button>
+  );
+}
+
+// Util
+function labelType(t: MediaType) {
+  switch (t) {
+    case "games": return "Games";
+    case "anime": return "Anime";
+    case "series": return "Séries";
+    case "books": return "Livros";
+    case "movies": return "Filmes";
+  }
 }
