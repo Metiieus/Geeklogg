@@ -200,25 +200,51 @@ export default function LibrarySection() {
             <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8">
               Organize sua jornada geek com estilo e inteligência. Comece adicionando seus primeiros itens!
             </p>
+
+            {/* Barra de Pesquisa Online */}
+            <div className="max-w-2xl mx-auto mb-6">
+              <div className="flex-1 relative">
+                <input
+                  placeholder="Buscar mídia online (livros, filmes, jogos...)..."
+                  className="w-full bg-slate-800/40 border border-white/10 rounded-2xl px-16 py-4 text-lg outline-none focus:border-cyan-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
+                />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
+                  <IconSearch className="w-6 h-6" />
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsSearchModalOpen(true)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 font-semibold text-white text-sm"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.03 2 10.67 2 15.31 6.48 19.33 12 19.33c5.52 0 10-4.02 10-8.66C22 6.03 17.52 2 12 2zm0 14.33c-3.31 0-6-2.18-6-4.86S8.69 6.61 12 6.61s6 2.18 6 4.86-2.69 4.86-6 4.86z"/>
+                    <path d="M8 12h8M12 8v8"/>
+                  </svg>
+                  Buscar Online
+                </motion.button>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActivePage("add-media")}
-                className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 transition-all duration-300 shadow-lg shadow-cyan-600/25 font-semibold"
+                className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold"
               >
-                <IconPlus /> Adicionar Mídia
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-300 backdrop-blur-sm font-semibold"
-              >
-                <IconSearch /> Buscar Online
+                <IconPlus /> Adicionar Manualmente
               </motion.button>
             </div>
           </motion.div>
         </div>
+
+        {/* Search Modal */}
+        <AddMediaSearchModal
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+          onResultSelect={handleSearchResultSelect}
+        />
       </div>
     );
   }
