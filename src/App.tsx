@@ -11,7 +11,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import AccountDeletion from './components/AccountDeletion';
 import Profile from './components/Profile';
 import AddMediaPage from './components/AddMediaPage';
-import EditMediaPageWrapper from './components/EditMediaPageWrapper';
+import EditMediaPlaceholder from './components/EditMediaPlaceholder';
 import { LandingPage } from './components/LandingPage';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
@@ -111,7 +111,7 @@ const defaultSettings: UserSettings = {
   },
 };
 
-// Componente principal da aplicação autenticada
+// Componente principal da aplicaç��o autenticada
 const AuthenticatedApp: React.FC = () => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
