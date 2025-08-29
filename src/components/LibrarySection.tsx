@@ -89,12 +89,7 @@ const typeLabels: Record<MediaType, string> = {
   movies: "Filmes",
 }
 
-function toStars(r?: number) {
-  if (r == null) return "—"
-  // nota 0–10 -> 5 estrelas
-  const s = Math.round((r / 10) * 5)
-  return "★★★★★☆☆☆☆☆".slice(5 - s, 10 - s) // só pra debugar fácil
-}
+
 
 // ---------------------------------------------
 
@@ -189,6 +184,21 @@ export default function LibrarySection() {
     })
   }, [])
 
+  // Função para limpar todos os filtros
+  const clearFilters = useCallback(() => {
+    setQuery("");
+    setTypes(new Set());
+    setStatuses(new Set());
+    setOnlyFav(false);
+    setSortBy("updatedAt");
+  }, []);
+
+  // Função para editar item
+  const handleEditItem = useCallback((item: MediaItem) => {
+    setEditingMediaItem(item);
+    setActivePage("edit-media");
+  }, [setEditingMediaItem, setActivePage]);
+
   const handleSearchResultSelect = (result: ExternalMediaResult) => {
     // Converter resultado externo para MediaItem e adicionar
     const newItem: MediaItem = {
@@ -205,14 +215,14 @@ export default function LibrarySection() {
       updatedAt: new Date().toISOString(),
     };
 
-    setMediaItems((prev: MediaItem[]) => [...prev, newItem]);
+    setMediaItems([...mediaItems, newItem]);
   };
 
   // ---------- Empty state
   if (!mediaItems || mediaItems.length === 0) {
     return (
-      <div className="p-4 md:p-8 text-white min-h-screen">
-        <div className="rounded-3xl bg-gradient-to-br from-slate-800/40 via-slate-900/60 to-slate-800/40 border border-white/10 p-8 md:p-12 relative overflow-hidden backdrop-blur-xl">
+      <div className="p-4 md:p-8 text-white min-h-screen flex items-center justify-center">
+        <div className="rounded-3xl bg-gradient-to-br from-slate-800/40 via-slate-900/60 to-slate-800/40 border border-white/10 p-8 md:p-12 relative overflow-hidden backdrop-blur-xl max-w-4xl w-full mx-auto">
           <div
             className="absolute inset-0 opacity-20 pointer-events-none"
             style={{
@@ -259,24 +269,20 @@ export default function LibrarySection() {
     )
   }
 
-
-
-
-
   return (
-    <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen">
+    <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen max-w-7xl mx-auto">
       {/* Header com Barra de Pesquisa Integrada */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6 mb-8">
         {/* Título */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
+          <div className="text-center lg:text-left">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-2">
               Minha Biblioteca
             </h1>
             <p className="text-white/60 text-lg">{filtered.length} itens na sua coleção</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex justify-center lg:justify-end">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -319,14 +325,14 @@ export default function LibrarySection() {
             </button>
           </div>
           <div className="overflow-x-auto pb-4">
-            <div className="flex gap-6 w-max">
+            <div className="flex gap-4 md:gap-6 w-max mx-auto lg:mx-0">
               {featuredItems.map((item, index) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 * index }}
-                  className="w-48 flex-shrink-0"
+                  className="w-40 md:w-48 flex-shrink-0"
                 >
                   <div
                     className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-2"
@@ -366,7 +372,7 @@ export default function LibrarySection() {
                     {/* Rating badge */}
                     {item.rating && (
                       <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
-                        <IconStar className="w-3 h-3 text-yellow-400" />
+                        <IconStar />
                         <span className="text-white text-sm font-bold">{item.rating}</span>
                       </div>
                     )}
@@ -436,9 +442,9 @@ export default function LibrarySection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="flex flex-wrap gap-3 mb-8"
+        className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start"
       >
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 justify-center">
           {(["games", "anime", "series", "books", "movies"] as MediaType[]).map((t) => (
             <button
               key={t}
@@ -460,7 +466,7 @@ export default function LibrarySection() {
 
         <div className="hidden lg:block w-px h-8 bg-white/20 my-auto"></div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 justify-center">
           {(["completed", "in-progress", "dropped", "planned"] as Status[]).map((s) => (
             <button
               key={s}
@@ -529,7 +535,7 @@ export default function LibrarySection() {
 
             <motion.div
               layout
-              className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4"
+              className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4"
             >
               {filtered.map((item, index) => (
                 <motion.div
@@ -688,7 +694,7 @@ export default function LibrarySection() {
         <AddMediaModal
           onClose={() => setIsAddModalOpen(false)}
           onSave={(item) => {
-            setMediaItems(prev => [...prev, { ...item, isFeatured: false }]);
+            setMediaItems([...mediaItems, { ...item, isFeatured: false }]);
           }}
         />
       )}
@@ -697,114 +703,11 @@ export default function LibrarySection() {
         selectedIds={mediaItems.filter(i => i.isFeatured).map(i => i.id)}
         onClose={() => setIsFeaturedModalOpen(false)}
         onSave={(ids) => {
-          setMediaItems(prev => prev.map(it => ({ ...it, isFeatured: ids.includes(it.id) })));
+          setMediaItems(mediaItems.map((it: MediaItem) => ({ ...it, isFeatured: ids.includes(it.id) })));
         }}
       />
     </div>
   );
 }
 
-// ---------------- Cards
 
-function CardGrid({ item, onOpen }: { item: MediaItem; onOpen(): void }) {
-  const status = statusBadge[item.status];
-  const [imageError, setImageError] = useState(false);
-
-  return (
-    <motion.button
-      onClick={onOpen}
-      whileHover={{ y: -8, scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className="group text-left bg-gradient-to-b from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-white/20 backdrop-blur-xl"
-    >
-      <div className="relative aspect-[3/4] bg-slate-800/60 overflow-hidden">
-        {!imageError && item.cover ? (
-          <img
-            src={item.cover}
-            alt={item.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center">
-            <div className="text-center">
-              <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-3 mx-auto`}>
-                {IconType[item.type]}
-              </div>
-              <span className="text-white/80 font-bold text-xl">{item.title.charAt(0)}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-        {/* Type badge */}
-        <div className={`absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-br ${typePill[item.type]} border border-white/20 flex items-center gap-2 backdrop-blur-sm`}>
-          {IconType[item.type]}
-          <span className="hidden sm:inline">{typeLabels[item.type]}</span>
-        </div>
-
-        {/* Rating */}
-        {item.rating && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 text-yellow-300 bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-sm border border-yellow-500/30">
-            <IconStar className="w-4 h-4" />
-            <span className="font-bold">{item.rating}</span>
-          </div>
-        )}
-
-        {/* Status */}
-        <div className={`absolute bottom-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium ${status.cls} backdrop-blur-sm`}>
-          {status.label}
-        </div>
-
-        {/* Progress for books */}
-        {item.type === 'books' && item.totalPages && (
-          <div className="absolute bottom-3 right-3 text-white/80 bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-xs font-medium">
-            {Math.round(((item.currentPage ?? 0) / item.totalPages) * 100)}%
-          </div>
-        )}
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-semibold text-lg text-white leading-tight line-clamp-2 mb-2">{item.title}</h3>
-
-        <div className="flex items-center justify-between text-xs text-white/60">
-          <div className="flex items-center gap-3">
-            {item.hoursSpent ? (<span className="flex items-center gap-1">⏱ {item.hoursSpent}h</span>) : null}
-            {item.totalPages ? (<span className="flex items-center gap-1">📖 {item.currentPage ?? 0}/{item.totalPages}</span>) : null}
-            {item.platform ? (<span className="flex items-center gap-1">🎮 {item.platform}</span>) : null}
-          </div>
-        </div>
-
-        {item.tags?.length ? (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {item.tags.slice(0, 2).map(t => (
-              <span key={t} className="text-[10px] px-2 py-1 rounded-full bg-white/10 border border-white/10 text-white/70">
-                #{t}
-              </span>
-            ))}
-            {item.tags.length > 2 && (
-              <span className="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-white/10 text-white/50">
-                +{item.tags.length - 2}
-              </span>
-            )}
-          </div>
-        ) : null}
-      </div>
-    </motion.button>
-  );
-}
-
-// Util
-function labelType(t: MediaType) {
-  switch (t) {
-    case "games": return "Games";
-    case "anime": return "Anime";
-    case "series": return "Séries";
-    case "books": return "Livros";
-    case "movies": return "Filmes";
-  }
-}

@@ -65,6 +65,7 @@ export interface MediaItem {
   type: MediaType;
   description?: string;
   isFeatured?: boolean;
+  isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
 }
