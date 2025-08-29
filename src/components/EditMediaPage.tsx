@@ -115,9 +115,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         endDate: formData.endDate || undefined,
         platform: formData.platform?.trim() || undefined,
         tags: formData.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+          ? formData.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter((tag) => tag.length > 0)
+          : [],
         externalLink: formData.externalLink?.trim() || undefined,
         description: formData.description?.trim() || undefined,
         coverFile: formData.coverFile,
@@ -142,9 +144,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         endDate: formData.endDate || undefined,
         platform: formData.platform?.trim() || undefined,
         tags: formData.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+          ? formData.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter((tag) => tag.length > 0)
+          : [],
         externalLink: formData.externalLink?.trim() || undefined,
         cover: updateRes.cover ?? item.cover,
         description: formData.description?.trim() || undefined,
