@@ -67,9 +67,11 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
       endDate: formData.endDate || undefined,
       platform: formData.platform || undefined,
       tags: formData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0),
+        ? formData.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
+        : [],
       externalLink: formData.externalLink || undefined,
       description: formData.description || undefined,
       coverFile: formData.coverFile,
