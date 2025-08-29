@@ -34,7 +34,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
     startDate: item.startDate || "",
     endDate: item.endDate || "",
     platform: item.platform || "",
-    tags: item.tags.join(", "),
+    tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
     externalLink: item.externalLink || "",
     coverPreview: item.cover || "",
     coverFile: undefined as File | undefined,
