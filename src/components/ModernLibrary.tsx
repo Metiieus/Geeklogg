@@ -13,7 +13,7 @@ import useDebounce from '../hooks/useDebounce';
 // Design System
 import { HeroBanner } from '../design-system/components/HeroBanner';
 // import { MediaCard } from '../design-system/components/MediaCard';
-import { RadiantMediaCard } from '../design-system/components/RadiantMediaCard';
+import { RadiantMediaCard } from './RadiantMediaCard';
 import { GlassInput, GlassSelect, GlassFilterBar } from '../design-system/components/GlassInput';
 import { NeonOrnament, FloatingParticles } from '../design-system/components/NeonPatterns';
 
