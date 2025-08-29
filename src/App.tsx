@@ -11,7 +11,7 @@ const Settings = lazy(() => import("./components/Settings"));
 const Profile = lazy(() => import("./components/Profile"));
 const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
 const AccountDeletion = lazy(() => import("./components/AccountDeletion"));
-import { LibrarySection } from "./components/LibrarySection";
+import LibrarySection from "./components/LibrarySection";
 import { SocialFeed } from "./components/SocialFeed";
 import { AddMediaPage } from "./components/AddMediaPage";
 import { EditMediaPage } from "./components/EditMediaPage";
