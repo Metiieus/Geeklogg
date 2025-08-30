@@ -294,29 +294,16 @@ const ModernLibrary: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                Minha Biblioteca
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Organize e acompanhe sua jornada através dos seus conteúdos favoritos
-              </p>
-            </div>
-            <button
-              onClick={() => setShowAddOptions(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-medium transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Adicionar
-            </button>
-          </div>
+        {/* Hero Banner */}
+        <MinimalistHeroBanner
+          title="Minha Biblioteca"
+          subtitle="Organize e acompanhe sua jornada através dos seus conteúdos favoritos"
+          onAddMedia={() => setShowAddOptions(true)}
+          stats={stats}
+        />
 
-          {/* Quick Stats */}
-          <QuickStats stats={stats} />
-        </div>
+        {/* Additional Stats */}
+        <QuickStats stats={stats} />
 
         {/* Search and Filters */}
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
