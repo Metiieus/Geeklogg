@@ -370,7 +370,6 @@ const AppContent: React.FC = () => {
     }
 
     if (showRegister) {
-      const { Register } = require('./components/Register');
       return (
         <Register
           onCancel={() => setShowRegister(false)}
