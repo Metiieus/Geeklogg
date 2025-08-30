@@ -224,10 +224,10 @@ const AppContent: React.FC = () => {
         console.log('🔄 Carregando dados do usuário...');
         
         const [loadedSettings, loadedMediaItems, loadedReviews, loadedMilestones] = await Promise.all([
-          loadSettings(user.uid),
-          loadMediaItems(user.uid),
-          loadReviews(user.uid),
-          loadMilestones(user.uid),
+          getSettings(user.uid),
+          getMedias(),
+          getReviews(),
+          getMilestones(),
         ]);
 
         setSettings({ ...defaultSettings, ...loadedSettings });
