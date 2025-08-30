@@ -355,7 +355,39 @@ const AppContent: React.FC = () => {
 
   // Unauthenticated state
   if (!user) {
-    return <Login />;
+    // Se pediu login ou registro, mostra o componente respectivo
+    if (showLogin) {
+      return (
+        <Login
+          onCancel={() => setShowLogin(false)}
+          onRegister={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
+        />
+      );
+    }
+
+    if (showRegister) {
+      const { Register } = require('./components/Register');
+      return (
+        <Register
+          onCancel={() => setShowRegister(false)}
+          onLogin={() => {
+            setShowRegister(false);
+            setShowLogin(true);
+          }}
+        />
+      );
+    }
+
+    // Caso contrário, mostra a landing page
+    return (
+      <LandingPage
+        onLogin={() => setShowLogin(true)}
+        onRegister={() => setShowRegister(true)}
+      />
+    );
   }
 
   const currentPageMeta = pageMetadata[activePage];
