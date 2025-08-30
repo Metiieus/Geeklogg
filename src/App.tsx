@@ -352,23 +352,7 @@ const AppContent: React.FC = () => {
 
   // Unauthenticated state
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-slate-800 rounded-2xl p-8 max-w-md w-full text-center border border-white/10">
-          <div className="w-16 h-16 mx-auto mb-6">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=80"
-              alt="GeekLog"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <h1 className="text-2xl font-bold text-white mb-2">GeekLog</h1>
-          <p className="text-slate-400 mb-6">
-            Faça login para continuar sua jornada nerd
-          </p>
-        </div>
-      </div>
-    );
+    return <Login />;
   }
 
   const currentPageMeta = pageMetadata[activePage];
