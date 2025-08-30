@@ -213,6 +213,8 @@ const AppContent: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   // Load user data on authentication
   useEffect(() => {
