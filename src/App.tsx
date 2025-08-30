@@ -32,7 +32,7 @@ import ModernLibrary from './components/ModernLibrary';
 import Reviews from './components/Reviews';
 import Timeline from './components/Timeline';
 import Statistics from './components/Statistics';
-import Settings from './components/Settings';
+import SettingsComponent from './components/Settings';
 import Profile from './components/Profile';
 import { AddMediaPage } from './components/AddMediaPage';
 import EditMediaPlaceholder from './components/EditMediaPlaceholder';
