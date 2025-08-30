@@ -39,10 +39,10 @@ import { EditMediaPlaceholder } from './components/EditMediaPlaceholder';
 import { UserProfileView } from './components/UserProfileView';
 
 // Services
-import { loadSettings, saveSettings } from './services/settingsService';
-import { loadMediaItems, saveMediaItems } from './services/mediaService';
-import { loadReviews, saveReviews } from './services/reviewService';
-import { loadMilestones, saveMilestones } from './services/milestoneService';
+import { getSettings, saveSettings } from './services/settingsService';
+import { getMedias } from './services/mediaService';
+import { getReviews } from './services/reviewService';
+import { getMilestones } from './services/milestoneService';
 
 // Types
 export type MediaType = 'game' | 'movie' | 'tv' | 'book' | 'anime' | 'manga';
