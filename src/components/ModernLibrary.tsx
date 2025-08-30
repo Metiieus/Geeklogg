@@ -25,6 +25,7 @@ import useDebounce from '../hooks/useDebounce';
 
 // Components
 import { MinimalistMediaCard } from './MinimalistMediaCard';
+import { MinimalistHeroBanner } from '../design-system/components/MinimalistHeroBanner';
 import { ConnectivityError } from './ConnectivityError';
 import { AddMediaOptions } from './AddMediaOptions';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
