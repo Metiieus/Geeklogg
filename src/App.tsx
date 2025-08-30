@@ -250,26 +250,22 @@ const AppContent: React.FC = () => {
     }
   }, [user, authLoading, showSuccess, showError]);
 
-  // Auto-save functionality
+  // Auto-save functionality - implementar quando necessário
   useEffect(() => {
     if (!user || isLoading) return;
 
     const autoSave = async () => {
       try {
-        await Promise.all([
-          saveSettings(user.uid, settings),
-          saveMediaItems(user.uid, mediaItems),
-          saveReviews(user.uid, reviews),
-          saveMilestones(user.uid, milestones),
-        ]);
+        // Auto-save será implementado conforme necessário
+        await saveSettings(user.uid, settings);
       } catch (error) {
         console.warn('⚠️ Auto-save falhou:', error);
       }
     };
 
-    const timeoutId = setTimeout(autoSave, 2000); // Auto-save depois de 2 segundos de inatividade
+    const timeoutId = setTimeout(autoSave, 5000); // Auto-save depois de 5 segundos de inatividade
     return () => clearTimeout(timeoutId);
-  }, [user, settings, mediaItems, reviews, milestones, isLoading]);
+  }, [user, settings, isLoading]);
 
   // Navigation functions
   const navigateToAddMedia = useCallback(() => {
