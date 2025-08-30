@@ -1,7 +1,7 @@
 // ModernLibrary.tsx
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Grid, List, X, Trash2, Star, Clock, TrendingUp, BookOpen, Award, Users, ChevronRight } from 'lucide-react';
+import { Search, Grid, List, X, Trash2, Star, Clock, TrendingUp, BookOpen, Award, Users, ChevronRight, BarChart3 } from 'lucide-react';
 
 import { useAppContext } from '../context/AppContext';
 import { MediaType, Status } from '../App';
