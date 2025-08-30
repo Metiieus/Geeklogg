@@ -291,7 +291,7 @@ const AppContent: React.FC = () => {
       reviews: Reviews,
       timeline: Timeline,
       statistics: Statistics,
-      settings: Settings,
+      settings: SettingsComponent,
       profile: Profile,
       'add-media': AddMediaPage,
       'edit-media': EditMediaPlaceholder,
