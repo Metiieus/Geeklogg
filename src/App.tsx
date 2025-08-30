@@ -28,7 +28,7 @@ import { Sidebar } from './components/Sidebar';
 import { DesktopHeader } from './components/DesktopHeader';
 import { MobileNav } from './components/MobileNav';
 import Dashboard from './components/Dashboard';
-import { ModernLibrary } from './components/ModernLibrary';
+import ModernLibrary from './components/ModernLibrary';
 import Reviews from './components/Reviews';
 import Timeline from './components/Timeline';
 import Statistics from './components/Statistics';
