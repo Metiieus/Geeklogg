@@ -29,6 +29,7 @@ import { DesktopHeader } from './components/DesktopHeader';
 import { MobileNav } from './components/MobileNav';
 import { Login } from './components/Login';
 import { LandingPage } from './components/LandingPage';
+import { Register } from './components/Register';
 import Dashboard from './components/Dashboard';
 import ModernLibrary from './components/ModernLibrary';
 import Reviews from './components/Reviews';
