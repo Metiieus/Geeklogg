@@ -27,6 +27,7 @@ import { useToast } from './context/ToastContext';
 import { Sidebar } from './components/Sidebar';
 import { DesktopHeader } from './components/DesktopHeader';
 import { MobileNav } from './components/MobileNav';
+import { Login } from './components/Login';
 import Dashboard from './components/Dashboard';
 import ModernLibrary from './components/ModernLibrary';
 import Reviews from './components/Reviews';
