@@ -35,7 +35,7 @@ import Statistics from './components/Statistics';
 import Settings from './components/Settings';
 import Profile from './components/Profile';
 import { AddMediaPage } from './components/AddMediaPage';
-import { EditMediaPlaceholder } from './components/EditMediaPlaceholder';
+import EditMediaPlaceholder from './components/EditMediaPlaceholder';
 import { UserProfileView } from './components/UserProfileView';
 
 // Services
