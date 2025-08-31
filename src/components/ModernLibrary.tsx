@@ -141,12 +141,15 @@ const QuickStats: React.FC<{ stats: any }> = ({ stats }) => (
 
 const ModernLibrary: React.FC = () => {
   const {
-    mediaItems,
+    mediaItems: rawMediaItems,
     setMediaItems,
     navigateToAddMedia,
     navigateToEditMedia,
     deleteMedia,
   } = useAppContext() as any;
+
+  // Use sample data if no real data exists (for development/demo)
+  const mediaItems = rawMediaItems?.length > 0 ? rawMediaItems : sampleMediaData;
 
   const { showError, showSuccess } = useToast();
 
