@@ -81,6 +81,11 @@ export interface MediaItem {
   isFavorite?: boolean;
   tags?: string[];
   externalId?: string;
+  description?: string;
+  platform?: string;
+  totalPages?: number;
+  currentPage?: number;
+  externalLink?: string;
 }
 
 export interface Review {
