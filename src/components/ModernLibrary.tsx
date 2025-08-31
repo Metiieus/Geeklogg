@@ -444,18 +444,28 @@ const ModernLibrary: React.FC = () => {
 
         {/* Featured Items */}
         {featuredItems.length > 0 && (
-          <section className="mb-8">
+          <motion.section
+            className="mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             <SectionHeader
-              title="Recomendados"
+              title="⭐ Destaques"
               subtitle="Seus favoritos e mais bem avaliados"
               count={featuredItems.length}
+              gradient={true}
               action={
-                <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 text-sm font-medium">
+                <motion.button
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   Ver todos <ChevronRight className="w-4 h-4" />
-                </button>
+                </motion.button>
               }
             />
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
               {featuredItems.map((item, idx) => (
                 <motion.div
                   key={item?.id ? String(item.id) : `featured-${idx}`}
@@ -499,7 +509,7 @@ const ModernLibrary: React.FC = () => {
                 </motion.div>
               ))}
             </div>
-          </section>
+          </motion.section>
         )}
 
         {/* Recent Items */}
