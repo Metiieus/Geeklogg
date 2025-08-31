@@ -32,6 +32,7 @@ import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
+import { sampleMediaData } from '../data/sampleMediaData';
 
 const statusOptions = [
   { value: 'all', label: 'Todos' },
