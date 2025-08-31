@@ -62,44 +62,73 @@ export const MinimalistMediaCard: React.FC<MinimalistMediaCardProps> = ({
     <motion.div
       className={`group cursor-pointer ${className}`}
       onClick={onClick}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     >
       {/* Main Card Container */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 h-full">
-        
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg hover:shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-500 h-full relative">
+
         {/* Cover Image Area */}
         <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
           {imageUrl ? (
-            <motion.img
-              src={imageUrl}
-              alt={title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
+            <>
+              <motion.img
+                src={imageUrl}
+                alt={title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => {
+                  console.log('Image failed to load:', imageUrl);
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              {/* Gradient overlay for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <TypeIcon className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+              <div className="text-center">
+                <TypeIcon className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                  {typeLabels[type]}
+                </span>
+              </div>
             </div>
           )}
-          
+
           {/* Rating Overlay */}
           {rating && rating > 0 && (
-            <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
-              <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+            <motion.div
+              className="absolute top-3 right-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-lg"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                 {rating.toFixed(1)}
               </span>
-            </div>
+            </motion.div>
           )}
-          
+
           {/* Progress Bar */}
           {progress !== undefined && progress > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gray-200 dark:bg-gray-700 h-1">
-              <div 
-                className="h-full bg-blue-500 transition-all duration-300"
-                style={{ width: `${Math.min(progress, 100)}%` }}
+            <div className="absolute bottom-0 left-0 right-0 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm h-2">
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(progress, 100)}%` }}
+                transition={{ duration: 0.8, delay: 0.3 }}
               />
+            </div>
+          )}
+
+          {/* Status Badge */}
+          {status && (
+            <div className="absolute top-3 left-3">
+              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${statusColors[status as keyof typeof statusColors] || 'bg-gray-100/90 text-gray-700 dark:bg-gray-700/90 dark:text-gray-300'}`}>
+                {statusLabels[status as keyof typeof statusLabels] || status}
+              </span>
             </div>
           )}
         </div>
