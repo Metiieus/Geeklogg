@@ -233,8 +233,7 @@ const ModernLibrary: React.FC = () => {
   }, [mediaItems, selectedType, selectedStatus, debouncedSearchQuery, sortBy]);
 
   // Helper functions
-  const getItemImage = (item: MediaItem) =>
-    (item as any)?.coverUrl || (item as any)?.imageUrl || (item as any)?.poster || (item as any)?.thumbnail || "";
+  const getItemImage = (item: MediaItem) => item.cover || "";
 
   // Handlers
   const handleExternalResultSelect = useCallback((result: ExternalMediaResult) => {
