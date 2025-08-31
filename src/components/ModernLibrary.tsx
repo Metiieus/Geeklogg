@@ -65,25 +65,31 @@ const SectionHeader: React.FC<{
   subtitle?: string;
   action?: React.ReactNode;
   count?: number;
-}> = ({ title, subtitle, action, count }) => (
-  <div className="flex items-center justify-between mb-6">
+  gradient?: boolean;
+}> = ({ title, subtitle, action, count, gradient = false }) => (
+  <motion.div
+    className="flex items-center justify-between mb-8"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+  >
     <div>
-      <div className="flex items-center gap-3">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+      <div className="flex items-center gap-4">
+        <h2 className={`text-2xl font-bold ${gradient ? 'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent' : 'text-gray-900 dark:text-gray-100'}`}>
           {title}
         </h2>
         {count !== undefined && (
-          <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-1 rounded-lg text-sm font-medium">
+          <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-lg">
             {count}
           </span>
         )}
       </div>
       {subtitle && (
-        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{subtitle}</p>
+        <p className="text-gray-600 dark:text-gray-400 text-base mt-2 font-medium">{subtitle}</p>
       )}
     </div>
     {action}
-  </div>
+  </motion.div>
 );
 
 // Quick Stats Component
