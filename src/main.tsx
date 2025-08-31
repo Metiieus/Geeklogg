@@ -9,6 +9,7 @@ import { ToastProvider } from "./context/ToastContext";
 
 // Analytics & Performance
 import './styles/performance-optimizations.css';
+import './styles/library-animations.css';
 
 console.log('🚀 GeekLog inicializando...');
 
