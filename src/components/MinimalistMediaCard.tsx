@@ -134,28 +134,18 @@ export const MinimalistMediaCard: React.FC<MinimalistMediaCardProps> = ({
         </div>
 
         {/* Content Area */}
-        <div className="p-4 space-y-3">
+        <div className="p-5 space-y-3">
           {/* Title */}
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 text-sm leading-snug">
+          <h3 className="font-bold text-gray-900 dark:text-gray-100 line-clamp-2 text-base leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
             {title}
           </h3>
-          
-          {/* Metadata Row */}
-          <div className="flex items-center justify-between">
-            {/* Type */}
-            <div className="flex items-center gap-1.5">
-              <TypeIcon className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
-              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                {typeLabels[type]}
-              </span>
-            </div>
-            
-            {/* Status Badge */}
-            {status && (
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'}`}>
-                {statusLabels[status as keyof typeof statusLabels] || status}
-              </span>
-            )}
+
+          {/* Type Label */}
+          <div className="flex items-center gap-2">
+            <TypeIcon className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              {typeLabels[type]}
+            </span>
           </div>
         </div>
       </div>
