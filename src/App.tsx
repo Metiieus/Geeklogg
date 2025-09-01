@@ -41,6 +41,7 @@ import { AddMediaPage } from './components/AddMediaPage';
 import EditMediaPlaceholder from './components/EditMediaPlaceholder';
 import { UserProfileView } from './components/UserProfileView';
 import FirebaseStatus from './components/FirebaseStatus';
+import './utils/connectivityTest'; // Auto-run connectivity test in development
 
 // Services
 import { getSettings, saveSettings } from './services/settingsService';
