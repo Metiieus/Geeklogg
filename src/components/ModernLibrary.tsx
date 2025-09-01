@@ -680,6 +680,21 @@ const ModernLibrary: React.FC = () => {
           setItemToDelete(null);
         }}
       />
+
+      {selectedItem && (
+        <MediaDetailModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onEdit={() => {
+            navigateToEditMedia(selectedItem);
+            setSelectedItem(null);
+          }}
+          onDelete={() => {
+            handleDeleteItem(selectedItem);
+            setSelectedItem(null);
+          }}
+        />
+      )}
     </div>
   );
 };
