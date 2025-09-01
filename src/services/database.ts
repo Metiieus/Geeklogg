@@ -40,22 +40,52 @@ export const database = {
     collectionPath: string | string[],
     data: any,
   ): Promise<DocumentReference> => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      const docRef = await addDoc(collection(db, pathStr), {
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for add operation");
+      const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const docData = {
         ...data,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-      // Retorna o DocumentReference completo (útil para pegar o ID gerado)
-      return docRef;
-    } catch (error) {
-      console.error("Error adding document:", error);
-      throw error;
+      localStorageService.setItem(pathStr, id, docData);
+
+      // Return a mock DocumentReference
+      return { id } as DocumentReference;
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      return await withRetry(async () => {
+        const docRef = await addDoc(collection(db, pathStr), {
+          ...data,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        return docRef;
+      });
+    } catch (error: any) {
+      console.warn("⚠️ Firebase add failed, falling back to local storage:", error);
+
+      const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const docData = {
+        ...data,
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      localStorageService.setItem(pathStr, id, docData);
+      return { id } as DocumentReference;
     }
   },
 
