@@ -172,16 +172,40 @@ export const database = {
    * GET – obtém um único documento
    * ------------------------------------------------------------------ */
   get: async (collectionPath: string | string[], docId?: string) => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      // Protege documentos do usuário quando não autenticado
-      if ((pathStr.startsWith("users/") || pathStr === "users") && !auth.currentUser) {
-        console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
-        return { exists: () => false, data: () => null };
+    // Protege documentos do usuário quando não autenticado
+    const auth = getAuth();
+    if ((pathStr.startsWith("users/") || pathStr === "users") && !auth?.currentUser) {
+      console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
+      return { exists: () => false, data: () => null };
+    }
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for get operation");
+
+      let effectiveDocId = docId;
+      if (!effectiveDocId) {
+        const parts = pathStr.split("/");
+        if (parts.length % 2 === 0) {
+          effectiveDocId = parts[parts.length - 1];
+        } else {
+          return { exists: () => false, data: () => null };
+        }
       }
+
+      const data = localStorageService.getItem(pathStr, effectiveDocId);
+      return data
+        ? { id: effectiveDocId, ...data, exists: () => true, data: () => data }
+        : { exists: () => false, data: () => null };
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
 
       let docRef;
       if (docId) {
@@ -196,31 +220,28 @@ export const database = {
         }
       }
 
-      const docSnap = await getDoc(docRef);
+      const docSnap = await withRetry(async () => await getDoc(docRef));
       return docSnap.exists()
         ? { id: docSnap.id, ...docSnap.data(), exists: () => true, data: () => docSnap.data() }
         : { exists: () => false, data: () => null };
     } catch (error: any) {
-      console.error("Error getting document:", error);
-      /* Tratamento de falhas de rede / permissão */
-      if (
-        error.code === "unavailable" ||
-        error.message?.includes("Failed to fetch") ||
-        error.message?.includes("offline") ||
-        error.code === "failed-precondition"
-      ) {
-        console.warn("🌐 Offline/unavailable – retornando documento nulo");
-        return { exists: () => false, data: () => null };
+      console.warn("⚠️ Firebase get failed, trying local storage:", error);
+
+      // Fallback to local storage
+      let effectiveDocId = docId;
+      if (!effectiveDocId) {
+        const parts = pathStr.split("/");
+        if (parts.length % 2 === 0) {
+          effectiveDocId = parts[parts.length - 1];
+        } else {
+          return { exists: () => false, data: () => null };
+        }
       }
-      if (error.code === "permission-denied" || error.code === "unauthenticated") {
-        console.warn("🔒 Sem permissão / não autenticado – doc nulo");
-        return { exists: () => false, data: () => null };
-      }
-      if (import.meta.env.DEV) {
-        console.warn("🚧 DEV – suprimindo erro e retornando nulo");
-        return { exists: () => false, data: () => null };
-      }
-      throw error;
+
+      const data = localStorageService.getItem(pathStr, effectiveDocId);
+      return data
+        ? { id: effectiveDocId, ...data, exists: () => true, data: () => data }
+        : { exists: () => false, data: () => null };
     }
   },
 
