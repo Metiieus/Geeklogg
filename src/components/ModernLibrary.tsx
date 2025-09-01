@@ -428,11 +428,47 @@ const ModernLibrary: React.FC = () => {
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 <span>Filtros</span>
+                {(selectedType !== 'all' || selectedStatus !== 'all' || debouncedSearchQuery) && (
+                  <span className="w-2 h-2 bg-blue-500 rounded-full ml-1" />
+                )}
               </button>
-              
-              <span className="text-sm text-slate-500 dark:text-slate-400">
-                {filteredAndSortedItems.length} itens encontrados
-              </span>
+
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                  {filteredAndSortedItems.length} itens encontrados
+                </span>
+
+                {/* Active Filters Indicators */}
+                {(selectedType !== 'all' || selectedStatus !== 'all' || debouncedSearchQuery) && (
+                  <div className="flex items-center gap-2">
+                    {selectedType !== 'all' && (
+                      <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium">
+                        {typeOptions.find(opt => opt.value === selectedType)?.label}
+                      </span>
+                    )}
+                    {selectedStatus !== 'all' && (
+                      <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-xs font-medium">
+                        {statusOptions.find(opt => opt.value === selectedStatus)?.label}
+                      </span>
+                    )}
+                    {debouncedSearchQuery && (
+                      <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-medium">
+                        "{debouncedSearchQuery}"
+                      </span>
+                    )}
+                    <button
+                      onClick={() => {
+                        setSelectedType('all');
+                        setSelectedStatus('all');
+                        setSearchQuery('');
+                      }}
+                      className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 underline"
+                    >
+                      Limpar
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* View Mode Toggle */}
