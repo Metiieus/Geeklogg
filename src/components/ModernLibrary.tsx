@@ -337,7 +337,7 @@ const ModernLibrary: React.FC = () => {
                     type={item.type}
                     status={item.status}
                     rating={item.rating}
-                    onClick={() => navigateToEditMedia(item)}
+                    onClick={() => setSelectedItem(item)}
                     variant="featured"
                   />
                 </motion.div>
