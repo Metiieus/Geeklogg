@@ -429,7 +429,7 @@ const ModernLibrary: React.FC = () => {
               </button>
               
               <span className="text-sm text-slate-500 dark:text-slate-400">
-                {filteredAndSortedItems.length} items found
+                {filteredAndSortedItems.length} itens encontrados
               </span>
             </div>
 
@@ -469,7 +469,7 @@ const ModernLibrary: React.FC = () => {
               >
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Type
+                    Tipo
                   </label>
                   <select
                     value={selectedType}
@@ -503,7 +503,7 @@ const ModernLibrary: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Sort By
+                    Ordenar Por
                   </label>
                   <select
                     value={sortBy}
@@ -529,8 +529,8 @@ const ModernLibrary: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <FuturisticSectionHeader
-            title="All Items"
-            subtitle="Your complete media collection"
+            title="Todos os Itens"
+            subtitle="Sua coleção completa de mídia"
             icon={<TrendingUp className="w-6 h-6 text-slate-600 dark:text-slate-400" />}
             count={filteredAndSortedItems.length}
           />
@@ -601,18 +601,18 @@ const ModernLibrary: React.FC = () => {
                     <TrendingUp className="w-10 h-10 text-slate-400" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">
-                    {debouncedSearchQuery ? 'No results found' : 'Your library is empty'}
+                    {debouncedSearchQuery ? 'Nenhum resultado encontrado' : 'Sua biblioteca está vazia'}
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
                     {debouncedSearchQuery
-                      ? 'Try adjusting your search terms or filters'
-                      : 'Start building your collection by adding your first media item'}
+                      ? 'Tente ajustar os termos de busca ou filtros'
+                      : 'Comece construindo sua coleção adicionando seu primeiro item'}
                   </p>
                   <button
                     onClick={() => setShowAddOptions(true)}
                     className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                   >
-                    Add Your First Item
+                    Adicionar Primeiro Item
                   </button>
                 </div>
               </motion.div>
@@ -634,7 +634,7 @@ const ModernLibrary: React.FC = () => {
               <div className="p-8">
                 <div className="flex items-center justify-between mb-8">
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                    Add New Media
+                    Adicionar Nova Mídia
                   </h2>
                   <button
                     onClick={() => setShowAddOptions(false)}
@@ -667,10 +667,10 @@ const ModernLibrary: React.FC = () => {
 
       <ConfirmationModal
         isOpen={showDeleteConfirm}
-        title="Delete Item"
-        message={itemToDelete ? `Are you sure you want to delete "${itemToDelete.title}"? This action cannot be undone.` : ''}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="Excluir Item"
+        message={itemToDelete ? `Tem certeza que deseja excluir "${itemToDelete.title}"? Esta ação não pode ser desfeita.` : ''}
+        confirmText="Excluir"
+        cancelText="Cancelar"
         variant="danger"
         onConfirm={confirmDelete}
         onCancel={() => {
