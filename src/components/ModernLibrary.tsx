@@ -290,19 +290,10 @@ const ModernLibrary: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <FuturisticSectionHeader
-              title="Featured"
-              subtitle="Your top-rated and recently enjoyed content"
+              title="Destaques"
+              subtitle="Seus conteúdos mais bem avaliados e recentes"
               icon={<Sparkles className="w-6 h-6 text-amber-600 dark:text-amber-400" />}
               count={featuredItems.length}
-              action={
-                <motion.button 
-                  className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-300"
-                  whileHover={{ x: 5 }}
-                >
-                  <span className="text-sm font-medium">View All</span>
-                  <ChevronRight className="w-4 h-4" />
-                </motion.button>
-              }
             />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
