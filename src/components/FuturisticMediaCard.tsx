@@ -100,7 +100,7 @@ export const FuturisticMediaCard: React.FC<FuturisticMediaCardProps> = ({
                   <TypeIcon className="w-8 h-8 text-slate-400 dark:text-slate-500" />
                 </div>
                 <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  {typeLabels[type]}
+                  {typeLabels[type] || 'Media'}
                 </span>
               </div>
             </div>
