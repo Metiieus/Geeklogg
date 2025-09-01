@@ -110,7 +110,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Seção de Conte��do - Lado Direito */}
+        {/* Seção de Conteúdo - Lado Direito */}
         <div className="lg:w-3/5 flex flex-col">
           {/* Header do conteúdo */}
           <div className="p-6 border-b border-white/10">
@@ -120,8 +120,8 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   {item.title}
                 </h1>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className={`px-3 py-1 bg-gradient-to-r ${typeColors[item.type]} rounded-full text-sm font-medium border border-current/30`}>
-                    {typeLabels[item.type]}
+                  <span className={`px-3 py-1 bg-gradient-to-r ${typeColors[item.type] || typeColors.book} rounded-full text-sm font-medium border border-current/30`}>
+                    {typeLabels[item.type] || 'Mídia'}
                   </span>
                   {item.platform && (
                     <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-sm">
