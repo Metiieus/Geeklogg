@@ -18,19 +18,21 @@ const statusConfig = {
 };
 
 const typeLabels = {
-  games: 'Jogo',
+  game: 'Jogo',
   anime: 'Anime',
-  series: 'Série',
-  books: 'Livro',
-  movies: 'Filme',
+  tv: 'Série',
+  book: 'Livro',
+  movie: 'Filme',
+  manga: 'Mangá',
 };
 
 const typeColors = {
-  games: 'from-cyan-500/20 to-cyan-400/10 text-cyan-300',
+  game: 'from-cyan-500/20 to-cyan-400/10 text-cyan-300',
   anime: 'from-pink-500/20 to-pink-400/10 text-pink-300',
-  series: 'from-indigo-500/20 to-indigo-400/10 text-indigo-300',
-  books: 'from-amber-500/20 to-amber-400/10 text-amber-300',
-  movies: 'from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300',
+  tv: 'from-indigo-500/20 to-indigo-400/10 text-indigo-300',
+  book: 'from-amber-500/20 to-amber-400/10 text-amber-300',
+  movie: 'from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300',
+  manga: 'from-violet-500/20 to-violet-400/10 text-violet-300',
 };
 
 export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
