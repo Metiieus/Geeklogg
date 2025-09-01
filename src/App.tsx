@@ -443,6 +443,9 @@ const AppContent: React.FC = () => {
 
         {/* Mobile Navigation */}
         <MobileNav />
+
+        {/* Firebase Status Indicator */}
+        <FirebaseStatus showStatus={!!user} />
       </div>
     </AppProvider>
   );
