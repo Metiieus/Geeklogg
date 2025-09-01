@@ -98,25 +98,73 @@ export const database = {
     data: any,
     options?: any,
   ): Promise<string> => {
-    try {
-      if (typeof docId !== "string" || docId.trim() === "") {
-        throw new Error("ID inválido");
+    if (typeof docId !== "string" || docId.trim() === "") {
+      throw new Error("ID inválido");
+    }
+
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for set operation");
+      const docData = {
+        ...data,
+        id: docId,
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (options?.merge) {
+        const existing = localStorageService.getItem(pathStr, docId);
+        if (existing) {
+          Object.assign(existing, docData);
+          localStorageService.setItem(pathStr, docId, existing);
+        } else {
+          localStorageService.setItem(pathStr, docId, docData);
+        }
+      } else {
+        localStorageService.setItem(pathStr, docId, docData);
       }
 
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+      return docId;
+    }
 
-      await setDoc(
-        doc(db, pathStr, docId),
-        { ...data, updatedAt: serverTimestamp() },
-        options,
-      );
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      await withRetry(async () => {
+        await setDoc(
+          doc(db, pathStr, docId),
+          { ...data, updatedAt: serverTimestamp() },
+          options,
+        );
+      });
 
       return docId;
-    } catch (error) {
-      console.error("Error setting document:", error);
-      throw error;
+    } catch (error: any) {
+      console.warn("⚠️ Firebase set failed, falling back to local storage:", error);
+
+      const docData = {
+        ...data,
+        id: docId,
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (options?.merge) {
+        const existing = localStorageService.getItem(pathStr, docId);
+        if (existing) {
+          Object.assign(existing, docData);
+          localStorageService.setItem(pathStr, docId, existing);
+        } else {
+          localStorageService.setItem(pathStr, docId, docData);
+        }
+      } else {
+        localStorageService.setItem(pathStr, docId, docData);
+      }
+
+      return docId;
     }
   },
 
