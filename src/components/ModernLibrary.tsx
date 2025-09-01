@@ -425,7 +425,7 @@ const ModernLibrary: React.FC = () => {
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4" />
-                <span>Filters</span>
+                <span>Filtros</span>
               </button>
               
               <span className="text-sm text-slate-500 dark:text-slate-400">
