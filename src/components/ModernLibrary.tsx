@@ -44,20 +44,20 @@ const statusOptions = [
 ];
 
 const sortOptions = [
-  { value: 'updatedAt', label: 'Recently Updated' },
-  { value: 'title', label: 'Title (A-Z)' },
-  { value: 'rating', label: 'Highest Rated' },
-  { value: 'hoursSpent', label: 'Most Time Spent' },
+  { value: 'updatedAt', label: 'Recentemente Atualizados' },
+  { value: 'title', label: 'Título (A-Z)' },
+  { value: 'rating', label: 'Melhor Avaliados' },
+  { value: 'hoursSpent', label: 'Mais Tempo Gasto' },
 ];
 
 const typeOptions = [
-  { value: 'all', label: 'All Types' },
-  { value: 'game', label: 'Games' },
-  { value: 'movie', label: 'Movies' },
-  { value: 'tv', label: 'TV Series' },
-  { value: 'book', label: 'Books' },
-  { value: 'anime', label: 'Anime' },
-  { value: 'manga', label: 'Manga' },
+  { value: 'all', label: 'Todos os Tipos' },
+  { value: 'game', label: 'Jogos' },
+  { value: 'movie', label: 'Filmes' },
+  { value: 'tv', label: 'Séries' },
+  { value: 'book', label: 'Livros' },
+  { value: 'anime', label: 'Animes' },
+  { value: 'manga', label: 'Mangás' },
 ];
 
 // Modern Section Header Component
