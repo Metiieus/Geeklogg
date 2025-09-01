@@ -19,6 +19,19 @@ import {
   type DocumentReference,
 } from "firebase/firestore";
 
+// Helper to check if we should use offline mode
+const shouldUseOfflineMode = (): boolean => {
+  const db = getDB();
+  const auth = getAuth();
+  return isFirebaseOffline() || !db || !auth;
+};
+
+// Helper to get current user ID
+const getCurrentUserId = (): string | null => {
+  const auth = getAuth();
+  return auth?.currentUser?.uid || null;
+};
+
 export const database = {
   /* ------------------------------------------------------------------ *
    * ADD – cria documento com ID gerado automaticamente
