@@ -1,386 +1,456 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Star, Clock, Edit, Trash2, ExternalLink, Play, Book, 
-  Film, Gamepad2
-} from 'lucide-react';
-import { shadows, getCategoryColors, getCategoryGradient } from './design-system/tokens';
+// Context Providers
+import { AppProvider } from './context/AppContext';
+import { useAuth } from './context/AuthContext';
+import { useToast } from './context/ToastContext';
 
-export interface MediaItemDS {
+// Components
+import { Sidebar } from './components/Sidebar';
+import { DesktopHeader } from './components/DesktopHeader';
+import { MobileNav } from './components/MobileNav';
+import { Login } from './components/Login';
+import { LandingPage } from './components/LandingPage';
+import { Register } from './components/Register';
+import Dashboard from './components/Dashboard';
+import ModernLibrary from './components/ModernLibrary';
+import Reviews from './components/Reviews';
+import Timeline from './components/Timeline';
+import Statistics from './components/Statistics';
+import SettingsComponent from './components/Settings';
+import Profile from './components/Profile';
+import { AddMediaPage } from './components/AddMediaPage';
+import EditMediaPlaceholder from './components/EditMediaPlaceholder';
+import { UserProfileView } from './components/UserProfileView';
+import FirebaseStatus from './components/FirebaseStatus';
+import './utils/connectivityTest'; // Auto-run connectivity test in development
+
+// Services
+import { getSettings, saveSettings } from './services/settingsService';
+import { getMedias } from './services/mediaService';
+import { getReviews } from './services/reviewService';
+import { getMilestones } from './services/milestoneService';
+
+// Types
+export type MediaType = 'game' | 'movie' | 'tv' | 'book' | 'anime' | 'manga';
+export type Status = 'completed' | 'in-progress' | 'dropped' | 'planned';
+export type ActivePage = 
+  | 'dashboard' 
+  | 'library' 
+  | 'reviews' 
+  | 'timeline' 
+  | 'statistics' 
+  | 'social' 
+  | 'settings' 
+  | 'profile' 
+  | 'add-media' 
+  | 'edit-media' 
+  | 'user-profile';
+
+export interface MediaItem {
   id: string;
   title: string;
-  cover?: string;
-  type: 'games' | 'anime' | 'series' | 'books' | 'movies';
-  status: 'completed' | 'in-progress' | 'dropped' | 'planned';
+  type: MediaType;
+  status: Status;
   rating?: number;
+  notes?: string;
+  startDate?: string;
+  endDate?: string;
   hoursSpent?: number;
-  currentPage?: number;
+  cover?: string;
+  genres?: string[];
+  platforms?: string[];
+  createdAt: string;
+  updatedAt: string;
+  isFavorite?: boolean;
+  tags?: string[];
+  externalId?: string;
+  description?: string;
+  platform?: string;
   totalPages?: number;
-  tags: string[];
+  currentPage?: number;
   externalLink?: string;
-  releaseDate?: string;
-  synopsis?: string;
 }
 
-interface MediaCardProps {
-  item: MediaItemDS;
-  onEdit?: (item: MediaItemDS) => void;
-  onDelete?: (item: MediaItemDS) => void;
-  onQuickAction?: (item: MediaItemDS) => void;
-  className?: string;
-  variant?: 'default' | 'compact' | 'featured';
+export interface Review {
+  id: string;
+  mediaId: string;
+  title: string;
+  content: string;
+  rating: number;
+  spoilers: boolean;
+  createdAt: string;
+  updatedAt: string;
+  likes?: number;
+  isPublic?: boolean;
 }
 
-const statusConfig = {
-  completed: {
-    label: 'CONCLUÍDO',
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/20',
-    border: 'border-emerald-500/30',
-    icon: '✅',
+export interface Milestone {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  date: string;
+  type: 'achievement' | 'goal' | 'event';
+  mediaId?: string;
+  data?: any;
+}
+
+export interface UserSettings {
+  name: string;
+  avatar?: string;
+  bio?: string;
+  favoriteGenres: string[];
+  theme: 'dark' | 'light';
+  language: 'pt' | 'en';
+  notifications: {
+    achievements: boolean;
+    social: boolean;
+    reminders: boolean;
+  };
+  privacy: {
+    profilePublic: boolean;
+    reviewsPublic: boolean;
+    statsPublic: boolean;
+  };
+}
+
+interface UserProfile {
+  uid: string;
+  email: string;
+  displayName?: string;
+  isPremium?: boolean;
+  bio?: string;
+  favoriteGenres?: string[];
+  profileImage?: string;
+}
+
+const defaultSettings: UserSettings = {
+  name: '',
+  bio: '',
+  favoriteGenres: [],
+  theme: 'dark',
+  language: 'pt',
+  notifications: {
+    achievements: true,
+    social: true,
+    reminders: true,
   },
-  'in-progress': {
-    label: 'EM PROGRESSO',
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/20',
-    border: 'border-blue-500/30',
-    icon: '⏳',
-  },
-  dropped: {
-    label: 'ABANDONADO',
-    color: 'text-red-400',
-    bg: 'bg-red-500/20',
-    border: 'border-red-500/30',
-    icon: '❌',
-  },
-  planned: {
-    label: 'PLANEJADO',
-    color: 'text-purple-400',
-    bg: 'bg-purple-500/20',
-    border: 'border-purple-500/30',
-    icon: '📅',
+  privacy: {
+    profilePublic: false,
+    reviewsPublic: false,
+    statsPublic: false,
   },
 };
 
-const typeIcons = {
-  games: Gamepad2,
-  anime: Play,
-  series: Film,
-  books: Book,
-  movies: Film,
+// Page metadata for navigation
+const pageMetadata = {
+  dashboard: { name: 'Dashboard', icon: <Home size={20} /> },
+  library: { name: 'Biblioteca', icon: <BookOpen size={20} /> },
+  reviews: { name: 'Resenhas', icon: <MessageSquare size={20} /> },
+  timeline: { name: 'Jornada', icon: <Clock size={20} /> },
+  statistics: { name: 'Estatísticas', icon: <BarChart3 size={20} /> },
+  social: { name: 'Social', icon: <Users size={20} /> },
+  settings: { name: 'Configurações', icon: <Settings size={20} /> },
+  profile: { name: 'Perfil', icon: <User size={20} /> },
+  'add-media': { name: 'Adicionar Mídia', icon: <Plus size={20} /> },
+  'edit-media': { name: 'Editar Mídia', icon: <Edit3 size={20} /> },
+  'user-profile': { name: 'Perfil do Usuário', icon: <User size={20} /> },
 };
 
-export const MediaCard: React.FC<MediaCardProps> = ({
-  item,
-  onEdit,
-  onDelete,
-  onQuickAction,
-  className = '',
-  variant = 'default',
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
-  const categoryColors = getCategoryColors(item.type);
-  const categoryGradient = getCategoryGradient(item.type);
-  const statusInfo = statusConfig[item.status];
-  const TypeIcon = typeIcons[item.type];
+const ErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
+  <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 max-w-md w-full text-center">
+      <h2 className="text-xl font-semibold text-red-400 mb-4">Erro inesperado</h2>
+      <p className="text-slate-300 mb-4">Algo deu errado ao carregar o aplicativo.</p>
+      <p className="text-sm text-slate-400 mb-4">{error.message}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+      >
+        Recarregar Página
+      </button>
+    </div>
+  </div>
+);
 
-  const cardHeight = variant === 'compact' ? 'h-80' : variant === 'featured' ? 'h-96' : 'h-[420px]';
+const AppContent: React.FC = () => {
+  const { user, loading: authLoading } = useAuth();
+  const { showSuccess, showError } = useToast();
+  
+  // App State
+  const [activePage, setActivePage] = useState<ActivePage>('dashboard');
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [settings, setSettings] = useState<UserSettings>(defaultSettings);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  // Load user data on authentication
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('🔄 Carregando dados do usuário...');
+        
+        const [loadedSettings, loadedMediaItems, loadedReviews, loadedMilestones] = await Promise.all([
+          getSettings(user.uid),
+          getMedias(),
+          getReviews(),
+          getMilestones(),
+        ]);
+
+        setSettings({ ...defaultSettings, ...loadedSettings });
+        setMediaItems(loadedMediaItems);
+        setReviews(loadedReviews);
+        setMilestones(loadedMilestones);
+
+        console.log('✅ Dados carregados com sucesso');
+        showSuccess('Bem-vindo!', 'Seus dados foram carregados com sucesso');
+      } catch (error) {
+        console.error('❌ Erro ao carregar dados:', error);
+        showError('Erro', 'Não foi possível carregar todos os seus dados');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!authLoading) {
+      loadUserData();
+    }
+  }, [user, authLoading, showSuccess, showError]);
+
+  // Auto-save functionality - implementar quando necessário
+  useEffect(() => {
+    if (!user || isLoading) return;
+
+    const autoSave = async () => {
+      try {
+        // Auto-save será implementado conforme necessário
+        await saveSettings(user.uid, settings);
+      } catch (error) {
+        console.warn('⚠️ Auto-save falhou:', error);
+      }
+    };
+
+    const timeoutId = setTimeout(autoSave, 5000); // Auto-save depois de 5 segundos de inatividade
+    return () => clearTimeout(timeoutId);
+  }, [user, settings, isLoading]);
+
+  // Navigation functions
+  const navigateToAddMedia = useCallback(() => {
+    setActivePage('add-media');
+  }, []);
+
+  const navigateToEditMedia = useCallback((item: MediaItem) => {
+    setEditingMediaItem(item);
+    setActivePage('edit-media');
+  }, []);
+
+  const navigateBack = useCallback(() => {
+    setActivePage('dashboard');
+    setEditingMediaItem(null);
+    setSelectedUser(null);
+  }, []);
+
+  // Page component renderer
+  const PageComponent = useMemo(() => {
+    const components = {
+      dashboard: Dashboard,
+      library: ModernLibrary,
+      reviews: Reviews,
+      timeline: Timeline,
+      statistics: Statistics,
+      settings: SettingsComponent,
+      profile: Profile,
+      'add-media': AddMediaPage,
+      'edit-media': EditMediaPlaceholder,
+      'user-profile': UserProfileView,
+      social: () => (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <Users className="mx-auto mb-4 text-purple-400" size={48} />
+            <h2 className="text-xl font-semibold text-white mb-2">Social em Breve</h2>
+            <p className="text-slate-400">
+              Conecte-se com outros nerds e compartilhe suas descobertas!
+            </p>
+          </div>
+        </div>
+      ),
+    };
+
+    return components[activePage] || components.dashboard;
+  }, [activePage]);
+
+  // App context value
+  const appContextValue = useMemo(() => ({
+    mediaItems,
+    setMediaItems,
+    reviews,
+    setReviews,
+    milestones,
+    setMilestones,
+    settings,
+    setSettings,
+    activePage,
+    setActivePage,
+    selectedUser,
+    setSelectedUser,
+    editingMediaItem,
+    setEditingMediaItem,
+    navigateToAddMedia,
+    navigateToEditMedia,
+    navigateBack,
+  }), [
+    mediaItems,
+    reviews,
+    milestones,
+    settings,
+    activePage,
+    selectedUser,
+    editingMediaItem,
+    navigateToAddMedia,
+    navigateToEditMedia,
+    navigateBack,
+  ]);
+
+  // Loading states
+  if (authLoading || isLoading) {
+    return <LoadingScreen />;
+  }
+
+  // Unauthenticated state
+  if (!user) {
+    // Se pediu login ou registro, mostra o componente respectivo
+    if (showLogin) {
+      return (
+        <Login
+          onCancel={() => setShowLogin(false)}
+          onRegister={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
+        />
+      );
+    }
+
+    if (showRegister) {
+      return (
+        <Register
+          onCancel={() => setShowRegister(false)}
+          onLogin={() => {
+            setShowRegister(false);
+            setShowLogin(true);
+          }}
+        />
+      );
+    }
+
+    // Caso contrário, mostra a landing page
+    return (
+      <LandingPage
+        onLogin={() => setShowLogin(true)}
+        onRegister={() => setShowRegister(true)}
+      />
+    );
+  }
+
+  const currentPageMeta = pageMetadata[activePage];
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      whileHover={{ 
-        y: -8,
-        transition: { duration: 0.3, ease: "easeOut" }
-      }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      className={`
-        group relative ${cardHeight} rounded-2xl overflow-hidden cursor-pointer
-        border border-white/10 backdrop-blur-sm
-        transition-all duration-300 ease-out
-        ${className}
-      `}
-      style={{
-        background: `linear-gradient(135deg, ${categoryColors.background}, rgba(17, 24, 39, 0.8))`,
-        boxShadow: isHovered 
-          ? shadows.glow[item.type as keyof typeof shadows.glow] || shadows.xl
-          : shadows.lg,
-      }}
-    >
-      {/* Background Gradient */}
-      <div 
-        className="absolute inset-0 opacity-20"
-        style={{ background: categoryGradient }}
-      />
+    <AppProvider value={appContextValue}>
+      <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
+        {/* Background Elements */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-500/10 rotate-45"></div>
+        </div>
 
-      {/* Cover Image Section */}
-      <div className="relative h-2/3 overflow-hidden">
-        {!imageError && item.cover ? (
-          <motion.img
-            src={item.cover}
-            alt={item.title}
-            className="w-full h-full object-cover"
-            onError={() => setImageError(true)}
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700/50 to-slate-800/80">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0.6 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="flex flex-col items-center gap-3"
-            >
-              <div 
-                className="w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: categoryGradient }}
-              >
-                <TypeIcon size={24} className="text-white" />
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* Desktop Header */}
+        <DesktopHeader 
+          pageName={currentPageMeta.name} 
+          pageIcon={currentPageMeta.icon} 
+        />
+
+        {/* Main Content */}
+        <main className="md:ml-20 md:pt-16 min-h-screen">
+          <div className="p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
               </div>
-              <span className="text-white/80 font-bold text-xl">
-                {item.title.charAt(0)}
-              </span>
-            </motion.div>
+            }>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activePage}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full"
+                >
+                  <PageComponent />
+                </motion.div>
+              </AnimatePresence>
+            </Suspense>
           </div>
-        )}
+        </main>
 
-        {/* Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        {/* Mobile Navigation */}
+        <MobileNav />
 
-        {/* Type Badge */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1.5 bg-black/50 backdrop-blur-sm rounded-full border border-white/20"
-        >
-          <TypeIcon size={14} className="text-white" />
-          <span className="text-white text-xs font-medium uppercase tracking-wide">
-            {item.type}
-          </span>
-        </motion.div>
-
-        {/* Rating Badge */}
-        {item.rating && (
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30"
-          >
-            <Star size={12} className="text-yellow-400 fill-current" />
-            <span className="text-white text-sm font-bold">{item.rating}</span>
-          </motion.div>
-        )}
-
-        {/* Desktop Action Menu (hover) */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/60 flex items-center justify-center gap-3 hidden md:flex"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {onEdit && (
-                <motion.button
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(item);
-                  }}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-white hover:bg-white/30 transition-all duration-200"
-                  title="Editar"
-                >
-                  <Edit size={18} />
-                </motion.button>
-              )}
-
-              {item.externalLink && (
-                <motion.a
-                  href={item.externalLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-white hover:bg-white/30 transition-all duration-200"
-                >
-                  <ExternalLink size={18} />
-                </motion.a>
-              )}
-
-              {onQuickAction && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onQuickAction(item);
-                  }}
-                  className="p-3 bg-gradient-to-r from-violet-500/30 to-cyan-500/30 backdrop-blur-sm rounded-full border border-violet-400/50 text-white hover:from-violet-500/40 hover:to-cyan-500/40 transition-all duration-200"
-                >
-                  <Play size={18} />
-                </motion.button>
-              )}
-
-              {onDelete && (
-                <motion.button
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(item);
-                  }}
-                  className="p-3 bg-red-500/30 backdrop-blur-sm rounded-full border border-red-500/50 text-white hover:bg-red-500/40 transition-all duration-200"
-                >
-                  <Trash2 size={18} />
-                </motion.button>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Mobile Action Buttons (always visible) */}
-        <div className="absolute top-3 right-3 flex gap-1.5 md:hidden">
-          {onEdit && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(item);
-              }}
-              className="p-2.5 bg-slate-900/85 backdrop-blur-sm rounded-xl border border-slate-600/50 text-slate-200 hover:text-white hover:bg-slate-800/95 transition-all duration-200 shadow-xl"
-            >
-              <Edit size={16} />
-            </motion.button>
-          )}
-          {onDelete && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(item);
-              }}
-              className="p-2.5 bg-red-900/85 backdrop-blur-sm rounded-xl border border-red-600/50 text-red-200 hover:text-white hover:bg-red-800/95 transition-all duration-200 shadow-xl"
-            >
-              <Trash2 size={16} />
-            </motion.button>
-          )}
-        </div>
+        {/* Firebase Status Indicator */}
+        <FirebaseStatus showStatus={!!user} />
       </div>
-
-      {/* Content Section */}
-      <div className="relative h-1/3 p-4 bg-gradient-to-t from-black/90 to-black/60 backdrop-blur-sm">
-        <div className="flex flex-col h-full justify-between">
-          {/* Title */}
-          <div>
-            <motion.h3
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-white font-bold text-lg leading-tight mb-2 line-clamp-2"
-            >
-              {item.title}
-            </motion.h3>
-
-            {/* Status Badge */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className={`
-                inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium
-                ${statusInfo.bg} ${statusInfo.border} ${statusInfo.color} border
-              `}
-            >
-              <span>{statusInfo.icon}</span>
-              <span>{statusInfo.label}</span>
-            </motion.div>
-          </div>
-
-          {/* Bottom Info */}
-          <div className="flex items-center justify-between">
-            {/* Progress/Stats */}
-            <div className="flex items-center gap-3 text-white/60">
-              {item.hoursSpent && (
-                <div className="flex items-center gap-1">
-                  <Clock size={12} />
-                  <span className="text-xs">{item.hoursSpent}h</span>
-                </div>
-              )}
-
-              {item.type === 'books' && item.totalPages && (
-                <div className="flex items-center gap-1">
-                  <Book size={12} />
-                  <span className="text-xs">
-                    {Math.round(((item.currentPage || 0) / item.totalPages) * 100)}%
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Main Tag */}
-            {item.tags.length > 0 && (
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                className="px-2 py-1 text-xs bg-white/10 backdrop-blur-sm rounded-full text-white/80 border border-white/20"
-              >
-                {item.tags[0]}
-                {item.tags.length > 1 && (
-                  <span className="ml-1 text-white/50">+{item.tags.length - 1}</span>
-                )}
-              </motion.span>
-            )}
-          </div>
-        </div>
-
-        {/* Progress Bar for Books */}
-        {item.type === 'books' && item.totalPages && (
-          <motion.div
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="absolute bottom-0 left-0 right-0 h-1 bg-black/20"
-          >
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ 
-                width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%` 
-              }}
-              transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500"
-            />
-          </motion.div>
-        )}
-      </div>
-
-      {/* Hover Glow Effect */}
-      <motion.div
-        animate={{
-          opacity: isHovered ? 1 : 0,
-          scale: isHovered ? 1 : 0.8,
-        }}
-        transition={{ duration: 0.3 }}
-        className="absolute inset-0 rounded-2xl pointer-events-none"
-        style={{
-          background: `linear-gradient(135deg, ${categoryColors.primary}20, transparent)`,
-          filter: 'blur(20px)',
-        }}
-      />
-    </motion.div>
+    </AppProvider>
   );
 };
 
-export default MediaCard;
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error boundary caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error!} />;
+    }
+
+    return this.props.children;
+  }
+}
+
+const App: React.FC = () => {
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  );
+};
+
+export default App;

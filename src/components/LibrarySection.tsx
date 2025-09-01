@@ -1,772 +1,777 @@
-import React, { useMemo, useState, useDeferredValue, useCallback } from "react";
-import { useAppContext } from "../context/AppContext";
-import { motion, AnimatePresence } from "framer-motion";
-import { MediaCard } from '../design-system/components/MediaCard';
-import type { MediaItemDS } from '../design-system/components/MediaCard';
-import type { ExternalMediaResult } from '../services/externalMediaService';
-import { MediaSearchBar } from './MediaSearchBar';
-import { AddMediaModal } from './modals/AddMediaModal';
-import { EditFeaturedModal } from './modals/EditFeaturedModal';
-import { MediaDetailModal } from './modals/MediaDetailModal';
-import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
-import { ConfirmationModal } from './ConfirmationModal';
-import { useToast } from '../context/ToastContext';
-import { deleteMedia } from '../services/mediaService';
-import { Star, Edit, Trash2, Plus, Search, Filter, X } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Search,
+  Filter,
+  Grid,
+  List,
+  Star,
+  Plus,
+  BookOpen,
+  Gamepad2,
+  Film,
+  Tv,
+  Sparkles,
+  TrendingUp,
+  Clock,
+  Heart,
+  Eye,
+  X
+} from 'lucide-react';
 
-// Tipos do seu app
-type MediaType = "games" | "anime" | "series" | "books" | "movies"
-type Status = "completed" | "in-progress" | "dropped" | "planned"
-
-type MediaItem = {
+interface MediaItem {
   id: string;
   title: string;
-  cover?: string;
-  platform?: string;
-  status: Status;
+  type: 'game' | 'anime' | 'series' | 'book' | 'movie';
+  status: 'completed' | 'in-progress' | 'planned' | 'dropped';
   rating?: number;
-  hoursSpent?: number;
-  totalPages?: number;
-  currentPage?: number;
-  startDate?: string;
-  endDate?: string;
+  cover?: string;
+  progress?: number;
+  totalEpisodes?: number;
+  currentEpisode?: number;
   tags: string[];
-  externalLink?: string;
-  type: MediaType;
-  description?: string;
-  isFeatured?: boolean;
+  dateAdded: string;
+  lastUpdated: string;
   isFavorite?: boolean;
-  createdAt: string;
-  updatedAt: string;
+  description?: string;
+}
+
+// Mock data para demonstração
+const mockMediaItems: MediaItem[] = [
+  {
+    id: '1',
+    title: 'The Legend of Zelda: Breath of the Wild',
+    type: 'game',
+    status: 'completed',
+    rating: 10,
+    cover: 'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=400',
+    progress: 100,
+    tags: ['adventure', 'open-world', 'nintendo'],
+    dateAdded: '2024-01-15',
+    lastUpdated: '2024-01-20',
+    isFavorite: true,
+    description: 'Uma obra-prima da Nintendo que redefiniu os jogos de aventura.'
+  },
+  {
+    id: '2',
+    title: 'Attack on Titan',
+    type: 'anime',
+    status: 'completed',
+    rating: 9,
+    cover: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=400',
+    currentEpisode: 87,
+    totalEpisodes: 87,
+    progress: 100,
+    tags: ['action', 'drama', 'thriller'],
+    dateAdded: '2024-01-10',
+    lastUpdated: '2024-01-25',
+    isFavorite: true,
+    description: 'Uma história épica sobre humanidade, liberdade e sacrifício.'
+  },
+  {
+    id: '3',
+    title: 'Dune',
+    type: 'book',
+    status: 'in-progress',
+    rating: 8,
+    cover: 'https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=400',
+    progress: 65,
+    tags: ['sci-fi', 'epic', 'politics'],
+    dateAdded: '2024-02-01',
+    lastUpdated: '2024-02-15',
+    description: 'O clássico da ficção científica de Frank Herbert.'
+  },
+  {
+    id: '4',
+    title: 'The Matrix',
+    type: 'movie',
+    status: 'completed',
+    rating: 9,
+    cover: 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=400',
+    progress: 100,
+    tags: ['sci-fi', 'action', 'philosophy'],
+    dateAdded: '2024-01-05',
+    lastUpdated: '2024-01-05',
+    isFavorite: true,
+    description: 'Um marco do cinema que questionou nossa percepção da realidade.'
+  },
+  {
+    id: '5',
+    title: 'Breaking Bad',
+    type: 'series',
+    status: 'completed',
+    rating: 10,
+    cover: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=400',
+    currentEpisode: 62,
+    totalEpisodes: 62,
+    progress: 100,
+    tags: ['drama', 'crime', 'thriller'],
+    dateAdded: '2024-01-12',
+    lastUpdated: '2024-01-30',
+    isFavorite: true,
+    description: 'A transformação de Walter White em uma das melhores séries já feitas.'
+  },
+  {
+    id: '6',
+    title: 'Cyberpunk 2077',
+    type: 'game',
+    status: 'in-progress',
+    rating: 7,
+    cover: 'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=400',
+    progress: 45,
+    tags: ['rpg', 'cyberpunk', 'open-world'],
+    dateAdded: '2024-02-10',
+    lastUpdated: '2024-02-20',
+    description: 'Aventura futurística em Night City.'
+  }
+];
+
+const typeIcons = {
+  game: Gamepad2,
+  anime: Sparkles,
+  series: Tv,
+  book: BookOpen,
+  movie: Film
 };
 
-// Converter MediaItem para MediaItemDS
-const convertToDesignSystemItem = (item: MediaItem): MediaItemDS => ({
-  id: item.id,
-  title: item.title,
-  cover: item.cover,
-  type: item.type,
-  status: item.status,
-  rating: item.rating,
-  hoursSpent: item.hoursSpent,
-  currentPage: item.currentPage,
-  totalPages: item.totalPages,
-  tags: item.tags,
-  externalLink: item.externalLink,
-  synopsis: item.description,
-})
+const typeColors = {
+  game: 'from-blue-500 to-cyan-500',
+  anime: 'from-pink-500 to-purple-500',
+  series: 'from-green-500 to-emerald-500',
+  book: 'from-amber-500 to-orange-500',
+  movie: 'from-red-500 to-rose-500'
+};
 
-// Status -> estilização
-const statusBadge: Record<Status, { label: string; cls: string }> = {
-  completed: { label: "Concluído", cls: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/20" },
-  "in-progress": { label: "Em Progresso", cls: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-400/20" },
-  dropped: { label: "Abandonado", cls: "bg-rose-500/15 text-rose-300 ring-1 ring-rose-400/20" },
-  planned: { label: "Planejado", cls: "bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20" },
-}
+const statusColors = {
+  completed: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  'in-progress': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  planned: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  dropped: 'bg-red-500/20 text-red-300 border-red-500/30'
+};
 
-const typePill: Record<MediaType, string> = {
-  games: "from-cyan-500/20 to-cyan-400/10 text-cyan-300",
-  anime: "from-pink-500/20 to-pink-400/10 text-pink-300",
-  series: "from-indigo-500/20 to-indigo-400/10 text-indigo-300",
-  books: "from-amber-500/20 to-amber-400/10 text-amber-300",
-  movies: "from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300",
-}
+const statusLabels = {
+  completed: 'Concluído',
+  'in-progress': 'Em Progresso',
+  planned: 'Planejado',
+  dropped: 'Abandonado'
+};
 
-const typeLabels: Record<MediaType, string> = {
-  games: "Games",
-  anime: "Anime",
-  series: "Séries",
-  books: "Livros",
-  movies: "Filmes",
-}
+export function LibrarySection() {
+  const [mediaItems] = useState<MediaItem[]>(mockMediaItems);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('lastUpdated');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState(false);
 
-type SortKey = "updatedAt" | "rating" | "title" | "createdAt"
+  const filteredItems = useMemo(() => {
+    let filtered = mediaItems;
 
-export default function LibrarySection() {
-  const {
-    mediaItems = [],
-    setMediaItems,
-    setActivePage,
-    setEditingMediaItem,
-    settings,
-  } = useAppContext();
-
-  const { showSuccess, showError } = useToast();
-
-  const [query, setQuery] = useState("");
-  const [types, setTypes] = useState<Set<MediaType>>(new Set());
-  const [statuses, setStatuses] = useState<Set<Status>>(new Set());
-  const [onlyFav, setOnlyFav] = useState(false);
-  const [sortBy, setSortBy] = useState<SortKey>(settings?.defaultLibrarySort as SortKey || "updatedAt");
-  const [searchType, setSearchType] = useState<MediaType>('games');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isFeaturedModalOpen, setIsFeaturedModalOpen] = useState(false);
-  const [selectedMediaForDetail, setSelectedMediaForDetail] = useState<MediaItem | null>(null);
-  const [selectedExternalResult, setSelectedExternalResult] = useState<ExternalMediaResult | null>(null);
-  const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
-
-  const q = useDeferredValue(query.trim().toLowerCase())
-
-  const filtered = useMemo(() => {
-    if (!mediaItems?.length) return []
-
-    let arr = mediaItems.slice()
-
-    if (types.size > 0) {
-      arr = arr.filter((i) => types.has(i.type))
+    if (searchQuery) {
+      filtered = filtered.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
     }
 
-    if (statuses.size > 0) {
-      arr = arr.filter((i) => statuses.has(i.status))
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(item => item.type === selectedType);
     }
 
-    if (onlyFav) {
-      arr = arr.filter((i) => i.isFavorite === true)
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(item => item.status === selectedStatus);
     }
 
-    if (q) {
-      arr = arr.filter((i) => {
-        const titleMatch = i.title?.toLowerCase().includes(q)
-        const tagMatch = i.tags?.some((t) => t.toLowerCase().includes(q))
-        const descMatch = i.description?.toLowerCase().includes(q)
-        return titleMatch || tagMatch || descMatch
-      })
-    }
-
-    arr.sort((a, b) => {
+    // Sorting
+    filtered.sort((a, b) => {
       switch (sortBy) {
-        case "rating":
-          return (b.rating ?? -1) - (a.rating ?? -1)
-        case "title":
-          return a.title.localeCompare(b.title, "pt-BR", { sensitivity: "base" })
-        case "createdAt":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        case "updatedAt":
+        case 'title':
+          return a.title.localeCompare(b.title);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'dateAdded':
+          return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
         default:
-          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
       }
-    })
+    });
 
-    return arr
-  }, [mediaItems, q, types, statuses, onlyFav, sortBy])
+    return filtered;
+  }, [mediaItems, searchQuery, selectedType, selectedStatus, sortBy]);
+
+  const stats = useMemo(() => {
+    const completed = mediaItems.filter(item => item.status === 'completed').length;
+    const inProgress = mediaItems.filter(item => item.status === 'in-progress').length;
+    const avgRating = mediaItems.filter(item => item.rating).reduce((acc, item) => acc + (item.rating || 0), 0) / mediaItems.filter(item => item.rating).length;
+
+    return {
+      total: mediaItems.length,
+      completed,
+      inProgress,
+      avgRating: avgRating || 0
+    };
+  }, [mediaItems]);
 
   const featuredItems = useMemo(() => {
-    return mediaItems.filter((item) => item.isFeatured).slice(0, 5)
-  }, [mediaItems])
-
-  const recentItems = useMemo(() => {
-    return filtered.slice(0, 8)
-  }, [filtered])
-
-  const bestItem = useMemo(() => {
-    return filtered
-      .filter((item) => item.rating && item.rating >= 9)
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0]
-  }, [filtered])
-
-  const toggleSet = useCallback(<T,>(set: React.Dispatch<React.SetStateAction<Set<T>>>, value: T) => {
-    set((prev) => {
-      const next = new Set(prev)
-      if (next.has(value)) {
-        next.delete(value)
-      } else {
-        next.add(value)
-      }
-      return next
-    })
-  }, [])
-
-  const clearFilters = useCallback(() => {
-    setQuery("");
-    setTypes(new Set());
-    setStatuses(new Set());
-    setOnlyFav(false);
-    setSortBy("updatedAt");
-  }, []);
-
-  const handleEditItem = useCallback((item: MediaItem) => {
-    setEditingMediaItem(item);
-    setActivePage("edit-media");
-  }, [setEditingMediaItem, setActivePage]);
-
-  const handleDeleteItem = useCallback(async (item: MediaItem) => {
-    try {
-      await deleteMedia(item.id);
-      setMediaItems(mediaItems.filter(m => m.id !== item.id));
-      showSuccess('Item removido', `${item.title} foi removido da biblioteca`);
-    } catch (error) {
-      console.error('Erro ao deletar:', error);
-      showError('Erro ao remover', 'Não foi possível remover o item');
-    }
-  }, [mediaItems, setMediaItems, showSuccess, showError]);
-
-  const handleSearchResultSelect = (result: ExternalMediaResult) => {
-    setSelectedExternalResult(result);
-  };
-
-  const handleAddFromSearch = (newItem: MediaItem) => {
-    setMediaItems([...mediaItems, newItem]);
-    setSelectedExternalResult(null);
-    showSuccess('Mídia adicionada', `${newItem.title} foi adicionado à biblioteca`);
-  };
-
-  const handleAddManual = (newItem: MediaItem) => {
-    setMediaItems([...mediaItems, newItem]);
-    setIsAddModalOpen(false);
-    showSuccess('Mídia adicionada', `${newItem.title} foi adicionado à biblioteca`);
-  };
-
-  // Empty state
-  if (!mediaItems || mediaItems.length === 0) {
-    return (
-      <div className="p-4 md:p-8 text-white min-h-screen flex items-center justify-center">
-        <div className="rounded-3xl bg-gradient-to-br from-slate-800/40 via-slate-900/60 to-slate-800/40 border border-white/10 p-8 md:p-12 relative overflow-hidden backdrop-blur-xl max-w-4xl w-full mx-auto">
-          <div
-            className="absolute inset-0 opacity-20 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(1200px 400px at 20% -10%, rgba(6,182,212,0.15), transparent 40%), radial-gradient(1000px 300px at 80% 120%, rgba(139,92,246,0.15), transparent 40%)",
-            }}
-          />
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-4">
-              Minha Biblioteca
-            </h1>
-            <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8">
-              Organize sua jornada geek com estilo e inteligência. Comece adicionando seus primeiros itens!
-            </p>
-
-            <div className="max-w-2xl mx-auto mb-6">
-              <MediaSearchBar
-                selectedType={searchType}
-                onTypeChange={setSearchType}
-                onResultSelect={handleSearchResultSelect}
-                placeholder="Buscar mídia online..."
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsAddModalOpen(true)}
-                className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold"
-              >
-                <Plus size={18} /> Adicionar Manualmente
-              </motion.button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    )
-  }
+    return mediaItems
+      .filter(item => item.isFavorite && item.rating && item.rating >= 8)
+      .slice(0, 3);
+  }, [mediaItems]);
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 text-white min-h-screen max-w-7xl mx-auto">
-      {/* Header com Barra de Pesquisa Integrada */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6 mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="text-center lg:text-left">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent mb-2">
-              Minha Biblioteca
-            </h1>
-            <p className="text-white/60 text-lg">{filtered.length} itens na sua coleção</p>
-          </div>
-
-          <div className="flex justify-center lg:justify-end">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-600/25 font-semibold text-white"
-            >
-              <Plus size={18} /> Adicionar Manualmente
-            </motion.button>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-          <div className="flex-1">
-            <MediaSearchBar
-              selectedType={searchType}
-              onTypeChange={setSearchType}
-              onResultSelect={handleSearchResultSelect}
-              placeholder="Buscar mídia online..."
-            />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Carousel de Destaques */}
-      {featuredItems.length > 0 && (
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-12"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white/90 flex items-center gap-2">
-              <Star className="text-yellow-400" size={24} />
-              Destaques da Coleção
-            </h2>
-            <button
-              onClick={() => setIsFeaturedModalOpen(true)}
-              className="text-sm px-4 py-2 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 transition-all duration-200 flex items-center gap-2"
-            >
-              <Edit size={16} />
-              Editar Destaques
-            </button>
-          </div>
-          <div className="overflow-x-auto pb-4">
-            <div className="flex gap-4 md:gap-6 w-max mx-auto lg:mx-0">
-              {featuredItems.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 * index }}
-                  className="w-48 md:w-56 flex-shrink-0"
-                >
-                  <div
-                    className="group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-2 border border-white/10 bg-slate-800"
-                    onClick={() => setSelectedMediaForDetail(item)}
-                  >
-                    {/* Capa com fallback melhorado */}
-                    {item.cover ? (
-                      <img
-                        src={item.cover}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
-                    
-                    {/* Fallback sempre presente */}
-                    <div 
-                      className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center absolute inset-0"
-                      style={{ display: item.cover ? 'none' : 'flex' }}
-                    >
-                      <div className="text-center">
-                        <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[item.type]} flex items-center justify-center mb-3 mx-auto border border-white/20`}>
-                          <span className="text-2xl font-bold text-white">{item.title.charAt(0)}</span>
-                        </div>
-                        <span className="text-white/60 text-sm font-medium">{typeLabels[item.type]}</span>
-                      </div>
-                    </div>
-
-                    {/* Overlay gradiente */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-                    {/* Badge de rating */}
-                    {item.rating && (
-                      <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
-                        <Star size={12} className="text-yellow-400 fill-current" />
-                        <span className="text-white text-sm font-bold">{item.rating}</span>
-                      </div>
-                    )}
-
-                    {/* Badge de destaque */}
-                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-purple-500/20 backdrop-blur-sm rounded-full border border-purple-500/30">
-                      <Star size={12} className="text-purple-400 fill-current" />
-                      <span className="text-white text-xs font-bold">DESTAQUE</span>
-                    </div>
-
-                    {/* Título e status */}
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 mb-2">
-                        {item.title}
-                      </h3>
-                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${statusBadge[item.status].cls}`}>
-                        <span>{statusBadge[item.status].label}</span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-      )}
-
-      {/* Barra de busca local e filtros */}
+    <div className="relative min-h-screen text-white">
+      {/* Header Section */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="space-y-4 mb-8"
+        className="relative z-10 pt-8 pb-12"
       >
-        {/* Busca e ordenação */}
-        <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" size={20} />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Filtrar sua biblioteca por título, tags ou descrição..."
-              className="w-full bg-slate-800/40 border border-white/10 rounded-2xl pl-12 pr-12 py-4 text-lg outline-none focus:border-emerald-400/50 focus:bg-slate-800/60 placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-              aria-label="Campo de busca local"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/90 p-1 rounded-full hover:bg-white/10 transition-all"
-                aria-label="Limpar busca"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortKey)}
-              className="bg-slate-800/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-emerald-400/50 backdrop-blur-sm text-white min-w-48"
-              aria-label="Ordenar por"
-            >
-              <option value="updatedAt">Mais Recentes</option>
-              <option value="createdAt">Data de Inclusão</option>
-              <option value="rating">Maior Nota</option>
-              <option value="title">Título (A–Z)</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Filtros */}
-        <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-          {/* Filtros de tipo */}
-          <div className="flex flex-wrap gap-2">
-            {(["games", "anime", "series", "books", "movies"] as MediaType[]).map((t) => (
-              <button
-                key={t}
-                onClick={() => toggleSet(setTypes, t)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-br ${typePill[t]} border transition-all duration-200 ${
-                  types.has(t)
-                    ? "border-white/30 ring-2 ring-white/20 scale-105 shadow-lg"
-                    : "border-white/10 hover:border-white/20 hover:scale-105"
-                }`}
-                aria-pressed={types.has(t)}
-                aria-label={`Filtrar por ${typeLabels[t]}`}
-              >
-                {typeLabels[t]}
-              </button>
-            ))}
-          </div>
-
-          <div className="hidden lg:block w-px h-8 bg-white/20 my-auto"></div>
-
-          {/* Filtros de status */}
-          <div className="flex flex-wrap gap-2">
-            {(["completed", "in-progress", "dropped", "planned"] as Status[]).map((s) => (
-              <button
-                key={s}
-                onClick={() => toggleSet(setStatuses, s)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
-                  statuses.has(s)
-                    ? "bg-white/15 border-white/30 text-white scale-105 shadow-lg"
-                    : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-white/80 hover:scale-105"
-                }`}
-                aria-pressed={statuses.has(s)}
-                aria-label={`Filtrar por ${statusBadge[s].label}`}
-              >
-                {statusBadge[s].label}
-              </button>
-            ))}
-          </div>
-
-          <div className="hidden lg:block w-px h-8 bg-white/20 my-auto"></div>
-
-          {/* Filtro de favoritos */}
-          <button
-            onClick={() => setOnlyFav((v) => !v)}
-            className={`px-4 py-2.5 rounded-xl text-sm font-medium border inline-flex items-center gap-2 transition-all duration-200 ${
-              onlyFav
-                ? "bg-yellow-500/15 border-yellow-400/30 text-yellow-300 scale-105 shadow-lg"
-                : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-white/80 hover:scale-105"
-            }`}
-            title="Apenas favoritos"
-            aria-pressed={onlyFav}
-            aria-label="Filtrar apenas favoritos"
-          >
-            <Star size={14} className={onlyFav ? "fill-current" : ""} /> Favoritos
-          </button>
-
-          {/* Limpar filtros */}
-          {(types.size || statuses.size || onlyFav || query) && (
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2.5 rounded-xl text-sm font-medium bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 transition-all duration-200 flex items-center gap-2"
-              aria-label="Limpar todos os filtros"
-            >
-              <X size={14} /> Limpar Filtros
-            </button>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Layout Principal */}
-      {filtered.length === 0 ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-          <div className="text-6xl mb-4">📚</div>
-          <h3 className="text-xl font-semibold text-white/90 mb-2">Nenhum item encontrado</h3>
-          <p className="text-white/60 mb-6">Tente ajustar os filtros ou adicionar novos itens à sua biblioteca</p>
-          <button
-            onClick={clearFilters}
-            className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all duration-200"
-          >
-            Limpar Filtros
-          </button>
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          {/* Coleção Principal */}
-          <div className="xl:col-span-3">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white/90">Coleção Completa</h2>
-              <span className="text-white/60">{filtered.length} itens</span>
-            </div>
-
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Hero Header */}
+          <div className="text-center mb-12">
             <motion.div
-              layout
-              className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-3 mb-6 px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full border border-white/20"
             >
-              {filtered.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(index * 0.05, 0.5) }}
-                  className="relative"
-                >
-                  {item && item.type && item.status && (
-                    <MediaCard
-                      item={convertToDesignSystemItem(item)}
-                      onEdit={(dsItem) => {
-                        const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
-                        if (originalItem) {
-                          handleEditItem(originalItem)
-                        }
-                      }}
-                      onDelete={(dsItem) => {
-                        const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
-                        if (originalItem) {
-                          setItemToDelete(originalItem)
-                        }
-                      }}
-                      onQuickAction={(dsItem) => {
-                        const originalItem = mediaItems.find((mi) => mi.id === dsItem.id)
-                        if (originalItem) {
-                          setSelectedMediaForDetail(originalItem)
-                        }
-                      }}
-                      variant="default"
-                    />
-                  )}
-                </motion.div>
-              ))}
+              <BookOpen className="text-cyan-400" size={24} />
+              <span className="text-lg font-semibold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                GeekLogg
+              </span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6"
+            >
+              <span className="bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent">
+                Biblioteca Digital
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-xl text-white/70 max-w-3xl mx-auto mb-8"
+            >
+              Organize sua jornada geek com estilo. Acompanhe jogos, animes, séries, livros e filmes em uma interface moderna e intuitiva.
+            </motion.p>
+
+            {/* Stats Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8"
+            >
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-cyan-400 mb-2">{stats.total}</div>
+                <div className="text-white/70 text-sm">Total de Itens</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-emerald-400 mb-2">{stats.completed}</div>
+                <div className="text-white/70 text-sm">Concluídos</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-blue-400 mb-2">{stats.inProgress}</div>
+                <div className="text-white/70 text-sm">Em Progresso</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                <div className="text-3xl font-bold text-yellow-400 mb-2">{stats.avgRating.toFixed(1)}</div>
+                <div className="text-white/70 text-sm">Nota Média</div>
+              </div>
             </motion.div>
           </div>
 
-          {/* Sidebar com Destaques */}
-          <div className="xl:col-span-1">
-            <div className="sticky top-6 space-y-8">
-              {/* Melhor Item */}
-              {bestItem && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }}>
-                  <h3 className="text-xl font-bold text-white/90 mb-4 flex items-center gap-2">
-                    <Star className="text-yellow-400 fill-current" size={20} />
-                    Melhor Avaliado
-                  </h3>
-                  <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
-                    <div
-                      className="aspect-[3/4] rounded-xl overflow-hidden mb-4 cursor-pointer hover:scale-105 transition-transform duration-300 bg-slate-700"
-                      onClick={() => setSelectedMediaForDetail(bestItem)}
-                    >
-                      {bestItem.cover ? (
-                        <img
-                          src={bestItem.cover}
-                          alt={bestItem.title}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const fallback = target.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div 
-                        className="w-full h-full bg-gradient-to-br from-slate-700/60 to-slate-800/80 flex items-center justify-center"
-                        style={{ display: bestItem.cover ? 'none' : 'flex' }}
-                      >
-                        <div className="text-center">
-                          <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${typePill[bestItem.type]} flex items-center justify-center mb-2 mx-auto`}>
-                            <span className="text-white/80 font-bold text-2xl">{bestItem.title.charAt(0)}</span>
-                          </div>
-                          <span className="text-white/60 text-sm">{typeLabels[bestItem.type]}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <h4 className="font-semibold text-white mb-2 line-clamp-2">{bestItem.title}</h4>
-                    {bestItem.rating && (
-                      <div className="flex items-center gap-2 text-yellow-400 mb-3">
-                        <Star size={16} className="fill-current" />
-                        <span className="font-bold">{bestItem.rating}/10</span>
-                      </div>
-                    )}
-                    <div
-                      className={`inline-block px-3 py-1.5 rounded-full text-xs font-medium ${statusBadge[bestItem.status].cls}`}
-                    >
-                      {statusBadge[bestItem.status].label}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+          {/* Featured Section */}
+          {featuredItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mb-16"
+            >
+              <div className="flex items-center gap-3 mb-8">
+                <Star className="text-yellow-400 fill-current" size={28} />
+                <h2 className="text-3xl font-bold text-white">Destaques da Coleção</h2>
+              </div>
 
-              {/* Itens Recentes */}
-              {recentItems.length > 0 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8 }}>
-                  <h3 className="text-xl font-bold text-white/90 mb-4">Recentes</h3>
-                  <div className="bg-gradient-to-br from-slate-800/40 to-slate-900/60 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
-                    <div className="space-y-3">
-                      {recentItems.slice(0, 5).map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
-                          onClick={() => setSelectedMediaForDetail(item)}
-                        >
-                          <div className="w-12 h-16 rounded-lg overflow-hidden bg-slate-700/50 flex-shrink-0">
-                            {item.cover ? (
-                              <img
-                                src={item.cover}
-                                alt={item.title}
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const fallback = target.nextElementSibling as HTMLElement;
-                                  if (fallback) fallback.style.display = 'flex';
-                                }}
-                              />
-                            ) : null}
-                            <div 
-                              className="w-full h-full flex items-center justify-center"
-                              style={{ display: item.cover ? 'none' : 'flex' }}
-                            >
-                              <span className="text-white/60 text-xs font-bold">{item.title.charAt(0)}</span>
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-white/90 text-sm font-medium truncate">{item.title}</p>
-                            <p className="text-white/60 text-xs">{typeLabels[item.type]}</p>
-                          </div>
-                          {item.rating && (
-                            <div className="flex items-center gap-1 text-yellow-400">
-                              <Star size={12} className="fill-current" />
-                              <span className="text-xs font-bold">{item.rating}</span>
-                            </div>
-                          )}
+              <div className="grid md:grid-cols-3 gap-6">
+                {featuredItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 + index * 0.1 }}
+                    className="group relative"
+                  >
+                    <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/20 backdrop-blur-xl">
+                      {item.cover && (
+                        <img
+                          src={item.cover}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                      )}
+
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                      {/* Rating Badge */}
+                      <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-2 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
+                        <Star size={14} className="text-yellow-400 fill-current" />
+                        <span className="text-white font-bold text-sm">{item.rating}</span>
+                      </div>
+
+                      {/* Type Badge */}
+                      <div className="absolute top-4 left-4">
+                        <div className={`p-2 rounded-full bg-gradient-to-r ${typeColors[item.type]} backdrop-blur-sm`}>
+                          {React.createElement(typeIcons[item.type], { size: 16, className: "text-white" })}
                         </div>
-                      ))}
+                      </div>
+
+                      {/* Content */}
+                      <div className="absolute bottom-0 left-0 right-0 p-6">
+                        <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{item.title}</h3>
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${statusColors[item.status]}`}>
+                          {statusLabels[item.status]}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Search and Filters */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mb-8"
+          >
+            <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center mb-6">
+              {/* Search Bar */}
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" size={20} />
+                <input
+                  type="text"
+                  placeholder="Buscar por título, tags ou descrição..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl pl-12 pr-12 py-4 text-white placeholder-white/50 outline-none focus:border-cyan-400/50 focus:bg-white/15 transition-all duration-300"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-1 rounded-full hover:bg-white/10 transition-all"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+
+              {/* Controls */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`flex items-center gap-2 px-4 py-4 rounded-2xl border transition-all duration-300 ${showFilters
+                      ? 'bg-purple-500/20 border-purple-400/50 text-purple-300'
+                      : 'bg-white/10 border-white/20 text-white/70 hover:bg-white/15'
+                    }`}
+                >
+                  <Filter size={18} />
+                  <span className="hidden sm:inline">Filtros</span>
+                </button>
+
+                <div className="flex border border-white/20 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-4 transition-all duration-200 ${viewMode === 'grid'
+                        ? 'bg-white/20 text-white'
+                        : 'text-white/60 hover:text-white hover:bg-white/10'
+                      }`}
+                  >
+                    <Grid size={18} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-4 transition-all duration-200 ${viewMode === 'list'
+                        ? 'bg-white/20 text-white'
+                        : 'text-white/60 hover:text-white hover:bg-white/10'
+                      }`}
+                  >
+                    <List size={18} />
+                  </button>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl font-semibold text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300"
+                >
+                  <Plus size={18} />
+                  <span className="hidden sm:inline">Adicionar</span>
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Type Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-white/80 mb-2">Tipo de Mídia</label>
+                        <select
+                          value={selectedType}
+                          onChange={(e) => setSelectedType(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400/50"
+                        >
+                          <option value="all">Todos os Tipos</option>
+                          <option value="game">🎮 Jogos</option>
+                          <option value="anime">✨ Anime</option>
+                          <option value="series">📺 Séries</option>
+                          <option value="book">📚 Livros</option>
+                          <option value="movie">🎬 Filmes</option>
+                        </select>
+                      </div>
+
+                      {/* Status Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-white/80 mb-2">Status</label>
+                        <select
+                          value={selectedStatus}
+                          onChange={(e) => setSelectedStatus(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400/50"
+                        >
+                          <option value="all">Todos os Status</option>
+                          <option value="completed">✅ Concluído</option>
+                          <option value="in-progress">⏳ Em Progresso</option>
+                          <option value="planned">📅 Planejado</option>
+                          <option value="dropped">❌ Abandonado</option>
+                        </select>
+                      </div>
+
+                      {/* Sort Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-white/80 mb-2">Ordenar por</label>
+                        <select
+                          value={sortBy}
+                          onChange={(e) => setSortBy(e.target.value)}
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-cyan-400/50"
+                        >
+                          <option value="lastUpdated">🕐 Última Atualização</option>
+                          <option value="title">🔤 Título (A-Z)</option>
+                          <option value="rating">⭐ Avaliação</option>
+                          <option value="dateAdded">📅 Data de Adição</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
               )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Results Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl font-bold text-white">
+                {searchQuery ? `Resultados para "${searchQuery}"` : 'Sua Coleção'}
+              </h2>
+              <span className="px-3 py-1 bg-white/10 rounded-full text-sm text-white/70">
+                {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'itens'}
+              </span>
             </div>
           </div>
+
+          {/* Media Grid */}
+          <AnimatePresence mode="popLayout">
+            {filteredItems.length > 0 ? (
+              <motion.div
+                layout
+                className={
+                  viewMode === 'grid'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6'
+                    : 'space-y-4'
+                }
+              >
+                {filteredItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: Math.min(index * 0.05, 0.5)
+                    }}
+                    className={viewMode === 'grid' ? '' : 'w-full'}
+                  >
+                    {viewMode === 'grid' ? (
+                      <MediaCard item={item} />
+                    ) : (
+                      <MediaListItem item={item} />
+                    )}
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20"
+              >
+                <div className="text-6xl mb-6">📚</div>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  {searchQuery ? 'Nenhum resultado encontrado' : 'Sua biblioteca está vazia'}
+                </h3>
+                <p className="text-white/60 mb-8 max-w-md mx-auto">
+                  {searchQuery
+                    ? 'Tente ajustar os filtros ou buscar por outros termos'
+                    : 'Comece adicionando seus jogos, animes, séries, livros e filmes favoritos'
+                  }
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl font-semibold text-white shadow-lg shadow-emerald-500/25"
+                >
+                  <Plus size={20} />
+                  Adicionar Primeira Mídia
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      )}
-
-      {/* Modais */}
-      <AnimatePresence>
-        {isAddModalOpen && (
-          <AddMediaModal
-            onClose={() => setIsAddModalOpen(false)}
-            onSave={handleAddManual}
-          />
-        )}
-
-        {isFeaturedModalOpen && (
-          <EditFeaturedModal
-            isOpen={isFeaturedModalOpen}
-            selectedIds={mediaItems.filter(i => i.isFeatured).map(i => i.id)}
-            onClose={() => setIsFeaturedModalOpen(false)}
-            onSave={(ids) => {
-              // Limitar a 5 destaques
-              const limitedIds = ids.slice(0, 5);
-              setMediaItems(mediaItems.map((it: MediaItem) => ({ 
-                ...it, 
-                isFeatured: limitedIds.includes(it.id) 
-              })));
-              setIsFeaturedModalOpen(false);
-              showSuccess('Destaques atualizados', `${limitedIds.length} itens em destaque`);
-            }}
-          />
-        )}
-
-        {selectedMediaForDetail && (
-          <MediaDetailModal
-            item={selectedMediaForDetail}
-            onClose={() => setSelectedMediaForDetail(null)}
-            onEdit={() => {
-              handleEditItem(selectedMediaForDetail);
-              setSelectedMediaForDetail(null);
-            }}
-            onDelete={() => {
-              setItemToDelete(selectedMediaForDetail);
-              setSelectedMediaForDetail(null);
-            }}
-          />
-        )}
-
-        {selectedExternalResult && (
-          <AddMediaFromSearchModal
-            selectedResult={selectedExternalResult}
-            onAdd={handleAddFromSearch}
-            onClose={() => setSelectedExternalResult(null)}
-          />
-        )}
-
-        {itemToDelete && (
-          <ConfirmationModal
-            isOpen={!!itemToDelete}
-            title="Remover da Biblioteca"
-            message={
-              <div>
-                <p>Tem certeza que deseja remover <strong>{itemToDelete?.title}</strong> da sua biblioteca?</p>
-                <p className="text-sm text-white/60 mt-2">Esta ação não pode ser desfeita.</p>
-              </div>
-            }
-            confirmText="Remover"
-            cancelText="Cancelar"
-            variant="danger"
-            onConfirm={() => {
-              if (itemToDelete) {
-                handleDeleteItem(itemToDelete);
-                setItemToDelete(null);
-              }
-            }}
-            onCancel={() => setItemToDelete(null)}
-          />
-        )}
-      </AnimatePresence>
+      </motion.div>
     </div>
+  );
+}
+
+// Media Card Component
+function MediaCard({ item }: { item: MediaItem }) {
+  const IconComponent = typeIcons[item.type];
+
+  return (
+    <motion.div
+      whileHover={{ y: -8, scale: 1.02 }}
+      className="group relative cursor-pointer"
+    >
+      <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/20 backdrop-blur-xl shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500">
+        {/* Cover Image */}
+        {item.cover ? (
+          <img
+            src={item.cover}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className={`p-6 rounded-full bg-gradient-to-r ${typeColors[item.type]}`}>
+              <IconComponent size={32} className="text-white" />
+            </div>
+          </div>
+        )}
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+
+        {/* Badges */}
+        <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+          <div className={`p-2 rounded-full bg-gradient-to-r ${typeColors[item.type]} shadow-lg`}>
+            <IconComponent size={16} className="text-white" />
+          </div>
+
+          {item.rating && (
+            <div className="flex items-center gap-1 px-3 py-2 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
+              <Star size={12} className="text-yellow-400 fill-current" />
+              <span className="text-white font-bold text-sm">{item.rating}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Favorite Heart */}
+        {item.isFavorite && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2">
+            <Heart size={20} className="text-red-400 fill-current drop-shadow-lg" />
+          </div>
+        )}
+
+        {/* Progress Bar */}
+        {item.progress !== undefined && item.progress < 100 && (
+          <div className="absolute bottom-20 left-4 right-4">
+            <div className="bg-black/50 backdrop-blur-sm rounded-full p-1">
+              <div className="bg-white/20 rounded-full h-2 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${item.progress}%` }}
+                  className="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"
+                  transition={{ duration: 1, delay: 0.5 }}
+                />
+              </div>
+            </div>
+            <div className="text-center mt-2">
+              <span className="text-xs text-white/80 font-medium">{item.progress}% concluído</span>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-cyan-300 transition-colors">
+            {item.title}
+          </h3>
+
+          <div className="flex items-center justify-between mb-3">
+            <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${statusColors[item.status]}`}>
+              {statusLabels[item.status]}
+            </div>
+
+            {item.currentEpisode && item.totalEpisodes && (
+              <span className="text-xs text-white/60">
+                {item.currentEpisode}/{item.totalEpisodes}
+              </span>
+            )}
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1">
+            {item.tags.slice(0, 2).map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-1 bg-white/10 rounded-lg text-xs text-white/70"
+              >
+                {tag}
+              </span>
+            ))}
+            {item.tags.length > 2 && (
+              <span className="px-2 py-1 bg-white/10 rounded-lg text-xs text-white/70">
+                +{item.tags.length - 2}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+    </motion.div>
+  );
+}
+
+// Media List Item Component
+function MediaListItem({ item }: { item: MediaItem }) {
+  const IconComponent = typeIcons[item.type];
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      className="group relative cursor-pointer"
+    >
+      <div className="flex items-center gap-6 p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl hover:bg-white/15 hover:border-white/30 transition-all duration-300">
+        {/* Cover */}
+        <div className="w-16 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-slate-700 to-slate-800 flex-shrink-0">
+          {item.cover ? (
+            <img
+              src={item.cover}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <IconComponent size={20} className="text-white/60" />
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors truncate">
+              {item.title}
+            </h3>
+            {item.rating && (
+              <div className="flex items-center gap-1 ml-4">
+                <Star size={14} className="text-yellow-400 fill-current" />
+                <span className="text-white font-medium text-sm">{item.rating}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4 mb-3">
+            <div className={`p-1.5 rounded-lg bg-gradient-to-r ${typeColors[item.type]}`}>
+              <IconComponent size={14} className="text-white" />
+            </div>
+            <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${statusColors[item.status]}`}>
+              {statusLabels[item.status]}
+            </div>
+            {item.isFavorite && (
+              <Heart size={14} className="text-red-400 fill-current" />
+            )}
+          </div>
+
+          {/* Progress */}
+          {item.progress !== undefined && item.progress < 100 && (
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-white/60">Progresso</span>
+                <span className="text-xs text-white/80 font-medium">{item.progress}%</span>
+              </div>
+              <div className="bg-white/20 rounded-full h-1.5 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${item.progress}%` }}
+                  className="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"
+                  transition={{ duration: 1, delay: 0.2 }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1">
+            {item.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-1 bg-white/10 rounded-lg text-xs text-white/70"
+              >
+                {tag}
+              </span>
+            ))}
+            {item.tags.length > 3 && (
+              <span className="px-2 py-1 bg-white/10 rounded-lg text-xs text-white/70">
+                +{item.tags.length - 3}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors">
+            <Eye size={16} className="text-white" />
+          </button>
+          <button className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-xl transition-colors">
+            <X size={16} className="text-red-300" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 }

@@ -1,0 +1,325 @@
+/* Futuristic Library Enhancements */
+
+/* Glass morphism utilities */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.dark .glass-morphism {
+  background: rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+/* Soft shadows for depth */
+.soft-shadow-sm {
+  box-shadow: 
+    0 1px 2px 0 rgba(15, 23, 42, 0.05),
+    0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+.soft-shadow {
+  box-shadow: 
+    0 4px 6px -1px rgba(15, 23, 42, 0.1),
+    0 2px 4px -1px rgba(15, 23, 42, 0.06),
+    0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+.soft-shadow-lg {
+  box-shadow: 
+    0 10px 15px -3px rgba(15, 23, 42, 0.1),
+    0 4px 6px -2px rgba(15, 23, 42, 0.05),
+    0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+.soft-shadow-xl {
+  box-shadow: 
+    0 20px 25px -5px rgba(15, 23, 42, 0.1),
+    0 10px 10px -5px rgba(15, 23, 42, 0.04),
+    0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+/* Dark mode soft shadows */
+.dark .soft-shadow-sm {
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(148, 163, 184, 0.1);
+}
+
+.dark .soft-shadow {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(148, 163, 184, 0.1);
+}
+
+.dark .soft-shadow-lg {
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0 4px 6px -2px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(148, 163, 184, 0.1);
+}
+
+.dark .soft-shadow-xl {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.4),
+    0 10px 10px -5px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(148, 163, 184, 0.1);
+}
+
+/* Subtle gradient overlays */
+.gradient-overlay-subtle {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+.dark .gradient-overlay-subtle {
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.1) 0%,
+    rgba(148, 163, 184, 0.05) 50%,
+    rgba(148, 163, 184, 0.02) 100%
+  );
+}
+
+/* Smooth hover transitions */
+.smooth-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smooth-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* Card hover glow effect */
+.card-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.card-glow:hover::before {
+  left: 100%;
+}
+
+.dark .card-glow::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(148, 163, 184, 0.1),
+    transparent
+  );
+}
+
+/* Subtle border animations */
+.animated-border {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 200%;
+}
+
+.dark .animated-border {
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.1),
+    rgba(148, 163, 184, 0.05)
+  );
+  background-size: 200% 200%;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.3),
+    transparent,
+    rgba(139, 92, 246, 0.3)
+  );
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.animated-border:hover::before {
+  opacity: 1;
+}
+
+/* Custom scrollbar for horizontal scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.3);
+  border-radius: 20px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.5);
+}
+
+/* Text gradients */
+.text-gradient {
+  background: linear-gradient(
+    135deg,
+    rgb(59, 130, 246),
+    rgb(139, 92, 246)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Floating animation for background elements */
+@keyframes float-gentle {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  33% { 
+    transform: translateY(-5px) rotate(0.5deg); 
+  }
+  66% { 
+    transform: translateY(3px) rotate(-0.5deg); 
+  }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 8s ease-in-out infinite;
+}
+
+/* Subtle pulse for interactive elements */
+@keyframes pulse-subtle {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* Loading skeleton improvements */
+.skeleton-modern {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.1) 25%,
+    rgba(148, 163, 184, 0.15) 50%,
+    rgba(148, 163, 184, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.dark .skeleton-modern {
+  background: linear-gradient(
+    90deg,
+    rgba(51, 65, 85, 0.3) 25%,
+    rgba(51, 65, 85, 0.5) 50%,
+    rgba(51, 65, 85, 0.3) 75%
+  );
+  background-size: 200% 100%;
+}
+
+/* Media query optimizations */
+@media (max-width: 640px) {
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(0, 0, 0, 0.3);
+  }
+  
+  .dark .glass-morphism {
+    background: rgba(15, 23, 42, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-gentle,
+  .animate-pulse-subtle,
+  .skeleton-modern {
+    animation: none;
+  }
+  
+  .smooth-hover,
+  .card-glow::before,
+  .animated-border::before {
+    transition: none;
+  }
+}

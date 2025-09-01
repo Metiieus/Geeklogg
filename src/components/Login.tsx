@@ -4,7 +4,7 @@ import { LogIn, User, Lock, Sparkles, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
-import { auth } from "../firebase";
+import { getAuth, isFirebaseOffline } from "../firebase";
 
 interface LoginProps {
   onCancel?: () => void;
@@ -60,10 +60,11 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     }
 
     // Verificar se o Firebase está inicializado
-    if (!auth) {
+    const auth = getAuth();
+    if (!auth || isFirebaseOffline()) {
       showError(
-        "Erro de Configuração",
-        "Sistema não configurado corretamente. Entre em contato com o suporte."
+        "Modo Offline",
+        "Funcionalidade de reset de senha não disponível offline. Conecte-se à internet e tente novamente."
       );
       return;
     }

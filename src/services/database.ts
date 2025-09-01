@@ -1,4 +1,4 @@
-import { db, auth } from "../firebase";
+import { getDB, getAuth, isFirebaseOffline, withRetry } from "../firebase";
 import { localStorageService } from "./localStorageService";
 import {
   collection,
@@ -19,6 +19,19 @@ import {
   type DocumentReference,
 } from "firebase/firestore";
 
+// Helper to check if we should use offline mode
+const shouldUseOfflineMode = (): boolean => {
+  const db = getDB();
+  const auth = getAuth();
+  return isFirebaseOffline() || !db || !auth;
+};
+
+// Helper to get current user ID
+const getCurrentUserId = (): string | null => {
+  const auth = getAuth();
+  return auth?.currentUser?.uid || null;
+};
+
 export const database = {
   /* ------------------------------------------------------------------ *
    * ADD – cria documento com ID gerado automaticamente
@@ -27,22 +40,52 @@ export const database = {
     collectionPath: string | string[],
     data: any,
   ): Promise<DocumentReference> => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      const docRef = await addDoc(collection(db, pathStr), {
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for add operation");
+      const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const docData = {
         ...data,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-      // Retorna o DocumentReference completo (útil para pegar o ID gerado)
-      return docRef;
-    } catch (error) {
-      console.error("Error adding document:", error);
-      throw error;
+      localStorageService.setItem(pathStr, id, docData);
+
+      // Return a mock DocumentReference
+      return { id } as DocumentReference;
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      return await withRetry(async () => {
+        const docRef = await addDoc(collection(db, pathStr), {
+          ...data,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        return docRef;
+      });
+    } catch (error: any) {
+      console.warn("⚠️ Firebase add failed, falling back to local storage:", error);
+
+      const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const docData = {
+        ...data,
+        id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      localStorageService.setItem(pathStr, id, docData);
+      return { id } as DocumentReference;
     }
   },
 
@@ -55,25 +98,73 @@ export const database = {
     data: any,
     options?: any,
   ): Promise<string> => {
-    try {
-      if (typeof docId !== "string" || docId.trim() === "") {
-        throw new Error("ID inválido");
+    if (typeof docId !== "string" || docId.trim() === "") {
+      throw new Error("ID inválido");
+    }
+
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for set operation");
+      const docData = {
+        ...data,
+        id: docId,
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (options?.merge) {
+        const existing = localStorageService.getItem(pathStr, docId);
+        if (existing) {
+          Object.assign(existing, docData);
+          localStorageService.setItem(pathStr, docId, existing);
+        } else {
+          localStorageService.setItem(pathStr, docId, docData);
+        }
+      } else {
+        localStorageService.setItem(pathStr, docId, docData);
       }
 
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+      return docId;
+    }
 
-      await setDoc(
-        doc(db, pathStr, docId),
-        { ...data, updatedAt: serverTimestamp() },
-        options,
-      );
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      await withRetry(async () => {
+        await setDoc(
+          doc(db, pathStr, docId),
+          { ...data, updatedAt: serverTimestamp() },
+          options,
+        );
+      });
 
       return docId;
-    } catch (error) {
-      console.error("Error setting document:", error);
-      throw error;
+    } catch (error: any) {
+      console.warn("⚠️ Firebase set failed, falling back to local storage:", error);
+
+      const docData = {
+        ...data,
+        id: docId,
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (options?.merge) {
+        const existing = localStorageService.getItem(pathStr, docId);
+        if (existing) {
+          Object.assign(existing, docData);
+          localStorageService.setItem(pathStr, docId, existing);
+        } else {
+          localStorageService.setItem(pathStr, docId, docData);
+        }
+      } else {
+        localStorageService.setItem(pathStr, docId, docData);
+      }
+
+      return docId;
     }
   },
 
@@ -81,16 +172,40 @@ export const database = {
    * GET – obtém um único documento
    * ------------------------------------------------------------------ */
   get: async (collectionPath: string | string[], docId?: string) => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      // Protege documentos do usuário quando não autenticado
-      if ((pathStr.startsWith("users/") || pathStr === "users") && !auth.currentUser) {
-        console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
-        return { exists: () => false, data: () => null };
+    // Protege documentos do usuário quando não autenticado
+    const auth = getAuth();
+    if ((pathStr.startsWith("users/") || pathStr === "users") && !auth?.currentUser) {
+      console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
+      return { exists: () => false, data: () => null };
+    }
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for get operation");
+
+      let effectiveDocId = docId;
+      if (!effectiveDocId) {
+        const parts = pathStr.split("/");
+        if (parts.length % 2 === 0) {
+          effectiveDocId = parts[parts.length - 1];
+        } else {
+          return { exists: () => false, data: () => null };
+        }
       }
+
+      const data = localStorageService.getItem(pathStr, effectiveDocId);
+      return data
+        ? { id: effectiveDocId, ...data, exists: () => true, data: () => data }
+        : { exists: () => false, data: () => null };
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
 
       let docRef;
       if (docId) {
@@ -105,31 +220,28 @@ export const database = {
         }
       }
 
-      const docSnap = await getDoc(docRef);
+      const docSnap = await withRetry(async () => await getDoc(docRef));
       return docSnap.exists()
         ? { id: docSnap.id, ...docSnap.data(), exists: () => true, data: () => docSnap.data() }
         : { exists: () => false, data: () => null };
     } catch (error: any) {
-      console.error("Error getting document:", error);
-      /* Tratamento de falhas de rede / permissão */
-      if (
-        error.code === "unavailable" ||
-        error.message?.includes("Failed to fetch") ||
-        error.message?.includes("offline") ||
-        error.code === "failed-precondition"
-      ) {
-        console.warn("🌐 Offline/unavailable – retornando documento nulo");
-        return { exists: () => false, data: () => null };
+      console.warn("⚠️ Firebase get failed, trying local storage:", error);
+
+      // Fallback to local storage
+      let effectiveDocId = docId;
+      if (!effectiveDocId) {
+        const parts = pathStr.split("/");
+        if (parts.length % 2 === 0) {
+          effectiveDocId = parts[parts.length - 1];
+        } else {
+          return { exists: () => false, data: () => null };
+        }
       }
-      if (error.code === "permission-denied" || error.code === "unauthenticated") {
-        console.warn("🔒 Sem permissão / não autenticado – doc nulo");
-        return { exists: () => false, data: () => null };
-      }
-      if (import.meta.env.DEV) {
-        console.warn("🚧 DEV – suprimindo erro e retornando nulo");
-        return { exists: () => false, data: () => null };
-      }
-      throw error;
+
+      const data = localStorageService.getItem(pathStr, effectiveDocId);
+      return data
+        ? { id: effectiveDocId, ...data, exists: () => true, data: () => data }
+        : { exists: () => false, data: () => null };
     }
   },
 
@@ -144,16 +256,71 @@ export const database = {
       limit?: number;
     },
   ) => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      // Protege coleção /users quando não autenticado
-      if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth.currentUser) {
-        console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
+    // Protege coleção /users quando não autenticado
+    const auth = getAuth();
+    if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth?.currentUser) {
+      console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
+      return [];
+    }
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for getCollection operation");
+      try {
+        const fallback = localStorageService.getCollection(pathStr);
+        let results = fallback.map((item: any, index: number) => ({
+          id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+          data: item,
+          ...item
+        }));
+
+        // Apply query options to local data
+        if (queryOptions) {
+          const { where: w, orderBy: ob, limit: lim } = queryOptions;
+
+          if (w) {
+            results = results.filter(item => {
+              const fieldValue = item[w.field];
+              switch (w.operator) {
+                case '==': return fieldValue === w.value;
+                case '!=': return fieldValue !== w.value;
+                case '>': return fieldValue > w.value;
+                case '>=': return fieldValue >= w.value;
+                case '<': return fieldValue < w.value;
+                case '<=': return fieldValue <= w.value;
+                case 'array-contains': return Array.isArray(fieldValue) && fieldValue.includes(w.value);
+                default: return true;
+              }
+            });
+          }
+
+          if (ob) {
+            results.sort((a, b) => {
+              const aVal = a[ob.field];
+              const bVal = b[ob.field];
+              const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+              return ob.direction === 'desc' ? -comparison : comparison;
+            });
+          }
+
+          if (lim) {
+            results = results.slice(0, lim);
+          }
+        }
+
+        return results;
+      } catch {
         return [];
       }
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
 
       let q = collection(db, pathStr);
 
@@ -164,83 +331,107 @@ export const database = {
         if (lim) q = query(q, limit(lim));
       }
 
-      const snap = await getDocs(q);
+      const snap = await withRetry(async () => await getDocs(q));
       return snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
     } catch (error: any) {
-      console.error("Error getting collection:", error);
+      console.warn("⚠️ Firebase getCollection failed, trying local storage:", error);
 
-      if (
-        error.code === "unavailable" ||
-        error.message?.includes("Failed to fetch") ||
-        error.message?.includes("offline") ||
-        error.code === "failed-precondition"
-      ) {
-        console.warn("🌐 Offline/unavailable – retornando []");
-        return [];
-      }
+      // Fallback to local storage
+      try {
+        const fallback = localStorageService.getCollection(pathStr);
+        let results = fallback.map((item: any, index: number) => ({
+          id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+          data: item,
+          ...item
+        }));
 
-      if (error.code === "permission-denied" || error.code === "unauthenticated") {
-        console.warn("🔒 Sem permissão / não autenticado – retornando []");
-        return [];
-      }
-
-      if (import.meta.env.DEV) {
-        console.warn("🚧 DEV – usando fallback localStorage");
-        try {
-          const fallback = localStorageService.getCollection(
-            Array.isArray(collectionPath) ? collectionPath.join("/") : collectionPath,
-          );
-          return fallback.map((item: any, index: number) => ({
-            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
-            ...item
-          }));
-        } catch {
-          return [];
+        // Apply query options to local data (simplified)
+        if (queryOptions?.limit) {
+          results = results.slice(0, queryOptions.limit);
         }
+
+        return results;
+      } catch {
+        return [];
       }
-      throw error;
     }
   },
 
   /* ------------------------------------------------------------------ */
   update: async (collectionPath: string | string[], docId: string, data: any) => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
-      await updateDoc(doc(db, pathStr, docId), { ...data, updatedAt: serverTimestamp() });
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for update operation");
+      const existing = localStorageService.getItem(pathStr, docId);
+      if (existing) {
+        const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
+        localStorageService.setItem(pathStr, docId, updated);
+      }
       return docId;
-    } catch (error) {
-      console.error("Error updating document:", error);
-      throw error;
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      await withRetry(async () => {
+        await updateDoc(doc(db, pathStr, docId), { ...data, updatedAt: serverTimestamp() });
+      });
+      return docId;
+    } catch (error: any) {
+      console.warn("⚠️ Firebase update failed, falling back to local storage:", error);
+
+      const existing = localStorageService.getItem(pathStr, docId);
+      if (existing) {
+        const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
+        localStorageService.setItem(pathStr, docId, updated);
+      }
+      return docId;
     }
   },
 
   /* ------------------------------------------------------------------ */
   delete: async (collectionPath: string | string[], docId: string) => {
-    try {
-      if (!docId || typeof docId !== "string" || docId.trim() === "") {
-        throw new Error("Document ID é obrigatório e deve ser uma string válida");
-      }
+    if (!docId || typeof docId !== "string" || docId.trim() === "") {
+      throw new Error("Document ID é obrigatório e deve ser uma string válida");
+    }
 
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      if (!pathStr || pathStr.trim() === "") {
-        throw new Error("Collection path é obrigatório");
-      }
+    if (!pathStr || pathStr.trim() === "") {
+      throw new Error("Collection path é obrigatório");
+    }
 
-      // Validate that path doesn't contain undefined parts
-      if (pathStr.includes("undefined") || pathStr.includes("null")) {
-        throw new Error(`Collection path contém valores inválidos: ${pathStr}`);
-      }
+    // Validate that path doesn't contain undefined parts
+    if (pathStr.includes("undefined") || pathStr.includes("null")) {
+      throw new Error(`Collection path contém valores inválidos: ${pathStr}`);
+    }
 
-      await deleteDoc(doc(db, pathStr, docId));
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for delete operation");
+      localStorageService.removeItem(pathStr, docId);
       return docId;
-    } catch (error) {
-      console.error("Error deleting document:", error);
-      throw error;
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      await withRetry(async () => {
+        await deleteDoc(doc(db, pathStr, docId));
+      });
+      return docId;
+    } catch (error: any) {
+      console.warn("⚠️ Firebase delete failed, falling back to local storage:", error);
+      localStorageService.removeItem(pathStr, docId);
+      return docId;
     }
   },
 
@@ -257,18 +448,82 @@ export const database = {
     const pathStr = Array.isArray(collectionPath)
       ? collectionPath.join("/")
       : collectionPath;
-    let q = collection(db, pathStr);
 
-    if (queryOptions) {
-      const { where: w, orderBy: ob, limit: lim } = queryOptions;
-      if (w) q = query(q, where(w.field, w.operator, w.value));
-      if (ob) q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
-      if (lim) q = query(q, limit(lim));
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for listen operation");
+
+      // Simulate real-time updates with periodic checks of local storage
+      const intervalId = setInterval(() => {
+        try {
+          const data = localStorageService.getCollection(pathStr);
+          callback(data.map((item: any, index: number) => ({
+            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+            ...item
+          })));
+        } catch (error) {
+          console.warn("Error reading from local storage:", error);
+          callback([]);
+        }
+      }, 1000);
+
+      // Return cleanup function
+      return () => clearInterval(intervalId);
     }
 
-    return onSnapshot(q, (snap) =>
-      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
-    );
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      let q = collection(db, pathStr);
+
+      if (queryOptions) {
+        const { where: w, orderBy: ob, limit: lim } = queryOptions;
+        if (w) q = query(q, where(w.field, w.operator, w.value));
+        if (ob) q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
+        if (lim) q = query(q, limit(lim));
+      }
+
+      return onSnapshot(q,
+        (snap) => callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+        (error) => {
+          console.warn("⚠️ Firebase listen failed, falling back to local storage:", error);
+          // Fallback to periodic local storage checks
+          const intervalId = setInterval(() => {
+            try {
+              const data = localStorageService.getCollection(pathStr);
+              callback(data.map((item: any, index: number) => ({
+                id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+                ...item
+              })));
+            } catch (localError) {
+              console.warn("Error reading from local storage:", localError);
+              callback([]);
+            }
+          }, 1000);
+
+          return () => clearInterval(intervalId);
+        }
+      );
+    } catch (error) {
+      console.warn("⚠️ Firebase listen setup failed, using local storage:", error);
+
+      // Fallback to periodic local storage checks
+      const intervalId = setInterval(() => {
+        try {
+          const data = localStorageService.getCollection(pathStr);
+          callback(data.map((item: any, index: number) => ({
+            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+            ...item
+          })));
+        } catch (localError) {
+          console.warn("Error reading from local storage:", localError);
+          callback([]);
+        }
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
   },
 
   /* ------------------------------------------------------------------ */

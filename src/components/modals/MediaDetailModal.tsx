@@ -18,19 +18,21 @@ const statusConfig = {
 };
 
 const typeLabels = {
-  games: 'Jogo',
+  game: 'Jogo',
   anime: 'Anime',
-  series: 'Série',
-  books: 'Livro',
-  movies: 'Filme',
+  tv: 'Série',
+  book: 'Livro',
+  movie: 'Filme',
+  manga: 'Mangá',
 };
 
 const typeColors = {
-  games: 'from-cyan-500/20 to-cyan-400/10 text-cyan-300',
+  game: 'from-cyan-500/20 to-cyan-400/10 text-cyan-300',
   anime: 'from-pink-500/20 to-pink-400/10 text-pink-300',
-  series: 'from-indigo-500/20 to-indigo-400/10 text-indigo-300',
-  books: 'from-amber-500/20 to-amber-400/10 text-amber-300',
-  movies: 'from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300',
+  tv: 'from-indigo-500/20 to-indigo-400/10 text-indigo-300',
+  book: 'from-amber-500/20 to-amber-400/10 text-amber-300',
+  movie: 'from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300',
+  manga: 'from-violet-500/20 to-violet-400/10 text-violet-300',
 };
 
 export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
@@ -39,7 +41,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const statusInfo = statusConfig[item.status];
+  const statusInfo = statusConfig[item.status] || statusConfig.planned;
 
   return (
     <ModalWrapper
@@ -72,10 +74,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
               style={{ display: item.cover ? 'none' : 'flex' }}
             >
               <div className="text-center">
-                <div className={`w-20 h-20 bg-gradient-to-br ${typeColors[item.type]} rounded-full flex items-center justify-center mb-4 border border-white/20`}>
+                <div className={`w-20 h-20 bg-gradient-to-br ${typeColors[item.type] || typeColors.book} rounded-full flex items-center justify-center mb-4 border border-white/20`}>
                   <span className="text-3xl font-bold text-white">{item.title.charAt(0)}</span>
                 </div>
-                <span className="text-white/60 text-lg font-medium">{typeLabels[item.type]}</span>
+                <span className="text-white/60 text-lg font-medium">{typeLabels[item.type] || 'Mídia'}</span>
               </div>
             </div>
 
@@ -118,8 +120,8 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   {item.title}
                 </h1>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className={`px-3 py-1 bg-gradient-to-r ${typeColors[item.type]} rounded-full text-sm font-medium border border-current/30`}>
-                    {typeLabels[item.type]}
+                  <span className={`px-3 py-1 bg-gradient-to-r ${typeColors[item.type] || typeColors.book} rounded-full text-sm font-medium border border-current/30`}>
+                    {typeLabels[item.type] || 'Mídia'}
                   </span>
                   {item.platform && (
                     <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-sm">
