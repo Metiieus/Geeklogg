@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, BookOpen, MessageSquare, Clock, BarChart3, Users, Settings, User, Plus, Edit3 } from 'lucide-react';
+
+// Loading Screen Component
+const LoadingScreen: React.FC = () => (
+  <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+      <p className="text-slate-300">Carregando...</p>
+    </div>
+  </div>
+);
+
 // Context Providers
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
