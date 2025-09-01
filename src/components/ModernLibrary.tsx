@@ -129,10 +129,11 @@ const ModernLibrary: React.FC = () => {
   const [hasConnectionError, setHasConnectionError] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<MediaItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  useImprovedScrollLock(showAddOptions || !!selectedExternalResult || showDeleteConfirm);
+  useImprovedScrollLock(showAddOptions || !!selectedExternalResult || showDeleteConfirm || !!selectedItem);
 
   // Statistics
   const stats = useMemo(() => {
