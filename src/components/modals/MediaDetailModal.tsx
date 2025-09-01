@@ -39,7 +39,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const statusInfo = statusConfig[item.status];
+  const statusInfo = statusConfig[item.status] || statusConfig.planned;
 
   return (
     <ModalWrapper
