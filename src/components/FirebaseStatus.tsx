@@ -12,6 +12,7 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isFirebaseConnected, setIsFirebaseConnected] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     // Check Firebase status
