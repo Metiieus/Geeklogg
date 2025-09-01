@@ -1,23 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Home,
-  BookOpen,
-  MessageSquare,
-  Clock,
-  BarChart3,
-  Settings,
-  User,
-  Plus,
-  Users,
-  Crown,
-  Search,
-  Star,
-  Calendar,
-  Trophy,
-  Edit3,
-} from 'lucide-react';
-
 // Context Providers
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
@@ -176,21 +158,6 @@ const pageMetadata = {
   'user-profile': { name: 'Perfil do Usuário', icon: <User size={20} /> },
 };
 
-const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-    <div className="text-center">
-      <div className="w-16 h-16 mx-auto mb-4 relative">
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets%2F7f1b9e9c1d27434ebacaa7f16ca51525%2Fa7818e35c5d54df9ba951473e49bd460?format=webp&width=80"
-          alt="GeekLog"
-          className="w-full h-full object-contain animate-pulse"
-        />
-      </div>
-      <h2 className="text-xl font-semibold text-white mb-2">GeekLog</h2>
-      <p className="text-slate-400">Carregando sua jornada nerd...</p>
-    </div>
-  </div>
-);
 
 const ErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
   <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
