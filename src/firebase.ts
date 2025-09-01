@@ -5,6 +5,7 @@ import {
   enableIndexedDbPersistence,
   enableNetwork,
   type Firestore,
+  connectFirestoreEmulator,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -20,11 +21,35 @@ const firebaseConfig = {
 };
 
 // Verificação de conectividade
-const checkConnectivity = () => {
-  if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
-    return navigator.onLine;
-  }
-  return true; // Assume online se não puder verificar
+const checkConnectivity = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (typeof navigator === 'undefined') {
+      resolve(true);
+      return;
+    }
+
+    if (!navigator.onLine) {
+      resolve(false);
+      return;
+    }
+
+    // Test actual connectivity with a simple fetch
+    const timeoutId = setTimeout(() => resolve(false), 3000);
+    
+    fetch('https://www.gstatic.com/hostedimg/382a91be88eaf3c4_large', { 
+      method: 'HEAD',
+      mode: 'no-cors',
+      cache: 'no-cache'
+    })
+      .then(() => {
+        clearTimeout(timeoutId);
+        resolve(true);
+      })
+      .catch(() => {
+        clearTimeout(timeoutId);
+        resolve(false);
+      });
+  });
 };
 
 // Validar configuração efetiva (não apenas env)
@@ -44,10 +69,14 @@ const missingConfig = requiredConfigKeys.filter((k) => {
 
 const hasValidConfig = missingConfig.length === 0;
 
+// Estado global para controlar o modo de operação
+let isOfflineMode = false;
+
 if (!hasValidConfig) {
   console.warn("⚠️ Firebase config incompleta - executando em modo offline");
   console.warn("Para produção, configure as variáveis Firebase no ambiente");
   console.log("🔧 Modo offline ativado - dados serão salvos localmente");
+  isOfflineMode = true;
 } else {
   console.log("✅ Firebase configurado corretamente");
   console.log("🔧 Firebase config:", {
@@ -57,75 +86,154 @@ if (!hasValidConfig) {
   });
 }
 
-// Inicializa o app Firebase com tratamento de erro
+// Inicializa o app Firebase com tratamento de erro robusto
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
 
-if (hasValidConfig) {
+const initializeFirebase = async () => {
+  if (!hasValidConfig) {
+    isOfflineMode = true;
+    return;
+  }
+
   try {
+    // Check connectivity first
+    const isOnline = await checkConnectivity();
+    if (!isOnline) {
+      console.warn("⚠️ Sem conectividade - modo offline ativado");
+      isOfflineMode = true;
+      return;
+    }
+
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    db = getFirestore(app, 'geeklog');
-    console.log("🚀 Firebase inicializado com sucesso");
+    
+    // Initialize Firestore with proper error handling
+    try {
+      db = getFirestore(app);
+      
+      // Test Firestore connectivity
+      if (db) {
+        // Try to enable offline persistence
+        try {
+          await enableIndexedDbPersistence(db, {
+            forceOwnership: false
+          });
+          console.log("✅ Firestore persistence enabled");
+        } catch (persistenceError: any) {
+          if (persistenceError.code === 'failed-precondition') {
+            console.warn("⚠️ Multiple tabs open, persistence can only be enabled in one tab at a time.");
+          } else if (persistenceError.code === 'unimplemented') {
+            console.warn("⚠️ The current browser doesn't support all features required for persistence");
+          } else {
+            console.warn("⚠️ Failed to enable persistence:", persistenceError);
+          }
+        }
+      }
+      
+      console.log("🚀 Firebase initialized successfully");
+    } catch (firestoreError) {
+      console.warn("⚠️ Firestore initialization failed:", firestoreError);
+      db = null;
+      isOfflineMode = true;
+    }
   } catch (error) {
     console.warn("⚠️ Firebase initialization failed:", error);
-    console.warn("Executando em modo offline");
+    console.warn("Switching to offline mode");
+    app = null;
+    auth = null;
+    db = null;
+    isOfflineMode = true;
   }
-} else {
-  console.log("🔄 Executando em modo offline - dados salvos localmente");
-  // Enable offline mode in localStorage service
+
+  // Set offline mode flag in localStorage
+  if (typeof window !== 'undefined') {
+    localStorage.setItem("firebase_offline_mode", isOfflineMode.toString());
+  }
+};
+
+// Initialize Firebase immediately but don't block
+initializeFirebase().catch((error) => {
+  console.warn("⚠️ Failed to initialize Firebase:", error);
+  isOfflineMode = true;
   if (typeof window !== 'undefined') {
     localStorage.setItem("firebase_offline_mode", "true");
   }
-}
+});
 
+// Export reactive getters that check current state
+export const getFirebaseApp = () => app;
+export const getAuth = () => auth;
+export const getDB = () => db;
+export const isFirebaseOffline = () => isOfflineMode;
+
+// Legacy exports for compatibility
 export { app, auth, db };
-
-// Configuração especial para DEV e produção
-if (db) {
-  try {
-    if (import.meta.env.DEV) {
-      enableIndexedDbPersistence(db).catch((err) => {
-        if (err.code === 'failed-precondition') {
-          console.warn("⚠️ Multiple tabs open, persistence can only be enabled in one tab at a time.");
-        } else if (err.code === 'unimplemented') {
-          console.warn("⚠️ The current browser doesn't support all of the features required to enable persistence");
-        } else {
-          console.warn("⚠️ Falha ao ativar persistence:", err);
-        }
-      });
-    } else {
-      enableNetwork(db).catch((err) =>
-        console.warn("⚠️ Falha ao ativar rede no modo produção:", err),
-      );
-    }
-  } catch (error) {
-    console.warn("⚠️ Erro na configuração do Firestore:", error);
-  }
-}
 
 // Storage - only initialize if app is valid
 export const storage = app ? getStorage(app) : null;
 
-// Mensagem final de status
-if (app) {
-  console.log("✅ Firebase online - dados sincronizados na nuvem");
-  if (!checkConnectivity()) {
-    console.warn("⚠️ Sem conectividade com a internet");
-  }
-} else {
-  console.log("💾 Modo offline ativado - dados salvos localmente");
-  console.log("📝 Para ativar Firebase: configure as variáveis de ambiente");
-}
-
-// Detectar mudanças de conectividade
+// Network status detection
 if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
-    console.log("🌐 Conectividade restaurada");
+    console.log("🌐 Network connectivity restored");
+    if (hasValidConfig && !app) {
+      console.log("🔄 Attempting to reconnect to Firebase...");
+      initializeFirebase();
+    }
   });
 
   window.addEventListener('offline', () => {
-    console.warn("⚠️ Conectividade perdida");
+    console.warn("⚠️ Network connectivity lost");
+    isOfflineMode = true;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("firebase_offline_mode", "true");
+    }
   });
 }
+
+// Retry mechanism for Firebase operations
+export const withRetry = async <T>(
+  operation: () => Promise<T>,
+  maxRetries = 3,
+  delay = 1000
+): Promise<T> => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Check if it's a network error that might benefit from retry
+      if (
+        error.code === 'unavailable' ||
+        error.message?.includes('Failed to fetch') ||
+        error.message?.includes('network') ||
+        error.code === 'deadline-exceeded'
+      ) {
+        console.warn(`⚠️ Attempt ${attempt} failed, retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 2; // Exponential backoff
+      } else {
+        throw error; // Don't retry non-network errors
+      }
+    }
+  }
+  throw new Error('All retry attempts failed');
+};
+
+// Status reporting
+const logFinalStatus = () => {
+  if (app && db) {
+    console.log("✅ Firebase online - dados sincronizados na nuvem");
+  } else {
+    console.log("💾 Modo offline ativado - dados salvos localmente");
+    console.log("📝 Para ativar Firebase: configure as variáveis de ambiente");
+  }
+};
+
+// Log status after a delay to allow initialization
+setTimeout(logFinalStatus, 2000);
