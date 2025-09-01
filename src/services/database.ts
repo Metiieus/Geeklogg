@@ -448,18 +448,82 @@ export const database = {
     const pathStr = Array.isArray(collectionPath)
       ? collectionPath.join("/")
       : collectionPath;
-    let q = collection(db, pathStr);
 
-    if (queryOptions) {
-      const { where: w, orderBy: ob, limit: lim } = queryOptions;
-      if (w) q = query(q, where(w.field, w.operator, w.value));
-      if (ob) q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
-      if (lim) q = query(q, limit(lim));
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for listen operation");
+
+      // Simulate real-time updates with periodic checks of local storage
+      const intervalId = setInterval(() => {
+        try {
+          const data = localStorageService.getCollection(pathStr);
+          callback(data.map((item: any, index: number) => ({
+            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+            ...item
+          })));
+        } catch (error) {
+          console.warn("Error reading from local storage:", error);
+          callback([]);
+        }
+      }, 1000);
+
+      // Return cleanup function
+      return () => clearInterval(intervalId);
     }
 
-    return onSnapshot(q, (snap) =>
-      callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
-    );
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      let q = collection(db, pathStr);
+
+      if (queryOptions) {
+        const { where: w, orderBy: ob, limit: lim } = queryOptions;
+        if (w) q = query(q, where(w.field, w.operator, w.value));
+        if (ob) q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
+        if (lim) q = query(q, limit(lim));
+      }
+
+      return onSnapshot(q,
+        (snap) => callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+        (error) => {
+          console.warn("⚠️ Firebase listen failed, falling back to local storage:", error);
+          // Fallback to periodic local storage checks
+          const intervalId = setInterval(() => {
+            try {
+              const data = localStorageService.getCollection(pathStr);
+              callback(data.map((item: any, index: number) => ({
+                id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+                ...item
+              })));
+            } catch (localError) {
+              console.warn("Error reading from local storage:", localError);
+              callback([]);
+            }
+          }, 1000);
+
+          return () => clearInterval(intervalId);
+        }
+      );
+    } catch (error) {
+      console.warn("⚠️ Firebase listen setup failed, using local storage:", error);
+
+      // Fallback to periodic local storage checks
+      const intervalId = setInterval(() => {
+        try {
+          const data = localStorageService.getCollection(pathStr);
+          callback(data.map((item: any, index: number) => ({
+            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+            ...item
+          })));
+        } catch (localError) {
+          console.warn("Error reading from local storage:", localError);
+          callback([]);
+        }
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
   },
 
   /* ------------------------------------------------------------------ */
