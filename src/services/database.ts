@@ -1,4 +1,4 @@
-import { db, auth } from "../firebase";
+import { getDB, getAuth, isFirebaseOffline, withRetry } from "../firebase";
 import { localStorageService } from "./localStorageService";
 import {
   collection,
