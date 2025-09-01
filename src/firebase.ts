@@ -33,21 +33,26 @@ const checkConnectivity = (): Promise<boolean> => {
       return;
     }
 
-    // Test actual connectivity with a simple fetch
-    const timeoutId = setTimeout(() => resolve(false), 3000);
-    
-    fetch('https://www.gstatic.com/hostedimg/382a91be88eaf3c4_large', { 
-      method: 'HEAD',
-      mode: 'no-cors',
-      cache: 'no-cache'
+    // Use a more reliable connectivity check
+    const timeoutId = setTimeout(() => resolve(false), 5000);
+
+    // Try to fetch a simple resource that supports CORS
+    fetch('https://httpbin.org/status/200', {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'application/json'
+      }
     })
-      .then(() => {
+      .then((response) => {
         clearTimeout(timeoutId);
-        resolve(true);
+        resolve(response.ok);
       })
-      .catch(() => {
+      .catch((error) => {
         clearTimeout(timeoutId);
-        resolve(false);
+        console.warn('Connectivity check failed:', error.message);
+        // If the specific check fails, assume we're online if navigator says so
+        resolve(navigator.onLine);
       });
   });
 };
@@ -208,16 +213,24 @@ export const withRetry = async <T>(
       }
 
       // Check if it's a network error that might benefit from retry
-      if (
+      const isNetworkError =
         error.code === 'unavailable' ||
-        error.message?.includes('Failed to fetch') ||
-        error.message?.includes('network') ||
-        error.code === 'deadline-exceeded'
-      ) {
-        console.warn(`⚠️ Attempt ${attempt} failed, retrying in ${delay}ms...`);
+        error.code === 'deadline-exceeded' ||
+        error.name === 'TypeError' ||
+        (error.message && (
+          error.message.includes('Failed to fetch') ||
+          error.message.includes('NetworkError') ||
+          error.message.includes('network') ||
+          error.message.includes('timeout')
+        ));
+
+      if (isNetworkError) {
+        console.warn(`⚠️ Network error on attempt ${attempt}:`, error.message || error.code);
+        console.warn(`🔄 Retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
         delay *= 2; // Exponential backoff
       } else {
+        console.warn(`❌ Non-retryable error:`, error);
         throw error; // Don't retry non-network errors
       }
     }
