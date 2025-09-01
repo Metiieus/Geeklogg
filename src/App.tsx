@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Home, BookOpen, MessageSquare, Clock, BarChart3, Users, Settings, User, Plus, Edit3 } from 'lucide-react';
 // Context Providers
 import { AppProvider } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
