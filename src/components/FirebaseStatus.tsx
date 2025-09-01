@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cloud, CloudOff, Wifi, WifiOff } from 'lucide-react';
+import { Cloud, CloudOff, Wifi, WifiOff, TestTube } from 'lucide-react';
 import { getDB, getAuth, isFirebaseOffline } from '../firebase';
+import { logConnectivityStatus } from '../utils/connectivityTest';
 
 interface FirebaseStatusProps {
   showStatus?: boolean;
