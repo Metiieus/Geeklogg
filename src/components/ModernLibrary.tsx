@@ -36,11 +36,11 @@ import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
 import { sampleMediaData } from '../data/sampleMediaData';
 
 const statusOptions = [
-  { value: 'all', label: 'All Status' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'in-progress', label: 'In Progress' },
-  { value: 'planned', label: 'Planned' },
-  { value: 'dropped', label: 'Dropped' },
+  { value: 'all', label: 'Todos os Status' },
+  { value: 'completed', label: 'Concluído' },
+  { value: 'in-progress', label: 'Em Progresso' },
+  { value: 'planned', label: 'Planejado' },
+  { value: 'dropped', label: 'Abandonado' },
 ];
 
 const sortOptions = [
