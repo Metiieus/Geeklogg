@@ -74,10 +74,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
               style={{ display: item.cover ? 'none' : 'flex' }}
             >
               <div className="text-center">
-                <div className={`w-20 h-20 bg-gradient-to-br ${typeColors[item.type]} rounded-full flex items-center justify-center mb-4 border border-white/20`}>
+                <div className={`w-20 h-20 bg-gradient-to-br ${typeColors[item.type] || typeColors.book} rounded-full flex items-center justify-center mb-4 border border-white/20`}>
                   <span className="text-3xl font-bold text-white">{item.title.charAt(0)}</span>
                 </div>
-                <span className="text-white/60 text-lg font-medium">{typeLabels[item.type]}</span>
+                <span className="text-white/60 text-lg font-medium">{typeLabels[item.type] || 'Mídia'}</span>
               </div>
             </div>
 
@@ -110,7 +110,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Seção de Conteúdo - Lado Direito */}
+        {/* Seção de Conte��do - Lado Direito */}
         <div className="lg:w-3/5 flex flex-col">
           {/* Header do conteúdo */}
           <div className="p-6 border-b border-white/10">
