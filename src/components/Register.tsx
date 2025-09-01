@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { auth, db } from "../firebase";
+import { getAuth, getDB, isFirebaseOffline } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
@@ -70,6 +70,17 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       }
 
       console.log("📝 Iniciando registro...");
+
+      const auth = getAuth();
+      const db = getDB();
+
+      if (!auth || isFirebaseOffline()) {
+        showError(
+          "Modo Offline",
+          "Não é possível criar conta no modo offline. Conecte-se à internet e tente novamente."
+        );
+        return;
+      }
 
       // Criar conta no Firebase Auth
       const { user } = await createUserWithEmailAndPassword(
