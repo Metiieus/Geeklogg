@@ -52,7 +52,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-4 tracking-tight"
             >
-              {title}
+              Biblioteca de Mídia
             </motion.h1>
             
             {subtitle && (
@@ -62,7 +62,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                 transition={{ delay: 0.1 }}
                 className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl"
               >
-                {subtitle}
+                Sua coleção pessoal, organizada e facilmente acessível
               </motion.p>
             )}
           </div>
@@ -78,7 +78,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <Plus className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Add New Media</span>
+              <span className="relative z-10">Adicionar Nova Mídia</span>
             </motion.button>
           )}
         </div>
@@ -99,7 +99,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                 type="text"
                 value={localSearchQuery}
                 onChange={handleSearchChange}
-                placeholder="Search your library..."
+                placeholder="Pesquisar sua biblioteca..."
                 className="w-full pl-12 pr-4 py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
               />
             </div>
@@ -125,7 +125,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                     {stats.total}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                    Total Items
+                    Total de Itens
                   </p>
                 </div>
               </div>
@@ -142,7 +142,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                     {stats.completed}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                    Completed
+                    Concluídos
                   </p>
                 </div>
               </div>
@@ -159,7 +159,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                     {stats.inProgress}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                    In Progress
+                    Em Progresso
                   </p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                     {stats.avgRating}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                    Avg Rating
+                    Avaliação Média
                   </p>
                 </div>
               </div>
