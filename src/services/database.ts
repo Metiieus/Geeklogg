@@ -256,16 +256,71 @@ export const database = {
       limit?: number;
     },
   ) => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      // Protege coleção /users quando não autenticado
-      if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth.currentUser) {
-        console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
+    // Protege coleção /users quando não autenticado
+    const auth = getAuth();
+    if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth?.currentUser) {
+      console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
+      return [];
+    }
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for getCollection operation");
+      try {
+        const fallback = localStorageService.getCollection(pathStr);
+        let results = fallback.map((item: any, index: number) => ({
+          id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+          data: item,
+          ...item
+        }));
+
+        // Apply query options to local data
+        if (queryOptions) {
+          const { where: w, orderBy: ob, limit: lim } = queryOptions;
+
+          if (w) {
+            results = results.filter(item => {
+              const fieldValue = item[w.field];
+              switch (w.operator) {
+                case '==': return fieldValue === w.value;
+                case '!=': return fieldValue !== w.value;
+                case '>': return fieldValue > w.value;
+                case '>=': return fieldValue >= w.value;
+                case '<': return fieldValue < w.value;
+                case '<=': return fieldValue <= w.value;
+                case 'array-contains': return Array.isArray(fieldValue) && fieldValue.includes(w.value);
+                default: return true;
+              }
+            });
+          }
+
+          if (ob) {
+            results.sort((a, b) => {
+              const aVal = a[ob.field];
+              const bVal = b[ob.field];
+              const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+              return ob.direction === 'desc' ? -comparison : comparison;
+            });
+          }
+
+          if (lim) {
+            results = results.slice(0, lim);
+          }
+        }
+
+        return results;
+      } catch {
         return [];
       }
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
 
       let q = collection(db, pathStr);
 
@@ -276,41 +331,29 @@ export const database = {
         if (lim) q = query(q, limit(lim));
       }
 
-      const snap = await getDocs(q);
+      const snap = await withRetry(async () => await getDocs(q));
       return snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
     } catch (error: any) {
-      console.error("Error getting collection:", error);
+      console.warn("⚠️ Firebase getCollection failed, trying local storage:", error);
 
-      if (
-        error.code === "unavailable" ||
-        error.message?.includes("Failed to fetch") ||
-        error.message?.includes("offline") ||
-        error.code === "failed-precondition"
-      ) {
-        console.warn("🌐 Offline/unavailable – retornando []");
-        return [];
-      }
+      // Fallback to local storage
+      try {
+        const fallback = localStorageService.getCollection(pathStr);
+        let results = fallback.map((item: any, index: number) => ({
+          id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+          data: item,
+          ...item
+        }));
 
-      if (error.code === "permission-denied" || error.code === "unauthenticated") {
-        console.warn("🔒 Sem permissão / não autenticado – retornando []");
-        return [];
-      }
-
-      if (import.meta.env.DEV) {
-        console.warn("🚧 DEV – usando fallback localStorage");
-        try {
-          const fallback = localStorageService.getCollection(
-            Array.isArray(collectionPath) ? collectionPath.join("/") : collectionPath,
-          );
-          return fallback.map((item: any, index: number) => ({
-            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
-            ...item
-          }));
-        } catch {
-          return [];
+        // Apply query options to local data (simplified)
+        if (queryOptions?.limit) {
+          results = results.slice(0, queryOptions.limit);
         }
+
+        return results;
+      } catch {
+        return [];
       }
-      throw error;
     }
   },
 
