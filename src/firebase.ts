@@ -76,6 +76,7 @@ const hasValidConfig = missingConfig.length === 0;
 
 // Estado global para controlar o modo de operação
 let isOfflineMode = false;
+let initializationPromise: Promise<void> | null = null;
 
 if (!hasValidConfig) {
   console.warn("⚠️ Firebase config incompleta - executando em modo offline");
@@ -158,14 +159,17 @@ const initializeFirebase = async () => {
   }
 };
 
-// Initialize Firebase immediately but don't block
-initializeFirebase().catch((error) => {
+// Create initialization promise
+initializationPromise = initializeFirebase().catch((error) => {
   console.warn("⚠️ Failed to initialize Firebase:", error);
   isOfflineMode = true;
   if (typeof window !== 'undefined') {
     localStorage.setItem("firebase_offline_mode", "true");
   }
 });
+
+// Export function to wait for initialization
+export const waitForFirebaseInit = () => initializationPromise || Promise.resolve();
 
 // Export reactive getters that check current state
 export const getFirebaseApp = () => app;

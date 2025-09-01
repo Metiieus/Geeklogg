@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
-import { getAuth, isFirebaseOffline } from '../firebase';
+import { getAuth, isFirebaseOffline, waitForFirebaseInit } from '../firebase';
 
 interface UserProfile {
   uid: string;
@@ -40,37 +40,58 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth();
+    let unsubscribe: (() => void) | undefined;
 
-    if (!auth || isFirebaseOffline()) {
-      console.warn('Firebase Auth not available - running in offline mode');
-      setLoading(false);
-      return;
-    }
+    const setupAuth = async () => {
+      try {
+        // Wait for Firebase initialization to complete
+        await waitForFirebaseInit();
+        
+        const auth = getAuth();
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      if (user) {
-        // Create a basic profile from user data
-        setProfile({
-          uid: user.uid,
-          email: user.email || '',
-          displayName: user.displayName || user.email?.split('@')[0] || 'User',
-          isPremium: false,
-          bio: '',
-          favoriteGenres: [],
-          profileImage: ''
+        if (!auth || isFirebaseOffline()) {
+          console.warn('Firebase Auth not available - running in offline mode');
+          setLoading(false);
+          return;
+        }
+
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+          setUser(user);
+          if (user) {
+            // Create a basic profile from user data
+            setProfile({
+              uid: user.uid,
+              email: user.email || '',
+              displayName: user.displayName || user.email?.split('@')[0] || 'User',
+              isPremium: false,
+              bio: '',
+              favoriteGenres: [],
+              profileImage: ''
+            });
+          } else {
+            setProfile(null);
+          }
+          setLoading(false);
         });
-      } else {
-        setProfile(null);
+      } catch (error) {
+        console.error('Failed to setup auth:', error);
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    };
 
-    return unsubscribe;
+    setupAuth();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
+    // Wait for Firebase initialization before attempting login
+    await waitForFirebaseInit();
+    
     const auth = getAuth();
 
     if (!auth || isFirebaseOffline()) {
@@ -81,6 +102,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register = async (email: string, password: string) => {
+    // Wait for Firebase initialization before attempting registration
+    await waitForFirebaseInit();
+    
     const auth = getAuth();
 
     if (!auth || isFirebaseOffline()) {
@@ -91,6 +115,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
+    // Wait for Firebase initialization before attempting logout
+    await waitForFirebaseInit();
+    
     const auth = getAuth();
 
     if (!auth || isFirebaseOffline()) {
@@ -101,6 +128,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetPassword = async (email: string) => {
+    // Wait for Firebase initialization before attempting password reset
+    await waitForFirebaseInit();
+    
     const auth = getAuth();
 
     if (!auth || isFirebaseOffline()) {
@@ -131,6 +161,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteAccount = async () => {
+    // Wait for Firebase initialization before attempting account deletion
+    await waitForFirebaseInit();
+    
     const auth = getAuth();
 
     if (!auth || !user || isFirebaseOffline()) {
