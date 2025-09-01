@@ -30,6 +30,7 @@ import { FuturisticHero } from './FuturisticHero';
 import { ConnectivityError } from './ConnectivityError';
 import { AddMediaOptions } from './AddMediaOptions';
 import { AddMediaFromSearchModal } from './modals/AddMediaFromSearchModal';
+import { MediaDetailModal } from './modals/MediaDetailModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import { ExternalMediaResult } from '../services/externalMediaService';
 import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
