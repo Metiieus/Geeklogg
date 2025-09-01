@@ -93,15 +93,24 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
   const status = getStatusInfo();
   const Icon = status.icon;
 
+  const handleTest = async () => {
+    try {
+      await logConnectivityStatus();
+    } catch (error) {
+      console.error('Failed to run connectivity test:', error);
+    }
+  };
+
   return (
     <>
       {/* Status Indicator */}
       <div className="fixed bottom-4 right-4 z-50">
         <motion.div
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${status.bgColor} ${status.borderColor} backdrop-blur-sm shadow-lg`}
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${status.bgColor} ${status.borderColor} backdrop-blur-sm shadow-lg cursor-pointer`}
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.3 }}
+          onClick={() => setIsExpanded(!isExpanded)}
         >
           <Icon className={`w-5 h-5 ${status.color}`} />
           <div className="min-w-0">
@@ -112,6 +121,26 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
               {status.description}
             </p>
           </div>
+
+          {/* Expanded Options */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleTest();
+                }}
+                className="ml-2 p-1 rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                title="Run connectivity test"
+              >
+                <TestTube className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
 
