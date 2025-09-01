@@ -173,9 +173,6 @@ export const getAuth = () => auth;
 export const getDB = () => db;
 export const isFirebaseOffline = () => isOfflineMode;
 
-// Legacy exports for compatibility
-export { app, auth, db };
-
 // Storage - only initialize if app is valid
 export const storage = app ? getStorage(app) : null;
 
