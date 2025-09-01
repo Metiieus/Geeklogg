@@ -279,6 +279,14 @@ const ModernLibrary: React.FC = () => {
           onAddMedia={() => setShowAddOptions(true)}
           onSearch={setSearchQuery}
           searchQuery={searchQuery}
+          featuredItems={featuredItems.map(item => ({
+            id: item.id,
+            title: item.title,
+            cover: item.cover,
+            type: item.type,
+            rating: item.rating
+          }))}
+          onFeaturedItemClick={setSelectedItem}
         />
 
         {/* Connection Error */}
