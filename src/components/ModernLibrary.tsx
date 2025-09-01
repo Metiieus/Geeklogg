@@ -352,8 +352,8 @@ const ModernLibrary: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <FuturisticSectionHeader
-              title="Continue Watching"
-              subtitle="Pick up where you left off"
+              title="Continue Assistindo"
+              subtitle="Continue de onde parou"
               icon={<Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />}
               count={currentlyActive.length}
             />
