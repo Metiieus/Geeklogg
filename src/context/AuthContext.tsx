@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
-import { auth } from '../firebase';
+import { getAuth, isFirebaseOffline } from '../firebase';
 
 interface UserProfile {
   uid: string;
@@ -39,9 +39,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-    if (!auth) {
-      console.warn('Firebase Auth not initialized');
+  useEffect(() => {
+    const auth = getAuth();
+
+    if (!auth || isFirebaseOffline()) {
+      console.warn('Firebase Auth not available - running in offline mode');
       setLoading(false);
       return;
     }
@@ -68,30 +70,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return unsubscribe;
   }, []);
 
-    const login = async (email: string, password: string) => {
-    if (!auth) {
-      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+  const login = async (email: string, password: string) => {
+    const auth = getAuth();
+
+    if (!auth || isFirebaseOffline()) {
+      throw new Error('Firebase Auth not available. Running in offline mode.');
     }
+
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const register = async (email: string, password: string) => {
-    if (!auth) {
-      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    const auth = getAuth();
+
+    if (!auth || isFirebaseOffline()) {
+      throw new Error('Firebase Auth not available. Running in offline mode.');
     }
+
     await createUserWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
-    if (!auth) {
-      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    const auth = getAuth();
+
+    if (!auth || isFirebaseOffline()) {
+      throw new Error('Firebase Auth not available. Running in offline mode.');
     }
+
     await signOut(auth);
   };
 
   const resetPassword = async (email: string) => {
-    if (!auth) {
-      throw new Error('Firebase Auth not initialized. Please configure your environment variables.');
+    const auth = getAuth();
+
+    if (!auth || isFirebaseOffline()) {
+      throw new Error('Firebase Auth not available. Running in offline mode.');
     }
 
     // Verificar conectividade básica
@@ -118,8 +131,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteAccount = async () => {
-    if (!auth || !user) {
-      throw new Error('Firebase Auth not initialized or user not logged in.');
+    const auth = getAuth();
+
+    if (!auth || !user || isFirebaseOffline()) {
+      throw new Error('Firebase Auth not available or user not logged in.');
     }
 
     try {
