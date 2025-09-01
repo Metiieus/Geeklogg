@@ -359,43 +359,79 @@ export const database = {
 
   /* ------------------------------------------------------------------ */
   update: async (collectionPath: string | string[], docId: string, data: any) => {
-    try {
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
-      await updateDoc(doc(db, pathStr, docId), { ...data, updatedAt: serverTimestamp() });
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
+
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for update operation");
+      const existing = localStorageService.getItem(pathStr, docId);
+      if (existing) {
+        const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
+        localStorageService.setItem(pathStr, docId, updated);
+      }
       return docId;
-    } catch (error) {
-      console.error("Error updating document:", error);
-      throw error;
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      await withRetry(async () => {
+        await updateDoc(doc(db, pathStr, docId), { ...data, updatedAt: serverTimestamp() });
+      });
+      return docId;
+    } catch (error: any) {
+      console.warn("⚠️ Firebase update failed, falling back to local storage:", error);
+
+      const existing = localStorageService.getItem(pathStr, docId);
+      if (existing) {
+        const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
+        localStorageService.setItem(pathStr, docId, updated);
+      }
+      return docId;
     }
   },
 
   /* ------------------------------------------------------------------ */
   delete: async (collectionPath: string | string[], docId: string) => {
-    try {
-      if (!docId || typeof docId !== "string" || docId.trim() === "") {
-        throw new Error("Document ID é obrigatório e deve ser uma string válida");
-      }
+    if (!docId || typeof docId !== "string" || docId.trim() === "") {
+      throw new Error("Document ID é obrigatório e deve ser uma string válida");
+    }
 
-      const pathStr = Array.isArray(collectionPath)
-        ? collectionPath.join("/")
-        : collectionPath;
+    const pathStr = Array.isArray(collectionPath)
+      ? collectionPath.join("/")
+      : collectionPath;
 
-      if (!pathStr || pathStr.trim() === "") {
-        throw new Error("Collection path é obrigatório");
-      }
+    if (!pathStr || pathStr.trim() === "") {
+      throw new Error("Collection path é obrigatório");
+    }
 
-      // Validate that path doesn't contain undefined parts
-      if (pathStr.includes("undefined") || pathStr.includes("null")) {
-        throw new Error(`Collection path contém valores inválidos: ${pathStr}`);
-      }
+    // Validate that path doesn't contain undefined parts
+    if (pathStr.includes("undefined") || pathStr.includes("null")) {
+      throw new Error(`Collection path contém valores inválidos: ${pathStr}`);
+    }
 
-      await deleteDoc(doc(db, pathStr, docId));
+    // Use offline mode if Firebase is not available
+    if (shouldUseOfflineMode()) {
+      console.warn("🔄 Using offline mode for delete operation");
+      localStorageService.removeItem(pathStr, docId);
       return docId;
-    } catch (error) {
-      console.error("Error deleting document:", error);
-      throw error;
+    }
+
+    try {
+      const db = getDB();
+      if (!db) throw new Error("Firestore not available");
+
+      await withRetry(async () => {
+        await deleteDoc(doc(db, pathStr, docId));
+      });
+      return docId;
+    } catch (error: any) {
+      console.warn("⚠️ Firebase delete failed, falling back to local storage:", error);
+      localStorageService.removeItem(pathStr, docId);
+      return docId;
     }
   },
 
