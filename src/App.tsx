@@ -40,6 +40,7 @@ import Profile from './components/Profile';
 import { AddMediaPage } from './components/AddMediaPage';
 import EditMediaPlaceholder from './components/EditMediaPlaceholder';
 import { UserProfileView } from './components/UserProfileView';
+import FirebaseStatus from './components/FirebaseStatus';
 
 // Services
 import { getSettings, saveSettings } from './services/settingsService';
