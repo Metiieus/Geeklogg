@@ -1,13 +1,11 @@
 // src/services/utils.ts
 
-import { getAuth, isFirebaseOffline } from "../firebase";
+import { auth, isFirebaseOffline } from "../firebase";
 
 /**
  * Retorna o UID do usuário autenticado ou null.
  */
 export function getUserId(): string | null {
-  const auth = getAuth();
-
   if (!auth || isFirebaseOffline()) {
     console.warn("Firebase auth não está disponível (modo offline)");
     return null;
