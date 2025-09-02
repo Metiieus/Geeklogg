@@ -68,6 +68,7 @@ export type Status = "completed" | "in-progress" | "dropped" | "planned";
 export type ActivePage =
   | "dashboard"
   | "library"
+  | "modern-library"
   | "reviews"
   | "timeline"
   | "statistics"
