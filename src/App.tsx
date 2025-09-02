@@ -179,6 +179,7 @@ const defaultSettings: UserSettings = {
 const pageMetadata = {
   dashboard: { name: "Dashboard", icon: <Home size={20} /> },
   library: { name: "Biblioteca", icon: <BookOpen size={20} /> },
+  "modern-library": { name: "Biblioteca Moderna", icon: <BookOpen size={20} /> },
   reviews: { name: "Resenhas", icon: <MessageSquare size={20} /> },
   timeline: { name: "Jornada", icon: <Clock size={20} /> },
   statistics: { name: "Estatísticas", icon: <BarChart3 size={20} /> },
