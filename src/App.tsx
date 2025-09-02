@@ -221,7 +221,7 @@ const AppContent: React.FC = () => {
       }
 
       try {
-        console.log("��� Carregando dados do usuário...");
+        console.log("🔄 Carregando dados do usuário...");
 
         const [
           loadedSettings,
@@ -304,9 +304,9 @@ const AppContent: React.FC = () => {
       ),
       "modern-library": () => (
         <ModernLibrary
-          featured={mediaItems.slice(0, 3)}
-          highlights={mediaItems.slice(0, 5)}
-          collection={mediaItems.map(item => ({
+          featured={sampleMediaItems.slice(0, 3)}
+          highlights={sampleMediaItems.slice(0, 5)}
+          collection={mediaItems.length > 0 ? mediaItems.map(item => ({
             id: item.id,
             title: item.title,
             cover: item.cover,
@@ -314,7 +314,7 @@ const AppContent: React.FC = () => {
             rating: item.rating,
             description: item.notes,
             isOnline: false
-          }))}
+          })) : sampleMediaItems}
           onAddMedia={() => setActivePage("add-media")}
           onEditMedia={(item) => {
             const mediaItem = mediaItems.find(m => m.id === item.id);
