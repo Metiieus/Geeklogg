@@ -301,6 +301,33 @@ const AppContent: React.FC = () => {
           collection={mediaItems}
         />
       ),
+      "modern-library": () => (
+        <ModernLibrary
+          featured={mediaItems.slice(0, 3)}
+          highlights={mediaItems.slice(0, 5)}
+          collection={mediaItems.map(item => ({
+            id: item.id,
+            title: item.title,
+            cover: item.cover,
+            category: item.type as "game" | "book" | "movie" | "series" | "anime",
+            rating: item.rating,
+            description: item.notes,
+            isOnline: false
+          }))}
+          onAddMedia={() => setActivePage("add-media")}
+          onEditMedia={(item) => {
+            const mediaItem = mediaItems.find(m => m.id === item.id);
+            if (mediaItem) {
+              setEditingMediaItem(mediaItem);
+              setActivePage("edit-media");
+            }
+          }}
+          onDeleteMedia={(item) => {
+            console.log("Delete media:", item);
+            // Add delete logic here
+          }}
+        />
+      ),
       reviews: Reviews,
       timeline: Timeline,
       statistics: Statistics,
