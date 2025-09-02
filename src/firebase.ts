@@ -17,7 +17,10 @@ const app = initializeApp(firebaseConfig);
 
 // ✅ Exporta serviços prontos
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// 🔑 aqui forçamos usar o banco "geeklog"
+export const db = getFirestore(app, "geeklog");
+
 export const storage = getStorage(app);
 
 // ✅ Habilita cache offline do Firestore
@@ -50,4 +53,9 @@ export async function withRetry<T>(
   }
 }
 
-console.log("🔥 Firebase inicializado com Auth:", !!auth);
+console.log(
+  "🔥 Firebase inicializado com Auth:",
+  !!auth,
+  " | Firestore conectado em banco:",
+  db.databaseId?.database ?? "(default)"
+);

@@ -54,7 +54,7 @@ export const localStorageService = {
       );
 
       // Update collection index
-      const collection = this.getCollection(key);
+      const collection = localStorageService.getCollection(key);
       collection.push({ ...data, id });
       localStorage.setItem(`firebase_${key}`, JSON.stringify(collection));
 
@@ -71,7 +71,7 @@ export const localStorageService = {
       const key = Array.isArray(path) ? path.join("/") : path;
       const docKey = `${key}/${docId}`;
 
-      const existing = this.getDocument(key, docId);
+      const existing = localStorageService.getDocument(key, docId);
       if (existing.exists()) {
         localStorage.setItem(
           `firebase_${docKey}`,
@@ -87,6 +87,21 @@ export const localStorageService = {
     }
   },
 
+  // Aliases para compatibilidade com database.ts
+  getItem: (path: string | string[], docId?: string) =>
+    localStorageService.getDocument(path, docId),
+  setItem: (path: string | string[], docId: string, data: any) =>
+    localStorageService.updateDocument(path, docId, data),
+  removeItem: (path: string | string[], docId: string) => {
+    try {
+      const key = Array.isArray(path) ? path.join("/") : path;
+      const docKey = `${key}/${docId}`;
+      localStorage.removeItem(`firebase_${docKey}`);
+    } catch (error) {
+      console.warn("localStorage removeItem error:", error);
+    }
+  },
+
   // Check if we should use localStorage fallback
   shouldUseFallback: (): boolean => {
     return (
@@ -95,13 +110,11 @@ export const localStorageService = {
     );
   },
 
-  // Enable offline mode
   enableOfflineMode: (): void => {
     localStorage.setItem("firebase_offline_mode", "true");
     console.log("📴 Offline mode enabled");
   },
 
-  // Disable offline mode
   disableOfflineMode: (): void => {
     localStorage.removeItem("firebase_offline_mode");
     console.log("🌐 Offline mode disabled");
