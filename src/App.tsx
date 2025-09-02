@@ -1,8 +1,20 @@
-import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Home, BookOpen, MessageSquare, Clock, BarChart3, Users, Settings, User, Plus, Edit3 } from 'lucide-react';
+// imports principais
+import React, { useState, useEffect, useMemo, useCallback, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Home,
+  BookOpen,
+  MessageSquare,
+  Clock,
+  BarChart3,
+  Users,
+  Settings,
+  User,
+  Plus,
+  Edit3,
+} from "lucide-react";
 
-// Loading Screen Component
+// Loading Screen
 const LoadingScreen: React.FC = () => (
   <div className="min-h-screen bg-gray-900 flex items-center justify-center">
     <div className="text-center">
@@ -13,51 +25,51 @@ const LoadingScreen: React.FC = () => (
 );
 
 // Context Providers
-import { AppProvider } from './context/AppContext';
-import { useAuth } from './context/AuthContext';
-import { useToast } from './context/ToastContext';
+import { AppProvider } from "./context/AppContext";
+import { useAuth } from "./context/AuthContext";
+import { useToast } from "./context/ToastContext";
 
 // Components
-import { Sidebar } from './components/Sidebar';
-import { DesktopHeader } from './components/DesktopHeader';
-import { MobileNav } from './components/MobileNav';
-import { Login } from './components/Login';
-import { LandingPage } from './components/LandingPage';
-import { Register } from './components/Register';
-import Dashboard from './components/Dashboard';
-import ModernLibrary from './components/ModernLibrary';
-import Reviews from './components/Reviews';
-import Timeline from './components/Timeline';
-import Statistics from './components/Statistics';
-import SettingsComponent from './components/Settings';
-import Profile from './components/Profile';
-import { AddMediaPage } from './components/AddMediaPage';
-import EditMediaPlaceholder from './components/EditMediaPlaceholder';
-import { UserProfileView } from './components/UserProfileView';
-import FirebaseStatus from './components/FirebaseStatus';
-import './utils/connectivityTest'; // Auto-run connectivity test in development
+import { Sidebar } from "./components/Sidebar";
+import { DesktopHeader } from "./components/DesktopHeader";
+import { MobileNav } from "./components/MobileNav";
+import { Login } from "./components/Login";
+import { LandingPage } from "./components/LandingPage";
+import { Register } from "./components/Register";
+import Dashboard from "./components/Dashboard";
+import ProLibrary from "./components/ProLibrary"; // ✅ Nova biblioteca integrada
+import Reviews from "./components/Reviews";
+import Timeline from "./components/Timeline";
+import Statistics from "./components/Statistics";
+import SettingsComponent from "./components/Settings";
+import Profile from "./components/Profile";
+import { AddMediaPage } from "./components/AddMediaPage";
+import EditMediaPlaceholder from "./components/EditMediaPlaceholder";
+import { UserProfileView } from "./components/UserProfileView";
+import FirebaseStatus from "./components/FirebaseStatus";
+import "./utils/connectivityTest";
 
 // Services
-import { getSettings, saveSettings } from './services/settingsService';
-import { getMedias } from './services/mediaService';
-import { getReviews } from './services/reviewService';
-import { getMilestones } from './services/milestoneService';
+import { getSettings, saveSettings } from "./services/settingsService";
+import { getMedias } from "./services/mediaService";
+import { getReviews } from "./services/reviewService";
+import { getMilestones } from "./services/milestoneService";
 
-// Types
-export type MediaType = 'game' | 'movie' | 'tv' | 'book' | 'anime' | 'manga';
-export type Status = 'completed' | 'in-progress' | 'dropped' | 'planned';
-export type ActivePage = 
-  | 'dashboard' 
-  | 'library' 
-  | 'reviews' 
-  | 'timeline' 
-  | 'statistics' 
-  | 'social' 
-  | 'settings' 
-  | 'profile' 
-  | 'add-media' 
-  | 'edit-media' 
-  | 'user-profile';
+// Tipos
+export type MediaType = "game" | "movie" | "tv" | "book" | "anime" | "manga";
+export type Status = "completed" | "in-progress" | "dropped" | "planned";
+export type ActivePage =
+  | "dashboard"
+  | "library"
+  | "reviews"
+  | "timeline"
+  | "statistics"
+  | "social"
+  | "settings"
+  | "profile"
+  | "add-media"
+  | "edit-media"
+  | "user-profile";
 
 export interface MediaItem {
   id: string;
@@ -103,7 +115,7 @@ export interface Milestone {
   description: string;
   icon: string;
   date: string;
-  type: 'achievement' | 'goal' | 'event';
+  type: "achievement" | "goal" | "event";
   mediaId?: string;
   data?: any;
 }
@@ -113,8 +125,8 @@ export interface UserSettings {
   avatar?: string;
   bio?: string;
   favoriteGenres: string[];
-  theme: 'dark' | 'light';
-  language: 'pt' | 'en';
+  theme: "dark" | "light";
+  language: "pt" | "en";
   notifications: {
     achievements: boolean;
     social: boolean;
@@ -138,11 +150,11 @@ interface UserProfile {
 }
 
 const defaultSettings: UserSettings = {
-  name: '',
-  bio: '',
+  name: "",
+  bio: "",
   favoriteGenres: [],
-  theme: 'dark',
-  language: 'pt',
+  theme: "dark",
+  language: "pt",
   notifications: {
     achievements: true,
     social: true,
@@ -155,44 +167,29 @@ const defaultSettings: UserSettings = {
   },
 };
 
-// Page metadata for navigation
+// Page metadata
 const pageMetadata = {
-  dashboard: { name: 'Dashboard', icon: <Home size={20} /> },
-  library: { name: 'Biblioteca', icon: <BookOpen size={20} /> },
-  reviews: { name: 'Resenhas', icon: <MessageSquare size={20} /> },
-  timeline: { name: 'Jornada', icon: <Clock size={20} /> },
-  statistics: { name: 'Estatísticas', icon: <BarChart3 size={20} /> },
-  social: { name: 'Social', icon: <Users size={20} /> },
-  settings: { name: 'Configurações', icon: <Settings size={20} /> },
-  profile: { name: 'Perfil', icon: <User size={20} /> },
-  'add-media': { name: 'Adicionar Mídia', icon: <Plus size={20} /> },
-  'edit-media': { name: 'Editar Mídia', icon: <Edit3 size={20} /> },
-  'user-profile': { name: 'Perfil do Usuário', icon: <User size={20} /> },
+  dashboard: { name: "Dashboard", icon: <Home size={20} /> },
+  library: { name: "Biblioteca", icon: <BookOpen size={20} /> },
+  reviews: { name: "Resenhas", icon: <MessageSquare size={20} /> },
+  timeline: { name: "Jornada", icon: <Clock size={20} /> },
+  statistics: { name: "Estatísticas", icon: <BarChart3 size={20} /> },
+  social: { name: "Social", icon: <Users size={20} /> },
+  settings: { name: "Configurações", icon: <Settings size={20} /> },
+  profile: { name: "Perfil", icon: <User size={20} /> },
+  "add-media": { name: "Adicionar Mídia", icon: <Plus size={20} /> },
+  "edit-media": { name: "Editar Mídia", icon: <Edit3 size={20} /> },
+  "user-profile": { name: "Perfil do Usuário", icon: <User size={20} /> },
 };
 
-
-const ErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
-  <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 max-w-md w-full text-center">
-      <h2 className="text-xl font-semibold text-red-400 mb-4">Erro inesperado</h2>
-      <p className="text-slate-300 mb-4">Algo deu errado ao carregar o aplicativo.</p>
-      <p className="text-sm text-slate-400 mb-4">{error.message}</p>
-      <button
-        onClick={() => window.location.reload()}
-        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-      >
-        Recarregar Página
-      </button>
-    </div>
-  </div>
-);
-
+// ======================================================
+// AppContent (conteúdo principal)
+// ======================================================
 const AppContent: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { showSuccess, showError } = useToast();
-  
-  // App State
-  const [activePage, setActivePage] = useState<ActivePage>('dashboard');
+
+  const [activePage, setActivePage] = useState<ActivePage>("dashboard");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -203,7 +200,7 @@ const AppContent: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
-  // Load user data on authentication
+  // Carrega dados do usuário
   useEffect(() => {
     const loadUserData = async () => {
       if (!user) {
@@ -212,25 +209,26 @@ const AppContent: React.FC = () => {
       }
 
       try {
-        console.log('🔄 Carregando dados do usuário...');
-        
-        const [loadedSettings, loadedMediaItems, loadedReviews, loadedMilestones] = await Promise.all([
-          getSettings(user.uid),
-          getMedias(),
-          getReviews(),
-          getMilestones(),
-        ]);
+        console.log("🔄 Carregando dados do usuário...");
+
+        const [loadedSettings, loadedMediaItems, loadedReviews, loadedMilestones] =
+          await Promise.all([
+            getSettings(user.uid),
+            getMedias(),
+            getReviews(),
+            getMilestones(),
+          ]);
 
         setSettings({ ...defaultSettings, ...loadedSettings });
         setMediaItems(loadedMediaItems);
         setReviews(loadedReviews);
         setMilestones(loadedMilestones);
 
-        console.log('✅ Dados carregados com sucesso');
-        showSuccess('Bem-vindo!', 'Seus dados foram carregados com sucesso');
+        console.log("✅ Dados carregados com sucesso");
+        showSuccess("Bem-vindo!", "Seus dados foram carregados com sucesso");
       } catch (error) {
-        console.error('❌ Erro ao carregar dados:', error);
-        showError('Erro', 'Não foi possível carregar todos os seus dados');
+        console.error("❌ Erro ao carregar dados:", error);
+        showError("Erro", "Não foi possível carregar todos os seus dados");
       } finally {
         setIsLoading(false);
       }
@@ -241,52 +239,61 @@ const AppContent: React.FC = () => {
     }
   }, [user, authLoading, showSuccess, showError]);
 
-  // Auto-save functionality - implementar quando necessário
+  // Auto-save
   useEffect(() => {
     if (!user || isLoading) return;
 
     const autoSave = async () => {
       try {
-        // Auto-save será implementado conforme necessário
         await saveSettings(user.uid, settings);
       } catch (error) {
-        console.warn('⚠️ Auto-save falhou:', error);
+        console.warn("⚠️ Auto-save falhou:", error);
       }
     };
 
-    const timeoutId = setTimeout(autoSave, 5000); // Auto-save depois de 5 segundos de inatividade
+    const timeoutId = setTimeout(autoSave, 5000);
     return () => clearTimeout(timeoutId);
   }, [user, settings, isLoading]);
 
-  // Navigation functions
+  // Funções de navegação
   const navigateToAddMedia = useCallback(() => {
-    setActivePage('add-media');
+    setActivePage("add-media");
   }, []);
 
   const navigateToEditMedia = useCallback((item: MediaItem) => {
     setEditingMediaItem(item);
-    setActivePage('edit-media');
+    setActivePage("edit-media");
   }, []);
 
   const navigateBack = useCallback(() => {
-    setActivePage('dashboard');
+    setActivePage("dashboard");
     setEditingMediaItem(null);
     setSelectedUser(null);
   }, []);
 
-  // Page component renderer
+  // Renderer de páginas
   const PageComponent = useMemo(() => {
     const components = {
       dashboard: Dashboard,
-      library: ModernLibrary,
+      library: () => (
+        <ProLibrary
+          featured={mediaItems.slice(0, 4)}
+          recent={mediaItems.slice(-6)}
+          topRated={[...mediaItems]
+            .filter((m) => m.rating !== undefined)
+            .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+            .slice(0, 6)}
+          collection={mediaItems}
+        />
+      ),
       reviews: Reviews,
       timeline: Timeline,
       statistics: Statistics,
       settings: SettingsComponent,
       profile: Profile,
-      'add-media': AddMediaPage,
-      'edit-media': EditMediaPlaceholder,
-      'user-profile': UserProfileView,
+      "add-media": AddMediaPage,
+      "edit-media": EditMediaPlaceholder,
+      "user-profile": UserProfileView,
       social: () => (
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
@@ -301,48 +308,47 @@ const AppContent: React.FC = () => {
     };
 
     return components[activePage] || components.dashboard;
-  }, [activePage]);
+  }, [activePage, mediaItems]);
 
-  // App context value
-  const appContextValue = useMemo(() => ({
-    mediaItems,
-    setMediaItems,
-    reviews,
-    setReviews,
-    milestones,
-    setMilestones,
-    settings,
-    setSettings,
-    activePage,
-    setActivePage,
-    selectedUser,
-    setSelectedUser,
-    editingMediaItem,
-    setEditingMediaItem,
-    navigateToAddMedia,
-    navigateToEditMedia,
-    navigateBack,
-  }), [
-    mediaItems,
-    reviews,
-    milestones,
-    settings,
-    activePage,
-    selectedUser,
-    editingMediaItem,
-    navigateToAddMedia,
-    navigateToEditMedia,
-    navigateBack,
-  ]);
+  // Contexto
+  const appContextValue = useMemo(
+    () => ({
+      mediaItems,
+      setMediaItems,
+      reviews,
+      setReviews,
+      milestones,
+      setMilestones,
+      settings,
+      setSettings,
+      activePage,
+      setActivePage,
+      selectedUser,
+      setSelectedUser,
+      editingMediaItem,
+      setEditingMediaItem,
+      navigateToAddMedia,
+      navigateToEditMedia,
+      navigateBack,
+    }),
+    [
+      mediaItems,
+      reviews,
+      milestones,
+      settings,
+      activePage,
+      selectedUser,
+      editingMediaItem,
+      navigateToAddMedia,
+      navigateToEditMedia,
+      navigateBack,
+    ]
+  );
 
-  // Loading states
-  if (authLoading || isLoading) {
-    return <LoadingScreen />;
-  }
+  // Renderização especial
+  if (authLoading || isLoading) return <LoadingScreen />;
 
-  // Unauthenticated state
   if (!user) {
-    // Se pediu login ou registro, mostra o componente respectivo
     if (showLogin) {
       return (
         <Login
@@ -367,7 +373,6 @@ const AppContent: React.FC = () => {
       );
     }
 
-    // Caso contrário, mostra a landing page
     return (
       <LandingPage
         onLogin={() => setShowLogin(true)}
@@ -381,7 +386,7 @@ const AppContent: React.FC = () => {
   return (
     <AppProvider value={appContextValue}>
       <div className="min-h-screen bg-gray-900 text-white overflow-hidden">
-        {/* Background Elements */}
+        {/* Background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"></div>
@@ -391,20 +396,22 @@ const AppContent: React.FC = () => {
         {/* Sidebar */}
         <Sidebar />
 
-        {/* Desktop Header */}
-        <DesktopHeader 
-          pageName={currentPageMeta.name} 
-          pageIcon={currentPageMeta.icon} 
+        {/* Header */}
+        <DesktopHeader
+          pageName={currentPageMeta.name}
+          pageIcon={currentPageMeta.icon}
         />
 
-        {/* Main Content */}
+        {/* Conteúdo */}
         <main className="md:ml-20 md:pt-16 min-h-screen">
           <div className="p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
-            <Suspense fallback={
-              <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+                </div>
+              }
+            >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activePage}
@@ -424,13 +431,14 @@ const AppContent: React.FC = () => {
         {/* Mobile Navigation */}
         <MobileNav />
 
-        {/* Firebase Status Indicator */}
+        {/* Firebase Status */}
         <FirebaseStatus showStatus={!!user} />
       </div>
     </AppProvider>
   );
 };
 
+// Error Boundary
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; error?: Error }
@@ -445,24 +453,26 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error boundary caught an error:', error, errorInfo);
+    console.error("Error boundary caught an error:", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      return <ErrorFallback error={this.state.error!} />;
+      return (
+        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+          <p className="text-red-400">Erro inesperado: {this.state.error?.message}</p>
+        </div>
+      );
     }
-
     return this.props.children;
   }
 }
 
-const App: React.FC = () => {
-  return (
-    <ErrorBoundary>
-      <AppContent />
-    </ErrorBoundary>
-  );
-};
+// Root App
+const App: React.FC = () => (
+  <ErrorBoundary>
+    <AppContent />
+  </ErrorBoundary>
+);
 
 export default App;
