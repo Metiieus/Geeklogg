@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useImprovedScrollLock } from "../hooks/useImprovedScrollLock";
 
