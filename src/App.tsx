@@ -45,6 +45,7 @@ import { Register } from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import ProLibrary from "./components/Library/ProLibrary"; // ✅ Nova biblioteca integrada
 import ModernLibrary from "./components/ModernLibrary";
+import { sampleMediaItems } from "./data/sampleModernLibraryData";
 import Reviews from "./components/Reviews";
 import Timeline from "./components/Timeline";
 import Statistics from "./components/Statistics";
@@ -220,7 +221,7 @@ const AppContent: React.FC = () => {
       }
 
       try {
-        console.log("🔄 Carregando dados do usuário...");
+        console.log("��� Carregando dados do usuário...");
 
         const [
           loadedSettings,
