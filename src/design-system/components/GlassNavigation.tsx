@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Home, Library, BarChart3, User, Settings, Search, Plus, 
-  Gamepad2, BookOpen, Film, Play, TrendingUp, Award, Bell,
-  Heart, Star, Clock, Calendar, Filter, Download, Share
-} from 'lucide-react';
-import { colors, glassmorphism, shadows, animations } from '../tokens';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Home,
+  Library,
+  BarChart3,
+  User,
+  Settings,
+  Search,
+  Plus,
+  Gamepad2,
+  BookOpen,
+  Film,
+  Play,
+  TrendingUp,
+  Award,
+  Bell,
+  Heart,
+  Star,
+  Clock,
+  Calendar,
+  Filter,
+  Download,
+  Share,
+} from "lucide-react";
+import { colors, glassmorphism, shadows, animations } from "../tokens";
 
 // ============= GLASS ICON CARD =============
 
@@ -14,7 +32,7 @@ interface GlassIconCardProps {
   label: string;
   isActive?: boolean;
   onClick?: () => void;
-  variant?: 'default' | 'small' | 'large';
+  variant?: "default" | "small" | "large";
   showTooltip?: boolean;
   badge?: number;
   className?: string;
@@ -25,17 +43,17 @@ export const GlassIconCard: React.FC<GlassIconCardProps> = ({
   label,
   isActive = false,
   onClick,
-  variant = 'default',
+  variant = "default",
   showTooltip = true,
   badge,
-  className = '',
+  className = "",
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const sizeClasses = {
-    small: 'w-12 h-12',
-    default: 'w-16 h-16',
-    large: 'w-20 h-20',
+    small: "w-12 h-12",
+    default: "w-16 h-16",
+    large: "w-20 h-20",
   };
 
   const iconSizes = {
@@ -57,12 +75,10 @@ export const GlassIconCard: React.FC<GlassIconCardProps> = ({
           ${glassmorphism.backdrop} ${glassmorphism.background} ${glassmorphism.border}
           flex items-center justify-center group cursor-pointer
           transition-all duration-300 ease-out
-          ${isActive ? 'ring-2 ring-cyan-400/50' : ''}
+          ${isActive ? "ring-2 ring-cyan-400/50" : ""}
         `}
         style={{
-          boxShadow: isHovered || isActive 
-            ? shadows.glow.cyan
-            : shadows.md,
+          boxShadow: isHovered || isActive ? shadows.glow.cyan : shadows.md,
         }}
       >
         {/* Background Glow */}
@@ -78,14 +94,18 @@ export const GlassIconCard: React.FC<GlassIconCardProps> = ({
         {/* Icon */}
         <motion.div
           animate={{
-            color: isActive ? colors.primary.cyan : isHovered ? colors.text.primary : colors.text.secondary,
+            color: isActive
+              ? colors.primary.cyan
+              : isHovered
+                ? colors.text.primary
+                : colors.text.secondary,
             scale: isActive ? 1.1 : 1,
           }}
           transition={{ duration: 0.2 }}
           className="relative z-10"
         >
-          {React.cloneElement(icon as React.ReactElement, { 
-            size: iconSizes[variant]
+          {React.cloneElement(icon as React.ReactElement, {
+            size: iconSizes[variant],
           })}
         </motion.div>
 
@@ -106,7 +126,7 @@ export const GlassIconCard: React.FC<GlassIconCardProps> = ({
             className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 rounded-full flex items-center justify-center border-2 border-gray-900"
           >
             <span className="text-white text-xs font-bold">
-              {badge > 99 ? '99+' : badge}
+              {badge > 99 ? "99+" : badge}
             </span>
           </motion.div>
         )}
@@ -122,10 +142,12 @@ export const GlassIconCard: React.FC<GlassIconCardProps> = ({
             transition={{ duration: 0.2 }}
             className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50"
           >
-            <div className={`
+            <div
+              className={`
               px-3 py-2 ${glassmorphism.backdrop} ${glassmorphism.background} ${glassmorphism.border}
               rounded-lg shadow-xl
-            `}>
+            `}
+            >
               <span className="text-white text-sm font-medium whitespace-nowrap">
                 {label}
               </span>
@@ -154,7 +176,7 @@ interface GlassNavigationProps {
   items: NavItem[];
   activeItem?: string;
   onItemClick?: (itemId: string) => void;
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
   className?: string;
 }
 
@@ -162,8 +184,8 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
   items,
   activeItem,
   onItemClick,
-  orientation = 'horizontal',
-  className = '',
+  orientation = "horizontal",
+  className = "",
 }) => {
   return (
     <motion.div
@@ -172,7 +194,7 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
       className={`
         ${glassmorphism.backdrop} ${glassmorphism.background} ${glassmorphism.border}
         rounded-2xl p-4 ${glassmorphism.shadow}
-        ${orientation === 'horizontal' ? 'flex flex-row gap-4' : 'flex flex-col gap-4'}
+        ${orientation === "horizontal" ? "flex flex-row gap-4" : "flex flex-col gap-4"}
         ${className}
       `}
     >
@@ -202,8 +224,8 @@ interface GlassActionButtonProps {
   icon: React.ReactNode;
   label: string;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'success' | 'danger';
-  size?: 'small' | 'default' | 'large';
+  variant?: "primary" | "secondary" | "success" | "danger";
+  size?: "small" | "default" | "large";
   isLoading?: boolean;
   className?: string;
 }
@@ -212,24 +234,24 @@ export const GlassActionButton: React.FC<GlassActionButtonProps> = ({
   icon,
   label,
   onClick,
-  variant = 'primary',
-  size = 'default',
+  variant = "primary",
+  size = "default",
   isLoading = false,
-  className = '',
+  className = "",
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const variantClasses = {
-    primary: 'from-violet-500/30 to-cyan-500/30 border-violet-400/50',
-    secondary: 'from-white/5 to-white/10 border-white/20',
-    success: 'from-emerald-500/30 to-green-500/30 border-emerald-400/50',
-    danger: 'from-red-500/30 to-pink-500/30 border-red-400/50',
+    primary: "from-violet-500/30 to-cyan-500/30 border-violet-400/50",
+    secondary: "from-white/5 to-white/10 border-white/20",
+    success: "from-emerald-500/30 to-green-500/30 border-emerald-400/50",
+    danger: "from-red-500/30 to-pink-500/30 border-red-400/50",
   };
 
   const sizeClasses = {
-    small: 'px-4 py-2 text-sm gap-2',
-    default: 'px-6 py-3 text-base gap-3',
-    large: 'px-8 py-4 text-lg gap-4',
+    small: "px-4 py-2 text-sm gap-2",
+    default: "px-6 py-3 text-base gap-3",
+    large: "px-8 py-4 text-lg gap-4",
   };
 
   return (
@@ -248,8 +270,10 @@ export const GlassActionButton: React.FC<GlassActionButtonProps> = ({
         disabled:opacity-50 disabled:cursor-not-allowed
       `}
       style={{
-        boxShadow: isHovered 
-          ? variant === 'primary' ? shadows.glow.violet : shadows.xl
+        boxShadow: isHovered
+          ? variant === "primary"
+            ? shadows.glow.violet
+            : shadows.xl
           : shadows.lg,
       }}
     >
@@ -290,26 +314,26 @@ export const GlassActionButton: React.FC<GlassActionButtonProps> = ({
 // ============= PREDEFINED NAVIGATION SETS =============
 
 export const mainNavigationItems: NavItem[] = [
-  { id: 'dashboard', icon: <Home />, label: 'Dashboard' },
-  { id: 'library', icon: <Library />, label: 'Biblioteca' },
-  { id: 'statistics', icon: <BarChart3 />, label: 'Estatísticas' },
-  { id: 'profile', icon: <User />, label: 'Perfil' },
-  { id: 'settings', icon: <Settings />, label: 'Configurações' },
+  { id: "dashboard", icon: <Home />, label: "Dashboard" },
+  { id: "library", icon: <Library />, label: "Biblioteca" },
+  { id: "statistics", icon: <BarChart3 />, label: "Estatísticas" },
+  { id: "profile", icon: <User />, label: "Perfil" },
+  { id: "settings", icon: <Settings />, label: "Configurações" },
 ];
 
 export const mediaTypeItems: NavItem[] = [
-  { id: 'games', icon: <Gamepad2 />, label: 'Jogos' },
-  { id: 'anime', icon: <Play />, label: 'Anime' },
-  { id: 'series', icon: <Film />, label: 'Séries' },
-  { id: 'books', icon: <BookOpen />, label: 'Livros' },
-  { id: 'movies', icon: <Film />, label: 'Filmes' },
+  { id: "games", icon: <Gamepad2 />, label: "Jogos" },
+  { id: "anime", icon: <Play />, label: "Anime" },
+  { id: "series", icon: <Film />, label: "Séries" },
+  { id: "books", icon: <BookOpen />, label: "Livros" },
+  { id: "movies", icon: <Film />, label: "Filmes" },
 ];
 
 export const actionItems: NavItem[] = [
-  { id: 'search', icon: <Search />, label: 'Buscar' },
-  { id: 'add', icon: <Plus />, label: 'Adicionar' },
-  { id: 'favorites', icon: <Heart />, label: 'Favoritos' },
-  { id: 'notifications', icon: <Bell />, label: 'Notificações', badge: 3 },
+  { id: "search", icon: <Search />, label: "Buscar" },
+  { id: "add", icon: <Plus />, label: "Adicionar" },
+  { id: "favorites", icon: <Heart />, label: "Favoritos" },
+  { id: "notifications", icon: <Bell />, label: "Notificações", badge: 3 },
 ];
 
 export default GlassIconCard;

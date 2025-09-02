@@ -1,13 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Send, Sparkles, Crown, Brain, Zap, ChevronRight, Shuffle } from "lucide-react";
+import {
+  Bot,
+  X,
+  Send,
+  Sparkles,
+  Crown,
+  Brain,
+  Zap,
+  ChevronRight,
+  Shuffle,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
-import { hasArchiviusAccess, canUseArchivius, ARCHIVIUS_CONFIG } from "../config/archivius";
+import {
+  hasArchiviusAccess,
+  canUseArchivius,
+  ARCHIVIUS_CONFIG,
+} from "../config/archivius";
 
 interface Message {
   id: string;
@@ -20,7 +34,7 @@ interface SmartSuggestion {
   id: string;
   text: string;
   emoji: string;
-  category: 'recommendation' | 'analysis' | 'discovery' | 'motivation';
+  category: "recommendation" | "analysis" | "discovery" | "motivation";
   prompt: string;
   requiresContext: boolean;
 }
@@ -35,8 +49,10 @@ export const ArchiviusAgent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
-  const [currentSuggestions, setCurrentSuggestions] = useState<SmartSuggestion[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [currentSuggestions, setCurrentSuggestions] = useState<
+    SmartSuggestion[]
+  >([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Archivius disponível para usuários premium
@@ -46,13 +62,22 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Gerar contexto enriquecido para IA
   const generateEnhancedUserContext = () => {
-    return archiviusService.generateEnhancedContext(mediaItems, reviews, settings, milestones || []);
+    return archiviusService.generateEnhancedContext(
+      mediaItems,
+      reviews,
+      settings,
+      milestones || [],
+    );
   };
 
   // Carregar sugestões inteligentes
   useEffect(() => {
     if (canAccess && mediaItems.length > 0) {
-      const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
+      const userAnalysis = archiviusService.analyzeUserProfile(
+        mediaItems,
+        reviews,
+        settings,
+      );
       const suggestions = archiviusService.getSmartSuggestions(userAnalysis);
       setCurrentSuggestions(suggestions);
     }
@@ -60,14 +85,18 @@ export const ArchiviusAgent: React.FC = () => {
 
   // Filtrar sugestões por categoria
   const getFilteredSuggestions = () => {
-    if (selectedCategory === 'all') return currentSuggestions;
-    return currentSuggestions.filter(s => s.category === selectedCategory);
+    if (selectedCategory === "all") return currentSuggestions;
+    return currentSuggestions.filter((s) => s.category === selectedCategory);
   };
 
   // Embaralhar sugestões
   const shuffleSuggestions = () => {
     if (!canAccess) return;
-    const userAnalysis = archiviusService.analyzeUserProfile(mediaItems, reviews, settings);
+    const userAnalysis = archiviusService.analyzeUserProfile(
+      mediaItems,
+      reviews,
+      settings,
+    );
     const newSuggestions = archiviusService.getSmartSuggestions(userAnalysis);
     setCurrentSuggestions([...newSuggestions].sort(() => Math.random() - 0.5));
   };
@@ -77,7 +106,7 @@ export const ArchiviusAgent: React.FC = () => {
     if (isOpen && !hasInitialized && canAccess) {
       const userContext = generateEnhancedUserContext();
       const userAnalysis = userContext.userAnalysis;
-      
+
       const welcomeMessage: Message = {
         id: "welcome",
         text: `# 🧙‍♂️ Saudações, ${userAnalysis.personalityType} ${settings.name || "Guardião"}!
@@ -86,11 +115,11 @@ export const ArchiviusAgent: React.FC = () => {
 
 ## 📊 **Análise Instantânea da Vossa Biblioteca**
 Detectei **${userContext.totalMedia} pergaminhos** em vossa coleção mística!
-Taxa de conclusão: **${userAnalysis.completionRate}%** (Verdadeiramente ${userAnalysis.completionRate > 70 ? 'impressionante' : 'em crescimento'}!)
+Taxa de conclusão: **${userAnalysis.completionRate}%** (Verdadeiramente ${userAnalysis.completionRate > 70 ? "impressionante" : "em crescimento"}!)
 
 ## 🎯 **Vosso Perfil Único**
 • **Personalidade Geek**: ${userAnalysis.personalityType}
-• **Domínios Preferidos**: ${userAnalysis.dominantGenres.join(', ') || 'Ainda mapeando'}
+• **Domínios Preferidos**: ${userAnalysis.dominantGenres.join(", ") || "Ainda mapeando"}
 • **Padrão de Excelência**: ${userAnalysis.averageRating}⭐ de média
 
 ## ⚔️ **Poderes Místicos Disponíveis**
@@ -237,7 +266,10 @@ ${config.callToAction}
       );
     } catch (error) {
       console.error("Erro na análise:", error);
-      showError("Erro na análise mística", "Não foi possível analisar vosso perfil");
+      showError(
+        "Erro na análise mística",
+        "Não foi possível analisar vosso perfil",
+      );
     }
 
     setIsAnalyzing(false);
@@ -252,16 +284,16 @@ ${config.callToAction}
 
   const categoryIcons: Record<string, string> = {
     recommendation: "��️",
-    analysis: "🔍", 
+    analysis: "🔍",
     discovery: "🗺️",
-    motivation: "🏆"
+    motivation: "🏆",
   };
 
   const categoryNames: Record<string, string> = {
     recommendation: "Recomendações",
     analysis: "An��lises",
-    discovery: "Descobertas", 
-    motivation: "Desafios"
+    discovery: "Descobertas",
+    motivation: "Desafios",
   };
 
   return (
@@ -412,7 +444,11 @@ ${config.callToAction}
               {/* Messages - responsivo */}
               <div
                 className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50"
-                style={{ height: canAccess ? "calc(100% - 200px)" : "calc(100% - 130px)" }}
+                style={{
+                  height: canAccess
+                    ? "calc(100% - 200px)"
+                    : "calc(100% - 130px)",
+                }}
               >
                 {messages.length === 0 && (
                   <div className="text-center text-gray-200 mt-4">
@@ -468,51 +504,59 @@ ${config.callToAction}
                                 <Shuffle className="w-3 h-3" />
                               </button>
                             </div>
-                            
+
                             {/* Seletor de categoria */}
                             <div className="flex gap-1 mb-3 overflow-x-auto">
                               <button
-                                onClick={() => setSelectedCategory('all')}
+                                onClick={() => setSelectedCategory("all")}
                                 className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
-                                  selectedCategory === 'all'
-                                    ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50'
-                                    : 'bg-gray-700/50 text-gray-400 border border-gray-600/30'
+                                  selectedCategory === "all"
+                                    ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
+                                    : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
                                 }`}
                               >
                                 ✨ Todas
                               </button>
-                              {Object.entries(categoryNames).map(([key, name]) => (
-                                <button
-                                  key={key}
-                                  onClick={() => setSelectedCategory(key)}
-                                  className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
-                                    selectedCategory === key
-                                      ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50'
-                                      : 'bg-gray-700/50 text-gray-400 border border-gray-600/30'
-                                  }`}
-                                >
-                                  {categoryIcons[key]} {name}
-                                </button>
-                              ))}
+                              {Object.entries(categoryNames).map(
+                                ([key, name]) => (
+                                  <button
+                                    key={key}
+                                    onClick={() => setSelectedCategory(key)}
+                                    className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+                                      selectedCategory === key
+                                        ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
+                                        : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
+                                    }`}
+                                  >
+                                    {categoryIcons[key]} {name}
+                                  </button>
+                                ),
+                              )}
                             </div>
 
                             {/* Sugestões Inteligentes */}
                             <div className="space-y-2 max-h-40 overflow-y-auto">
-                              {getFilteredSuggestions().slice(0, 6).map((suggestion) => (
-                                <button
-                                  key={suggestion.id}
-                                  onClick={() => handleSendMessage(suggestion.prompt)}
-                                  className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors group"
-                                >
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-cyan-400 flex-shrink-0 mt-0.5">
-                                      {suggestion.emoji}
-                                    </span>
-                                    <span className="flex-1">{suggestion.text}</span>
-                                    <ChevronRight className="w-3 h-3 text-cyan-400/50 group-hover:text-cyan-400 transition-colors flex-shrink-0 mt-0.5" />
-                                  </div>
-                                </button>
-                              ))}
+                              {getFilteredSuggestions()
+                                .slice(0, 6)
+                                .map((suggestion) => (
+                                  <button
+                                    key={suggestion.id}
+                                    onClick={() =>
+                                      handleSendMessage(suggestion.prompt)
+                                    }
+                                    className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors group"
+                                  >
+                                    <div className="flex items-start gap-2">
+                                      <span className="text-cyan-400 flex-shrink-0 mt-0.5">
+                                        {suggestion.emoji}
+                                      </span>
+                                      <span className="flex-1">
+                                        {suggestion.text}
+                                      </span>
+                                      <ChevronRight className="w-3 h-3 text-cyan-400/50 group-hover:text-cyan-400 transition-colors flex-shrink-0 mt-0.5" />
+                                    </div>
+                                  </button>
+                                ))}
                             </div>
                           </div>
                         )}
@@ -546,7 +590,9 @@ ${config.callToAction}
                           : "bg-gray-700/50 border border-gray-600/30 text-gray-100"
                       }`}
                     >
-                      <div className="text-sm whitespace-pre-wrap">{message.text}</div>
+                      <div className="text-sm whitespace-pre-wrap">
+                        {message.text}
+                      </div>
                     </div>
                   </motion.div>
                 ))}

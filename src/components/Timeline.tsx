@@ -22,7 +22,9 @@ const Timeline: React.FC = () => {
     null,
   );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [milestoneToDelete, setMilestoneToDelete] = useState<Milestone | null>(null);
+  const [milestoneToDelete, setMilestoneToDelete] = useState<Milestone | null>(
+    null,
+  );
 
   const sortedMilestones = milestones.sort(
     (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime(),
@@ -43,7 +45,9 @@ const Timeline: React.FC = () => {
       try {
         await deleteMilestone(milestoneToDelete.id);
         setMilestones(
-          milestones.filter((milestone) => milestone.id !== milestoneToDelete.id),
+          milestones.filter(
+            (milestone) => milestone.id !== milestoneToDelete.id,
+          ),
         );
         // Feedback visual
         const toast = document.createElement("div");
@@ -53,7 +57,7 @@ const Timeline: React.FC = () => {
         document.body.appendChild(toast);
         setTimeout(() => document.body.removeChild(toast), 3000);
       } catch (error) {
-        console.error('Erro ao excluir marco:', error);
+        console.error("Erro ao excluir marco:", error);
         const toast = document.createElement("div");
         toast.className =
           "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-slide-up";
@@ -127,9 +131,7 @@ const Timeline: React.FC = () => {
                         </h3>
                         <div className="flex items-center gap-1 text-slate-400 text-xs sm:text-sm">
                           <Calendar size={14} />
-                          <span>
-                            {formatDateShort(milestone.date)}
-                          </span>
+                          <span>{formatDateShort(milestone.date)}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-1 sm:gap-2">

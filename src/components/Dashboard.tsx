@@ -169,8 +169,15 @@ const Dashboard: React.FC = () => {
         <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-slide-in-right">
           <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
             <div className="flex items-center gap-3 mb-2">
-              <Clock className="text-blue-400" size={16} sm:size={18} md:size={20} />
-              <span className="text-blue-400 font-medium text-sm sm:text-base">Total de Horas</span>
+              <Clock
+                className="text-blue-400"
+                size={16}
+                sm:size={18}
+                md:size={20}
+              />
+              <span className="text-blue-400 font-medium text-sm sm:text-base">
+                Total de Horas
+              </span>
             </div>
             <p className="text-lg sm:text-xl md:text-2xl font-bold text-white">
               {stats.totalHours.toLocaleString()}

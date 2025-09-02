@@ -55,8 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setProfile({
           uid: user.uid,
           email: user.email || "",
-          displayName:
-            user.displayName || user.email?.split("@")[0] || "User",
+          displayName: user.displayName || user.email?.split("@")[0] || "User",
           isPremium: false,
           bio: "",
           favoriteGenres: [],
@@ -105,7 +104,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     deleteAccount,
   };
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

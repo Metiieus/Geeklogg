@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from 'react';
-import { MediaItem, Review, Milestone, UserSettings, ActivePage } from '../App';
-import { UserProfile } from '../types/social';
+import React, { createContext, useContext } from "react";
+import { MediaItem, Review, Milestone, UserSettings, ActivePage } from "../App";
+import { UserProfile } from "../types/social";
 
 interface AppContextType {
   mediaItems: MediaItem[];
@@ -24,14 +24,17 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<{ children: React.ReactNode; value: AppContextType }> = ({ children, value }) => {
+export const AppProvider: React.FC<{
+  children: React.ReactNode;
+  value: AppContextType;
+}> = ({ children, value }) => {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useAppContext must be used within an AppProvider');
+    throw new Error("useAppContext must be used within an AppProvider");
   }
   return context;
 };

@@ -15,14 +15,16 @@ import { useToast } from "../context/ToastContext";
  * quando o usuário escolhe um resultado externo, abre o modal de confirmação.
  */
 export const AddMediaPage: React.FC = () => {
-  const { mediaItems, setMediaItems, navigateToEditMedia } = useAppContext() as {
-    mediaItems: MediaItem[];
-    setMediaItems: (items: MediaItem[]) => void;
-    navigateToEditMedia: (item: MediaItem) => void;
-  };
+  const { mediaItems, setMediaItems, navigateToEditMedia } =
+    useAppContext() as {
+      mediaItems: MediaItem[];
+      setMediaItems: (items: MediaItem[]) => void;
+      navigateToEditMedia: (item: MediaItem) => void;
+    };
   const { showSuccess, showError } = useToast();
 
-  const [selectedResult, setSelectedResult] = useState<ExternalMediaResult | null>(null);
+  const [selectedResult, setSelectedResult] =
+    useState<ExternalMediaResult | null>(null);
 
   const handleAddFromSearch = useCallback(
     (newItem: MediaItem) => {
@@ -37,7 +39,7 @@ export const AddMediaPage: React.FC = () => {
         setSelectedResult(null);
       }
     },
-    [mediaItems, setMediaItems, showSuccess, showError]
+    [mediaItems, setMediaItems, showSuccess, showError],
   );
 
   return (
@@ -45,7 +47,9 @@ export const AddMediaPage: React.FC = () => {
       {/* Cabeçalho */}
       <div className="flex items-center gap-3 mb-6">
         <button
-          onClick={() => (typeof window !== "undefined" ? window.history.back() : null)}
+          onClick={() =>
+            typeof window !== "undefined" ? window.history.back() : null
+          }
           className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10"
           aria-label="Voltar"
           title="Voltar"

@@ -21,7 +21,12 @@ export interface UserActivity {
   userId: string;
   userName: string;
   userAvatar?: string;
-  type: 'media_added' | 'media_completed' | 'review_added' | 'milestone_added' | 'achievement_unlocked';
+  type:
+    | "media_added"
+    | "media_completed"
+    | "review_added"
+    | "milestone_added"
+    | "achievement_unlocked";
   title: string;
   description: string;
   mediaTitle?: string;
@@ -36,7 +41,7 @@ export interface Notification {
   fromUserId: string;
   fromUserName: string;
   fromUserAvatar?: string;
-  type: 'new_follower' | 'activity_update' | 'follow_request';
+  type: "new_follower" | "activity_update" | "follow_request";
   title: string;
   message: string;
   read: boolean;

@@ -5,7 +5,10 @@ import { UserProfileView } from "./UserProfileView";
 import { getFollowingActivities } from "../services/socialService";
 import { UserActivity, UserProfile } from "../types/social";
 import { useAppContext } from "../context/AppContext";
-import { formatTimeAgo as formatTimeAgoUtil, getTimestamp } from "../utils/dateUtils";
+import {
+  formatTimeAgo as formatTimeAgoUtil,
+  getTimestamp,
+} from "../utils/dateUtils";
 
 export const SocialFeed: React.FC = () => {
   const { selectedUser, setSelectedUser } = useAppContext();
@@ -127,18 +130,20 @@ export const SocialFeed: React.FC = () => {
                 className={`p-6 rounded-2xl border backdrop-blur-sm transition-all duration-300 hover:scale-105 ${getActivityColor(activity.type)}`}
               >
                 <div className="flex items-start gap-4">
-                                                      <div
+                  <div
                     className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
-                    onClick={() => setSelectedUser({
-                      uid: activity.userId,
-                      name: activity.userName,
-                      avatar: activity.userAvatar,
-                      bio: '',
-                      isPublic: true,
-                      followers: [],
-                      following: [],
-                      createdAt: new Date().toISOString()
-                    })}
+                    onClick={() =>
+                      setSelectedUser({
+                        uid: activity.userId,
+                        name: activity.userName,
+                        avatar: activity.userAvatar,
+                        bio: "",
+                        isPublic: true,
+                        followers: [],
+                        following: [],
+                        createdAt: new Date().toISOString(),
+                      })
+                    }
                   >
                     {activity.userAvatar ? (
                       <img
@@ -156,18 +161,20 @@ export const SocialFeed: React.FC = () => {
                       <span className="text-2xl">
                         {getActivityIcon(activity.type)}
                       </span>
-                                                                  <span
+                      <span
                         className="text-white font-medium cursor-pointer hover:text-purple-300 transition-colors"
-                        onClick={() => setSelectedUser({
-                          uid: activity.userId,
-                          name: activity.userName,
-                          avatar: activity.userAvatar,
-                          bio: '',
-                          isPublic: true,
-                          followers: [],
-                          following: [],
-                          createdAt: new Date().toISOString()
-                        })}
+                        onClick={() =>
+                          setSelectedUser({
+                            uid: activity.userId,
+                            name: activity.userName,
+                            avatar: activity.userAvatar,
+                            bio: "",
+                            isPublic: true,
+                            followers: [],
+                            following: [],
+                            createdAt: new Date().toISOString(),
+                          })
+                        }
                       >
                         {activity.userName}
                       </span>

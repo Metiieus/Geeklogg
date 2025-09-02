@@ -57,5 +57,5 @@ console.log(
   "🔥 Firebase inicializado com Auth:",
   !!auth,
   " | Firestore conectado em banco:",
-  db.databaseId?.database ?? "(default)"
+  db.databaseId?.database ?? "(default)",
 );

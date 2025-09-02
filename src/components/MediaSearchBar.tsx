@@ -33,7 +33,11 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [apiStatus, setApiStatus] = useState({ googleBooks: true, tmdb: true, rawg: true });
+  const [apiStatus, setApiStatus] = useState({
+    googleBooks: true,
+    tmdb: true,
+    rawg: true,
+  });
 
   const { showError, showWarning } = useToast();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -90,7 +94,9 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
 
       // Verificar se a API necessária está disponível
       const needsGoogleBooks = finalType === "books";
-      const needsTmdb = ["movies", "series", "anime", "dorama"].includes(finalType);
+      const needsTmdb = ["movies", "series", "anime", "dorama"].includes(
+        finalType,
+      );
       const needsRawg = finalType === "games";
 
       if (
@@ -143,35 +149,37 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
   const handleInputChange = (value: string) => {
     let finalType: MediaType = selectedType;
     // Detectar tags como #anime, #filme, #serie, #jogo
-    const tagMatch = value.match(/#(anime|filme|filmes|serie|série|series|jogo|jogos|game|games|livro|livros)/i);
+    const tagMatch = value.match(
+      /#(anime|filme|filmes|serie|série|series|jogo|jogos|game|games|livro|livros)/i,
+    );
     if (tagMatch) {
       const tag = tagMatch[1].toLowerCase();
       switch (tag) {
-        case 'anime':
-          finalType = 'anime';
+        case "anime":
+          finalType = "anime";
           break;
-        case 'filme':
-        case 'filmes':
-          finalType = 'movies';
+        case "filme":
+        case "filmes":
+          finalType = "movies";
           break;
-        case 'serie':
-        case 'série':
-        case 'series':
-          finalType = 'series';
+        case "serie":
+        case "série":
+        case "series":
+          finalType = "series";
           break;
-        case 'jogo':
-        case 'jogos':
-        case 'game':
-        case 'games':
-          finalType = 'games';
+        case "jogo":
+        case "jogos":
+        case "game":
+        case "games":
+          finalType = "games";
           break;
-        case 'livro':
-        case 'livros':
-          finalType = 'books';
+        case "livro":
+        case "livros":
+          finalType = "books";
           break;
       }
       onTypeChange(finalType);
-      value = value.replace(tagMatch[0], '').trim();
+      value = value.replace(tagMatch[0], "").trim();
     }
 
     setQuery(value);
@@ -350,15 +358,15 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
                             result.source === "google-books"
                               ? "bg-blue-500/20 text-blue-400"
                               : result.source === "rawg"
-                              ? "bg-purple-500/20 text-purple-400"
-                              : "bg-green-500/20 text-green-400"
+                                ? "bg-purple-500/20 text-purple-400"
+                                : "bg-green-500/20 text-green-400"
                           }`}
                         >
                           {result.source === "google-books"
                             ? "Google Books"
                             : result.source === "rawg"
-                            ? "RAWG"
-                            : "TMDb"}
+                              ? "RAWG"
+                              : "TMDb"}
                         </span>
                       </div>
                     </div>

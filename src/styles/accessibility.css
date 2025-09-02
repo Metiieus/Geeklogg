@@ -44,7 +44,7 @@
 
 /* Focus management */
 .focus-visible:focus-visible {
-  outline: 2px solid #3B82F6;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
@@ -56,7 +56,7 @@
     background: #000 !important;
     border: 1px solid #fff !important;
   }
-  
+
   .text-gray-400,
   .text-slate-400 {
     color: #ffffff !important;
@@ -88,7 +88,7 @@
 @media (hover: none) and (pointer: coarse) {
   .touch-target:focus {
     background-color: rgba(59, 130, 246, 0.1);
-    outline: 2px solid #3B82F6;
+    outline: 2px solid #3b82f6;
   }
 }
 
@@ -112,20 +112,21 @@
 
 /* Form validation styles */
 .form-field-error {
-  border-color: #EF4444 !important;
-  box-shadow: 0 0 0 1px #EF4444 !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444 !important;
 }
 
 .form-field-error:focus {
-  outline-color: #EF4444 !important;
-  border-color: #EF4444 !important;
+  outline-color: #ef4444 !important;
+  border-color: #ef4444 !important;
 }
 
 /* Loading states */
 .loading-skeleton {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 25%, 
-    rgba(255, 255, 255, 0.2) 50%, 
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
     rgba(255, 255, 255, 0.1) 75%
   );
   background-size: 200% 100%;
@@ -143,31 +144,31 @@
 
 /* Color contrast improvements */
 .text-improved-contrast {
-  color: #E5E7EB; /* Melhor contraste que text-gray-400 */
+  color: #e5e7eb; /* Melhor contraste que text-gray-400 */
 }
 
 .text-secondary-improved {
-  color: #D1D5DB; /* Melhor contraste que text-gray-500 */
+  color: #d1d5db; /* Melhor contraste que text-gray-500 */
 }
 
 /* Button states for accessibility */
 .btn-primary {
-  background: #3B82F6;
+  background: #3b82f6;
   color: white;
   border: 2px solid transparent;
 }
 
 .btn-primary:hover {
-  background: #2563EB;
+  background: #2563eb;
 }
 
 .btn-primary:focus {
-  outline: 2px solid #60A5FA;
+  outline: 2px solid #60a5fa;
   outline-offset: 2px;
 }
 
 .btn-primary:disabled {
-  background: #6B7280;
+  background: #6b7280;
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -180,7 +181,7 @@
 /* Keyboard navigation improvements */
 .navigation-item:focus {
   background-color: rgba(59, 130, 246, 0.1);
-  outline: 2px solid #3B82F6;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
@@ -199,7 +200,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: #10B981;
+  background: #10b981;
   border-radius: 50%;
   margin-right: 4px;
 }
@@ -209,7 +210,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: #6B7280;
+  background: #6b7280;
   border-radius: 50%;
   margin-right: 4px;
 }

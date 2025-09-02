@@ -74,7 +74,7 @@ div[data-framer-component] {
     -webkit-overflow-scrolling: auto !important;
     overscroll-behavior: none !important;
   }
-  
+
   body.modal-open {
     -webkit-overflow-scrolling: auto !important;
     overscroll-behavior: none !important;

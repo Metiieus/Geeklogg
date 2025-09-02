@@ -104,12 +104,14 @@ class RAWGService {
           errorText = "Unknown error";
         }
         console.error("❌ RAWG Error Response:", errorText);
-        throw new Error(`RAWG API error: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `RAWG API error: ${response.status} ${response.statusText} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
       const games: RAWGGame[] = data.results || [];
-      return games.map(game => this.mapToSearchResult(game));
+      return games.map((game) => this.mapToSearchResult(game));
     } catch (error) {
       console.error("Error searching games via RAWG API:", error);
       throw error;
@@ -119,7 +121,7 @@ class RAWGService {
   async getGameDetails(gameId: number): Promise<RAWGGame | null> {
     try {
       const url = `${this.baseUrl}/games/${gameId}?key=${this.apiKey}`;
-      
+
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -130,7 +132,9 @@ class RAWGService {
           errorText = "Unknown error";
         }
         console.error("❌ RAWG Error Response:", errorText);
-        throw new Error(`RAWG API error: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `RAWG API error: ${response.status} ${response.statusText} - ${errorText}`,
+        );
       }
 
       const game: RAWGGame = await response.json();
@@ -144,7 +148,7 @@ class RAWGService {
   async getPopularGames(limit: number = 20): Promise<RAWGSearchResult[]> {
     try {
       const url = `${this.baseUrl}/games?key=${this.apiKey}&ordering=-rating&page_size=${limit}&metacritic=80,100`;
-      
+
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -155,23 +159,28 @@ class RAWGService {
           errorText = "Unknown error";
         }
         console.error("❌ RAWG Error Response:", errorText);
-        throw new Error(`RAWG API error: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `RAWG API error: ${response.status} ${response.statusText} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
       const games: RAWGGame[] = data.results || [];
-      return games.map(game => this.mapToSearchResult(game));
+      return games.map((game) => this.mapToSearchResult(game));
     } catch (error) {
       console.error("Error fetching popular games via RAWG API:", error);
       return [];
     }
   }
 
-  async getGamesByGenre(genreName: string, limit: number = 20): Promise<RAWGSearchResult[]> {
+  async getGamesByGenre(
+    genreName: string,
+    limit: number = 20,
+  ): Promise<RAWGSearchResult[]> {
     try {
-      const genreSlug = genreName.toLowerCase().replace(/\s+/g, '-');
+      const genreSlug = genreName.toLowerCase().replace(/\s+/g, "-");
       const url = `${this.baseUrl}/games?key=${this.apiKey}&genres=${genreSlug}&page_size=${limit}&ordering=-rating`;
-      
+
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -182,12 +191,14 @@ class RAWGService {
           errorText = "Unknown error";
         }
         console.error("❌ RAWG Error Response:", errorText);
-        throw new Error(`RAWG API error: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `RAWG API error: ${response.status} ${response.statusText} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
       const games: RAWGGame[] = data.results || [];
-      return games.map(game => this.mapToSearchResult(game));
+      return games.map((game) => this.mapToSearchResult(game));
     } catch (error) {
       console.error("Error fetching games by genre via RAWG API:", error);
       return [];
@@ -217,40 +228,46 @@ class RAWGService {
 
   private buildQueryParams(params: RAWGSearchParams): string {
     const { query, limit = 20, page = 1, filters } = params;
-    
+
     const searchParams = new URLSearchParams();
-    searchParams.append('key', this.apiKey);
-    searchParams.append('search', query);
-    searchParams.append('page_size', limit.toString());
-    searchParams.append('page', page.toString());
-    searchParams.append('ordering', '-rating');
+    searchParams.append("key", this.apiKey);
+    searchParams.append("search", query);
+    searchParams.append("page_size", limit.toString());
+    searchParams.append("page", page.toString());
+    searchParams.append("ordering", "-rating");
 
     // Apply filters
     if (filters) {
       if (filters.platforms && filters.platforms.length > 0) {
         // Convert platform names to RAWG platform IDs/slugs
-        const platformSlugs = filters.platforms.map(p => 
-          p.toLowerCase().replace(/\s+/g, '-')
-        ).join(',');
-        searchParams.append('platforms', platformSlugs);
+        const platformSlugs = filters.platforms
+          .map((p) => p.toLowerCase().replace(/\s+/g, "-"))
+          .join(",");
+        searchParams.append("platforms", platformSlugs);
       }
 
       if (filters.genres && filters.genres.length > 0) {
-        const genreSlugs = filters.genres.map(g => 
-          g.toLowerCase().replace(/\s+/g, '-')
-        ).join(',');
-        searchParams.append('genres', genreSlugs);
+        const genreSlugs = filters.genres
+          .map((g) => g.toLowerCase().replace(/\s+/g, "-"))
+          .join(",");
+        searchParams.append("genres", genreSlugs);
       }
 
       if (filters.yearRange) {
-        searchParams.append('dates', `${filters.yearRange.min}-01-01,${filters.yearRange.max}-12-31`);
+        searchParams.append(
+          "dates",
+          `${filters.yearRange.min}-01-01,${filters.yearRange.max}-12-31`,
+        );
       }
 
       if (filters.ratingRange) {
         // RAWG uses 0-5 rating scale
         const minRating = Math.round(filters.ratingRange.min);
         const maxRating = Math.round(filters.ratingRange.max);
-        searchParams.append('metacritic', `${minRating * 20},${maxRating * 20}`);
+        searchParams.append(
+          "metacritic",
+          `${minRating * 20},${maxRating * 20}`,
+        );
       }
     }
 
@@ -263,16 +280,18 @@ class RAWGService {
     const publisher = game.publishers?.[0]?.name;
 
     // Extract year from release date
-    const year = game.released ? new Date(game.released).getFullYear() : undefined;
+    const year = game.released
+      ? new Date(game.released).getFullYear()
+      : undefined;
 
     // Map platforms
-    const platforms = game.platforms?.map(p => p.platform.name) || [];
+    const platforms = game.platforms?.map((p) => p.platform.name) || [];
 
     // Map genres
-    const genres = game.genres?.map(g => g.name) || [];
+    const genres = game.genres?.map((g) => g.name) || [];
 
     // Get screenshots
-    const screenshots = game.screenshots?.map(s => s.image) || [];
+    const screenshots = game.screenshots?.map((s) => s.image) || [];
 
     // Convert rating from 0-5 to 0-10 scale if needed
     const rating = game.rating ? Math.round(game.rating * 2) : undefined;
@@ -291,7 +310,7 @@ class RAWGService {
       screenshots,
       officialWebsite: game.website,
       source: "rawg",
-      originalType: "game"
+      originalType: "game",
     };
   }
 }

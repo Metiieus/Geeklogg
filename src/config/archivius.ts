@@ -32,7 +32,10 @@ export const hasArchiviusAccess = (isPremium?: boolean): boolean => {
 };
 
 // Função para verificar se o usuário pode usar o Archivius
-export const canUseArchivius = (isPremium?: boolean, isLoggedIn?: boolean): boolean => {
+export const canUseArchivius = (
+  isPremium?: boolean,
+  isLoggedIn?: boolean,
+): boolean => {
   if (!isLoggedIn) return false;
   return hasArchiviusAccess(isPremium);
 };

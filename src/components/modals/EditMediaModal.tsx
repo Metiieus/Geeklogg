@@ -134,24 +134,26 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in"
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        overflow: 'hidden' // BLOQUEIA scroll da página
+        overflow: "hidden", // BLOQUEIA scroll da página
       }}
     >
       <div
         className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full overflow-hidden animate-slide-up flex flex-col"
         style={{
-          maxHeight: 'calc(100vh - 2rem)',
-          minHeight: 'auto'
+          maxHeight: "calc(100vh - 2rem)",
+          minHeight: "auto",
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Editar Mídia</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">
+            Editar Mídia
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
@@ -166,235 +168,236 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
           className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
           <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0">
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Título *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.title}
-                onChange={(e) => handleChange("title", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Digite o título da mídia"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Tipo *
-              </label>
-              <select
-                value={formData.type}
-                onChange={(e) => handleChange("type", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              >
-                {Object.entries(mediaTypeLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Status *
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleChange("status", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              >
-                <option value="planned">Planejado</option>
-                <option value="in-progress">Em Progresso</option>
-                <option value="completed">Concluído</option>
-                <option value="dropped">Abandonado</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Plataforma
-              </label>
-              <input
-                type="text"
-                value={formData.platform}
-                onChange={(e) => handleChange("platform", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Steam, Netflix, etc."
-              />
-            </div>
-          </div>
-
-          {/* Rating & Hours */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Avaliação (0-10)
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="10"
-                step="0.1"
-                value={formData.rating}
-                onChange={(e) => handleChange("rating", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="8.5"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Horas Gastas
-              </label>
-              <input
-                type="number"
-                min="0"
-                step="0.5"
-                value={formData.hoursSpent}
-                onChange={(e) => handleChange("hoursSpent", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="25.5"
-              />
-            </div>
-          </div>
-
-          {formData.type === "books" && (
+            {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Páginas Totais
+                  Título *
                 </label>
                 <input
-                  type="number"
-                  min="1"
-                  value={formData.totalPages}
-                  onChange={(e) => handleChange("totalPages", e.target.value)}
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="350"
+                  placeholder="Digite o título da mídia"
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Página Atual
+                  Tipo *
+                </label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => handleChange("type", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  {Object.entries(mediaTypeLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Status *
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => handleChange("status", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="planned">Planejado</option>
+                  <option value="in-progress">Em Progresso</option>
+                  <option value="completed">Concluído</option>
+                  <option value="dropped">Abandonado</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Plataforma
+                </label>
+                <input
+                  type="text"
+                  value={formData.platform}
+                  onChange={(e) => handleChange("platform", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Steam, Netflix, etc."
+                />
+              </div>
+            </div>
+
+            {/* Rating & Hours */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Avaliação (0-10)
                 </label>
                 <input
                   type="number"
                   min="0"
-                  value={formData.currentPage}
-                  onChange={(e) => handleChange("currentPage", e.target.value)}
+                  max="10"
+                  step="0.1"
+                  value={formData.rating}
+                  onChange={(e) => handleChange("rating", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="42"
+                  placeholder="8.5"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Horas Gastas
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  value={formData.hoursSpent}
+                  onChange={(e) => handleChange("hoursSpent", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="25.5"
                 />
               </div>
             </div>
-          )}
 
-          {/* Dates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Data de Início
-              </label>
-              <input
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => handleChange("startDate", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Data de Conclusão
-              </label>
-              <input
-                type="date"
-                value={formData.endDate}
-                onChange={(e) => handleChange("endDate", e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Tags
-            </label>
-            <input
-              type="text"
-              value={formData.tags}
-              onChange={(e) => handleChange("tags", e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
-            />
-          </div>
-
-          {/* External Link */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Link Externo
-            </label>
-            <input
-              type="url"
-              value={formData.externalLink}
-              onChange={(e) => handleChange("externalLink", e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="https://store.steampowered.com/..."
-            />
-          </div>
-
-          {/* Cover Image */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Imagem de Capa
-            </label>
-            <div className="space-y-3">
-              <div className="flex items-center justify-center">
-                <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
-                  <Upload size={18} />
-                  Fazer Upload da Imagem
+            {formData.type === "books" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Páginas Totais
+                  </label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-              {formData.coverPreview && (
-                <div className="mt-3">
-                  <img
-                    src={formData.coverPreview}
-                    alt="Preview"
-                    className="w-32 h-40 object-cover rounded-lg mx-auto"
+                    type="number"
+                    min="1"
+                    value={formData.totalPages}
+                    onChange={(e) => handleChange("totalPages", e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="350"
                   />
                 </div>
-              )}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Página Atual
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.currentPage}
+                    onChange={(e) =>
+                      handleChange("currentPage", e.target.value)
+                    }
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="42"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Data de Início
+                </label>
+                <input
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) => handleChange("startDate", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Data de Conclusão
+                </label>
+                <input
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) => handleChange("endDate", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Descrição
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              rows={3}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-              placeholder="Breve descrição ou notas..."
-            />
-          </div>
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Tags
+              </label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => handleChange("tags", e.target.value)}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
+              />
+            </div>
 
+            {/* External Link */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Link Externo
+              </label>
+              <input
+                type="url"
+                value={formData.externalLink}
+                onChange={(e) => handleChange("externalLink", e.target.value)}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="https://store.steampowered.com/..."
+              />
+            </div>
+
+            {/* Cover Image */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Imagem de Capa
+              </label>
+              <div className="space-y-3">
+                <div className="flex items-center justify-center">
+                  <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
+                    <Upload size={18} />
+                    Fazer Upload da Imagem
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {formData.coverPreview && (
+                  <div className="mt-3">
+                    <img
+                      src={formData.coverPreview}
+                      alt="Preview"
+                      className="w-32 h-40 object-cover rounded-lg mx-auto"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Descrição
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                placeholder="Breve descrição ou notas..."
+              />
+            </div>
           </div>
 
           {/* Actions - Fixed at bottom */}

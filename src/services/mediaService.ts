@@ -10,7 +10,8 @@ export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
 }
 
 // Interface para adição de mídia
-export interface AddMediaData extends Omit<MediaItem, "id" | "createdAt" | "updatedAt"> {
+export interface AddMediaData
+  extends Omit<MediaItem, "id" | "createdAt" | "updatedAt"> {
   coverFile?: File;
 }
 
@@ -88,7 +89,9 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   if (coverFile instanceof File) {
     try {
       coverUrl = await storageClient.upload(`media/${mediaId}`, coverFile);
-      await database.update(["users", uid, "medias"], mediaId, { cover: coverUrl });
+      await database.update(["users", uid, "medias"], mediaId, {
+        cover: coverUrl,
+      });
     } catch (err) {
       console.error("Erro ao fazer upload da capa:", err);
     }
@@ -115,7 +118,8 @@ export async function getMedias(): Promise<MediaItem[]> {
     const medias = await database.getCollection(["users", uid, "medias"]);
     return medias
       .filter((media) => {
-        const hasValidId = media.id && typeof media.id === "string" && media.id.trim() !== "";
+        const hasValidId =
+          media.id && typeof media.id === "string" && media.id.trim() !== "";
         if (!hasValidId) {
           console.warn("Documento de mídia encontrado sem ID válido:", media);
         }

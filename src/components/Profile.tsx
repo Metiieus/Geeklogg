@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Trophy, Crown, Star, Zap, LogOut, Bell, Edit, BarChart3 } from "lucide-react";
+import {
+  Trophy,
+  Crown,
+  Star,
+  Zap,
+  LogOut,
+  Bell,
+  Edit,
+  BarChart3,
+} from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
@@ -9,7 +18,7 @@ import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";
 import { FavoritesCarousel } from "./FavoritesCarousel";
 import ProfileSummary from "./ProfileSummary";
-import { saveProfile } from "../services/profileService"; 
+import { saveProfile } from "../services/profileService";
 import {
   getUserNotifications,
   markNotificationAsRead,
@@ -80,7 +89,7 @@ const Profile: React.FC = () => {
       // Normalizar timestamps e filtrar notificações válidas
       const normalizedNotifications = userNotifications
         .map(normalizeTimestamp)
-        .filter(notif => notif && notif.id);
+        .filter((notif) => notif && notif.id);
       setNotifications(normalizedNotifications);
     } catch (error) {
       console.error("Erro ao carregar notificações:", error);
@@ -434,9 +443,7 @@ const Profile: React.FC = () => {
       )}
 
       {/* Summary Tab */}
-      {activeTab === "summary" && (
-        <ProfileSummary />
-      )}
+      {activeTab === "summary" && <ProfileSummary />}
 
       {/* Achievements Tab */}
       {activeTab === "achievements" && (
@@ -489,7 +496,9 @@ const Profile: React.FC = () => {
                         {notification.message}
                       </p>
                       <p className="text-slate-400 text-xs">
-                        {formatDate(notification.timestamp || notification.createdAt)}
+                        {formatDate(
+                          notification.timestamp || notification.createdAt,
+                        )}
                       </p>
                     </div>
                     {!notification.read && (

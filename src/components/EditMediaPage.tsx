@@ -281,7 +281,10 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
           onSubmit={handleSubmit}
           className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
-          <div className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll allow-scroll" style={{ touchAction: 'auto' }}>
+          <div
+            className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0 modal-scroll allow-scroll"
+            style={{ touchAction: "auto" }}
+          >
             <div className="space-y-4 sm:space-y-6 pb-safe">
               {/* Basic Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -392,7 +395,9 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                       type="number"
                       min="1"
                       value={formData.totalPages}
-                      onChange={(e) => handleChange("totalPages", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("totalPages", e.target.value)
+                      }
                       className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                       placeholder="350"
                     />
@@ -405,7 +410,9 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                       type="number"
                       min="0"
                       value={formData.currentPage}
-                      onChange={(e) => handleChange("currentPage", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("currentPage", e.target.value)
+                      }
                       className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                       placeholder="42"
                     />
@@ -487,7 +494,9 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                       ) : (
                         <Upload size={16} className="sm:w-5 sm:h-5" />
                       )}
-                      {isUploading ? "Processando..." : "Fazer Upload da Imagem"}
+                      {isUploading
+                        ? "Processando..."
+                        : "Fazer Upload da Imagem"}
                       <input
                         type="file"
                         accept="image/*"

@@ -210,7 +210,7 @@
 /* ===== ESTADOS DE INTERAÇÃO ===== */
 
 .modal-interactive:focus-within {
-  box-shadow: 
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     0 0 0 2px rgba(168, 85, 247, 0.4);
 }
@@ -227,7 +227,7 @@
   .modal-desktop-animate {
     animation: none;
   }
-  
+
   .modal-interactive:hover {
     transform: none;
   }
@@ -268,6 +268,10 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

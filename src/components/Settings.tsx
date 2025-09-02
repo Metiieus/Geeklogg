@@ -1,12 +1,26 @@
 import React, { useState } from "react";
-import { Download, Upload, Trash2, Save, Shield, FileText, UserX } from "lucide-react";
+import {
+  Download,
+  Upload,
+  Trash2,
+  Save,
+  Shield,
+  FileText,
+  UserX,
+} from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { saveSettings } from "../services/settingsService";
 
 const Settings: React.FC = () => {
-  const { settings, setSettings, mediaItems, reviews, milestones, setActivePage } =
-    useAppContext();
+  const {
+    settings,
+    setSettings,
+    mediaItems,
+    reviews,
+    milestones,
+    setActivePage,
+  } = useAppContext();
   const { user } = useAuth();
   const [localSettings, setLocalSettings] = useState(settings);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -260,9 +274,10 @@ const Settings: React.FC = () => {
 
         <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
           <p className="text-blue-300 text-sm">
-            <strong>Seus Direitos:</strong> Você tem direito ao acesso, retificação, exclusão e portabilidade dos seus dados,
-            conforme a Lei Geral de Proteção de Dados (LGPD). Para exercer esses direitos, use as opções acima ou
-            entre em contato conosco.
+            <strong>Seus Direitos:</strong> Você tem direito ao acesso,
+            retificação, exclusão e portabilidade dos seus dados, conforme a Lei
+            Geral de Proteção de Dados (LGPD). Para exercer esses direitos, use
+            as opções acima ou entre em contato conosco.
           </p>
         </div>
       </div>

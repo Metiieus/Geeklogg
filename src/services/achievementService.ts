@@ -102,8 +102,6 @@ export function getAchievementProgress(
   };
 }
 
-
-
 export async function checkAchievements(
   mediaItems: MediaItem[],
   reviews: Review[],

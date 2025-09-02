@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Cloud, CloudOff, Wifi, WifiOff, TestTube } from 'lucide-react';
-import { db, auth, isFirebaseOffline } from '../firebase';
-import { logConnectivityStatus } from '../utils/connectivityTest';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Cloud, CloudOff, Wifi, WifiOff, TestTube } from "lucide-react";
+import { db, auth, isFirebaseOffline } from "../firebase";
+import { logConnectivityStatus } from "../utils/connectivityTest";
 
 interface FirebaseStatusProps {
   showStatus?: boolean;
 }
 
-export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = true }) => {
+export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({
+  showStatus = true,
+}) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isFirebaseConnected, setIsFirebaseConnected] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -40,15 +42,15 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
       setTimeout(() => setShowNotification(false), 3000);
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     // Periodic Firebase status check
     const interval = setInterval(checkFirebaseStatus, 10000);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       clearInterval(interval);
     };
   }, []);
@@ -59,32 +61,32 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
     if (!isOnline) {
       return {
         icon: WifiOff,
-        color: 'text-red-500',
-        bgColor: 'bg-red-50 dark:bg-red-900/20',
-        borderColor: 'border-red-200 dark:border-red-800',
-        message: 'Sem conexão com internet',
-        description: 'Dados salvos localmente',
+        color: "text-red-500",
+        bgColor: "bg-red-50 dark:bg-red-900/20",
+        borderColor: "border-red-200 dark:border-red-800",
+        message: "Sem conexão com internet",
+        description: "Dados salvos localmente",
       };
     }
 
     if (!isFirebaseConnected) {
       return {
         icon: CloudOff,
-        color: 'text-amber-500',
-        bgColor: 'bg-amber-50 dark:bg-amber-900/20',
-        borderColor: 'border-amber-200 dark:border-amber-800',
-        message: 'Modo offline',
-        description: 'Dados salvos localmente',
+        color: "text-amber-500",
+        bgColor: "bg-amber-50 dark:bg-amber-900/20",
+        borderColor: "border-amber-200 dark:border-amber-800",
+        message: "Modo offline",
+        description: "Dados salvos localmente",
       };
     }
 
     return {
       icon: Cloud,
-      color: 'text-green-500',
-      bgColor: 'bg-green-50 dark:bg-green-900/20',
-      borderColor: 'border-green-200 dark:border-green-800',
-      message: 'Conectado',
-      description: 'Dados sincronizados',
+      color: "text-green-500",
+      bgColor: "bg-green-50 dark:bg-green-900/20",
+      borderColor: "border-green-200 dark:border-green-800",
+      message: "Conectado",
+      description: "Dados sincronizados",
     };
   };
 
@@ -95,7 +97,7 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
     try {
       await logConnectivityStatus();
     } catch (error) {
-      console.error('Failed to run connectivity test:', error);
+      console.error("Failed to run connectivity test:", error);
     }
   };
 
@@ -152,17 +154,18 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
             exit={{ opacity: 0, x: 300 }}
             transition={{ duration: 0.3 }}
           >
-            <div className={`flex items-center gap-3 px-6 py-4 rounded-xl border ${status.bgColor} ${status.borderColor} backdrop-blur-sm shadow-xl`}>
+            <div
+              className={`flex items-center gap-3 px-6 py-4 rounded-xl border ${status.bgColor} ${status.borderColor} backdrop-blur-sm shadow-xl`}
+            >
               <Icon className={`w-6 h-6 ${status.color}`} />
               <div>
                 <p className={`font-semibold ${status.color}`}>
-                  {isOnline ? 'Conexão restaurada' : 'Conexão perdida'}
+                  {isOnline ? "Conexão restaurada" : "Conexão perdida"}
                 </p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {isOnline && isFirebaseConnected 
-                    ? 'Dados serão sincronizados automaticamente'
-                    : 'Seus dados estão seguros localmente'
-                  }
+                  {isOnline && isFirebaseConnected
+                    ? "Dados serão sincronizados automaticamente"
+                    : "Seus dados estão seguros localmente"}
                 </p>
               </div>
             </div>

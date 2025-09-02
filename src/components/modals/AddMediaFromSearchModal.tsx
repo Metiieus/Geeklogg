@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
-import { X, Save, Star, Calendar, Tag, ExternalLink, Clock, BookOpen, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalMediaResult } from '../../services/externalMediaService';
-import { MediaItem, MediaType, Status } from '../../App';
-import { useToast } from '../../context/ToastContext';
+import React, { useState } from "react";
+import {
+  X,
+  Save,
+  Star,
+  Calendar,
+  Tag,
+  ExternalLink,
+  Clock,
+  BookOpen,
+  Sparkles,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ExternalMediaResult } from "../../services/externalMediaService";
+import { MediaItem, MediaType, Status } from "../../App";
+import { useToast } from "../../context/ToastContext";
 
 interface AddMediaFromSearchModalProps {
   selectedResult: ExternalMediaResult;
@@ -12,37 +22,55 @@ interface AddMediaFromSearchModalProps {
 }
 
 const statusOptions = [
-  { value: 'planned', label: 'Planejado', icon: '📅', color: 'from-purple-500/20 to-purple-400/10 border-purple-500/30' },
-  { value: 'in-progress', label: 'Em Progresso', icon: '⏳', color: 'from-blue-500/20 to-blue-400/10 border-blue-500/30' },
-  { value: 'completed', label: 'Concluído', icon: '✅', color: 'from-emerald-500/20 to-emerald-400/10 border-emerald-500/30' },
-  { value: 'dropped', label: 'Abandonado', icon: '❌', color: 'from-red-500/20 to-red-400/10 border-red-500/30' },
+  {
+    value: "planned",
+    label: "Planejado",
+    icon: "📅",
+    color: "from-purple-500/20 to-purple-400/10 border-purple-500/30",
+  },
+  {
+    value: "in-progress",
+    label: "Em Progresso",
+    icon: "⏳",
+    color: "from-blue-500/20 to-blue-400/10 border-blue-500/30",
+  },
+  {
+    value: "completed",
+    label: "Concluído",
+    icon: "✅",
+    color: "from-emerald-500/20 to-emerald-400/10 border-emerald-500/30",
+  },
+  {
+    value: "dropped",
+    label: "Abandonado",
+    icon: "❌",
+    color: "from-red-500/20 to-red-400/10 border-red-500/30",
+  },
 ];
 
 const typeLabels = {
-  games: 'Jogo',
-  anime: 'Anime',
-  series: 'Série',
-  books: 'Livro',
-  movies: 'Filme',
+  games: "Jogo",
+  anime: "Anime",
+  series: "Série",
+  books: "Livro",
+  movies: "Filme",
 };
 
-export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = ({
-  selectedResult,
-  onAdd,
-  onClose,
-}) => {
+export const AddMediaFromSearchModal: React.FC<
+  AddMediaFromSearchModalProps
+> = ({ selectedResult, onAdd, onClose }) => {
   const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
-    status: 'planned' as Status,
-    rating: '',
-    hoursSpent: '',
-    currentPage: '',
-    totalPages: selectedResult.pageCount?.toString() || '',
-    startDate: '',
-    endDate: '',
-    platform: '',
-    tags: selectedResult.genres?.join(', ') || '',
-    personalNotes: '',
+    status: "planned" as Status,
+    rating: "",
+    hoursSpent: "",
+    currentPage: "",
+    totalPages: selectedResult.pageCount?.toString() || "",
+    startDate: "",
+    endDate: "",
+    platform: "",
+    tags: selectedResult.genres?.join(", ") || "",
+    personalNotes: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -53,18 +81,30 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
         id: crypto.randomUUID(),
         title: selectedResult.title,
         cover: selectedResult.image,
-        type: (selectedResult.originalType as MediaType) || 'books',
+        type: (selectedResult.originalType as MediaType) || "books",
         status: formData.status,
         rating: formData.rating ? parseFloat(formData.rating) : undefined,
-        hoursSpent: formData.hoursSpent ? parseFloat(formData.hoursSpent) : undefined,
-        currentPage: formData.currentPage ? parseInt(formData.currentPage) : undefined,
-        totalPages: formData.totalPages ? parseInt(formData.totalPages) : undefined,
+        hoursSpent: formData.hoursSpent
+          ? parseFloat(formData.hoursSpent)
+          : undefined,
+        currentPage: formData.currentPage
+          ? parseInt(formData.currentPage)
+          : undefined,
+        totalPages: formData.totalPages
+          ? parseInt(formData.totalPages)
+          : undefined,
         startDate: formData.startDate || undefined,
         endDate: formData.endDate || undefined,
         platform: formData.platform || undefined,
-        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(t => t) : [],
+        tags: formData.tags
+          ? formData.tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter((t) => t)
+          : [],
         externalLink: selectedResult.officialWebsite,
-        description: selectedResult.description || formData.personalNotes || undefined,
+        description:
+          selectedResult.description || formData.personalNotes || undefined,
         isFeatured: false,
         isFavorite: false,
         createdAt: new Date().toISOString(),
@@ -72,15 +112,18 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
       };
 
       onAdd(newItem);
-      showSuccess('Mídia adicionada!', `${selectedResult.title} foi adicionado à sua biblioteca`);
+      showSuccess(
+        "Mídia adicionada!",
+        `${selectedResult.title} foi adicionado à sua biblioteca`,
+      );
     } catch (error) {
-      console.error('Erro ao adicionar mídia:', error);
-      showError('Erro', 'Não foi possível adicionar a mídia');
+      console.error("Erro ao adicionar mídia:", error);
+      showError("Erro", "Não foi possível adicionar a mídia");
     }
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -110,7 +153,6 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
 
           <div className="relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl overflow-hidden">
             <div className="flex flex-col lg:flex-row max-h-[95vh]">
-              
               {/* Preview Section - Left Side */}
               <div className="lg:w-2/5 border-b lg:border-b-0 lg:border-r border-slate-200/50 dark:border-slate-700/50">
                 {/* Header for preview */}
@@ -141,21 +183,28 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                         referrerPolicy="no-referrer"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
+                          target.style.display = "none";
+                          const fallback =
+                            target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
                         }}
                       />
                     ) : null}
-                    <div 
+                    <div
                       className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center"
-                      style={{ display: selectedResult.image ? 'none' : 'flex' }}
+                      style={{
+                        display: selectedResult.image ? "none" : "flex",
+                      }}
                     >
                       <div className="text-center">
                         <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-violet-100 dark:from-blue-900/50 dark:to-violet-900/50 rounded-2xl flex items-center justify-center mb-3 border border-slate-300 dark:border-slate-600">
-                          <span className="text-slate-700 dark:text-slate-300 font-bold text-2xl">{selectedResult.title.charAt(0)}</span>
+                          <span className="text-slate-700 dark:text-slate-300 font-bold text-2xl">
+                            {selectedResult.title.charAt(0)}
+                          </span>
                         </div>
-                        <span className="text-slate-500 dark:text-slate-400 text-sm">Sem imagem</span>
+                        <span className="text-slate-500 dark:text-slate-400 text-sm">
+                          Sem imagem
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -169,41 +218,55 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                     {selectedResult.year && (
                       <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                         <Calendar className="w-4 h-4" />
-                        <span className="text-sm font-medium">{selectedResult.year}</span>
+                        <span className="text-sm font-medium">
+                          {selectedResult.year}
+                        </span>
                       </div>
                     )}
 
-                    {selectedResult.authors && selectedResult.authors.length > 0 && (
+                    {selectedResult.authors &&
+                      selectedResult.authors.length > 0 && (
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-700/50">
+                          <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Autor(es)
+                          </p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {selectedResult.authors.slice(0, 2).join(", ")}
+                          </p>
+                        </div>
+                      )}
+
+                    {selectedResult.developer && (
                       <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-700/50">
-                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Autor(es)</p>
+                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                          Desenvolvedor
+                        </p>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {selectedResult.authors.slice(0, 2).join(', ')}
+                          {selectedResult.developer}
                         </p>
                       </div>
                     )}
 
-                    {selectedResult.developer && (
-                      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-700/50">
-                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Desenvolvedor</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">{selectedResult.developer}</p>
-                      </div>
-                    )}
-
-                    {selectedResult.genres && selectedResult.genres.length > 0 && (
-                      <div>
-                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Gêneros</p>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedResult.genres.slice(0, 4).map((genre, index) => (
-                            <span
-                              key={index}
-                              className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-700 dark:to-slate-800 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-600/50"
-                            >
-                              {genre}
-                            </span>
-                          ))}
+                    {selectedResult.genres &&
+                      selectedResult.genres.length > 0 && (
+                        <div>
+                          <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                            Gêneros
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedResult.genres
+                              .slice(0, 4)
+                              .map((genre, index) => (
+                                <span
+                                  key={index}
+                                  className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-700 dark:to-slate-800 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-600/50"
+                                >
+                                  {genre}
+                                </span>
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
 
                   {/* Description */}
@@ -263,16 +326,18 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                             type="button"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => handleChange('status', option.value)}
+                            onClick={() => handleChange("status", option.value)}
                             className={`p-4 rounded-2xl border transition-all duration-300 text-left ${
                               formData.status === option.value
                                 ? `bg-gradient-to-r ${option.color} text-slate-800 dark:text-slate-200 ring-2 ring-offset-2 ring-slate-300 dark:ring-slate-600 ring-offset-white dark:ring-offset-slate-900`
-                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600'
+                                : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600"
                             }`}
                           >
                             <div className="flex items-center gap-3">
                               <span className="text-xl">{option.icon}</span>
-                              <span className="font-medium">{option.label}</span>
+                              <span className="font-medium">
+                                {option.label}
+                              </span>
                             </div>
                           </motion.button>
                         ))}
@@ -286,14 +351,19 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                           Avaliação (0-10)
                         </label>
                         <div className="relative">
-                          <Star className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500" size={18} />
+                          <Star
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500"
+                            size={18}
+                          />
                           <input
                             type="number"
                             min="0"
                             max="10"
                             step="0.1"
                             value={formData.rating}
-                            onChange={(e) => handleChange('rating', e.target.value)}
+                            onChange={(e) =>
+                              handleChange("rating", e.target.value)
+                            }
                             className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                             placeholder="8.5"
                           />
@@ -305,13 +375,18 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                           Horas Gastas
                         </label>
                         <div className="relative">
-                          <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={18} />
+                          <Clock
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500"
+                            size={18}
+                          />
                           <input
                             type="number"
                             min="0"
                             step="0.5"
                             value={formData.hoursSpent}
-                            onChange={(e) => handleChange('hoursSpent', e.target.value)}
+                            onChange={(e) =>
+                              handleChange("hoursSpent", e.target.value)
+                            }
                             className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                             placeholder="25.5"
                           />
@@ -320,19 +395,25 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                     </div>
 
                     {/* Pages (for books) */}
-                    {(selectedResult.originalType === 'book' || selectedResult.pageCount) && (
+                    {(selectedResult.originalType === "book" ||
+                      selectedResult.pageCount) && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                           <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
                             Páginas Totais
                           </label>
                           <div className="relative">
-                            <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500" size={18} />
+                            <BookOpen
+                              className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500"
+                              size={18}
+                            />
                             <input
                               type="number"
                               min="1"
                               value={formData.totalPages}
-                              onChange={(e) => handleChange('totalPages', e.target.value)}
+                              onChange={(e) =>
+                                handleChange("totalPages", e.target.value)
+                              }
                               className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                               placeholder="350"
                             />
@@ -346,7 +427,9 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                             type="number"
                             min="0"
                             value={formData.currentPage}
-                            onChange={(e) => handleChange('currentPage', e.target.value)}
+                            onChange={(e) =>
+                              handleChange("currentPage", e.target.value)
+                            }
                             className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                             placeholder="42"
                           />
@@ -363,7 +446,9 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                         <input
                           type="date"
                           value={formData.startDate}
-                          onChange={(e) => handleChange('startDate', e.target.value)}
+                          onChange={(e) =>
+                            handleChange("startDate", e.target.value)
+                          }
                           className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         />
                       </div>
@@ -375,7 +460,9 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                         <input
                           type="date"
                           value={formData.endDate}
-                          onChange={(e) => handleChange('endDate', e.target.value)}
+                          onChange={(e) =>
+                            handleChange("endDate", e.target.value)
+                          }
                           className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         />
                       </div>
@@ -389,7 +476,9 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                       <input
                         type="text"
                         value={formData.platform}
-                        onChange={(e) => handleChange('platform', e.target.value)}
+                        onChange={(e) =>
+                          handleChange("platform", e.target.value)
+                        }
                         className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         placeholder="Steam, Netflix, Amazon, PlayStation, etc."
                       />
@@ -404,7 +493,7 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                       <input
                         type="text"
                         value={formData.tags}
-                        onChange={(e) => handleChange('tags', e.target.value)}
+                        onChange={(e) => handleChange("tags", e.target.value)}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         placeholder="Fantasia, RPG, Aventura (separado por vírgula)"
                       />
@@ -417,7 +506,9 @@ export const AddMediaFromSearchModal: React.FC<AddMediaFromSearchModalProps> = (
                       </label>
                       <textarea
                         value={formData.personalNotes}
-                        onChange={(e) => handleChange('personalNotes', e.target.value)}
+                        onChange={(e) =>
+                          handleChange("personalNotes", e.target.value)
+                        }
                         rows={4}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
                         placeholder="Suas impressões, expectativas ou notas sobre este item..."

@@ -1,17 +1,18 @@
 /* Animações avançadas para molduras dos cards */
 
 @keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 
-      0 0 5px currentColor, 
-      0 0 10px currentColor, 
+  0%,
+  100% {
+    box-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor,
       0 0 15px currentColor,
       0 4px 15px rgba(0, 0, 0, 0.3);
   }
   50% {
-    box-shadow: 
-      0 0 10px currentColor, 
-      0 0 20px currentColor, 
+    box-shadow:
+      0 0 10px currentColor,
+      0 0 20px currentColor,
       0 0 35px currentColor,
       0 8px 25px rgba(0, 0, 0, 0.4);
   }
@@ -42,7 +43,7 @@
 }
 
 .media-frame-games::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -120,7 +121,7 @@
   .media-frame-books,
   .media-frame-movies,
   .media-frame-dorama {
-    box-shadow: 
+    box-shadow:
       0 0 8px currentColor,
       0 2px 10px rgba(0, 0, 0, 0.3);
   }
@@ -133,7 +134,7 @@
   .media-frame-books:hover,
   .media-frame-movies:hover,
   .media-frame-dorama:hover {
-    box-shadow: 
+    box-shadow:
       0 0 15px currentColor,
       0 0 30px currentColor,
       0 8px 25px rgba(0, 0, 0, 0.4);

@@ -1,6 +1,6 @@
-import React, { useState, memo } from 'react';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { FavoriteItem } from '../App';
+import React, { useState, memo } from "react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { FavoriteItem } from "../App";
 
 interface FavoritesCarouselProps {
   items: FavoriteItem[];
@@ -8,7 +8,11 @@ interface FavoritesCarouselProps {
   color: string;
 }
 
-const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, title, color }) => {
+const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({
+  items,
+  title,
+  color,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!items.length) {
@@ -19,11 +23,19 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
           {title}
         </h4>
         <div className="text-center text-slate-400 py-8 sm:py-12">
-          <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${color.replace('text-', 'bg-').replace('-400', '-500/20')} flex items-center justify-center mx-auto mb-3 border-2 border-dashed ${color.replace('text-', 'border-').replace('-400', '-500/30')} group-hover:scale-110 transition-transform duration-300`}>
-            <Star className={`w-6 h-6 sm:w-8 sm:h-8 ${color.replace('-400', '-500')} animate-bounce`} />
+          <div
+            className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${color.replace("text-", "bg-").replace("-400", "-500/20")} flex items-center justify-center mx-auto mb-3 border-2 border-dashed ${color.replace("text-", "border-").replace("-400", "-500/30")} group-hover:scale-110 transition-transform duration-300`}
+          >
+            <Star
+              className={`w-6 h-6 sm:w-8 sm:h-8 ${color.replace("-400", "-500")} animate-bounce`}
+            />
           </div>
-          <p className="text-sm sm:text-base font-medium">Nenhum favorito ainda</p>
-          <p className="text-xs sm:text-sm opacity-70 mt-1">Adicione seus itens favoritos</p>
+          <p className="text-sm sm:text-base font-medium">
+            Nenhum favorito ainda
+          </p>
+          <p className="text-xs sm:text-sm opacity-70 mt-1">
+            Adicione seus itens favoritos
+          </p>
         </div>
       </div>
     );
@@ -52,8 +64,8 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
               onClick={() => setCurrentIndex(index)}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 hover:scale-125 ${
                 index === currentIndex
-                  ? `${color.replace('text-', 'bg-')} shadow-lg ${color.replace('text-', 'shadow-').replace('-400', '-500/50')}`
-                  : 'bg-slate-600 hover:bg-slate-500'
+                  ? `${color.replace("text-", "bg-")} shadow-lg ${color.replace("text-", "shadow-").replace("-400", "-500/50")}`
+                  : "bg-slate-600 hover:bg-slate-500"
               }`}
             />
           ))}
@@ -98,14 +110,21 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
                         className="w-full h-full object-cover transition-all duration-500 group-hover/card:scale-110 group-hover/card:brightness-110"
                       />
                     ) : (
-                      <div className={`w-full h-full flex items-center justify-center ${color.replace('text-', 'text-').replace('-400', '-300')}`}>
-                        <Star size={20} className="sm:w-7 sm:h-7 animate-pulse" />
+                      <div
+                        className={`w-full h-full flex items-center justify-center ${color.replace("text-", "text-").replace("-400", "-300")}`}
+                      >
+                        <Star
+                          size={20}
+                          className="sm:w-7 sm:h-7 animate-pulse"
+                        />
                       </div>
                     )}
                     {/* Enhanced gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-all duration-500" />
                     {/* Glow effect */}
-                    <div className={`absolute inset-0 opacity-0 group-hover/card:opacity-30 transition-opacity duration-500 bg-gradient-to-t ${color.replace('text-', 'from-').replace('-400', '-500/20')} to-transparent`} />
+                    <div
+                      className={`absolute inset-0 opacity-0 group-hover/card:opacity-30 transition-opacity duration-500 bg-gradient-to-t ${color.replace("text-", "from-").replace("-400", "-500/20")} to-transparent`}
+                    />
                   </div>
 
                   {/* Title */}
@@ -115,14 +134,22 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
 
                   {/* Enhanced decorative elements */}
                   <div className="flex items-center justify-center gap-1 mb-2">
-                    <div className={`w-1 h-1 rounded-full ${color.replace('text-', 'bg-')}`} />
-                    <div className={`w-2 h-0.5 bg-gradient-to-r ${color.replace('text-', 'from-').replace('-400', '-500')} to-transparent opacity-60`} />
-                    <div className={`w-1 h-1 rounded-full ${color.replace('text-', 'bg-')}`} />
+                    <div
+                      className={`w-1 h-1 rounded-full ${color.replace("text-", "bg-")}`}
+                    />
+                    <div
+                      className={`w-2 h-0.5 bg-gradient-to-r ${color.replace("text-", "from-").replace("-400", "-500")} to-transparent opacity-60`}
+                    />
+                    <div
+                      className={`w-1 h-1 rounded-full ${color.replace("text-", "bg-")}`}
+                    />
                   </div>
 
                   {/* Star rating visual */}
                   <div className="flex justify-center">
-                    <Star className={`w-3 h-3 ${color} fill-current opacity-70 group-hover/card:opacity-100 transition-opacity duration-300`} />
+                    <Star
+                      className={`w-3 h-3 ${color} fill-current opacity-70 group-hover/card:opacity-100 transition-opacity duration-300`}
+                    />
                   </div>
                 </div>
               </div>
@@ -132,22 +159,30 @@ const FavoritesCarouselComponent: React.FC<FavoritesCarouselProps> = ({ items, t
       </div>
 
       {/* Enhanced background effects */}
-      <div className={`absolute inset-0 ${color.replace('text-', 'bg-').replace('-400', '-500/5')} rounded-2xl pointer-events-none`} />
-      <div className={`absolute -inset-1 ${color.replace('text-', 'bg-').replace('-400', '-500/10')} rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+      <div
+        className={`absolute inset-0 ${color.replace("text-", "bg-").replace("-400", "-500/5")} rounded-2xl pointer-events-none`}
+      />
+      <div
+        className={`absolute -inset-1 ${color.replace("text-", "bg-").replace("-400", "-500/10")} rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}
+      />
     </div>
   );
 };
 
 // Exportar versão memoizada para performance
-export const FavoritesCarousel = memo(FavoritesCarouselComponent, (prevProps, nextProps) => {
-  return (
-    prevProps.items.length === nextProps.items.length &&
-    prevProps.title === nextProps.title &&
-    prevProps.color === nextProps.color &&
-    prevProps.items.every((item, index) =>
-      item.id === nextProps.items[index]?.id &&
-      item.name === nextProps.items[index]?.name &&
-      item.image === nextProps.items[index]?.image
-    )
-  );
-});
+export const FavoritesCarousel = memo(
+  FavoritesCarouselComponent,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.items.length === nextProps.items.length &&
+      prevProps.title === nextProps.title &&
+      prevProps.color === nextProps.color &&
+      prevProps.items.every(
+        (item, index) =>
+          item.id === nextProps.items[index]?.id &&
+          item.name === nextProps.items[index]?.name &&
+          item.image === nextProps.items[index]?.image,
+      )
+    );
+  },
+);

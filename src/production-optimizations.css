@@ -128,11 +128,11 @@ img {
   body {
     font-size: 14px;
   }
-  
+
   .text-xs {
     font-size: 11px;
   }
-  
+
   .text-sm {
     font-size: 13px;
   }
@@ -145,7 +145,7 @@ img {
     color: black !important;
     box-shadow: none !important;
   }
-  
+
   .no-print {
     display: none !important;
   }

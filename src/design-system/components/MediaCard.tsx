@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Star, Clock, Edit, Trash2, ExternalLink, Play, Book, 
-  Film, Gamepad2, MoreHorizontal, Calendar, Award 
-} from 'lucide-react';
-import { colors, gradients, shadows, animations, getCategoryColors, getCategoryGradient } from '../tokens';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Star,
+  Clock,
+  Edit,
+  Trash2,
+  ExternalLink,
+  Play,
+  Book,
+  Film,
+  Gamepad2,
+  MoreHorizontal,
+  Calendar,
+  Award,
+} from "lucide-react";
+import {
+  colors,
+  gradients,
+  shadows,
+  animations,
+  getCategoryColors,
+  getCategoryGradient,
+} from "../tokens";
 
 export interface MediaItemDS {
   id: string;
   title: string;
   cover?: string;
-  type: 'games' | 'anime' | 'series' | 'books' | 'movies';
-  status: 'completed' | 'in-progress' | 'dropped' | 'planned';
+  type: "games" | "anime" | "series" | "books" | "movies";
+  status: "completed" | "in-progress" | "dropped" | "planned";
   rating?: number;
   hoursSpent?: number;
   currentPage?: number;
@@ -28,37 +45,37 @@ interface MediaCardProps {
   onDelete?: (item: MediaItemDS) => void;
   onQuickAction?: (item: MediaItemDS) => void;
   className?: string;
-  variant?: 'default' | 'compact' | 'featured';
+  variant?: "default" | "compact" | "featured";
 }
 
 const statusConfig = {
   completed: {
-    label: 'CONCLUÍDO',
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/20',
-    border: 'border-emerald-500/30',
-    icon: '✅',
+    label: "CONCLUÍDO",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/20",
+    border: "border-emerald-500/30",
+    icon: "✅",
   },
-  'in-progress': {
-    label: 'EM PROGRESSO',
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/20',
-    border: 'border-blue-500/30',
-    icon: '⏳',
+  "in-progress": {
+    label: "EM PROGRESSO",
+    color: "text-blue-400",
+    bg: "bg-blue-500/20",
+    border: "border-blue-500/30",
+    icon: "⏳",
   },
   dropped: {
-    label: 'ABANDONADO',
-    color: 'text-red-400',
-    bg: 'bg-red-500/20',
-    border: 'border-red-500/30',
-    icon: '❌',
+    label: "ABANDONADO",
+    color: "text-red-400",
+    bg: "bg-red-500/20",
+    border: "border-red-500/30",
+    icon: "❌",
   },
   planned: {
-    label: 'PLANEJADO',
-    color: 'text-purple-400',
-    bg: 'bg-purple-500/20',
-    border: 'border-purple-500/30',
-    icon: '📅',
+    label: "PLANEJADO",
+    color: "text-purple-400",
+    bg: "bg-purple-500/20",
+    border: "border-purple-500/30",
+    icon: "📅",
   },
 };
 
@@ -75,8 +92,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   onEdit,
   onDelete,
   onQuickAction,
-  className = '',
-  variant = 'default',
+  className = "",
+  variant = "default",
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -87,7 +104,12 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   const statusInfo = statusConfig[item.status];
   const TypeIcon = typeIcons[item.type];
 
-  const cardHeight = variant === 'compact' ? 'h-80' : variant === 'featured' ? 'h-96' : 'h-[420px]';
+  const cardHeight =
+    variant === "compact"
+      ? "h-80"
+      : variant === "featured"
+        ? "h-96"
+        : "h-[420px]";
 
   return (
     <motion.div
@@ -95,9 +117,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      whileHover={{ 
+      whileHover={{
         y: -8,
-        transition: { duration: 0.3, ease: "easeOut" }
+        transition: { duration: 0.3, ease: "easeOut" },
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -109,13 +131,13 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       `}
       style={{
         background: `linear-gradient(135deg, ${categoryColors.background}, rgba(17, 24, 39, 0.8))`,
-        boxShadow: isHovered 
+        boxShadow: isHovered
           ? shadows.glow[item.type as keyof typeof shadows.glow] || shadows.xl
           : shadows.lg,
       }}
     >
       {/* Background Gradient */}
-      <div 
+      <div
         className="absolute inset-0 opacity-20"
         style={{ background: categoryGradient }}
       />
@@ -138,7 +160,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               className="flex flex-col items-center gap-3"
             >
-              <div 
+              <div
                 className="w-16 h-16 rounded-full flex items-center justify-center"
                 style={{ background: categoryGradient }}
               >
@@ -318,11 +340,14 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                 </div>
               )}
 
-              {item.type === 'books' && item.totalPages && (
+              {item.type === "books" && item.totalPages && (
                 <div className="flex items-center gap-1">
                   <Book size={12} />
                   <span className="text-xs">
-                    {Math.round(((item.currentPage || 0) / item.totalPages) * 100)}%
+                    {Math.round(
+                      ((item.currentPage || 0) / item.totalPages) * 100,
+                    )}
+                    %
                   </span>
                 </div>
               )}
@@ -338,7 +363,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               >
                 {item.tags[0]}
                 {item.tags.length > 1 && (
-                  <span className="ml-1 text-white/50">+{item.tags.length - 1}</span>
+                  <span className="ml-1 text-white/50">
+                    +{item.tags.length - 1}
+                  </span>
                 )}
               </motion.span>
             )}
@@ -346,7 +373,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         </div>
 
         {/* Progress Bar for Books */}
-        {item.type === 'books' && item.totalPages && (
+        {item.type === "books" && item.totalPages && (
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
@@ -355,8 +382,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           >
             <motion.div
               initial={{ width: 0 }}
-              animate={{ 
-                width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%` 
+              animate={{
+                width: `${Math.min(((item.currentPage || 0) / item.totalPages) * 100, 100)}%`,
               }}
               transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
               className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500"
@@ -375,7 +402,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         className="absolute inset-0 rounded-2xl pointer-events-none"
         style={{
           background: `linear-gradient(135deg, ${categoryColors.primary}20, transparent)`,
-          filter: 'blur(20px)',
+          filter: "blur(20px)",
         }}
       />
     </motion.div>

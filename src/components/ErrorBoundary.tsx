@@ -1,5 +1,5 @@
-import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import React, { Component, ReactNode, ErrorInfo } from "react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 interface Props {
   children: ReactNode;
@@ -19,11 +19,11 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('ErrorBoundary caught an error', error, info);
+    console.error("ErrorBoundary caught an error", error, info);
     this.setState({ errorInfo: info });
 
     // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Could integrate with error reporting service here
     }
   }
@@ -49,7 +49,8 @@ export default class ErrorBoundary extends Component<Props, State> {
                 Algo deu errado
               </h2>
               <p className="text-gray-300 text-sm">
-                Ocorreu um erro inesperado. Tente recarregar a página ou entre em contato com o suporte se o problema persistir.
+                Ocorreu um erro inesperado. Tente recarregar a página ou entre
+                em contato com o suporte se o problema persistir.
               </p>
             </div>
 
@@ -70,7 +71,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               </button>
             </div>
 
-            {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
+            {process.env.NODE_ENV === "development" && this.state.errorInfo && (
               <details className="mt-4 text-left">
                 <summary className="text-sm text-gray-400 cursor-pointer hover:text-gray-300">
                   Detalhes do erro (desenvolvimento)

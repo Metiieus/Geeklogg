@@ -47,9 +47,16 @@
 
 /* Floating animation for background elements */
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-10px) rotate(1deg); }
-  66% { transform: translateY(5px) rotate(-1deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
 }
 
 .animate-float {
@@ -58,8 +65,13 @@
 
 /* Pulse glow effect */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+  }
 }
 
 .animate-pulse-glow {
@@ -150,6 +162,11 @@
 }
 
 @keyframes pulse-glow-dark {
-  0%, 100% { box-shadow: 0 0 20px rgba(147, 197, 253, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(147, 197, 253, 0.5); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(147, 197, 253, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(147, 197, 253, 0.5);
+  }
 }

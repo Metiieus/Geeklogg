@@ -1,53 +1,69 @@
-import React from 'react';
-import { BarChart3, Clock, Star, TrendingUp, Gamepad2, Film, Tv, Book, Sparkles } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
-import { MediaType } from '../App';
+import React from "react";
+import {
+  BarChart3,
+  Clock,
+  Star,
+  TrendingUp,
+  Gamepad2,
+  Film,
+  Tv,
+  Book,
+  Sparkles,
+} from "lucide-react";
+import { useAppContext } from "../context/AppContext";
+import { MediaType } from "../App";
 
 const mediaTypeIcons = {
   games: Gamepad2,
   anime: Sparkles,
   series: Tv,
   books: Book,
-  movies: Film
+  movies: Film,
 };
 
 const mediaTypeColors = {
-  games: 'from-blue-500 to-cyan-500',
-  anime: 'from-pink-500 to-rose-500',
-  series: 'from-purple-500 to-violet-500',
-  books: 'from-green-500 to-emerald-500',
-  movies: 'from-yellow-500 to-orange-500'
+  games: "from-blue-500 to-cyan-500",
+  anime: "from-pink-500 to-rose-500",
+  series: "from-purple-500 to-violet-500",
+  books: "from-green-500 to-emerald-500",
+  movies: "from-yellow-500 to-orange-500",
 };
 
 const mediaTypeLabels = {
-  games: 'Jogos',
-  anime: 'Anime',
-  series: 'Séries',
-  books: 'Livros',
-  movies: 'Filmes'
+  games: "Jogos",
+  anime: "Anime",
+  series: "Séries",
+  books: "Livros",
+  movies: "Filmes",
 };
 
 const Statistics: React.FC = () => {
   const { mediaItems, reviews } = useAppContext();
 
   const getMediaStats = () => {
-    const stats: Record<MediaType, { count: number; hours: number; avgRating: number; completed: number }> = {
+    const stats: Record<
+      MediaType,
+      { count: number; hours: number; avgRating: number; completed: number }
+    > = {
       games: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       anime: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       series: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       books: { count: 0, hours: 0, avgRating: 0, completed: 0 },
-      movies: { count: 0, hours: 0, avgRating: 0, completed: 0 }
+      movies: { count: 0, hours: 0, avgRating: 0, completed: 0 },
     };
 
-    mediaItems.forEach(item => {
+    mediaItems.forEach((item) => {
       stats[item.type].count++;
       stats[item.type].hours += item.hoursSpent || 0;
       if (item.rating) {
         const currentAvg = stats[item.type].avgRating;
         const currentCount = stats[item.type].count;
-        stats[item.type].avgRating = currentCount === 1 ? item.rating : (currentAvg * (currentCount - 1) + item.rating) / currentCount;
+        stats[item.type].avgRating =
+          currentCount === 1
+            ? item.rating
+            : (currentAvg * (currentCount - 1) + item.rating) / currentCount;
       }
-      if (item.status === 'completed') {
+      if (item.status === "completed") {
         stats[item.type].completed++;
       }
     });
@@ -56,24 +72,38 @@ const Statistics: React.FC = () => {
   };
 
   const getTotalStats = () => {
-    const totalHours = mediaItems.reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
-    const totalCompleted = mediaItems.filter(item => item.status === 'completed').length;
-    const ratedItems = mediaItems.filter(item => item.rating);
-    const avgRating = ratedItems.length > 0 ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) / ratedItems.length : 0;
-    
-    return { totalHours, totalCompleted, avgRating, totalItems: mediaItems.length };
+    const totalHours = mediaItems.reduce(
+      (sum, item) => sum + (item.hoursSpent || 0),
+      0,
+    );
+    const totalCompleted = mediaItems.filter(
+      (item) => item.status === "completed",
+    ).length;
+    const ratedItems = mediaItems.filter((item) => item.rating);
+    const avgRating =
+      ratedItems.length > 0
+        ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) /
+          ratedItems.length
+        : 0;
+
+    return {
+      totalHours,
+      totalCompleted,
+      avgRating,
+      totalItems: mediaItems.length,
+    };
   };
 
   const getTopRated = () => {
     return mediaItems
-      .filter(item => item.rating)
+      .filter((item) => item.rating)
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .slice(0, 5);
   };
 
   const getMostPlayed = () => {
     return mediaItems
-      .filter(item => item.hoursSpent)
+      .filter((item) => item.hoursSpent)
       .sort((a, b) => (b.hoursSpent || 0) - (a.hoursSpent || 0))
       .slice(0, 5);
   };
@@ -114,8 +144,12 @@ const Statistics: React.FC = () => {
       </div>
       {/* Header */}
       <div className="animate-slide-down relative z-10">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">Estatísticas</h1>
-        <p className="text-slate-400 text-sm md:text-base">Insights sobre seu consumo de mídia e preferências</p>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
+          Estatísticas
+        </h1>
+        <p className="text-slate-400 text-sm md:text-base">
+          Insights sobre seu consumo de mídia e preferências
+        </p>
       </div>
 
       {/* Overview Stats */}
@@ -125,11 +159,19 @@ const Statistics: React.FC = () => {
             <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg">
               <Clock className="text-blue-400" size={16} />
             </div>
-            <span className="text-blue-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">Total de Horas</span>
-            <span className="text-blue-400 font-medium text-xs sm:hidden">Horas</span>
+            <span className="text-blue-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">
+              Total de Horas
+            </span>
+            <span className="text-blue-400 font-medium text-xs sm:hidden">
+              Horas
+            </span>
           </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStats.totalHours.toLocaleString()}</p>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">Tempo investido</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+            {totalStats.totalHours.toLocaleString()}
+          </p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">
+            Tempo investido
+          </p>
         </div>
 
         <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-green-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
@@ -137,10 +179,16 @@ const Statistics: React.FC = () => {
             <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg">
               <TrendingUp className="text-green-400" size={16} />
             </div>
-            <span className="text-green-400 font-medium text-xs sm:text-sm md:text-base">Concluídos</span>
+            <span className="text-green-400 font-medium text-xs sm:text-sm md:text-base">
+              Concluídos
+            </span>
           </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStats.totalCompleted}</p>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1">De {totalStats.totalItems}</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+            {totalStats.totalCompleted}
+          </p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+            De {totalStats.totalItems}
+          </p>
         </div>
 
         <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-yellow-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
@@ -148,10 +196,16 @@ const Statistics: React.FC = () => {
             <div className="p-1.5 sm:p-2 bg-yellow-500/20 rounded-lg">
               <Star className="text-yellow-400" size={16} />
             </div>
-            <span className="text-yellow-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">Nota Média</span>
-            <span className="text-yellow-400 font-medium text-xs sm:hidden">Nota</span>
+            <span className="text-yellow-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">
+              Nota Média
+            </span>
+            <span className="text-yellow-400 font-medium text-xs sm:hidden">
+              Nota
+            </span>
           </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{totalStats.avgRating.toFixed(1)}</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+            {totalStats.avgRating.toFixed(1)}
+          </p>
           <p className="text-slate-400 text-xs sm:text-sm mt-1">De 10</p>
         </div>
 
@@ -160,43 +214,77 @@ const Statistics: React.FC = () => {
             <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg">
               <BarChart3 className="text-purple-400" size={16} />
             </div>
-            <span className="text-purple-400 font-medium text-xs sm:text-sm md:text-base">Resenhas</span>
+            <span className="text-purple-400 font-medium text-xs sm:text-sm md:text-base">
+              Resenhas
+            </span>
           </div>
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{reviews.length}</p>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">Escritas</p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+            {reviews.length}
+          </p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">
+            Escritas
+          </p>
         </div>
       </div>
 
       {/* Media Type Breakdown */}
       <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 sm:p-6 border border-white/10 animate-slide-in-left hover:scale-[1.01] md:hover:scale-105 transition-all duration-300 relative z-10">
-        <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">Por Tipo de Mídia</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
+          Por Tipo de Mídia
+        </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 animate-fade-in">
           {Object.entries(mediaStats).map(([type, stats]) => {
             const Icon = mediaTypeIcons[type as MediaType];
             return (
-              <div key={type} className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-lg md:rounded-xl p-2 sm:p-3 md:p-4 border border-gray-700/50 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg`}>
+              <div
+                key={type}
+                className={`bg-gradient-to-br ${mediaTypeColors[type as MediaType]}/5 backdrop-blur-sm rounded-lg md:rounded-xl p-2 sm:p-3 md:p-4 border border-gray-700/50 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg`}
+              >
                 <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
-                  <Icon size={14} sm:size={16} md:size={20} className="text-white" />
-                  <span className="text-white font-medium">{mediaTypeLabels[type as MediaType]}</span>
+                  <Icon
+                    size={14}
+                    sm:size={16}
+                    md:size={20}
+                    className="text-white"
+                  />
+                  <span className="text-white font-medium">
+                    {mediaTypeLabels[type as MediaType]}
+                  </span>
                 </div>
-                
+
                 <div className="space-y-1 sm:space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-xs sm:text-sm">Total</span>
-                    <span className="text-white font-medium text-xs sm:text-sm">{stats.count}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">
+                      Total
+                    </span>
+                    <span className="text-white font-medium text-xs sm:text-sm">
+                      {stats.count}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-xs sm:text-sm">Horas</span>
-                    <span className="text-white font-medium text-xs sm:text-sm">{stats.hours.toFixed(1)}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">
+                      Horas
+                    </span>
+                    <span className="text-white font-medium text-xs sm:text-sm">
+                      {stats.hours.toFixed(1)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-xs sm:text-sm">✅</span>
-                    <span className="text-white font-medium text-xs sm:text-sm">{stats.completed}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">
+                      ✅
+                    </span>
+                    <span className="text-white font-medium text-xs sm:text-sm">
+                      {stats.completed}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 text-xs sm:text-sm">⭐</span>
-                    <span className="text-white font-medium text-xs sm:text-sm">{stats.avgRating.toFixed(1)}</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">
+                      ⭐
+                    </span>
+                    <span className="text-white font-medium text-xs sm:text-sm">
+                      {stats.avgRating.toFixed(1)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -213,37 +301,57 @@ const Statistics: React.FC = () => {
             <Star className="text-yellow-400" size={20} />
             Melhor Avaliados
           </h2>
-          
+
           <div className="space-y-4">
             {topRated.length > 0 ? (
               topRated.map((item, index) => {
                 return (
-                <div key={item.id} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors duration-200">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
-                    {index + 1}
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors duration-200"
+                  >
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="w-8 h-10 sm:w-10 sm:h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
+                      {item.cover ? (
+                        <img
+                          src={item.cover}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-500">
+                          <Star size={10} sm:size={14} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-medium text-xs sm:text-sm line-clamp-1">
+                        {item.title}
+                      </p>
+                      <p className="text-slate-400 text-xs hidden sm:block">
+                        {mediaTypeLabels[item.type]}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                      <Star
+                        className="text-yellow-400"
+                        size={12}
+                        sm:size={14}
+                        fill="currentColor"
+                      />
+                      <span className="text-white font-medium text-xs sm:text-sm">
+                        {item.rating}
+                      </span>
+                    </div>
                   </div>
-                  <div className="w-8 h-10 sm:w-10 sm:h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
-                    {item.cover ? (
-                      <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-500">
-                        <Star size={10} sm:size={14} />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium text-xs sm:text-sm line-clamp-1">{item.title}</p>
-                    <p className="text-slate-400 text-xs hidden sm:block">{mediaTypeLabels[item.type]}</p>
-                  </div>
-                  <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-                    <Star className="text-yellow-400" size={12} sm:size={14} fill="currentColor" />
-                    <span className="text-white font-medium text-xs sm:text-sm">{item.rating}</span>
-                  </div>
-                </div>
                 );
               })
             ) : (
-              <p className="text-slate-400 text-center py-4">Nenhum item avaliado ainda</p>
+              <p className="text-slate-400 text-center py-4">
+                Nenhum item avaliado ainda
+              </p>
             )}
           </div>
         </div>
@@ -254,41 +362,57 @@ const Statistics: React.FC = () => {
             <Clock className="text-blue-400" size={20} />
             Mais Tempo Gasto
           </h2>
-          
+
           <div className="space-y-4">
             {mostPlayed.length > 0 ? (
               mostPlayed.map((item, index) => {
                 return (
-                <div key={item.id} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors duration-200">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
-                    {index + 1}
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors duration-200"
+                  >
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="w-8 h-10 sm:w-10 sm:h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
+                      {item.cover ? (
+                        <img
+                          src={item.cover}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-500">
+                          <Clock size={10} sm:size={14} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-medium text-xs sm:text-sm line-clamp-1">
+                        {item.title}
+                      </p>
+                      <p className="text-slate-400 text-xs hidden sm:block">
+                        {mediaTypeLabels[item.type]}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                      <Clock className="text-blue-400" size={12} sm:size={14} />
+                      <span className="text-white font-medium">
+                        {item.hoursSpent}h
+                      </span>
+                    </div>
                   </div>
-                  <div className="w-8 h-10 sm:w-10 sm:h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
-                    {item.cover ? (
-                      <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-500">
-                        <Clock size={10} sm:size={14} />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium text-xs sm:text-sm line-clamp-1">{item.title}</p>
-                    <p className="text-slate-400 text-xs hidden sm:block">{mediaTypeLabels[item.type]}</p>
-                  </div>
-                  <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-                    <Clock className="text-blue-400" size={12} sm:size={14} />
-                    <span className="text-white font-medium">{item.hoursSpent}h</span>
-                  </div>
-                </div>
                 );
               })
             ) : (
-              <p className="text-slate-400 text-center py-4">Nenhum dado de tempo ainda</p>
+              <p className="text-slate-400 text-center py-4">
+                Nenhum dado de tempo ainda
+              </p>
             )}
           </div>
         </div>
       </div>
     </div>
   );
-};export default Statistics;
+};
+export default Statistics;

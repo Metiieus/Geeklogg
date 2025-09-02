@@ -23,7 +23,9 @@ class OpenAIService {
 
   async sendMessage(userMessage: string, context?: any): Promise<string> {
     if (!this.apiKey) {
-      console.log("🤖 Archivius: API key não configurada - usando respostas inteligentes");
+      console.log(
+        "🤖 Archivius: API key não configurada - usando respostas inteligentes",
+      );
       return this.getIntelligentMockResponse(userMessage, context);
     }
 
@@ -97,7 +99,10 @@ Use emojis temáticos e seja profundamente personalizado com base nos dados forn
     }
   }
 
-  private getIntelligentMockResponse(userMessage: string, context?: any): string {
+  private getIntelligentMockResponse(
+    userMessage: string,
+    context?: any,
+  ): string {
     const message = userMessage.toLowerCase();
 
     // Usar contexto avançado para respostas mais inteligentes
@@ -106,11 +111,19 @@ Use emojis temáticos e seja profundamente personalizado com base nos dados forn
     }
 
     // Respostas baseadas em palavras-chave melhoradas
-    if (message.includes("recomend") || message.includes("sugir") || message.includes("forje")) {
+    if (
+      message.includes("recomend") ||
+      message.includes("sugir") ||
+      message.includes("forje")
+    ) {
       return this.getSmartRecommendation(message);
     }
 
-    if (message.includes("analise") || message.includes("perfil") || message.includes("segredos")) {
+    if (
+      message.includes("analise") ||
+      message.includes("perfil") ||
+      message.includes("segredos")
+    ) {
       return this.getProfileAnalysisResponse();
     }
 
@@ -122,7 +135,11 @@ Use emojis temáticos e seja profundamente personalizado com base nos dados forn
       return this.getNostalgiaResponse();
     }
 
-    if (message.includes("ocultas") || message.includes("hidden") || message.includes("joias")) {
+    if (
+      message.includes("ocultas") ||
+      message.includes("hidden") ||
+      message.includes("joias")
+    ) {
       return this.getHiddenGemsResponse();
     }
 
@@ -145,22 +162,33 @@ Para que eu possa forjar recomendações verdadeiramente lendárias, compartilhe
 *Archivius, o Oráculo do GeekLog* 🏆`;
   }
 
-  private getContextualIntelligentResponse(message: string, context: any): string {
-    const { 
-      totalMedia, 
-      completedMedia, 
-      userAnalysis, 
-      mediaByType, 
-      userContext 
+  private getContextualIntelligentResponse(
+    message: string,
+    context: any,
+  ): string {
+    const {
+      totalMedia,
+      completedMedia,
+      userAnalysis,
+      mediaByType,
+      userContext,
     } = context;
 
     // Análise profunda do perfil
-    if (message.includes("analise") || message.includes("perfil") || message.includes("segredos")) {
+    if (
+      message.includes("analise") ||
+      message.includes("perfil") ||
+      message.includes("segredos")
+    ) {
       return this.getAdvancedProfileAnalysis(context);
     }
 
     // Recomendações baseadas no perfil
-    if (message.includes("recomend") || message.includes("forje") || message.includes("sugir")) {
+    if (
+      message.includes("recomend") ||
+      message.includes("forje") ||
+      message.includes("sugir")
+    ) {
       return this.getAdvancedRecommendation(context);
     }
 
@@ -175,9 +203,9 @@ Para que eu possa forjar recomendações verdadeiramente lendárias, compartilhe
     }
 
     // Resposta contextual padrão
-    const dominantType = userAnalysis?.dominantGenres?.[0] || 'entretenimento';
-    const personality = userAnalysis?.personalityType || 'Explorador';
-    
+    const dominantType = userAnalysis?.dominantGenres?.[0] || "entretenimento";
+    const personality = userAnalysis?.personalityType || "Explorador";
+
     return `# 🧙‍♂️ Saudações, ${personality} dos ${dominantType}!
 
 ## 📊 **Visão Oráculo**
@@ -191,38 +219,46 @@ Baseado em vosso perfil único de **${personality}** e preferência por **${domi
 • 🗺️ Territórios inexplorados para expandir horizontes
 • 🏆 Desafios épicos personalizados
 
-**Qual caminho desperta vosso interesse, ${userContext?.name || 'Guardião'}?** ⚡
+**Qual caminho desperta vosso interesse, ${userContext?.name || "Guardião"}?** ⚡
 
 *Archivius, o Oráculo do GeekLog* 🌟`;
   }
 
   private getAdvancedProfileAnalysis(context: any): string {
     const { userAnalysis, mediaByType, reviewInsights, userContext } = context;
-    
+
     const insights = [];
-    
-    if (userAnalysis?.personalityType === 'Completista') {
-      insights.push("🏆 **Alma Completista** - Vossa dedicação em finalizar jornadas é verdadeiramente épica!");
-    } else if (userAnalysis?.personalityType === 'Explorador') {
-      insights.push("🗺️ **Espírito Explorador** - Vossa sede por novos mundos é inspiradora!");
+
+    if (userAnalysis?.personalityType === "Completista") {
+      insights.push(
+        "🏆 **Alma Completista** - Vossa dedicação em finalizar jornadas é verdadeiramente épica!",
+      );
+    } else if (userAnalysis?.personalityType === "Explorador") {
+      insights.push(
+        "🗺️ **Espírito Explorador** - Vossa sede por novos mundos é inspiradora!",
+      );
     }
 
     if (userAnalysis?.averageRating > 4) {
-      insights.push("👑 **Gosto Refinado** - Vossas avaliações revelam padrões de excelência!");
+      insights.push(
+        "👑 **Gosto Refinado** - Vossas avaliações revelam padrões de excelência!",
+      );
     }
 
-    const topGenre = mediaByType?.[0]?.type || 'entretenimento';
-    insights.push(`⚔️ **Mestre em ${topGenre}** - Domínio absoluto neste reino!`);
+    const topGenre = mediaByType?.[0]?.type || "entretenimento";
+    insights.push(
+      `⚔️ **Mestre em ${topGenre}** - Domínio absoluto neste reino!`,
+    );
 
-    return `# 🔍 Análise Épica do Perfil de ${userContext?.name || 'Guardião'}
+    return `# 🔍 Análise Épica do Perfil de ${userContext?.name || "Guardião"}
 
 ## 📊 **Revelações Místicas**
-${insights.join('\n')}
+${insights.join("\n")}
 
 ## 🎯 **Padrões Descobertos**
-• **Personalidade**: ${userAnalysis?.personalityType || 'Em desenvolvimento'}
-• **Taxa de Conclusão**: ${userAnalysis?.completionRate || 0}% (${userAnalysis?.completionRate > 70 ? 'Impressionante!' : 'Oportunidade de crescimento'})
-• **Gênero Dominante**: ${userAnalysis?.dominantGenres?.join(', ') || 'Ainda descobrindo'}
+• **Personalidade**: ${userAnalysis?.personalityType || "Em desenvolvimento"}
+• **Taxa de Conclusão**: ${userAnalysis?.completionRate || 0}% (${userAnalysis?.completionRate > 70 ? "Impressionante!" : "Oportunidade de crescimento"})
+• **Gênero Dominante**: ${userAnalysis?.dominantGenres?.join(", ") || "Ainda descobrindo"}
 
 ## ⚔️ **Missões Recomendadas**
 1. 🚀 Explorar subgêneros de ${topGenre}
@@ -236,15 +272,15 @@ ${insights.join('\n')}
 
   private getAdvancedRecommendation(context: any): string {
     const { userAnalysis, mediaByType } = context;
-    const dominantType = userAnalysis?.dominantGenres?.[0] || 'games';
-    const personality = userAnalysis?.personalityType || 'Explorador';
+    const dominantType = userAnalysis?.dominantGenres?.[0] || "games";
+    const personality = userAnalysis?.personalityType || "Explorador";
 
     const recommendations: Record<string, string[]> = {
-      games: ['Hades', 'The Witcher 3', 'Disco Elysium'],
-      anime: ['Demon Slayer', 'Jujutsu Kaisen', 'Vinland Saga'],
-      movies: ['Dune', 'Blade Runner 2049', 'The Matrix'],
-      books: ['Neuromancer', 'Dune', 'Foundation'],
-      series: ['The Expanse', 'Dark', 'Westworld']
+      games: ["Hades", "The Witcher 3", "Disco Elysium"],
+      anime: ["Demon Slayer", "Jujutsu Kaisen", "Vinland Saga"],
+      movies: ["Dune", "Blade Runner 2049", "The Matrix"],
+      books: ["Neuromancer", "Dune", "Foundation"],
+      series: ["The Expanse", "Dark", "Westworld"],
     };
 
     const recs = recommendations[dominantType] || recommendations.games;
@@ -270,7 +306,7 @@ Estas escolhas consideram vossa personalidade de **${personality}**, preferênci
   private getPersonalizedChallenge(context: any): string {
     const { userAnalysis, completedMedia, totalMedia } = context;
     const completionRate = userAnalysis?.completionRate || 0;
-    
+
     let challenge = "Explorar um novo gênero completamente";
     if (completionRate < 50) {
       challenge = "Completar 5 títulos da sua lista de pendências";
@@ -284,7 +320,7 @@ Estas escolhas consideram vossa personalidade de **${personality}**, preferênci
 
 ## 📊 **Baseado em Vosso Perfil**
 Taxa atual de conclusão: **${completionRate}%** (${completedMedia}/${totalMedia})
-Personalidade: **${userAnalysis?.personalityType || 'Explorador'}**
+Personalidade: **${userAnalysis?.personalityType || "Explorador"}**
 
 ## 🎯 **Objetivos Específicos**
 • Semana 1-2: Pesquisa e seleção estratégica
@@ -296,7 +332,7 @@ Personalidade: **${userAnalysis?.personalityType || 'Explorador'}**
 - Recomendações ainda mais precisas
 - Status de "Lenda" no GeekLog
 
-**Aceita este desafio, valoroso ${userAnalysis?.personalityType || 'Guardião'}?** ⚡
+**Aceita este desafio, valoroso ${userAnalysis?.personalityType || "Guardião"}?** ⚡
 
 *Archivius, o Oráculo do GeekLog* 🏆`;
   }
@@ -304,22 +340,27 @@ Personalidade: **${userAnalysis?.personalityType || 'Explorador'}**
   private getExplorationRecommendation(context: any): string {
     const { userAnalysis } = context;
     const explored = userAnalysis?.dominantGenres || [];
-    const unexplored = ['documentários', 'podcasts', 'graphic novels', 'indie games', 'foreign films']
-      .filter(genre => !explored.includes(genre));
+    const unexplored = [
+      "documentários",
+      "podcasts",
+      "graphic novels",
+      "indie games",
+      "foreign films",
+    ].filter((genre) => !explored.includes(genre));
 
     return `# 🗺️ Territórios Inexplorados Aguardam!
 
 ## 📊 **Análise de Fronteiras**
-Domínios conquistados: **${explored.join(', ')}**
+Domínios conquistados: **${explored.join(", ")}**
 Reinos misteriosos ainda não desbravados detectados!
 
 ## ⚔️ **Missão**: *A Expansão dos Horizontes*
-Baseado em vosso perfil de **${userAnalysis?.personalityType || 'Explorador'}**, recomendo explorar:
+Baseado em vosso perfil de **${userAnalysis?.personalityType || "Explorador"}**, recomendo explorar:
 
 ## 🎯 **Novos Reinos**
-1. **${unexplored[0] || 'Documentários'}** - Conhecimento real como aventura
-2. **${unexplored[1] || 'Podcasts'}** - Narrativas áudio épicas
-3. **${unexplored[2] || 'Graphic Novels'}** - Arte visual com narrativa profunda
+1. **${unexplored[0] || "Documentários"}** - Conhecimento real como aventura
+2. **${unexplored[1] || "Podcasts"}** - Narrativas áudio épicas
+3. **${unexplored[2] || "Graphic Novels"}** - Arte visual com narrativa profunda
 
 ## 🏆 **Estratégia de Conquista**
 Comece com títulos que fazem ponte com vossos gêneros favoritos, depois avance para territórios completamente novos!
@@ -330,9 +371,9 @@ Comece com títulos que fazem ponte com vossos gêneros favoritos, depois avance
   }
 
   private getSmartRecommendation(message: string): string {
-    const gameRecs = ['Hades', 'Celeste', 'Hollow Knight'];
-    const animeRecs = ['Demon Slayer', 'Jujutsu Kaisen', 'Attack on Titan'];
-    const movieRecs = ['Dune', 'Blade Runner 2049', 'The Matrix'];
+    const gameRecs = ["Hades", "Celeste", "Hollow Knight"];
+    const animeRecs = ["Demon Slayer", "Jujutsu Kaisen", "Attack on Titan"];
+    const movieRecs = ["Dune", "Blade Runner 2049", "The Matrix"];
 
     return `# ⚔️ Recomendações Épicas Forjadas!
 

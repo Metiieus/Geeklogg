@@ -6,13 +6,18 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "preview": "vite preview --host",
     "start:server": "node server.js",
     "server": "node server.js",
     "build:preview": "npm run build && npm run preview",
     "deploy:netlify": "npm run build && npx netlify deploy --prod --dir=dist",
-    "deploy:firebase": "npm run build && firebase deploy"
+    "deploy:firebase": "npm run build && firebase deploy",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
+    "prune": "ts-prune",
+    "migrate": "ts-migrate migrate src",
+    "clean": "npm run lint:fix && npm run format && npm run prune"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
@@ -48,6 +53,9 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "prettier": "^3.3.3",
+    "ts-prune": "^0.11.0",
+    "ts-migrate": "^0.1.0"
   }
 }

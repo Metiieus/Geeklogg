@@ -36,11 +36,14 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Eye className="w-6 h-6 text-purple-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">1. Introdução</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  1. Introdução
+                </h2>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Esta Política de Privacidade descreve como o GeekLog coleta, usa e protege suas informações pessoais. 
-                Ao usar nosso aplicativo, você concorda com as práticas descritas nesta política.
+                Esta Política de Privacidade descreve como o GeekLog coleta, usa
+                e protege suas informações pessoais. Ao usar nosso aplicativo,
+                você concorda com as práticas descritas nesta política.
               </p>
             </section>
 
@@ -48,11 +51,15 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Database className="w-6 h-6 text-blue-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">2. Informações que Coletamos</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  2. Informações que Coletamos
+                </h2>
               </div>
               <div className="space-y-4 text-gray-300">
                 <div>
-                  <h3 className="font-medium text-white mb-2">2.1 Informações de Conta</h3>
+                  <h3 className="font-medium text-white mb-2">
+                    2.1 Informações de Conta
+                  </h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Nome de usuário e email para criação da conta</li>
                     <li>Foto de perfil (opcional)</li>
@@ -60,16 +67,23 @@ const PrivacyPolicy: React.FC = () => {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-medium text-white mb-2">2.2 Dados de Uso</h3>
+                  <h3 className="font-medium text-white mb-2">
+                    2.2 Dados de Uso
+                  </h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
-                    <li>Mídia adicionada à sua biblioteca (jogos, filmes, livros, etc.)</li>
+                    <li>
+                      Mídia adicionada à sua biblioteca (jogos, filmes, livros,
+                      etc.)
+                    </li>
                     <li>Avaliações e resenhas criadas</li>
                     <li>Marcos e conquistas alcançadas</li>
                     <li>Estatísticas de uso do aplicativo</li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-medium text-white mb-2">2.3 Dados Técnicos</h3>
+                  <h3 className="font-medium text-white mb-2">
+                    2.3 Dados Técnicos
+                  </h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Informações do dispositivo e navegador</li>
                     <li>Endereço IP para funcionalidade do serviço</li>
@@ -83,7 +97,9 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Clock className="w-6 h-6 text-green-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">3. Como Usamos suas Informações</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  3. Como Usamos suas Informações
+                </h2>
               </div>
               <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
                 <li>Fornecer e manter a funcionalidade do GeekLog</li>
@@ -99,11 +115,14 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <UserX className="w-6 h-6 text-red-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">4. Compartilhamento de Dados</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  4. Compartilhamento de Dados
+                </h2>
               </div>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Não vendemos, alugamos ou compartilhamos suas informações pessoais com terceiros para fins comerciais. 
-                Podemos compartilhar dados apenas nas seguintes situações:
+                Não vendemos, alugamos ou compartilhamos suas informações
+                pessoais com terceiros para fins comerciais. Podemos
+                compartilhar dados apenas nas seguintes situações:
               </p>
               <ul className="list-disc list-inside space-y-1 text-gray-300 ml-4">
                 <li>Com seu consentimento explícito</li>
@@ -117,12 +136,16 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Shield className="w-6 h-6 text-yellow-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">5. Segurança</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  5. Segurança
+                </h2>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Implementamos medidas de segurança técnicas e organizacionais apropriadas para proteger suas 
-                informações contra acesso não autorizado, alteração, divulgação ou destruição. Utilizamos 
-                criptografia SSL/TLS e seguimos as melhores práticas de segurança.
+                Implementamos medidas de segurança técnicas e organizacionais
+                apropriadas para proteger suas informações contra acesso não
+                autorizado, alteração, divulgação ou destruição. Utilizamos
+                criptografia SSL/TLS e seguimos as melhores práticas de
+                segurança.
               </p>
             </section>
 
@@ -130,7 +153,9 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Eye className="w-6 h-6 text-indigo-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">6. Seus Direitos</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  6. Seus Direitos
+                </h2>
               </div>
               <p className="text-gray-300 leading-relaxed mb-4">
                 Você tem os seguintes direitos em relação aos seus dados:
@@ -148,11 +173,14 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Database className="w-6 h-6 text-cyan-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">7. Retenção de Dados</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  7. Retenção de Dados
+                </h2>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Mantemos suas informações pessoais apenas pelo tempo necessário para fornecer nossos serviços 
-                ou conforme exigido por lei. Quando você excluir sua conta, seus dados serão removidos 
+                Mantemos suas informações pessoais apenas pelo tempo necessário
+                para fornecer nossos serviços ou conforme exigido por lei.
+                Quando você excluir sua conta, seus dados serão removidos
                 permanentemente dentro de 30 dias.
               </p>
             </section>
@@ -161,12 +189,15 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <div className="flex items-center mb-4">
                 <Clock className="w-6 h-6 text-purple-400 mr-3" />
-                <h2 className="text-xl font-semibold text-white">8. Alterações nesta Política</h2>
+                <h2 className="text-xl font-semibold text-white">
+                  8. Alterações nesta Política
+                </h2>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos você sobre 
-                mudanças significativas através do aplicativo ou por email. O uso continuado do serviço 
-                após as alterações constitui aceitação da nova política.
+                Podemos atualizar esta Política de Privacidade periodicamente.
+                Notificaremos você sobre mudanças significativas através do
+                aplicativo ou por email. O uso continuado do serviço após as
+                alterações constitui aceitação da nova política.
               </p>
             </section>
 
@@ -177,15 +208,16 @@ const PrivacyPolicy: React.FC = () => {
                 <h2 className="text-xl font-semibold text-white">9. Contato</h2>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Para questões sobre esta Política de Privacidade ou para exercer seus direitos, 
-                entre em contato conosco em: <span className="text-cyan-400">privacy@geeklog.app</span>
+                Para questões sobre esta Política de Privacidade ou para exercer
+                seus direitos, entre em contato conosco em:{" "}
+                <span className="text-cyan-400">privacy@geeklog.app</span>
               </p>
             </section>
 
             {/* Data de atualização */}
             <div className="mt-8 pt-6 border-t border-gray-700/50">
               <p className="text-sm text-gray-400">
-                Última atualização: {new Date().toLocaleDateString('pt-BR')}
+                Última atualização: {new Date().toLocaleDateString("pt-BR")}
               </p>
             </div>
           </div>

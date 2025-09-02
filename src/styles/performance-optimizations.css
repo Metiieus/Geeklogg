@@ -53,7 +53,8 @@
 
 /* Otimização de sombras */
 .shadow-optimized {
-  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
+    drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
 }
 
 /* Prefetching de recursos */
@@ -80,7 +81,8 @@
 
 /* Reduzir repaints em hover states */
 .hover-optimized {
-  transition-property: transform, opacity, background-color, border-color, color, fill, stroke;
+  transition-property:
+    transform, opacity, background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -91,7 +93,7 @@
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
-  
+
   /* Reduzir blur em mobile para melhor performance */
   .backdrop-blur-xl {
     backdrop-filter: blur(12px);

@@ -1,4 +1,9 @@
-export type AchievementCategory = 'gamer' | 'leitor' | 'narrador' | 'cinefilo' | 'geral';
+export type AchievementCategory =
+  | "gamer"
+  | "leitor"
+  | "narrador"
+  | "cinefilo"
+  | "geral";
 
 export interface AchievementNode {
   id: string;
@@ -10,7 +15,7 @@ export interface AchievementNode {
   dependsOn?: string[];
   category: AchievementCategory;
   position: { x: number; y: number }; // Para posicionamento na árvore
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  rarity: "common" | "rare" | "epic" | "legendary";
 }
 
 export interface UserAchievement {

@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface UseOptimizedAvatarProps {
   avatarUrl?: string;
   fallbackText: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 interface UseOptimizedAvatarReturn {
@@ -20,7 +20,7 @@ interface UseOptimizedAvatarReturn {
 export const useOptimizedAvatar = ({
   avatarUrl,
   fallbackText,
-  size = 'md'
+  size = "md",
 }: UseOptimizedAvatarProps): UseOptimizedAvatarReturn => {
   const [displayAvatar, setDisplayAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(Boolean(avatarUrl));
@@ -28,7 +28,7 @@ export const useOptimizedAvatar = ({
 
   // Gerar inicial do fallback de forma otimizada
   const fallbackInitial = useCallback(() => {
-    return fallbackText?.charAt(0)?.toUpperCase() || 'U';
+    return fallbackText?.charAt(0)?.toUpperCase() || "U";
   }, [fallbackText]);
 
   // Pre-carregar imagem de forma otimizada
@@ -45,7 +45,7 @@ export const useOptimizedAvatar = ({
 
     // Criar uma nova instância de Image para pré-carregar
     const img = new Image();
-    
+
     const handleLoad = () => {
       setDisplayAvatar(avatarUrl);
       setIsLoading(false);
@@ -61,7 +61,7 @@ export const useOptimizedAvatar = ({
 
     img.onload = handleLoad;
     img.onerror = handleError;
-    
+
     // Otimizar carregamento com timeout para evitar loading infinito
     const timeout = setTimeout(() => {
       handleError();
@@ -87,6 +87,6 @@ export const useOptimizedAvatar = ({
     fallbackInitial: fallbackInitial(),
     isLoading,
     hasError,
-    handleImageError
+    handleImageError,
   };
 };

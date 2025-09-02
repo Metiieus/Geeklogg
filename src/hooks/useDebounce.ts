@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Hook para debounce de valores
  * Útil para otimizar campos de busca e evitar muitas re-renderizações
- * 
+ *
  * @param value - Valor a ser "debounced"
  * @param delay - Delay em millisegundos (padrão: 300ms)
  * @returns Valor com debounce aplicado

@@ -74,7 +74,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       if (!auth || isFirebaseOffline()) {
         showError(
           "Modo Offline",
-          "Não é possível criar conta no modo offline. Conecte-se à internet e tente novamente."
+          "Não é possível criar conta no modo offline. Conecte-se à internet e tente novamente.",
         );
         return;
       }

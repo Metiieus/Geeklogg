@@ -70,7 +70,10 @@ export const database = {
         return docRef;
       });
     } catch (error: any) {
-      console.warn("⚠️ Firebase add failed, falling back to local storage:", error);
+      console.warn(
+        "⚠️ Firebase add failed, falling back to local storage:",
+        error,
+      );
 
       const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const docData = {
@@ -139,7 +142,10 @@ export const database = {
 
       return docId;
     } catch (error: any) {
-      console.warn("⚠️ Firebase set failed, falling back to local storage:", error);
+      console.warn(
+        "⚠️ Firebase set failed, falling back to local storage:",
+        error,
+      );
 
       const docData = {
         ...data,
@@ -172,8 +178,14 @@ export const database = {
       : collectionPath;
 
     // Protege documentos do usuário quando não autenticado
-    if ((pathStr.startsWith("users/") || pathStr === "users") && !auth?.currentUser) {
-      console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
+    if (
+      (pathStr.startsWith("users/") || pathStr === "users") &&
+      !auth?.currentUser
+    ) {
+      console.warn(
+        "🔒 Tentativa de acessar documento de usuário sem login:",
+        pathStr,
+      );
       return { exists: () => false, data: () => null };
     }
 
@@ -215,7 +227,12 @@ export const database = {
 
       const docSnap = await withRetry(async () => await getDoc(docRef));
       return docSnap.exists()
-        ? { id: docSnap.id, ...docSnap.data(), exists: () => true, data: () => docSnap.data() }
+        ? {
+            id: docSnap.id,
+            ...docSnap.data(),
+            exists: () => true,
+            data: () => docSnap.data(),
+          }
         : { exists: () => false, data: () => null };
     } catch (error: any) {
       console.warn("⚠️ Firebase get failed, trying local storage:", error);
@@ -254,7 +271,10 @@ export const database = {
       : collectionPath;
 
     // Protege coleção /users quando não autenticado
-    if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth?.currentUser) {
+    if (
+      (pathStr === "users" || pathStr.startsWith("users/")) &&
+      !auth?.currentUser
+    ) {
       console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
       return [];
     }
@@ -265,9 +285,11 @@ export const database = {
       try {
         const fallback = localStorageService.getCollection(pathStr);
         let results = fallback.map((item: any, index: number) => ({
-          id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+          id:
+            item.id ??
+            `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
           data: item,
-          ...item
+          ...item,
         }));
 
         // Apply query options to local data
@@ -275,17 +297,27 @@ export const database = {
           const { where: w, orderBy: ob, limit: lim } = queryOptions;
 
           if (w) {
-            results = results.filter(item => {
+            results = results.filter((item) => {
               const fieldValue = item[w.field];
               switch (w.operator) {
-                case '==': return fieldValue === w.value;
-                case '!=': return fieldValue !== w.value;
-                case '>': return fieldValue > w.value;
-                case '>=': return fieldValue >= w.value;
-                case '<': return fieldValue < w.value;
-                case '<=': return fieldValue <= w.value;
-                case 'array-contains': return Array.isArray(fieldValue) && fieldValue.includes(w.value);
-                default: return true;
+                case "==":
+                  return fieldValue === w.value;
+                case "!=":
+                  return fieldValue !== w.value;
+                case ">":
+                  return fieldValue > w.value;
+                case ">=":
+                  return fieldValue >= w.value;
+                case "<":
+                  return fieldValue < w.value;
+                case "<=":
+                  return fieldValue <= w.value;
+                case "array-contains":
+                  return (
+                    Array.isArray(fieldValue) && fieldValue.includes(w.value)
+                  );
+                default:
+                  return true;
               }
             });
           }
@@ -295,7 +327,7 @@ export const database = {
               const aVal = a[ob.field];
               const bVal = b[ob.field];
               const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-              return ob.direction === 'desc' ? -comparison : comparison;
+              return ob.direction === "desc" ? -comparison : comparison;
             });
           }
 
@@ -325,15 +357,20 @@ export const database = {
       const snap = await withRetry(async () => await getDocs(q));
       return snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
     } catch (error: any) {
-      console.warn("⚠️ Firebase getCollection failed, trying local storage:", error);
+      console.warn(
+        "⚠️ Firebase getCollection failed, trying local storage:",
+        error,
+      );
 
       // Fallback to local storage
       try {
         const fallback = localStorageService.getCollection(pathStr);
         let results = fallback.map((item: any, index: number) => ({
-          id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+          id:
+            item.id ??
+            `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
           data: item,
-          ...item
+          ...item,
         }));
 
         // Apply query options to local data (simplified)
@@ -349,7 +386,11 @@ export const database = {
   },
 
   /* ------------------------------------------------------------------ */
-  update: async (collectionPath: string | string[], docId: string, data: any) => {
+  update: async (
+    collectionPath: string | string[],
+    docId: string,
+    data: any,
+  ) => {
     const pathStr = Array.isArray(collectionPath)
       ? collectionPath.join("/")
       : collectionPath;
@@ -359,7 +400,11 @@ export const database = {
       console.warn("🔄 Using offline mode for update operation");
       const existing = localStorageService.getItem(pathStr, docId);
       if (existing) {
-        const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
+        const updated = {
+          ...existing,
+          ...data,
+          updatedAt: new Date().toISOString(),
+        };
         localStorageService.setItem(pathStr, docId, updated);
       }
       return docId;
@@ -369,15 +414,25 @@ export const database = {
       if (!db) throw new Error("Firestore not available");
 
       await withRetry(async () => {
-        await updateDoc(doc(db, pathStr, docId), { ...data, updatedAt: serverTimestamp() });
+        await updateDoc(doc(db, pathStr, docId), {
+          ...data,
+          updatedAt: serverTimestamp(),
+        });
       });
       return docId;
     } catch (error: any) {
-      console.warn("⚠️ Firebase update failed, falling back to local storage:", error);
+      console.warn(
+        "⚠️ Firebase update failed, falling back to local storage:",
+        error,
+      );
 
       const existing = localStorageService.getItem(pathStr, docId);
       if (existing) {
-        const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
+        const updated = {
+          ...existing,
+          ...data,
+          updatedAt: new Date().toISOString(),
+        };
         localStorageService.setItem(pathStr, docId, updated);
       }
       return docId;
@@ -418,7 +473,10 @@ export const database = {
       });
       return docId;
     } catch (error: any) {
-      console.warn("⚠️ Firebase delete failed, falling back to local storage:", error);
+      console.warn(
+        "⚠️ Firebase delete failed, falling back to local storage:",
+        error,
+      );
       localStorageService.removeItem(pathStr, docId);
       return docId;
     }
@@ -446,10 +504,14 @@ export const database = {
       const intervalId = setInterval(() => {
         try {
           const data = localStorageService.getCollection(pathStr);
-          callback(data.map((item: any, index: number) => ({
-            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
-            ...item
-          })));
+          callback(
+            data.map((item: any, index: number) => ({
+              id:
+                item.id ??
+                `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+              ...item,
+            })),
+          );
         } catch (error) {
           console.warn("Error reading from local storage:", error);
           callback([]);
@@ -472,18 +534,26 @@ export const database = {
         if (lim) q = query(q, limit(lim));
       }
 
-      return onSnapshot(q,
+      return onSnapshot(
+        q,
         (snap) => callback(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
         (error) => {
-          console.warn("⚠️ Firebase listen failed, falling back to local storage:", error);
+          console.warn(
+            "⚠️ Firebase listen failed, falling back to local storage:",
+            error,
+          );
           // Fallback to periodic local storage checks
           const intervalId = setInterval(() => {
             try {
               const data = localStorageService.getCollection(pathStr);
-              callback(data.map((item: any, index: number) => ({
-                id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
-                ...item
-              })));
+              callback(
+                data.map((item: any, index: number) => ({
+                  id:
+                    item.id ??
+                    `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+                  ...item,
+                })),
+              );
             } catch (localError) {
               console.warn("Error reading from local storage:", localError);
               callback([]);
@@ -491,19 +561,26 @@ export const database = {
           }, 1000);
 
           return () => clearInterval(intervalId);
-        }
+        },
       );
     } catch (error) {
-      console.warn("⚠️ Firebase listen setup failed, using local storage:", error);
+      console.warn(
+        "⚠️ Firebase listen setup failed, using local storage:",
+        error,
+      );
 
       // Fallback to periodic local storage checks
       const intervalId = setInterval(() => {
         try {
           const data = localStorageService.getCollection(pathStr);
-          callback(data.map((item: any, index: number) => ({
-            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
-            ...item
-          })));
+          callback(
+            data.map((item: any, index: number) => ({
+              id:
+                item.id ??
+                `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+              ...item,
+            })),
+          );
         } catch (localError) {
           console.warn("Error reading from local storage:", localError);
           callback([]);

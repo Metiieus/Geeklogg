@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * Hook melhorado para bloquear scroll que funciona melhor em iOS
@@ -14,7 +14,7 @@ export const useImprovedScrollLock = (isLocked: boolean) => {
     width: string;
     overflow: string;
   } | null>(null);
-  const originalViewportRef = useRef<string>('');
+  const originalViewportRef = useRef<string>("");
 
   useEffect(() => {
     if (!isLocked) return;
@@ -33,21 +33,24 @@ export const useImprovedScrollLock = (isLocked: boolean) => {
     };
 
     // Aplicar estilos para bloquear scroll de forma mais suave
-    body.style.position = 'fixed';
+    body.style.position = "fixed";
     body.style.top = `-${scrollYRef.current}px`;
-    body.style.left = '0';
-    body.style.right = '0';
-    body.style.width = '100%';
-    body.style.overflow = 'hidden';
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
 
     // Adicionar classe para CSS customizado
-    body.classList.add('scroll-locked');
+    body.classList.add("scroll-locked");
 
     // Para iOS - configurar viewport
     const viewport = document.querySelector('meta[name="viewport"]');
     if (viewport) {
-      originalViewportRef.current = viewport.getAttribute('content') || '';
-      viewport.setAttribute('content', originalViewportRef.current + ', user-scalable=no');
+      originalViewportRef.current = viewport.getAttribute("content") || "";
+      viewport.setAttribute(
+        "content",
+        originalViewportRef.current + ", user-scalable=no",
+      );
     }
 
     // Função mais suave de prevenção
@@ -55,8 +58,10 @@ export const useImprovedScrollLock = (isLocked: boolean) => {
       // Permitir scroll dentro de elementos com classe 'allow-scroll'
       let target = e.target as Element;
       while (target && target !== document.body) {
-        if (target.classList?.contains('allow-scroll') ||
-            target.classList?.contains('modal-scroll')) {
+        if (
+          target.classList?.contains("allow-scroll") ||
+          target.classList?.contains("modal-scroll")
+        ) {
           return;
         }
         target = target.parentElement as Element;
@@ -68,7 +73,7 @@ export const useImprovedScrollLock = (isLocked: boolean) => {
     };
 
     // Adicionar listener apenas para touchmove
-    document.addEventListener('touchmove', preventScroll, { passive: false });
+    document.addEventListener("touchmove", preventScroll, { passive: false });
 
     // Cleanup function
     return () => {
@@ -79,22 +84,22 @@ export const useImprovedScrollLock = (isLocked: boolean) => {
       }
 
       // Remover classe
-      body.classList.remove('scroll-locked');
+      body.classList.remove("scroll-locked");
 
       // Restaurar viewport
       const viewport = document.querySelector('meta[name="viewport"]');
       if (viewport && originalViewportRef.current) {
-        viewport.setAttribute('content', originalViewportRef.current);
+        viewport.setAttribute("content", originalViewportRef.current);
       }
 
       // Remover listener
-      document.removeEventListener('touchmove', preventScroll);
+      document.removeEventListener("touchmove", preventScroll);
 
       // Restaurar posição de scroll de forma suave
       requestAnimationFrame(() => {
         window.scrollTo({
           top: scrollYRef.current,
-          behavior: 'auto'
+          behavior: "auto",
         });
       });
     };

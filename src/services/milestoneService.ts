@@ -44,9 +44,7 @@ export interface AddMilestoneData
 /**
  * Cria um novo marco para o usuário.
  */
-export async function addMilestone(
-  data: AddMilestoneData,
-): Promise<Milestone> {
+export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
   const uid = getUserId();
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
@@ -131,7 +129,10 @@ export async function updateMilestone(
  * Remove um marco e sua imagem da Storage.
  */
 export async function deleteMilestone(id: string): Promise<void> {
-  ensureValidId(id, "ID da milestone é obrigatório e deve ser uma string válida");
+  ensureValidId(
+    id,
+    "ID da milestone é obrigatório e deve ser uma string válida",
+  );
 
   const uid = getUserId();
   if (!uid) throw new Error("Usuário não autenticado");

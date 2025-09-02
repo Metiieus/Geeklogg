@@ -1,16 +1,15 @@
-import { useCallback, useMemo, useRef, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useEffect } from "react";
 
 /**
  * Hook para otimização de performance com debounce, throttle e memoização
  */
 export const usePerformanceOptimization = () => {
-  
   /**
    * Debounce function para limitar execuções frequentes
    */
   const useDebounce = <T extends (...args: any[]) => any>(
     callback: T,
-    delay: number
+    delay: number,
   ): T => {
     const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -24,7 +23,7 @@ export const usePerformanceOptimization = () => {
           callback(...args);
         }, delay);
       }) as T,
-      [callback, delay]
+      [callback, delay],
     );
   };
 
@@ -33,20 +32,20 @@ export const usePerformanceOptimization = () => {
    */
   const useThrottle = <T extends (...args: any[]) => any>(
     callback: T,
-    delay: number
+    delay: number,
   ): T => {
     const lastExecutedRef = useRef<number>(0);
 
     return useCallback(
       ((...args: Parameters<T>) => {
         const now = Date.now();
-        
+
         if (now - lastExecutedRef.current >= delay) {
           lastExecutedRef.current = now;
           callback(...args);
         }
       }) as T,
-      [callback, delay]
+      [callback, delay],
     );
   };
 
@@ -71,17 +70,17 @@ export const usePerformanceOptimization = () => {
    */
   const useOptimizedScroll = (
     callback: (event: Event) => void,
-    options: { passive?: boolean; throttle?: number } = {}
+    options: { passive?: boolean; throttle?: number } = {},
   ) => {
     const { passive = true, throttle = 16 } = options;
     const throttledCallback = useThrottle(callback, throttle);
 
     useEffect(() => {
       const element = window;
-      element.addEventListener('scroll', throttledCallback, { passive });
-      
+      element.addEventListener("scroll", throttledCallback, { passive });
+
       return () => {
-        element.removeEventListener('scroll', throttledCallback);
+        element.removeEventListener("scroll", throttledCallback);
       };
     }, [throttledCallback, passive]);
   };
@@ -91,15 +90,15 @@ export const usePerformanceOptimization = () => {
    */
   const useOptimizedResize = (
     callback: (event: Event) => void,
-    delay: number = 250
+    delay: number = 250,
   ) => {
     const debouncedCallback = useDebounce(callback, delay);
 
     useEffect(() => {
-      window.addEventListener('resize', debouncedCallback);
-      
+      window.addEventListener("resize", debouncedCallback);
+
       return () => {
-        window.removeEventListener('resize', debouncedCallback);
+        window.removeEventListener("resize", debouncedCallback);
       };
     }, [debouncedCallback]);
   };
@@ -125,7 +124,7 @@ export const usePerformanceOptimization = () => {
     useLazyComponent,
     useOptimizedScroll,
     useOptimizedResize,
-    useCleanup
+    useCleanup,
   };
 };
 
@@ -133,12 +132,11 @@ export const usePerformanceOptimization = () => {
  * Hook específico para otimização de imagens
  */
 export const useImageOptimization = () => {
-  
   /**
    * Preload de imagens críticas
    */
   const preloadImages = useCallback((urls: string[]) => {
-    urls.forEach(url => {
+    urls.forEach((url) => {
       const img = new Image();
       img.src = url;
     });
@@ -160,21 +158,21 @@ export const useImageOptimization = () => {
         ([entry]) => {
           if (entry.isIntersecting && !isLoaded && !error) {
             const imageLoader = new Image();
-            
+
             imageLoader.onload = () => {
               img.src = src;
               setIsLoaded(true);
             };
-            
+
             imageLoader.onerror = () => {
               setError(true);
             };
-            
+
             imageLoader.src = src;
             observer.unobserve(img);
           }
         },
-        { threshold }
+        { threshold },
       );
 
       observer.observe(img);
@@ -189,6 +187,6 @@ export const useImageOptimization = () => {
 
   return {
     preloadImages,
-    useLazyImage
+    useLazyImage,
   };
 };

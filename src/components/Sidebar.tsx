@@ -73,13 +73,16 @@ const Sidebar: React.FC = () => {
 
   const isPremium = profile?.isPremium || false;
 
-  const handleNavigation = useCallback((itemId: ActivePage) => {
-    if (itemId === "social") {
-      showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
-      return;
-    }
-    setActivePage(itemId);
-  }, [showInfo, setActivePage]);
+  const handleNavigation = useCallback(
+    (itemId: ActivePage) => {
+      if (itemId === "social") {
+        showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+        return;
+      }
+      setActivePage(itemId);
+    },
+    [showInfo, setActivePage],
+  );
 
   return (
     <>
@@ -135,7 +138,11 @@ const Sidebar: React.FC = () => {
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex-1 space-y-2" role="navigation" aria-label="Menu principal">
+          <nav
+            className="flex-1 space-y-2"
+            role="navigation"
+            aria-label="Menu principal"
+          >
             {navigationItems.map((item) => (
               <button
                 key={item.id}
@@ -147,16 +154,18 @@ const Sidebar: React.FC = () => {
                   item.id === "social"
                     ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30 border border-transparent"
                     : activePage === item.id
-                    ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
-                    : "hover:bg-gray-800/50 border border-transparent"
+                      ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
+                      : "hover:bg-gray-800/50 border border-transparent"
                 }`}
               >
                 {/* Icon com gradiente ativo e melhor visual */}
-                <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
-                  activePage === item.id
-                    ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
-                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
-                }`}>
+                <div
+                  className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                    activePage === item.id
+                      ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
+                      : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                  }`}
+                >
                   <div
                     className={`${
                       activePage === item.id
@@ -177,13 +186,15 @@ const Sidebar: React.FC = () => {
                       item.id === "social"
                         ? "text-gray-400"
                         : activePage === item.id
-                        ? "text-white"
-                        : "text-gray-200 group-hover:text-white"
+                          ? "text-white"
+                          : "text-gray-200 group-hover:text-white"
                     }`}
                   >
                     {item.label}
                     {item.id === "social" && (
-                      <span className="ml-1 text-xs text-purple-400">Em breve</span>
+                      <span className="ml-1 text-xs text-purple-400">
+                        Em breve
+                      </span>
                     )}
                   </span>
                 )}
@@ -208,11 +219,13 @@ const Sidebar: React.FC = () => {
                   : "hover:bg-gray-800/50 border border-transparent"
               }`}
             >
-              <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
-                activePage === "profile"
-                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/25"
-                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
-              }`}>
+              <div
+                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                  activePage === "profile"
+                    ? "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/25"
+                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                }`}
+              >
                 <div
                   className={`${
                     activePage === "profile"
@@ -249,11 +262,13 @@ const Sidebar: React.FC = () => {
                   : "hover:bg-gray-800/50 border border-transparent"
               }`}
             >
-              <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
-                activePage === "settings"
-                  ? "bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg shadow-gray-500/25"
-                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
-              }`}>
+              <div
+                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                  activePage === "settings"
+                    ? "bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg shadow-gray-500/25"
+                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                }`}
+              >
                 <div
                   className={`${
                     activePage === "settings"
@@ -291,26 +306,40 @@ const Sidebar: React.FC = () => {
                         alt={settings.name || profile?.displayName || "Usuário"}
                         className="w-full h-full object-cover rounded-full"
                         onError={(e) => {
-                          console.log('Erro ao carregar avatar:', settings.avatar);
+                          console.log(
+                            "Erro ao carregar avatar:",
+                            settings.avatar,
+                          );
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
+                          target.style.display = "none";
+                          const fallback =
+                            target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
                         }}
                       />
                     ) : null}
                     <span
                       className="text-white text-xs font-bold flex items-center justify-center w-full h-full"
-                      style={{ display: settings?.avatar ? 'none' : 'flex' }}
+                      style={{ display: settings?.avatar ? "none" : "flex" }}
                     >
-                      {(settings?.name || profile?.displayName || user?.email?.charAt(0) || "U").charAt(0).toUpperCase()}
+                      {(
+                        settings?.name ||
+                        profile?.displayName ||
+                        user?.email?.charAt(0) ||
+                        "U"
+                      )
+                        .charAt(0)
+                        .toUpperCase()}
                     </span>
                   </div>
                 </div>
                 {isExpanded && (
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">
-                      {settings?.name || profile?.name || profile?.displayName || "Usuário"}
+                      {settings?.name ||
+                        profile?.name ||
+                        profile?.displayName ||
+                        "Usuário"}
                     </p>
                     <p className="text-slate-400 text-xs truncate">
                       {profile?.isPremium ? "Premium" : "Básico"}
@@ -344,6 +373,6 @@ const Sidebar: React.FC = () => {
 };
 
 const MemoizedSidebar = memo(Sidebar);
-MemoizedSidebar.displayName = 'Sidebar';
+MemoizedSidebar.displayName = "Sidebar";
 
 export { MemoizedSidebar as Sidebar };

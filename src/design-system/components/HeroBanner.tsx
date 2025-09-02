@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Sparkles, Gamepad2, BookOpen, Film } from 'lucide-react';
-import { gradients, colors, typography, shadows } from '../tokens';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Sparkles, Gamepad2, BookOpen, Film } from "lucide-react";
+import { gradients, colors, typography, shadows } from "../tokens";
 
 export interface HeroBannerProps {
   title?: string;
@@ -12,20 +12,20 @@ export interface HeroBannerProps {
 
 const HERO_GRADIENTS = [
   {
-    id: 'warmCold',
-    name: 'Warm Cold',
+    id: "warmCold",
+    name: "Warm Cold",
     gradient: gradients.hero.warmCold,
     accent: colors.primary.magenta,
   },
   {
-    id: 'intrigue',
-    name: 'Intrigue',
+    id: "intrigue",
+    name: "Intrigue",
     gradient: gradients.hero.intrigue,
     accent: colors.primary.violet,
   },
   {
-    id: 'techOrganic',
-    name: 'Tech Organic',
+    id: "techOrganic",
+    name: "Tech Organic",
     gradient: gradients.hero.techOrganic,
     accent: colors.primary.cyan,
   },
@@ -81,7 +81,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 20, rotate: -10 }}
-            animate={{ 
+            animate={{
               opacity: [0, 0.6, 0],
               y: [-20, -60, -100],
               rotate: [-10, 10, -5],
@@ -92,7 +92,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               delay: delay,
               repeat: Infinity,
               repeatDelay: 2,
-              ease: "easeOut"
+              ease: "easeOut",
             }}
             className="absolute"
             style={{
@@ -100,10 +100,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               top: `${60 + Math.random() * 20}%`,
             }}
           >
-            <Icon 
-              size={24} 
+            <Icon
+              size={24}
               className="text-white/40"
-              style={{ filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))' }}
+              style={{ filter: "drop-shadow(0 0 10px rgba(255,255,255,0.3))" }}
             />
           </motion.div>
         ))}
@@ -121,7 +121,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             style={{
               fontFamily: typography.fontFamily.primary,
               lineHeight: typography.lineHeight.tight,
-              textShadow: '0 4px 20px rgba(0,0,0,0.5)'
+              textShadow: "0 4px 20px rgba(0,0,0,0.5)",
             }}
           >
             {title}
@@ -136,7 +136,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             style={{
               fontFamily: typography.fontFamily.primary,
               lineHeight: typography.lineHeight.normal,
-              textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+              textShadow: "0 2px 10px rgba(0,0,0,0.3)",
             }}
           >
             {subtitle}
@@ -153,7 +153,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               onClick={onAddMedia}
               whileHover={{
                 scale: 1.05,
-                boxShadow: `0 20px 40px -10px ${activeGradient.accent}40`
+                boxShadow: `0 20px 40px -10px ${activeGradient.accent}40`,
               }}
               whileTap={{ scale: 0.95 }}
               className="group relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white/20 backdrop-blur-[20px] border border-white/30 rounded-full text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-white/25 mx-4 sm:mx-0"
@@ -163,32 +163,40 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               }}
             >
               {/* Button Glow Effect */}
-              <div 
+              <div
                 className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 style={{
                   background: `linear-gradient(135deg, ${activeGradient.accent}20, transparent)`,
-                  filter: 'blur(10px)',
+                  filter: "blur(10px)",
                 }}
               />
-              
+
               {/* Plus Icon with Rotation */}
               <motion.div
                 animate={{ rotate: [0, 90, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 <Plus size={20} className="relative z-10" />
               </motion.div>
-              
+
               <span className="relative z-10">Adicionar Mídia</span>
-              
+
               {/* Sparkle Effect */}
               <motion.div
-                animate={{ 
+                animate={{
                   scale: [1, 1.2, 1],
                   rotate: [0, 180, 360],
-                  opacity: [0.5, 1, 0.5]
+                  opacity: [0.5, 1, 0.5],
                 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 <Sparkles size={16} className="relative z-10 text-yellow-300" />
               </motion.div>
@@ -209,9 +217,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
                 className={`w-3 h-3 rounded-full border-2 border-white/50 transition-all duration-300 ${
-                  index === currentGradient 
-                    ? 'bg-white scale-110' 
-                    : 'bg-white/30 hover:bg-white/60'
+                  index === currentGradient
+                    ? "bg-white scale-110"
+                    : "bg-white/30 hover:bg-white/60"
                 }`}
               />
             ))}

@@ -6,30 +6,30 @@
     contain: layout style paint;
     transform: translateZ(0);
   }
-  
+
   .media-card {
     contain: layout style paint;
     will-change: transform;
     transform: translateZ(0);
   }
-  
+
   /* Reduzir sombras complexas em mobile */
   .media-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
-  
+
   /* Simplificar gradientes em mobile */
   .gradient-bg {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
   }
-  
+
   /* Otimizar imagens para mobile */
   .media-cover img {
     image-rendering: auto;
     transform: none;
     transition: none;
   }
-  
+
   /* Desabilitar animações complexas em mobile */
   .animate-bounce,
   .animate-wiggle,
@@ -37,13 +37,13 @@
     animation: none !important;
     transform: none !important;
   }
-  
+
   /* Melhorar performance de scroll */
   .library-container {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: auto; /* Mais rápido que smooth em mobile */
   }
-  
+
   /* Otimizar botões flutuantes */
   .floating-button {
     position: fixed;
@@ -53,7 +53,7 @@
     will-change: transform;
     transform: translateZ(0);
   }
-  
+
   /* Melhorar performance dos filtros */
   .filter-container {
     position: sticky;
@@ -62,13 +62,13 @@
     backdrop-filter: none;
     background: rgba(15, 23, 42, 0.95);
   }
-  
+
   /* Otimizar modals para mobile */
   .modal-overlay {
     backdrop-filter: none;
     background: rgba(0, 0, 0, 0.8);
   }
-  
+
   /* Reduzir blur effects */
   .backdrop-blur-sm,
   .backdrop-blur-md {
@@ -84,16 +84,16 @@
     max-height: 100vh;
     overflow-y: auto;
   }
-  
+
   /* Simplificar ainda mais os estilos */
   .border-slate-700\/50 {
     border-color: #374151 !important;
   }
-  
+
   .bg-gradient-to-br {
     background: #1e293b !important;
   }
-  
+
   /* Desabilitar todas as transições em dispositivos muito pequenos */
   * {
     transition: none !important;
@@ -107,7 +107,7 @@
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 0.5rem !important;
   }
-  
+
   .media-card {
     aspect-ratio: 3/4;
   }
@@ -120,13 +120,13 @@
     min-height: 44px;
     padding: 8px;
   }
-  
+
   /* Melhorar área de toque dos botões pequenos */
   .mobile-action-button {
     padding: 12px;
     margin: 4px;
   }
-  
+
   /* Evitar hover states em touch */
   .hover\:bg-slate-600\/50:hover {
     background-color: initial !important;
@@ -150,7 +150,7 @@
   .media-card {
     padding: 0.5rem;
   }
-  
+
   .media-card h3 {
     font-size: 0.75rem;
     line-height: 1.2;

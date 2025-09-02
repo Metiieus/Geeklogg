@@ -34,8 +34,12 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
               <Search className="text-white/90" size={20} />
             </div>
             <div>
-              <div className="font-semibold text-white text-lg group-hover:text-cyan-200 transition-colors">Buscar Online</div>
-              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors">Google Books, TMDb, RAWG...</div>
+              <div className="font-semibold text-white text-lg group-hover:text-cyan-200 transition-colors">
+                Buscar Online
+              </div>
+              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors">
+                Google Books, TMDb, RAWG...
+              </div>
             </div>
           </div>
         </button>
@@ -51,8 +55,12 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
               <Plus className="text-white/90" size={20} />
             </div>
             <div>
-              <div className="font-semibold text-white text-lg group-hover:text-emerald-200 transition-colors">Adicionar Manual</div>
-              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors">Criar entrada personalizada</div>
+              <div className="font-semibold text-white text-lg group-hover:text-emerald-200 transition-colors">
+                Adicionar Manual
+              </div>
+              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors">
+                Criar entrada personalizada
+              </div>
             </div>
           </div>
         </button>

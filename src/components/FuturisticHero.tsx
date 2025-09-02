@@ -1,6 +1,15 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Search, TrendingUp, Star, Clock, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Plus,
+  Search,
+  TrendingUp,
+  Star,
+  Clock,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 interface FuturisticHeroProps {
   title: string;
@@ -30,7 +39,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
   stats,
   onAddMedia,
   onSearch,
-  searchQuery = '',
+  searchQuery = "",
   featuredItems = [],
   onFeaturedItemClick,
 }) => {
@@ -52,7 +61,6 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
 
       {/* Main Hero Content */}
       <div className="relative bg-white/60 dark:bg-slate-900/60 backdrop-blur-3xl rounded-[2.5rem] border border-slate-200/50 dark:border-slate-700/50 overflow-hidden">
-        
         {/* Header Section */}
         <div className="p-8 lg:p-12 pb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
@@ -65,7 +73,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
               >
                 Biblioteca de Mídia
               </motion.h1>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -137,7 +145,7 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                 </button>
               </div>
             </div>
-            
+
             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
               {featuredItems.map((item, index) => (
                 <motion.div
@@ -156,39 +164,46 @@ export const FuturisticHero: React.FC<FuturisticHeroProps> = ({
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
+                          target.style.display = "none";
+                          const fallback =
+                            target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = "flex";
                         }}
                       />
                     ) : null}
-                    <div 
+                    <div
                       className="w-full h-full bg-gradient-to-br from-slate-300 to-slate-400 dark:from-slate-600 dark:to-slate-700 flex items-center justify-center"
-                      style={{ display: item.cover ? 'none' : 'flex' }}
+                      style={{ display: item.cover ? "none" : "flex" }}
                     >
                       <span className="text-slate-600 dark:text-slate-300 font-bold text-4xl">
                         {item.title.charAt(0)}
                       </span>
                     </div>
-                    
+
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
+
                     {/* Rating Badge */}
                     {item.rating && (
                       <div className="absolute top-3 right-3 bg-yellow-500/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
                         <Star className="w-3 h-3 text-white fill-current" />
-                        <span className="text-white text-xs font-bold">{item.rating}</span>
+                        <span className="text-white text-xs font-bold">
+                          {item.rating}
+                        </span>
                       </div>
                     )}
-                    
+
                     {/* Title Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <h3 className="font-semibold text-sm line-clamp-2 mb-1">{item.title}</h3>
-                      <p className="text-xs text-white/80 capitalize">{item.type}</p>
+                      <h3 className="font-semibold text-sm line-clamp-2 mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-white/80 capitalize">
+                        {item.type}
+                      </p>
                     </div>
                   </div>
-                  
+
                   {/* Title below image */}
                   <div className="mt-3 px-1">
                     <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm line-clamp-2 mb-1">

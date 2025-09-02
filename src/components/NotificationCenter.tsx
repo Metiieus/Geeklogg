@@ -41,8 +41,8 @@ export const NotificationCenter: React.FC = () => {
       const notifs = await getUserNotifications(user.uid);
       // Verificar se notifs é um array válido e filtrar notificações inválidas
       if (Array.isArray(notifs)) {
-        const validNotifications = notifs.filter(notif =>
-          notif && typeof notif === 'object' && notif.id
+        const validNotifications = notifs.filter(
+          (notif) => notif && typeof notif === "object" && notif.id,
         );
         setNotifications(validNotifications);
       } else {
@@ -66,7 +66,7 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
-    const handleMarkAllAsRead = async () => {
+  const handleMarkAllAsRead = async () => {
     setLoading(true);
     try {
       await markAllNotificationsAsRead();
@@ -78,16 +78,20 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
-  const navigateToUserProfile = (fromUserId: string, fromUserName: string, fromUserAvatar?: string) => {
+  const navigateToUserProfile = (
+    fromUserId: string,
+    fromUserName: string,
+    fromUserAvatar?: string,
+  ) => {
     const userProfile = {
       uid: fromUserId,
       name: fromUserName,
       avatar: fromUserAvatar,
-      bio: '',
+      bio: "",
       isPublic: true,
       followers: [],
       following: [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     setSelectedUser(userProfile);
     setActivePage("social");
@@ -163,67 +167,83 @@ export const NotificationCenter: React.FC = () => {
           {/* Notifications List */}
           <div className="max-h-80 sm:max-h-96 overflow-y-auto">
             {notifications.length > 0 ? (
-              notifications.slice(0, 10).filter(Boolean).map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`p-3 sm:p-4 border-b border-white/10 hover:bg-slate-700/30 transition-colors ${
-                    !notification.read ? "bg-purple-500/5" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                                        <div
-                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
-                      onClick={() => navigateToUserProfile(notification.fromUserId || '', notification.fromUserName || 'Usuário', notification.fromUserAvatar)}
-                    >
-                      {notification.fromUserAvatar ? (
-                        <img
-                          src={notification.fromUserAvatar}
-                          alt={notification.fromUserName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        (notification.fromUserName || "?")
-                          .charAt(0)
-                          .toUpperCase()
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <p className="text-white text-xs sm:text-sm font-medium line-clamp-1">
-                            {notification.title || 'Notificação'}
-                          </p>
-                          <p className="text-slate-300 text-xs sm:text-sm line-clamp-2">
-                            {notification.message || 'Nova notificação recebida'}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-1 sm:gap-2 ml-1 sm:ml-2">
-                          <span className="text-xs text-slate-500">
-                            {formatTimeAgo(notification.timestamp || notification.createdAt)}
-                          </span>
-                          {!notification.read && (
-                            <button
-                              onClick={() => handleMarkAsRead(notification.id)}
-                              className="text-purple-400 hover:text-purple-300 touch-target"
-                            >
-                              <Check size={14} />
-                            </button>
-                          )}
-                        </div>
+              notifications
+                .slice(0, 10)
+                .filter(Boolean)
+                .map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`p-3 sm:p-4 border-b border-white/10 hover:bg-slate-700/30 transition-colors ${
+                      !notification.read ? "bg-purple-500/5" : ""
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
+                        onClick={() =>
+                          navigateToUserProfile(
+                            notification.fromUserId || "",
+                            notification.fromUserName || "Usuário",
+                            notification.fromUserAvatar,
+                          )
+                        }
+                      >
+                        {notification.fromUserAvatar ? (
+                          <img
+                            src={notification.fromUserAvatar}
+                            alt={notification.fromUserName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          (notification.fromUserName || "?")
+                            .charAt(0)
+                            .toUpperCase()
+                        )}
                       </div>
 
-                      <div className="flex items-center gap-1 mt-1">
-                        {getNotificationIcon(notification.type || 'default')}
-                        <span className="text-xs text-slate-500 capitalize">
-                          {notification.type?.replace("_", " ") || "notificação"}
-                        </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="text-white text-xs sm:text-sm font-medium line-clamp-1">
+                              {notification.title || "Notificação"}
+                            </p>
+                            <p className="text-slate-300 text-xs sm:text-sm line-clamp-2">
+                              {notification.message ||
+                                "Nova notificação recebida"}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-1 sm:gap-2 ml-1 sm:ml-2">
+                            <span className="text-xs text-slate-500">
+                              {formatTimeAgo(
+                                notification.timestamp ||
+                                  notification.createdAt,
+                              )}
+                            </span>
+                            {!notification.read && (
+                              <button
+                                onClick={() =>
+                                  handleMarkAsRead(notification.id)
+                                }
+                                className="text-purple-400 hover:text-purple-300 touch-target"
+                              >
+                                <Check size={14} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 mt-1">
+                          {getNotificationIcon(notification.type || "default")}
+                          <span className="text-xs text-slate-500 capitalize">
+                            {notification.type?.replace("_", " ") ||
+                              "notificação"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : (
               <div className="p-6 sm:p-8 text-center">
                 <Bell

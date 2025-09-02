@@ -1,4 +1,4 @@
-import { auth, isFirebaseOffline } from '../firebase';
+import { auth, isFirebaseOffline } from "../firebase";
 
 // --- Interfaces ---
 export interface CheckoutResponse {
@@ -15,13 +15,14 @@ export interface CheckoutResponse {
  */
 const getApiUrl = (): string => {
   const { hostname } = window.location;
-  const isDevelopment = hostname === 'localhost' || hostname.startsWith('192.168');
+  const isDevelopment =
+    hostname === "localhost" || hostname.startsWith("192.168");
 
   if (isDevelopment) {
-    return 'http://localhost:4242';
+    return "http://localhost:4242";
   } else {
     // ✅ Aponta para a sua Cloud Function do Firebase
-    return 'https://us-central1-geeklog-26b2c.cloudfunctions.net/api';
+    return "https://us-central1-geeklog-26b2c.cloudfunctions.net/api";
   }
 };
 
@@ -33,13 +34,19 @@ const getApiUrl = (): string => {
 export async function createPreference(): Promise<CheckoutResponse> {
   if (!auth || isFirebaseOffline()) {
     console.error("Firebase auth não disponível (modo offline).");
-    return { success: false, error: 'Serviço de pagamento não disponível no modo offline.' };
+    return {
+      success: false,
+      error: "Serviço de pagamento não disponível no modo offline.",
+    };
   }
 
   const user = auth.currentUser;
   if (!user) {
     console.error("Tentativa de checkout sem usuário logado.");
-    return { success: false, error: 'Você precisa estar logado para continuar.' };
+    return {
+      success: false,
+      error: "Você precisa estar logado para continuar.",
+    };
   }
 
   const apiUrl = getApiUrl();
@@ -47,16 +54,18 @@ export async function createPreference(): Promise<CheckoutResponse> {
   try {
     console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
     const response = await fetch(`${apiUrl}/create-preference`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ uid: user.uid, email: user.email }),
     });
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.error || `O servidor retornou um erro ${response.status}.`);
+      throw new Error(
+        data.error || `O servidor retornou um erro ${response.status}.`,
+      );
     }
 
     return {
@@ -64,12 +73,12 @@ export async function createPreference(): Promise<CheckoutResponse> {
       init_point: data.init_point,
       preference_id: data.preference_id,
     };
-
   } catch (error) {
-    console.error('Falha ao criar preferência de pagamento:', error);
+    console.error("Falha ao criar preferência de pagamento:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Um erro inesperado ocorreu.',
+      error:
+        error instanceof Error ? error.message : "Um erro inesperado ocorreu.",
     };
   }
 }
@@ -84,44 +93,52 @@ export async function handleCheckout(): Promise<void> {
     if (result.success && result.init_point) {
       window.location.href = result.init_point;
     } else {
-      throw new Error(result.error || 'Não foi possível obter o link de pagamento.');
+      throw new Error(
+        result.error || "Não foi possível obter o link de pagamento.",
+      );
     }
   } catch (error) {
-    console.error('Erro final no fluxo de checkout:', error);
-    alert(`Erro ao iniciar o pagamento: ${error instanceof Error ? error.message : 'Tente novamente mais tarde.'}`);
+    console.error("Erro final no fluxo de checkout:", error);
+    alert(
+      `Erro ao iniciar o pagamento: ${error instanceof Error ? error.message : "Tente novamente mais tarde."}`,
+    );
   }
 }
 
 /**
  * Chama o backend para atualizar o status do plano do usuário para Premium.
  */
-export async function updateUserPremium(uid: string, preference_id: string): Promise<boolean> {
+export async function updateUserPremium(
+  uid: string,
+  preference_id: string,
+): Promise<boolean> {
   if (!uid || !preference_id) {
     console.error("UID ou Preference ID faltando para atualizar o plano.");
     return false;
   }
-  
+
   const apiUrl = getApiUrl();
 
   try {
     const response = await fetch(`${apiUrl}/update-premium`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ uid, preference_id }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `Erro ${response.status} ao atualizar o plano.`);
+      throw new Error(
+        errorData.error || `Erro ${response.status} ao atualizar o plano.`,
+      );
     }
 
     console.log("Plano do usuário atualizado para Premium com sucesso!");
     return true;
-
   } catch (error) {
-    console.error('Falha ao atualizar o plano do usuário:', error);
+    console.error("Falha ao atualizar o plano do usuário:", error);
     return false;
   }
 }

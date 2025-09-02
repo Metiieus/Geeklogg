@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import { Search, X, Plus, Check } from 'lucide-react';
-import { MediaItem, MediaType } from '../../App';
-import { useAppContext } from '../../context/AppContext';
+import React, { useState, useMemo } from "react";
+import { Search, X, Plus, Check } from "lucide-react";
+import { MediaItem, MediaType } from "../../App";
+import { useAppContext } from "../../context/AppContext";
 
 interface LibrarySelectorProps {
-  mediaType: 'games' | 'movies'; // movies inclui filmes, séries e anime
+  mediaType: "games" | "movies"; // movies inclui filmes, séries e anime
   onSelect: (items: MediaItem[]) => void;
   onClose: () => void;
   maxSelection: number;
@@ -12,39 +12,41 @@ interface LibrarySelectorProps {
 }
 
 const mediaTypeLabels = {
-  games: 'Jogos',
-  movies: 'Filmes & Séries'
+  games: "Jogos",
+  movies: "Filmes & Séries",
 };
 
-export const LibrarySelector: React.FC<LibrarySelectorProps> = ({ 
-  mediaType, 
-  onSelect, 
-  onClose, 
+export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
+  mediaType,
+  onSelect,
+  onClose,
   maxSelection,
-  selectedItems = []
+  selectedItems = [],
 }) => {
   const { mediaItems } = useAppContext();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [localSelected, setLocalSelected] = useState<string[]>(selectedItems);
 
   // Filtrar itens da biblioteca
   const filteredItems = useMemo(() => {
     let items = mediaItems;
-    
+
     // Filtrar por tipo
-    if (mediaType === 'games') {
-      items = items.filter(item => item.type === 'games');
+    if (mediaType === "games") {
+      items = items.filter((item) => item.type === "games");
     } else {
-      items = items.filter(item => ['movies', 'series', 'anime'].includes(item.type));
-    }
-    
-    // Filtrar por busca
-    if (searchTerm) {
-      items = items.filter(item => 
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+      items = items.filter((item) =>
+        ["movies", "series", "anime"].includes(item.type),
       );
     }
-    
+
+    // Filtrar por busca
+    if (searchTerm) {
+      items = items.filter((item) =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+
     // Ordenar por rating (melhor primeiro) e depois por data de atualização
     return items.sort((a, b) => {
       const ratingA = a.rating || 0;
@@ -57,9 +59,9 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
   }, [mediaItems, mediaType, searchTerm]);
 
   const handleToggleItem = (itemId: string) => {
-    setLocalSelected(prev => {
+    setLocalSelected((prev) => {
       if (prev.includes(itemId)) {
-        return prev.filter(id => id !== itemId);
+        return prev.filter((id) => id !== itemId);
       } else if (prev.length < maxSelection) {
         return [...prev, itemId];
       }
@@ -68,7 +70,9 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
   };
 
   const handleConfirm = () => {
-    const selectedMediaItems = mediaItems.filter(item => localSelected.includes(item.id));
+    const selectedMediaItems = mediaItems.filter((item) =>
+      localSelected.includes(item.id),
+    );
     onSelect(selectedMediaItems);
     onClose();
   };
@@ -86,7 +90,6 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
         className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
           <div>
@@ -94,10 +97,14 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
               Selecionar {mediaTypeLabels[mediaType]}
             </h2>
             <p className="text-sm text-slate-400 mt-1">
-              Escolha até {maxSelection} itens da sua biblioteca ({localSelected.length}/{maxSelection})
+              Escolha até {maxSelection} itens da sua biblioteca (
+              {localSelected.length}/{maxSelection})
             </p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+          >
             <X className="text-slate-400" size={20} />
           </button>
         </div>
@@ -105,7 +112,10 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
         {/* Search */}
         <div className="p-4 sm:p-6 border-b border-white/10 flex-shrink-0">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Buscar na biblioteca..."
@@ -122,8 +132,9 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
             <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {filteredItems.map((item) => {
                 const isSelected = localSelected.includes(item.id);
-                const canSelect = localSelected.length < maxSelection || isSelected;
-                
+                const canSelect =
+                  localSelected.length < maxSelection || isSelected;
+
                 return (
                   <button
                     key={item.id}
@@ -131,16 +142,20 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                     disabled={!canSelect}
                     className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border transition-all text-left touch-target ${
                       isSelected
-                        ? 'bg-purple-500/20 border-purple-500/50'
+                        ? "bg-purple-500/20 border-purple-500/50"
                         : canSelect
-                        ? 'bg-slate-800/50 border-slate-600 hover:bg-slate-800/80 hover:border-slate-500'
-                        : 'bg-slate-800/30 border-slate-700 opacity-50 cursor-not-allowed'
+                          ? "bg-slate-800/50 border-slate-600 hover:bg-slate-800/80 hover:border-slate-500"
+                          : "bg-slate-800/30 border-slate-700 opacity-50 cursor-not-allowed"
                     }`}
                   >
                     {/* Cover */}
                     <div className="w-10 h-12 sm:w-12 sm:h-16 bg-slate-700 rounded overflow-hidden flex-shrink-0">
                       {item.cover ? (
-                        <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
+                        <img
+                          src={item.cover}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500">
                           <Search size={14} className="sm:w-4 sm:h-4" />
@@ -150,36 +165,56 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-white font-medium text-xs sm:text-sm line-clamp-2">{item.title}</h4>
+                      <h4 className="text-white font-medium text-xs sm:text-sm line-clamp-2">
+                        {item.title}
+                      </h4>
                       <div className="flex items-center gap-1 sm:gap-2 mt-1 flex-wrap">
                         {item.rating && (
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full" />
-                            <span className="text-yellow-400 text-xs">{item.rating}</span>
+                            <span className="text-yellow-400 text-xs">
+                              {item.rating}
+                            </span>
                           </div>
                         )}
-                        <span className={`text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${
-                          item.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                          item.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-400' :
-                          item.status === 'planned' ? 'bg-blue-500/20 text-blue-400' :
-                          'bg-red-500/20 text-red-400'
-                        }`}>
-                          {item.status === 'completed' ? 'Concluído' :
-                           item.status === 'in-progress' ? 'Em Progresso' :
-                           item.status === 'planned' ? 'Planejado' : 'Abandonado'}
+                        <span
+                          className={`text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${
+                            item.status === "completed"
+                              ? "bg-green-500/20 text-green-400"
+                              : item.status === "in-progress"
+                                ? "bg-yellow-500/20 text-yellow-400"
+                                : item.status === "planned"
+                                  ? "bg-blue-500/20 text-blue-400"
+                                  : "bg-red-500/20 text-red-400"
+                          }`}
+                        >
+                          {item.status === "completed"
+                            ? "Concluído"
+                            : item.status === "in-progress"
+                              ? "Em Progresso"
+                              : item.status === "planned"
+                                ? "Planejado"
+                                : "Abandonado"}
                         </span>
                       </div>
                     </div>
 
                     {/* Selection indicator */}
-                    <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                      isSelected
-                        ? 'bg-purple-500 border-purple-500'
-                        : canSelect
-                        ? 'border-slate-400'
-                        : 'border-slate-600'
-                    }`}>
-                      {isSelected && <Check size={12} className="text-white sm:w-3.5 sm:h-3.5" />}
+                    <div
+                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        isSelected
+                          ? "bg-purple-500 border-purple-500"
+                          : canSelect
+                            ? "border-slate-400"
+                            : "border-slate-600"
+                      }`}
+                    >
+                      {isSelected && (
+                        <Check
+                          size={12}
+                          className="text-white sm:w-3.5 sm:h-3.5"
+                        />
+                      )}
                     </div>
                   </button>
                 );
@@ -189,7 +224,9 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
             <div className="text-center py-8">
               <Search className="w-12 h-12 text-slate-500 mx-auto mb-2" />
               <p className="text-slate-400">
-                {searchTerm ? 'Nenhum item encontrado' : 'Sua biblioteca está vazia'}
+                {searchTerm
+                  ? "Nenhum item encontrado"
+                  : "Sua biblioteca está vazia"}
               </p>
             </div>
           )}

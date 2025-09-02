@@ -10,7 +10,7 @@ let isInitialized = false;
  */
 function setViewportHeight() {
   const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
 }
 
 /**
@@ -24,21 +24,21 @@ export function initializeViewportHeight() {
   setViewportHeight();
 
   // Atualizar quando a janela redimensionar
-  window.addEventListener('resize', setViewportHeight);
-  
+  window.addEventListener("resize", setViewportHeight);
+
   // Atualizar quando a orientação mudar
-  window.addEventListener('orientationchange', () => {
+  window.addEventListener("orientationchange", () => {
     // Pequeno delay para aguardar a mudança de orientação
     setTimeout(setViewportHeight, 100);
   });
 
   // Para iOS Safari - detectar mudanças na barra de endereço
-  if (typeof window !== 'undefined' && 'visualViewport' in window) {
-    window.visualViewport?.addEventListener('resize', setViewportHeight);
+  if (typeof window !== "undefined" && "visualViewport" in window) {
+    window.visualViewport?.addEventListener("resize", setViewportHeight);
   }
 
   isInitialized = true;
-  console.log('✅ Viewport height utility inicializado');
+  console.log("✅ Viewport height utility inicializado");
 }
 
 /**
@@ -47,11 +47,11 @@ export function initializeViewportHeight() {
 export function cleanupViewportHeight() {
   if (!isInitialized) return;
 
-  window.removeEventListener('resize', setViewportHeight);
-  window.removeEventListener('orientationchange', setViewportHeight);
-  
-  if (typeof window !== 'undefined' && 'visualViewport' in window) {
-    window.visualViewport?.removeEventListener('resize', setViewportHeight);
+  window.removeEventListener("resize", setViewportHeight);
+  window.removeEventListener("orientationchange", setViewportHeight);
+
+  if (typeof window !== "undefined" && "visualViewport" in window) {
+    window.visualViewport?.removeEventListener("resize", setViewportHeight);
   }
 
   isInitialized = false;
@@ -75,14 +75,19 @@ export function getViewportHeight(): number {
  * Verifica se estamos em um dispositivo móvel
  */
 export function isMobileDevice(): boolean {
-  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  return (
+    window.innerWidth <= 768 ||
+    /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent,
+    )
+  );
 }
 
 // Auto-inicializar se estiver no browser
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Inicializar após o DOM estar pronto
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeViewportHeight);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeViewportHeight);
   } else {
     initializeViewportHeight();
   }

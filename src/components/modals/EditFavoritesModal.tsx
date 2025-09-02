@@ -1,46 +1,69 @@
-import React, { useState } from 'react';
-import { Plus, Save, X, Trash2, ChevronUp, ChevronDown, Upload, Library } from 'lucide-react';
-import { FavoriteItem, UserSettings, MediaItem } from '../../App';
-import { useAppContext } from '../../context/AppContext';
-import { LibrarySelector } from './LibrarySelector';
-import { ModalWrapper } from '../ModalWrapper';
-import { useImprovedScrollLock } from '../../hooks/useImprovedScrollLock';
+import React, { useState } from "react";
+import {
+  Plus,
+  Save,
+  X,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
+  Upload,
+  Library,
+} from "lucide-react";
+import { FavoriteItem, UserSettings, MediaItem } from "../../App";
+import { useAppContext } from "../../context/AppContext";
+import { LibrarySelector } from "./LibrarySelector";
+import { ModalWrapper } from "../ModalWrapper";
+import { useImprovedScrollLock } from "../../hooks/useImprovedScrollLock";
 
 interface EditFavoritesModalProps {
-  favorites: UserSettings['favorites'];
-  onSave: (fav: UserSettings['favorites']) => void;
+  favorites: UserSettings["favorites"];
+  onSave: (fav: UserSettings["favorites"]) => void;
   onClose: () => void;
   isOpen?: boolean;
 }
 
-const emptyItem = (): FavoriteItem => ({ id: Date.now().toString(), name: '', image: '' });
+const emptyItem = (): FavoriteItem => ({
+  id: Date.now().toString(),
+  name: "",
+  image: "",
+});
 
-type Category = keyof UserSettings['favorites'];
+type Category = keyof UserSettings["favorites"];
 
-export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorites, onSave, onClose, isOpen = true }) => {
+export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({
+  favorites,
+  onSave,
+  onClose,
+  isOpen = true,
+}) => {
   const [local, setLocal] = useState({ ...favorites });
-  const [showLibrarySelector, setShowLibrarySelector] = useState<'games' | 'movies' | null>(null);
+  const [showLibrarySelector, setShowLibrarySelector] = useState<
+    "games" | "movies" | null
+  >(null);
   const { mediaItems } = useAppContext();
 
-  const handleLibrarySelection = (category: 'games' | 'movies', selectedItems: MediaItem[]) => {
-    const favoriteItems = selectedItems.map(item => ({
+  const handleLibrarySelection = (
+    category: "games" | "movies",
+    selectedItems: MediaItem[],
+  ) => {
+    const favoriteItems = selectedItems.map((item) => ({
       id: item.id,
       name: item.title,
-      image: item.cover || ''
+      image: item.cover || "",
     }));
 
-    setLocal(prev => ({
+    setLocal((prev) => ({
       ...prev,
-      [category]: favoriteItems
+      [category]: favoriteItems,
     }));
   };
 
-  const getCurrentSelectedIds = (category: 'games' | 'movies') => {
-    return local[category].map(item => item.id);
+  const getCurrentSelectedIds = (category: "games" | "movies") => {
+    return local[category].map((item) => item.id);
   };
 
   const addItem = (cat: Category) => {
-    setLocal(prev => {
+    setLocal((prev) => {
       // Limitar a 3 itens por categoria
       if (prev[cat].length >= 3) {
         return prev;
@@ -49,35 +72,44 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
     });
   };
 
-  const updateItem = (cat: Category, index: number, field: keyof FavoriteItem, value: string) => {
-    setLocal(prev => {
+  const updateItem = (
+    cat: Category,
+    index: number,
+    field: keyof FavoriteItem,
+    value: string,
+  ) => {
+    setLocal((prev) => {
       const arr = [...prev[cat]];
       arr[index] = { ...arr[index], [field]: value };
       return { ...prev, [cat]: arr };
     });
   };
 
-  const uploadImage = (cat: Category, index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadImage = (
+    cat: Category,
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (ev) => {
         const result = ev.target?.result as string;
-        updateItem(cat, index, 'image', result);
+        updateItem(cat, index, "image", result);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const removeItem = (cat: Category, index: number) => {
-    setLocal(prev => {
+    setLocal((prev) => {
       const arr = prev[cat].filter((_, i) => i !== index);
       return { ...prev, [cat]: arr };
     });
   };
 
   const moveItem = (cat: Category, from: number, to: number) => {
-    setLocal(prev => {
+    setLocal((prev) => {
       const arr = [...prev[cat]];
       const [item] = arr.splice(from, 1);
       arr.splice(to, 0, item);
@@ -96,7 +128,7 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
         <h3 className="text-lg font-semibold text-white">{title}</h3>
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400">{local[cat].length}/3</span>
-          {(cat === 'games' || cat === 'movies') && (
+          {(cat === "games" || cat === "movies") && (
             <button
               type="button"
               onClick={(e) => {
@@ -113,15 +145,24 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
         </div>
       </div>
       {local[cat].map((item, idx) => (
-        <div key={item.id} className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-lg">
+        <div
+          key={item.id}
+          className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-lg"
+        >
           <div className="w-16 h-16 bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
-            {item.image ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> : null}
+            {item.image ? (
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
+            ) : null}
           </div>
           <div className="flex-1 space-y-2">
             <input
               type="text"
               value={item.name}
-              onChange={(e) => updateItem(cat, idx, 'name', e.target.value)}
+              onChange={(e) => updateItem(cat, idx, "name", e.target.value)}
               className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Nome"
             />
@@ -137,13 +178,29 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
             </label>
           </div>
           <div className="flex flex-col gap-1">
-            <button type="button" onClick={() => moveItem(cat, idx, Math.max(0, idx - 1))} disabled={idx === 0} className="p-1 text-slate-300 hover:text-white disabled:opacity-50">
+            <button
+              type="button"
+              onClick={() => moveItem(cat, idx, Math.max(0, idx - 1))}
+              disabled={idx === 0}
+              className="p-1 text-slate-300 hover:text-white disabled:opacity-50"
+            >
               <ChevronUp size={18} />
             </button>
-            <button type="button" onClick={() => moveItem(cat, idx, Math.min(local[cat].length - 1, idx + 1))} disabled={idx === local[cat].length - 1} className="p-1 text-slate-300 hover:text-white disabled:opacity-50">
+            <button
+              type="button"
+              onClick={() =>
+                moveItem(cat, idx, Math.min(local[cat].length - 1, idx + 1))
+              }
+              disabled={idx === local[cat].length - 1}
+              className="p-1 text-slate-300 hover:text-white disabled:opacity-50"
+            >
               <ChevronDown size={18} />
             </button>
-            <button type="button" onClick={() => removeItem(cat, idx)} className="p-1 text-red-400 hover:text-red-500">
+            <button
+              type="button"
+              onClick={() => removeItem(cat, idx)}
+              className="p-1 text-red-400 hover:text-red-500"
+            >
               <Trash2 size={18} />
             </button>
           </div>
@@ -155,12 +212,12 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
         disabled={local[cat].length >= 3}
         className={`flex items-center gap-2 transition-colors ${
           local[cat].length >= 3
-            ? 'text-slate-500 cursor-not-allowed'
-            : 'text-purple-400 hover:text-purple-500'
+            ? "text-slate-500 cursor-not-allowed"
+            : "text-purple-400 hover:text-purple-500"
         }`}
       >
         <Plus size={18} />
-        {local[cat].length >= 3 ? 'Máximo 3 itens' : 'Adicionar'}
+        {local[cat].length >= 3 ? "Máximo 3 itens" : "Adicionar"}
       </button>
     </div>
   );
@@ -177,16 +234,24 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
     >
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full overflow-hidden flex flex-col modal-h-auto">
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Editar Favoritos</h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">
+            Editar Favoritos
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
+          >
             <X className="text-slate-400" size={20} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden min-h-0">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 flex flex-col overflow-hidden min-h-0"
+        >
           <div className="flex-1 p-4 sm:p-6 space-y-6 sm:space-y-8 overflow-y-auto min-h-0">
-          {renderCategory('characters', 'Personagens Favoritos')}
-          {renderCategory('games', 'Jogos Favoritos')}
-          {renderCategory('movies', 'Filmes/Séries Favoritos')}
+            {renderCategory("characters", "Personagens Favoritos")}
+            {renderCategory("games", "Jogos Favoritos")}
+            {renderCategory("movies", "Filmes/Séries Favoritos")}
           </div>
 
           {/* Actions - Fixed at bottom */}
@@ -214,7 +279,9 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({ favorite
       {showLibrarySelector && (
         <LibrarySelector
           mediaType={showLibrarySelector}
-          onSelect={(items) => handleLibrarySelection(showLibrarySelector, items)}
+          onSelect={(items) =>
+            handleLibrarySelection(showLibrarySelector, items)
+          }
           onClose={() => setShowLibrarySelector(null)}
           maxSelection={3}
           selectedItems={getCurrentSelectedIds(showLibrarySelector)}

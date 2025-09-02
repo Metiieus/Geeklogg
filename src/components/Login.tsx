@@ -50,7 +50,10 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
   const handleForgotPassword = async (resetEmail: string, retryCount = 0) => {
     if (!resetEmail.trim()) {
-      showError("Email obrigatório", "Por favor, insira seu email para resetar a senha");
+      showError(
+        "Email obrigatório",
+        "Por favor, insira seu email para resetar a senha",
+      );
       return;
     }
 
@@ -63,7 +66,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     if (!auth || isFirebaseOffline()) {
       showError(
         "Modo Offline",
-        "Funcionalidade de reset de senha não disponível offline. Conecte-se à internet e tente novamente."
+        "Funcionalidade de reset de senha não disponível offline. Conecte-se à internet e tente novamente.",
       );
       return;
     }
@@ -74,7 +77,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       await resetPassword(resetEmail);
       showSuccess(
         "🎉 Email mágico enviado!",
-        "O Archivius mandou um email especial para você! Verifique sua caixa de entrada (e a pasta de spam também) para redefinir sua senha ✨"
+        "O Archivius mandou um email especial para você! Verifique sua caixa de entrada (e a pasta de spam também) para redefinir sua senha ✨",
       );
       setShowForgotPassword(false);
     } catch (error: any) {
@@ -82,7 +85,9 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
       // Se for erro de rede e ainda não tentou 1 vez, tenta novamente com delay maior
       if (error?.code === "auth/network-request-failed" && retryCount < 1) {
-        console.log(`Tentando novamente com delay maior... (tentativa ${retryCount + 1}/1)`);
+        console.log(
+          `Tentando novamente com delay maior... (tentativa ${retryCount + 1}/1)`,
+        );
         setTimeout(() => {
           handleForgotPassword(resetEmail, retryCount + 1);
         }, 5000); // Aguarda 5 segundos antes de tentar novamente
@@ -95,7 +100,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       if (error?.code === "auth/network-request-failed") {
         showError(
           "Serviço Temporariamente Indisponível",
-          "O serviço de reset de senha está temporariamente indisponível. Tente novamente em alguns minutos ou entre em contato pelo suporte. 📧"
+          "O serviço de reset de senha está temporariamente indisponível. Tente novamente em alguns minutos ou entre em contato pelo suporte. 📧",
         );
       } else {
         showError("Erro ao resetar senha", errorMessage);
@@ -315,8 +320,9 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                   Esqueceu sua senha? 😅
                 </h3>
                 <p className="text-slate-300 text-sm leading-relaxed">
-                  Relaxa! O Archivius vai mandar um email mágico ✨ para você redefinir sua senha.
-                  É só digitar seu email aí embaixo que ele resolve tudo para você! 🚀
+                  Relaxa! O Archivius vai mandar um email mágico ✨ para você
+                  redefinir sua senha. É só digitar seu email aí embaixo que ele
+                  resolve tudo para você! 🚀
                 </p>
               </div>
 

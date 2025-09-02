@@ -1,5 +1,8 @@
 import { MediaType } from "../App";
-import { rawgService, RAWGSearchResult } from "../infrastructure/services/RAWGService";
+import {
+  rawgService,
+  RAWGSearchResult,
+} from "../infrastructure/services/RAWGService";
 
 // Interfaces para resultados das APIs
 export interface ExternalMediaResult {
@@ -161,8 +164,9 @@ class ExternalMediaService {
         return [];
       }
 
-      return data.results.slice(0, limit).map(
-        (item: any): ExternalMediaResult => {
+      return data.results
+        .slice(0, limit)
+        .map((item: any): ExternalMediaResult => {
           const isAnime = this.detectIfAnime(item);
           return {
             id: item.id.toString(),
@@ -181,8 +185,7 @@ class ExternalMediaService {
             source: "tmdb",
             originalType: isAnime ? "anime" : "tv",
           };
-        }
-      );
+        });
     } catch (error) {
       console.error("Erro ao buscar séries:", error);
       throw error;
@@ -200,21 +203,23 @@ class ExternalMediaService {
         limit,
       });
 
-      return rawgResults.map((game: RAWGSearchResult): ExternalMediaResult => ({
-        id: game.id,
-        title: game.title,
-        description: game.description,
-        image: game.image,
-        year: game.year,
-        genres: game.genres || [],
-        platforms: game.platforms,
-        developer: game.developer,
-        screenshots: game.screenshots,
-        officialWebsite: game.officialWebsite,
-        rating: game.rating,
-        source: "rawg",
-        originalType: "game",
-      }));
+      return rawgResults.map(
+        (game: RAWGSearchResult): ExternalMediaResult => ({
+          id: game.id,
+          title: game.title,
+          description: game.description,
+          image: game.image,
+          year: game.year,
+          genres: game.genres || [],
+          platforms: game.platforms,
+          developer: game.developer,
+          screenshots: game.screenshots,
+          officialWebsite: game.officialWebsite,
+          rating: game.rating,
+          source: "rawg",
+          originalType: "game",
+        }),
+      );
     } catch (error) {
       console.error("Erro ao buscar games:", error);
       // Se RAWG falhar, retorna array vazio em vez de lançar erro
@@ -239,16 +244,16 @@ class ExternalMediaService {
         case "games":
           return await this.searchGames(query, limit);
         case "series":
-          return await this.searchTvShows(query, limit).then(results =>
-            results.filter(result => result.originalType !== "anime")
+          return await this.searchTvShows(query, limit).then((results) =>
+            results.filter((result) => result.originalType !== "anime"),
           );
         case "anime":
-          return await this.searchTvShows(query, limit).then(results =>
-            results.filter(result => result.originalType === "anime")
+          return await this.searchTvShows(query, limit).then((results) =>
+            results.filter((result) => result.originalType === "anime"),
           );
         case "dorama":
-          return await this.searchTvShows(query, limit).then(results =>
-            results.filter(result => this.detectIfDorama(result))
+          return await this.searchTvShows(query, limit).then((results) =>
+            results.filter((result) => this.detectIfDorama(result)),
           );
         default:
           // Para tipos não suportados, retorna array vazio
@@ -319,12 +324,25 @@ class ExternalMediaService {
 
     // Animes muito específicos que sempre devem ser detectados como anime
     const definiteAnimes = [
-      'one piece', 'dragon ball', 'naruto', 'attack on titan', 'demon slayer',
-      'my hero academia', 'jujutsu kaisen', 'fullmetal alchemist', 'death note',
-      'bleach', 'hunter x hunter', 'pokemon', 'sailor moon', 'evangelion'
+      "one piece",
+      "dragon ball",
+      "naruto",
+      "attack on titan",
+      "demon slayer",
+      "my hero academia",
+      "jujutsu kaisen",
+      "fullmetal alchemist",
+      "death note",
+      "bleach",
+      "hunter x hunter",
+      "pokemon",
+      "sailor moon",
+      "evangelion",
     ];
 
-    const isDefiniteAnime = definiteAnimes.some(anime => title.includes(anime));
+    const isDefiniteAnime = definiteAnimes.some((anime) =>
+      title.includes(anime),
+    );
 
     // Se for um anime definitivo, retorna true
     if (isDefiniteAnime) {
@@ -332,7 +350,7 @@ class ExternalMediaService {
     }
 
     // Países de origem que indicam anime
-    const animeCountries = ['JP'];
+    const animeCountries = ["JP"];
     const countries = item.origin_country || [];
 
     // Gêneros que são comuns em animes (ID 16 = Animation)
@@ -340,24 +358,25 @@ class ExternalMediaService {
     const hasAnimationGenre = genreIds.includes(16);
 
     // Verifica país de origem japonês
-    const isJapanese = originalLanguage === 'ja' ||
-                      countries.some((country: string) => animeCountries.includes(country));
+    const isJapanese =
+      originalLanguage === "ja" ||
+      countries.some((country: string) => animeCountries.includes(country));
 
     // Palavras-chave MUITO específicas de anime
-    const strictAnimeKeywords = [
-      'anime', 'manga'
-    ];
+    const strictAnimeKeywords = ["anime", "manga"];
 
     // Verifica palavras-chave no título ou descrição
-    const hasStrictAnimeKeywords = strictAnimeKeywords.some(keyword =>
-      title.includes(keyword) || overview.includes(keyword)
+    const hasStrictAnimeKeywords = strictAnimeKeywords.some(
+      (keyword) => title.includes(keyword) || overview.includes(keyword),
     );
 
     // É anime apenas se:
     // 1. É definitivamente um anime conhecido OU
     // 2. É japonês E tem gênero de animação E tem palavras-chave específicas de anime
-    return isDefiniteAnime ||
-           (isJapanese && hasAnimationGenre && hasStrictAnimeKeywords);
+    return (
+      isDefiniteAnime ||
+      (isJapanese && hasAnimationGenre && hasStrictAnimeKeywords)
+    );
   }
 
   // Detectar se um resultado é um dorama
@@ -367,13 +386,24 @@ class ExternalMediaService {
 
     // Palavras-chave que indicam dorama
     const doramaKeywords = [
-      'dorama', 'k-drama', 'korean drama', 'j-drama', 'japanese drama',
-      'thai drama', 'chinese drama', 'drama coreano', 'drama japonês',
-      'drama tailandês', 'drama chinês', 'bl', 'boys love', 'yaoi live action'
+      "dorama",
+      "k-drama",
+      "korean drama",
+      "j-drama",
+      "japanese drama",
+      "thai drama",
+      "chinese drama",
+      "drama coreano",
+      "drama japonês",
+      "drama tailandês",
+      "drama chinês",
+      "bl",
+      "boys love",
+      "yaoi live action",
     ];
 
-    return doramaKeywords.some(keyword =>
-      title.includes(keyword) || description.includes(keyword)
+    return doramaKeywords.some(
+      (keyword) => title.includes(keyword) || description.includes(keyword),
     );
   }
 

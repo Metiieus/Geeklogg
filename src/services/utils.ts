@@ -42,9 +42,7 @@ export function removeUndefinedFields<T extends Record<string, any>>(
  * Sanitiza valores string de um objeto,
  * removendo tags <script>, event handlers e javascript:.
  */
-export function sanitizeStrings(
-  obj: Record<string, any>,
-): Record<string, any> {
+export function sanitizeStrings(obj: Record<string, any>): Record<string, any> {
   const result: Record<string, any> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === "string") {
@@ -65,7 +63,7 @@ export function sanitizeStrings(
  */
 export function removeDiacritics(str: string): string {
   return str
-    .normalize("NFD")                // separa base de acentos
+    .normalize("NFD") // separa base de acentos
     .replace(/[\u0300-\u036f]/g, "") // remove todos os diacríticos
     .toLowerCase();
 }

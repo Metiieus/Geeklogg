@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
     label: "Reviews",
     gradient: "from-purple-400 to-indigo-500",
   },
-    {
+  {
     id: "timeline",
     icon: <Clock size={20} />,
     label: "Jornada",
@@ -75,13 +75,16 @@ const MobileSidebar: React.FC = () => {
   const { showInfo } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleNavigation = useCallback((itemId: ActivePage) => {
-    if (itemId === "social") {
-      showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
-      return;
-    }
-    setActivePage(itemId);
-  }, [showInfo, setActivePage]);
+  const handleNavigation = useCallback(
+    (itemId: ActivePage) => {
+      if (itemId === "social") {
+        showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+        return;
+      }
+      setActivePage(itemId);
+    },
+    [showInfo, setActivePage],
+  );
 
   // Close sidebar when page changes
   useEffect(() => {
@@ -111,13 +114,16 @@ const MobileSidebar: React.FC = () => {
   }, [isOpen]);
 
   const getCurrentPageInfo = () => {
-    return navItems.find(item => item.id === activePage) || navItems[0];
+    return navItems.find((item) => item.id === activePage) || navItems[0];
   };
 
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 backdrop-blur-xl border-b border-white/10" style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}>
+      <div
+        className="md:hidden fixed top-0 left-0 right-0 z-40 backdrop-blur-xl border-b border-white/10"
+        style={{ backgroundColor: "rgba(17, 24, 39, 0.95)" }}
+      >
         <div className="safe-area-inset-top flex items-center justify-between px-3 py-3">
           {/* Menu Button */}
           <button
@@ -129,10 +135,10 @@ const MobileSidebar: React.FC = () => {
 
           {/* Current Page Indicator */}
           <div className="flex items-center gap-3 flex-1 justify-center min-w-0">
-            <div className={`relative p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} shadow-lg transition-all duration-300 flex-shrink-0`}>
-              <div className="text-white">
-                {getCurrentPageInfo().icon}
-              </div>
+            <div
+              className={`relative p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} shadow-lg transition-all duration-300 flex-shrink-0`}
+            >
+              <div className="text-white">{getCurrentPageInfo().icon}</div>
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
             </div>
             <span className="text-white font-semibold text-lg truncate">
@@ -143,24 +149,37 @@ const MobileSidebar: React.FC = () => {
           {/* Profile Avatar */}
           <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5 flex items-center justify-center flex-shrink-0">
             <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-              {(profile?.avatar || profile?.profileImage || settings?.avatar) ? (
+              {profile?.avatar || profile?.profileImage || settings?.avatar ? (
                 <img
-                  src={profile?.avatar || profile?.profileImage || settings?.avatar}
+                  src={
+                    profile?.avatar || profile?.profileImage || settings?.avatar
+                  }
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"
                   onError={(e) => {
                     // Fallback se a imagem falhar ao carregar
                     const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.setAttribute('style', 'display: flex');
+                    target.style.display = "none";
+                    target.nextElementSibling?.setAttribute(
+                      "style",
+                      "display: flex",
+                    );
                   }}
                 />
               ) : null}
               <span
                 className="text-white font-semibold text-sm flex items-center justify-center w-full h-full"
-                style={{ display: (profile?.avatar || profile?.profileImage || settings?.avatar) ? 'none' : 'flex' }}
+                style={{
+                  display:
+                    profile?.avatar || profile?.profileImage || settings?.avatar
+                      ? "none"
+                      : "flex",
+                }}
               >
-                {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                {profile?.name?.charAt(0) ||
+                  user?.displayName?.charAt(0) ||
+                  user?.email?.charAt(0) ||
+                  "U"}
               </span>
             </div>
           </div>
@@ -181,7 +200,13 @@ const MobileSidebar: React.FC = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="h-full border-r border-white/10 overflow-hidden" style={{ background: 'linear-gradient(135deg, #111827 0%, #1F2937 50%, #111827 100%)' }}>
+        <div
+          className="h-full border-r border-white/10 overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(135deg, #111827 0%, #1F2937 50%, #111827 100%)",
+          }}
+        >
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-20 -left-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
@@ -207,30 +232,53 @@ const MobileSidebar: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
-                    {(profile?.avatar || profile?.profileImage || settings?.avatar) ? (
+                    {profile?.avatar ||
+                    profile?.profileImage ||
+                    settings?.avatar ? (
                       <img
-                        src={profile?.avatar || profile?.profileImage || settings?.avatar}
+                        src={
+                          profile?.avatar ||
+                          profile?.profileImage ||
+                          settings?.avatar
+                        }
                         alt="Profile"
                         className="w-full h-full rounded-full object-cover"
                         onError={(e) => {
                           // Fallback se a imagem falhar ao carregar
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling?.setAttribute('style', 'display: flex');
+                          target.style.display = "none";
+                          target.nextElementSibling?.setAttribute(
+                            "style",
+                            "display: flex",
+                          );
                         }}
                       />
                     ) : null}
                     <span
                       className="text-white font-semibold flex items-center justify-center w-full h-full"
-                      style={{ display: (profile?.avatar || profile?.profileImage || settings?.avatar) ? 'none' : 'flex' }}
+                      style={{
+                        display:
+                          profile?.avatar ||
+                          profile?.profileImage ||
+                          settings?.avatar
+                            ? "none"
+                            : "flex",
+                      }}
                     >
-                      {profile?.name?.charAt(0) || user?.displayName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                      {profile?.name?.charAt(0) ||
+                        user?.displayName?.charAt(0) ||
+                        user?.email?.charAt(0) ||
+                        "U"}
                     </span>
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-white font-medium truncate">
-                    {settings?.name || profile?.name || user?.displayName || user?.email?.split("@")[0] || "Usuário"}
+                    {settings?.name ||
+                      profile?.name ||
+                      user?.displayName ||
+                      user?.email?.split("@")[0] ||
+                      "Usuário"}
                   </p>
                   <p className="text-gray-400 text-sm truncate">
                     {profile?.isPremium ? "Premium" : "Básico"} • {user?.email}
@@ -249,8 +297,8 @@ const MobileSidebar: React.FC = () => {
                     item.id === "social"
                       ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30"
                       : activePage === item.id
-                      ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105 shadow-lg"
-                      : "hover:bg-gray-800/50 active:scale-95"
+                        ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105 shadow-lg"
+                        : "hover:bg-gray-800/50 active:scale-95"
                   }`}
                 >
                   <div
@@ -262,9 +310,7 @@ const MobileSidebar: React.FC = () => {
                   >
                     <div
                       className={`transition-colors duration-300 ${
-                        activePage === item.id
-                          ? "text-white"
-                          : "text-gray-400"
+                        activePage === item.id ? "text-white" : "text-gray-400"
                       }`}
                     >
                       {item.icon}
@@ -278,13 +324,15 @@ const MobileSidebar: React.FC = () => {
                       item.id === "social"
                         ? "text-gray-400"
                         : activePage === item.id
-                        ? "text-white"
-                        : "text-gray-300"
+                          ? "text-white"
+                          : "text-gray-300"
                     }`}
                   >
                     {item.label}
                     {item.id === "social" && (
-                      <span className="ml-1 text-xs text-purple-400">Em breve</span>
+                      <span className="ml-1 text-xs text-purple-400">
+                        Em breve
+                      </span>
                     )}
                   </span>
                   {activePage === item.id && (
@@ -301,9 +349,14 @@ const MobileSidebar: React.FC = () => {
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-gray-800/50 active:scale-95"
               >
                 <div className="relative p-2 rounded-lg bg-gray-700/50 hover:bg-gray-600/50 transition-colors duration-300">
-                  <Settings size={20} className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300" />
+                  <Settings
+                    size={20}
+                    className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300"
+                  />
                 </div>
-                <span className="font-medium text-gray-300 hover:text-white transition-colors duration-300">Configurações</span>
+                <span className="font-medium text-gray-300 hover:text-white transition-colors duration-300">
+                  Configurações
+                </span>
               </button>
 
               <button
@@ -311,9 +364,14 @@ const MobileSidebar: React.FC = () => {
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-red-500/20 active:scale-95 border border-red-500/20 hover:border-red-500/40 group"
               >
                 <div className="relative p-2 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-all duration-300">
-                  <LogOut size={20} className="text-red-400 group-hover:text-red-300 transition-colors duration-300" />
+                  <LogOut
+                    size={20}
+                    className="text-red-400 group-hover:text-red-300 transition-colors duration-300"
+                  />
                 </div>
-                <span className="font-medium text-red-400 group-hover:text-red-300 transition-colors duration-300">Sair</span>
+                <span className="font-medium text-red-400 group-hover:text-red-300 transition-colors duration-300">
+                  Sair
+                </span>
               </button>
             </div>
           </div>
@@ -327,6 +385,6 @@ const MobileSidebar: React.FC = () => {
 };
 
 const MemoizedMobileSidebar = memo(MobileSidebar);
-MemoizedMobileSidebar.displayName = 'MobileSidebar';
+MemoizedMobileSidebar.displayName = "MobileSidebar";
 
 export { MemoizedMobileSidebar as MobileSidebar };

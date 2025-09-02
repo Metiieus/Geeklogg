@@ -4,6 +4,7 @@ import { LibraryFilters } from "./LibraryFilters";
 import { FeaturedSection } from "../FeaturedSection";
 import { CollectionGrid } from "../CollectionGrid";
 import { ManualAddModal } from "./ManualAddModal";
+import MediaPreviewModal from "./MediaPreviewModal";
 
 import { MediaItem } from "../types/mediaTypes"; // tipagem compartilhada
 
@@ -24,6 +25,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const [filter, setFilter] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
 
+  // Estado do preview modal
+  const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  // Abre o modal ao clicar no card
+  const handleCardClick = (item: MediaItem) => {
+    setSelectedItem(item);
+    setIsPreviewOpen(true);
+  };
+
   // Filtra a coleção por texto e tag
   const filteredCollection = collection.filter((item) => {
     const matchesSearch = item.title
@@ -41,8 +52,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       {/* Cabeçalho com busca */}
       <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-100">Minha Biblioteca</h1>
-          <p className="text-slate-400">Seu espaço geek com estilo moderno ✨</p>
+          <h1 className="text-3xl font-bold text-slate-100">
+            Minha Biblioteca
+          </h1>
+          <p className="text-slate-400">
+            Seu espaço geek com estilo moderno ✨
+          </p>
         </div>
 
         <SearchBar value={search} onChange={setSearch} />
@@ -59,7 +74,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         />
 
         {/* Coleção completa */}
-        <CollectionGrid items={filteredCollection} />
+        <CollectionGrid
+          items={filteredCollection}
+          onCardClick={handleCardClick}
+        />
 
         {/* Botão de adicionar mídia */}
         <div className="flex justify-center mt-10">
@@ -76,6 +94,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       {showAddModal && (
         <ManualAddModal onClose={() => setShowAddModal(false)} />
       )}
+
+      {/* Modal de preview */}
+      <MediaPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        item={selectedItem}
+        onEdit={(item) => console.log("Editar mídia:", item)}
+        onDelete={(item) => console.log("Excluir mídia:", item)}
+        onToggleFavorite={(item) => console.log("Favoritar mídia:", item)}
+      />
     </div>
   );
 };

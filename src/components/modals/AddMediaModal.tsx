@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { X, Save, Upload, Star, Clock, Calendar, Tag, BookOpen } from "lucide-react";
+import {
+  X,
+  Save,
+  Upload,
+  Star,
+  Clock,
+  Calendar,
+  Tag,
+  BookOpen,
+} from "lucide-react";
 import { MediaItem, MediaType, Status } from "../../App";
 import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
@@ -21,10 +30,30 @@ const mediaTypeLabels = {
 };
 
 const statusOptions = [
-  { value: 'planned', label: 'Planejado', icon: '📅', color: 'from-purple-500/20 to-purple-400/10 border-purple-500/30' },
-  { value: 'in-progress', label: 'Em Progresso', icon: '⏳', color: 'from-blue-500/20 to-blue-400/10 border-blue-500/30' },
-  { value: 'completed', label: 'Concluído', icon: '✅', color: 'from-emerald-500/20 to-emerald-400/10 border-emerald-500/30' },
-  { value: 'dropped', label: 'Abandonado', icon: '❌', color: 'from-red-500/20 to-red-400/10 border-red-500/30' },
+  {
+    value: "planned",
+    label: "Planejado",
+    icon: "📅",
+    color: "from-purple-500/20 to-purple-400/10 border-purple-500/30",
+  },
+  {
+    value: "in-progress",
+    label: "Em Progresso",
+    icon: "⏳",
+    color: "from-blue-500/20 to-blue-400/10 border-blue-500/30",
+  },
+  {
+    value: "completed",
+    label: "Concluído",
+    icon: "✅",
+    color: "from-emerald-500/20 to-emerald-400/10 border-emerald-500/30",
+  },
+  {
+    value: "dropped",
+    label: "Abandonado",
+    icon: "❌",
+    color: "from-red-500/20 to-red-400/10 border-red-500/30",
+  },
 ];
 
 export const AddMediaModal: React.FC<AddMediaModalProps> = ({
@@ -283,11 +312,11 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => handleChange('status', option.value)}
+                  onClick={() => handleChange("status", option.value)}
                   className={`p-4 rounded-xl border transition-all duration-200 text-left ${
                     formData.status === option.value
                       ? `bg-gradient-to-r ${option.color} text-white ring-2 ring-white/20`
-                      : 'bg-slate-800/50 border-white/10 text-white/80 hover:bg-slate-700/50 hover:border-white/20'
+                      : "bg-slate-800/50 border-white/10 text-white/80 hover:bg-slate-700/50 hover:border-white/20"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -306,7 +335,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                 Avaliação (0-10)
               </label>
               <div className="relative">
-                <Star className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-400" size={16} />
+                <Star
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-400"
+                  size={16}
+                />
                 <input
                   type="number"
                   min="0"
@@ -325,7 +357,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                 Horas Gastas
               </label>
               <div className="relative">
-                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" size={16} />
+                <Clock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400"
+                  size={16}
+                />
                 <input
                   type="number"
                   min="0"
@@ -346,7 +381,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                   Páginas Totais
                 </label>
                 <div className="relative">
-                  <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400" size={16} />
+                  <BookOpen
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400"
+                    size={16}
+                  />
                   <input
                     type="number"
                     min="1"
@@ -482,7 +520,13 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                     />
                     <button
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, coverPreview: '', coverFile: undefined }))}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          coverPreview: "",
+                          coverFile: undefined,
+                        }))
+                      }
                       className="absolute -top-2 -right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors"
                     >
                       <X size={14} />

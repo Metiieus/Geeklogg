@@ -6,7 +6,9 @@ export const isValidDate = (date: any): boolean => {
   return date instanceof Date && !isNaN(date.getTime());
 };
 
-export const parseDate = (timestamp: string | number | Date | undefined | null): Date => {
+export const parseDate = (
+  timestamp: string | number | Date | undefined | null,
+): Date => {
   if (!timestamp) {
     return new Date(); // Retorna data atual se timestamp for inválido
   }
@@ -19,39 +21,47 @@ export const parseDate = (timestamp: string | number | Date | undefined | null):
   }
 };
 
-export const formatTimeAgo = (timestamp: string | number | Date | undefined | null): string => {
+export const formatTimeAgo = (
+  timestamp: string | number | Date | undefined | null,
+): string => {
   const date = parseDate(timestamp);
   const now = new Date();
-  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+  const diffInMinutes = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60),
+  );
 
   if (diffInMinutes < 1) return "Agora";
   if (diffInMinutes < 60) return `${diffInMinutes}m`;
   if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
   if (diffInMinutes < 10080) return `${Math.floor(diffInMinutes / 1440)}d`;
-  return date.toLocaleDateString('pt-BR', { 
-    day: '2-digit', 
-    month: '2-digit', 
-    year: 'numeric' 
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 };
 
-export const formatDate = (timestamp: string | number | Date | undefined | null): string => {
+export const formatDate = (
+  timestamp: string | number | Date | undefined | null,
+): string => {
   const date = parseDate(timestamp);
-  return date.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  return date.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
-export const formatDateShort = (timestamp: string | number | Date | undefined | null): string => {
+export const formatDateShort = (
+  timestamp: string | number | Date | undefined | null,
+): string => {
   const date = parseDate(timestamp);
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   });
 };
 
@@ -64,7 +74,7 @@ export const normalizeTimestamp = (notification: any): any => {
   if (notification && !notification.timestamp && notification.createdAt) {
     return {
       ...notification,
-      timestamp: notification.createdAt
+      timestamp: notification.createdAt,
     };
   }
   return notification;

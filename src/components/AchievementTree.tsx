@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Target, Award, Zap, Crown, Star, Eye, EyeOff, X } from 'lucide-react';
-import { AchievementNode, AchievementCategory } from '../types/achievements';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
-import { AchievementModal } from './AchievementModal';
+import React, { useState, useEffect } from "react";
+import {
+  Trophy,
+  Target,
+  Award,
+  Zap,
+  Crown,
+  Star,
+  Eye,
+  EyeOff,
+  X,
+} from "lucide-react";
+import { AchievementNode, AchievementCategory } from "../types/achievements";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import { AchievementModal } from "./AchievementModal";
 
 interface AchievementTreeProps {
   onClose: () => void;
@@ -18,11 +28,11 @@ const categoryIcons = {
 };
 
 const categoryColors = {
-  gamer: 'from-green-400 to-emerald-400',
-  leitor: 'from-blue-400 to-cyan-400',
-  narrador: 'from-purple-400 to-pink-400',
-  cinefilo: 'from-orange-400 to-red-400',
-  geral: 'from-cyan-400 to-pink-400',
+  gamer: "from-green-400 to-emerald-400",
+  leitor: "from-blue-400 to-cyan-400",
+  narrador: "from-purple-400 to-pink-400",
+  cinefilo: "from-orange-400 to-red-400",
+  geral: "from-cyan-400 to-pink-400",
 };
 
 export const AchievementTree: React.FC<AchievementTreeProps> = ({
@@ -33,8 +43,9 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showUnlockedOnly, setShowUnlockedOnly] = useState(false);
-  const [selectedAchievement, setSelectedAchievement] = useState<AchievementNode | null>(null);
-  const [viewMode, setViewMode] = useState<'tree' | 'list'>('tree');
+  const [selectedAchievement, setSelectedAchievement] =
+    useState<AchievementNode | null>(null);
+  const [viewMode, setViewMode] = useState<"tree" | "list">("tree");
   const { user } = useAuth();
   const { showError } = useToast();
 
@@ -55,7 +66,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
       setAchievements([]);
     } catch (error) {
       console.error("Erro ao carregar conquistas:", error);
-      showError('Erro ao carregar conquistas');
+      showError("Erro ao carregar conquistas");
     } finally {
       setLoading(false);
     }
@@ -66,7 +77,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
   };
 
   const toggleViewMode = () => {
-    setViewMode(viewMode === 'tree' ? 'list' : 'tree');
+    setViewMode(viewMode === "tree" ? "list" : "tree");
   };
 
   if (loading) {
@@ -115,7 +126,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
               />
             ))}
           </div>
-          
+
           <div className="relative z-10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-2">
@@ -126,7 +137,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                   Continue sua jornada para desbloquear mais conquistas
                 </p>
               </div>
-              
+
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setShowUnlockedOnly(!showUnlockedOnly)}
@@ -138,10 +149,12 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                     <Eye className="w-4 h-4" />
                   )}
                   <span className="text-sm">
-                    {showUnlockedOnly ? 'Mostrar Todas' : 'Apenas Desbloqueadas'}
+                    {showUnlockedOnly
+                      ? "Mostrar Todas"
+                      : "Apenas Desbloqueadas"}
                   </span>
                 </button>
-                
+
                 <div className="text-right">
                   <p className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
                     {progress.totalUnlocked}/{progress.totalAvailable}
@@ -165,7 +178,7 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
               className={`p-3 rounded-xl border transition-all duration-300 ${
                 selectedCategory === category
                   ? `border-${categoryColors[category as AchievementCategory]} bg-${categoryColors[category as AchievementCategory]}/20`
-                  : 'border-slate-700 bg-slate-800/60 hover:bg-slate-700/60'
+                  : "border-slate-700 bg-slate-800/60 hover:bg-slate-700/60"
               }`}
             >
               <IconComponent className="w-6 h-6 mx-auto mb-2" />
@@ -181,12 +194,12 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
           <button
             onClick={toggleViewMode}
             className={`p-2 rounded-lg transition-colors ${
-              viewMode === 'tree'
-                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                : 'bg-slate-700/60 text-slate-300 hover:bg-slate-600/60'
+              viewMode === "tree"
+                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                : "bg-slate-700/60 text-slate-300 hover:bg-slate-600/60"
             }`}
           >
-            {viewMode === 'tree' ? 'Árvore' : 'Lista'}
+            {viewMode === "tree" ? "Árvore" : "Lista"}
           </button>
         </div>
       </div>
@@ -216,15 +229,21 @@ export const AchievementTree: React.FC<AchievementTreeProps> = ({
                     <Trophy className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-white">{achievement.title}</h4>
-                    <p className="text-sm text-slate-300">{achievement.description}</p>
+                    <h4 className="font-semibold text-white">
+                      {achievement.title}
+                    </h4>
+                    <p className="text-sm text-slate-300">
+                      {achievement.description}
+                    </p>
                     <div className="flex items-center space-x-2 mt-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        achievement.unlocked
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-slate-600/50 text-slate-400'
-                      }`}>
-                        {achievement.unlocked ? 'Desbloqueada' : 'Bloqueada'}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          achievement.unlocked
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-slate-600/50 text-slate-400"
+                        }`}
+                      >
+                        {achievement.unlocked ? "Desbloqueada" : "Bloqueada"}
                       </span>
                       <span className="px-2 py-1 rounded-full text-xs font-medium bg-slate-600/50 text-slate-400">
                         {achievement.category}

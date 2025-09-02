@@ -30,47 +30,49 @@ export const UI_CONSTANTS = {
 
 // Tipos de mídia
 export const MEDIA_TYPES = {
-  GAMES: 'games',
-  ANIME: 'anime',
-  SERIES: 'series',
-  BOOKS: 'books',
-  MOVIES: 'movies',
+  GAMES: "games",
+  ANIME: "anime",
+  SERIES: "series",
+  BOOKS: "books",
+  MOVIES: "movies",
 } as const;
 
 // Status de mídia
 export const MEDIA_STATUS = {
-  COMPLETED: 'completed',
-  IN_PROGRESS: 'in-progress',
-  DROPPED: 'dropped',
-  PLANNED: 'planned',
+  COMPLETED: "completed",
+  IN_PROGRESS: "in-progress",
+  DROPPED: "dropped",
+  PLANNED: "planned",
 } as const;
 
 // Cores dos tipos de mídia
 export const MEDIA_TYPE_COLORS = {
-  [MEDIA_TYPES.GAMES]: 'from-purple-500 to-indigo-600',
-  [MEDIA_TYPES.ANIME]: 'from-pink-500 to-red-500',
-  [MEDIA_TYPES.SERIES]: 'from-blue-500 to-cyan-500',
-  [MEDIA_TYPES.BOOKS]: 'from-green-500 to-teal-500',
-  [MEDIA_TYPES.MOVIES]: 'from-yellow-500 to-orange-500',
+  [MEDIA_TYPES.GAMES]: "from-purple-500 to-indigo-600",
+  [MEDIA_TYPES.ANIME]: "from-pink-500 to-red-500",
+  [MEDIA_TYPES.SERIES]: "from-blue-500 to-cyan-500",
+  [MEDIA_TYPES.BOOKS]: "from-green-500 to-teal-500",
+  [MEDIA_TYPES.MOVIES]: "from-yellow-500 to-orange-500",
 } as const;
 
 // Configurações de validação
 export const VALIDATION_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  STRONG_PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  STRONG_PASSWORD:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
   PHONE: /^\+?[\d\s\-\(\)]{10,}$/,
   URL: /^https?:\/\/.+/,
 } as const;
 
 // Mensagens de erro padrão
 export const ERROR_MESSAGES = {
-  REQUIRED_FIELD: 'Este campo é obrigatório',
-  INVALID_EMAIL: 'Endereço de email inválido',
-  WEAK_PASSWORD: 'A senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo',
-  FILE_TOO_LARGE: 'Arquivo muito grande. Tamanho máximo: 5MB',
-  INVALID_FILE_TYPE: 'Tipo de arquivo não suportado',
-  NETWORK_ERROR: 'Erro de conexão. Verifique sua internet',
-  UNKNOWN_ERROR: 'Ocorreu um erro inesperado',
+  REQUIRED_FIELD: "Este campo é obrigatório",
+  INVALID_EMAIL: "Endereço de email inválido",
+  WEAK_PASSWORD:
+    "A senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo",
+  FILE_TOO_LARGE: "Arquivo muito grande. Tamanho máximo: 5MB",
+  INVALID_FILE_TYPE: "Tipo de arquivo não suportado",
+  NETWORK_ERROR: "Erro de conexão. Verifique sua internet",
+  UNKNOWN_ERROR: "Ocorreu um erro inesperado",
 } as const;
 
 // Configurações de API

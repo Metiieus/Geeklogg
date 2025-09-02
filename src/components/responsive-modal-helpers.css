@@ -159,15 +159,15 @@
 
 .modal-interactive-hover:hover {
   transform: translateY(-1px);
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04),
     0 0 0 1px rgba(168, 85, 247, 0.1);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-interactive-focus:focus-within {
-  box-shadow: 
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.25),
     0 0 0 2px rgba(168, 85, 247, 0.3);
 }
@@ -188,7 +188,7 @@
   .modal-backdrop-enhanced {
     background: rgba(0, 0, 0, 0.95);
   }
-  
+
   .modal-border-enhanced {
     border-width: 2px;
     border-color: rgba(255, 255, 255, 0.8);
@@ -241,7 +241,7 @@
 /* ===== LOADING STATES ===== */
 
 .modal-loading::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -252,7 +252,7 @@
 }
 
 .modal-loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -267,8 +267,12 @@
 }
 
 @keyframes modalLoadingSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ===== TOAST E NOTIFICATION OVERLAYS ===== */

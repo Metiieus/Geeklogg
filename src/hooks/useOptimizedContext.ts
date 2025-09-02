@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { MediaItem, Review, Milestone, UserSettings, ActivePage } from '../App';
-import { UserProfile } from '../types/social';
+import { useMemo } from "react";
+import { MediaItem, Review, Milestone, UserSettings, ActivePage } from "../App";
+import { UserProfile } from "../types/social";
 
 interface UseOptimizedContextProps {
   mediaItems: MediaItem[];
@@ -40,7 +40,7 @@ export const useOptimizedContext = (props: UseOptimizedContextProps) => {
   // Memoizar funções de navegação para evitar re-renders
   const navigateToAddMedia = useMemo(
     () => () => setActivePage("add-media"),
-    [setActivePage]
+    [setActivePage],
   );
 
   const navigateToEditMedia = useMemo(
@@ -48,12 +48,12 @@ export const useOptimizedContext = (props: UseOptimizedContextProps) => {
       setEditingMediaItem(item);
       setActivePage("edit-media");
     },
-    [setEditingMediaItem, setActivePage]
+    [setEditingMediaItem, setActivePage],
   );
 
   const navigateBack = useMemo(
     () => () => setActivePage("dashboard"),
-    [setActivePage]
+    [setActivePage],
   );
 
   // Memoizar valor do contexto para evitar re-renders desnecessários
@@ -95,7 +95,7 @@ export const useOptimizedContext = (props: UseOptimizedContextProps) => {
       navigateToAddMedia,
       navigateToEditMedia,
       navigateBack,
-    ]
+    ],
   );
 
   return contextValue;

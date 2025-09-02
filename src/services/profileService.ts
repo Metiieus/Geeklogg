@@ -14,7 +14,7 @@ export interface Profile {
   name: string;
   bio?: string;
   avatar?: string; // URL pública
-  cover?: string;  // URL pública
+  cover?: string; // URL pública
   createdAt?: string;
   updatedAt?: string;
 }
@@ -44,19 +44,31 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
   if (data.avatarFile instanceof File) {
     console.log("🖼️ Fazendo upload do avatar...");
     try {
-      avatarUrl = await storageClient.upload(`users/${uid}/avatar.jpg`, data.avatarFile);
+      avatarUrl = await storageClient.upload(
+        `users/${uid}/avatar.jpg`,
+        data.avatarFile,
+      );
       console.log("✅ Avatar upload concluído:", avatarUrl);
     } catch (err) {
-      console.warn("⚠️ Erro ao fazer upload do avatar (continuando sem avatar):", err);
+      console.warn(
+        "⚠️ Erro ao fazer upload do avatar (continuando sem avatar):",
+        err,
+      );
     }
   }
   if (data.coverFile instanceof File) {
     console.log("🖼️ Fazendo upload da capa...");
     try {
-      coverUrl = await storageClient.upload(`users/${uid}/cover.jpg`, data.coverFile);
+      coverUrl = await storageClient.upload(
+        `users/${uid}/cover.jpg`,
+        data.coverFile,
+      );
       console.log("✅ Capa upload concluído:", coverUrl);
     } catch (err) {
-      console.warn("⚠️ Erro ao fazer upload da capa (continuando sem capa):", err);
+      console.warn(
+        "⚠️ Erro ao fazer upload da capa (continuando sem capa):",
+        err,
+      );
     }
   }
 

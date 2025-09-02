@@ -46,7 +46,7 @@ export async function getSettings(
       bio: userData.bio,
       favorites: userData.favorites,
       theme: userData.theme,
-      defaultLibrarySort: userData.defaultLibrarySort
+      defaultLibrarySort: userData.defaultLibrarySort,
     };
     return settings;
   } catch (error) {

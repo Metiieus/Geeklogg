@@ -1,5 +1,11 @@
 // imports principais
-import React, { useState, useEffect, useMemo, useCallback, Suspense } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  Suspense,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
@@ -195,7 +201,9 @@ const AppContent: React.FC = () => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
+  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -211,13 +219,17 @@ const AppContent: React.FC = () => {
       try {
         console.log("🔄 Carregando dados do usuário...");
 
-        const [loadedSettings, loadedMediaItems, loadedReviews, loadedMilestones] =
-          await Promise.all([
-            getSettings(user.uid),
-            getMedias(),
-            getReviews(),
-            getMilestones(),
-          ]);
+        const [
+          loadedSettings,
+          loadedMediaItems,
+          loadedReviews,
+          loadedMilestones,
+        ] = await Promise.all([
+          getSettings(user.uid),
+          getMedias(),
+          getReviews(),
+          getMilestones(),
+        ]);
 
         setSettings({ ...defaultSettings, ...loadedSettings });
         setMediaItems(loadedMediaItems);
@@ -298,7 +310,9 @@ const AppContent: React.FC = () => {
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <Users className="mx-auto mb-4 text-purple-400" size={48} />
-            <h2 className="text-xl font-semibold text-white mb-2">Social em Breve</h2>
+            <h2 className="text-xl font-semibold text-white mb-2">
+              Social em Breve
+            </h2>
             <p className="text-slate-400">
               Conecte-se com outros nerds e compartilhe suas descobertas!
             </p>
@@ -342,7 +356,7 @@ const AppContent: React.FC = () => {
       navigateToAddMedia,
       navigateToEditMedia,
       navigateBack,
-    ]
+    ],
   );
 
   // Renderização especial
@@ -460,7 +474,9 @@ class ErrorBoundary extends React.Component<
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-          <p className="text-red-400">Erro inesperado: {this.state.error?.message}</p>
+          <p className="text-red-400">
+            Erro inesperado: {this.state.error?.message}
+          </p>
         </div>
       );
     }

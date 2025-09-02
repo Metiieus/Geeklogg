@@ -1,5 +1,10 @@
 import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { getUserId } from "./utils";
 
 class StorageClient {
@@ -20,7 +25,7 @@ class StorageClient {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
-    
+
     try {
       return await uploadBytes(storageRef, file);
     } catch (e) {
@@ -33,7 +38,7 @@ class StorageClient {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
-    
+
     try {
       return await getDownloadURL(storageRef);
     } catch (e) {
@@ -51,7 +56,7 @@ class StorageClient {
       return await deleteObject(storageRef);
     } catch (e: any) {
       // Se o arquivo não existe, consideramos como sucesso
-      if (e.code === 'storage/object-not-found') {
+      if (e.code === "storage/object-not-found") {
         console.log("ℹ️ Arquivo não encontrado (já foi deletado):", e);
         return; // Não é erro, apenas ignora
       }

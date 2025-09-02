@@ -84,8 +84,8 @@ export const MobileNav: React.FC = () => {
                 item.id === "social"
                   ? "opacity-50 cursor-not-allowed"
                   : activePage === item.id
-                  ? "scale-110"
-                  : "active:scale-95"
+                    ? "scale-110"
+                    : "active:scale-95"
               }`}
             >
               {/* Container do ícone com efeito ativo */}
@@ -118,8 +118,8 @@ export const MobileNav: React.FC = () => {
                   item.id === "social"
                     ? "text-gray-400"
                     : activePage === item.id
-                    ? "text-white"
-                    : "text-gray-200"
+                      ? "text-white"
+                      : "text-gray-200"
                 }`}
               >
                 {item.id === "social" ? "Em breve" : item.label}

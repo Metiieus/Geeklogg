@@ -73,25 +73,27 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in"
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        overflow: 'hidden' // BLOQUEIA scroll da página
+        overflow: "hidden", // BLOQUEIA scroll da página
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
         className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full max-w-2xl my-auto animate-slide-up flex flex-col"
         style={{
-          maxHeight: 'calc(100vh - 2rem)',
-          minHeight: 'auto'
+          maxHeight: "calc(100vh - 2rem)",
+          minHeight: "auto",
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Editar Resenha</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">
+            Editar Resenha
+          </h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
@@ -106,100 +108,99 @@ export const EditReviewModal: React.FC<EditReviewModalProps> = ({
           className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
           <div className="flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto min-h-0">
-          {/* Media Selection */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Mídia *
-            </label>
-            <select
-              required
-              value={formData.mediaId}
-              onChange={(e) => handleChange("mediaId", e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="">Selecione uma mídia</option>
-              {mediaItems.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.title} ({item.type})
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Media Selection */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Mídia *
+              </label>
+              <select
+                required
+                value={formData.mediaId}
+                onChange={(e) => handleChange("mediaId", e.target.value)}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Selecione uma mídia</option>
+                {mediaItems.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.title} ({item.type})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Título da Resenha *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={(e) => handleChange("title", e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Digite o título da sua resenha"
-            />
-          </div>
-
-          {/* Rating */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Avaliação *
-            </label>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Título da Resenha *
+              </label>
               <input
-                type="range"
-                min="0"
-                max="10"
-                step="1"
-                value={formData.rating}
-                onChange={(e) =>
-                  handleChange("rating", parseInt(e.target.value))
-                }
-                className="w-full sm:flex-1"
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Digite o título da sua resenha"
               />
-              <div className="flex items-center gap-1 min-w-[80px]">
-                <Star
-                  className="text-yellow-400"
-                  size={16}
-                  fill="currentColor"
+            </div>
+
+            {/* Rating */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Avaliação *
+              </label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={formData.rating}
+                  onChange={(e) =>
+                    handleChange("rating", parseInt(e.target.value))
+                  }
+                  className="w-full sm:flex-1"
                 />
-                <span className="text-white font-medium">
-                  {formData.rating}/10
-                </span>
+                <div className="flex items-center gap-1 min-w-[80px]">
+                  <Star
+                    className="text-yellow-400"
+                    size={16}
+                    fill="currentColor"
+                  />
+                  <span className="text-white font-medium">
+                    {formData.rating}/10
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Content */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Conteúdo da Resenha *
-            </label>
-            <textarea
-              required
-              value={formData.content}
-              onChange={(e) => handleChange("content", e.target.value)}
-              rows={6}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none min-h-[120px]"
-              placeholder="Escreva sua resenha aqui..."
-            />
-          </div>
+            {/* Content */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Conteúdo da Resenha *
+              </label>
+              <textarea
+                required
+                value={formData.content}
+                onChange={(e) => handleChange("content", e.target.value)}
+                rows={6}
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none min-h-[120px]"
+                placeholder="Escreva sua resenha aqui..."
+              />
+            </div>
 
-          {/* Favorite */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="favorite"
-              checked={formData.isFavorite}
-              onChange={(e) => handleChange("isFavorite", e.target.checked)}
-              className="w-4 h-4 text-pink-500 bg-slate-700 border-slate-600 rounded focus:ring-pink-500"
-            />
-            <label htmlFor="favorite" className="text-slate-300">
-              Marcar como resenha favorita
-            </label>
-          </div>
-
+            {/* Favorite */}
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="favorite"
+                checked={formData.isFavorite}
+                onChange={(e) => handleChange("isFavorite", e.target.checked)}
+                className="w-4 h-4 text-pink-500 bg-slate-700 border-slate-600 rounded focus:ring-pink-500"
+              />
+              <label htmlFor="favorite" className="text-slate-300">
+                Marcar como resenha favorita
+              </label>
+            </div>
           </div>
 
           {/* Actions - Fixed at bottom */}

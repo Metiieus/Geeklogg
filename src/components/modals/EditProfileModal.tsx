@@ -103,20 +103,22 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
       maxWidth="max-w-lg"
       className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 overflow-hidden flex flex-col"
     >
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Editar Perfil</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
-          >
-            <X className="text-slate-400" size={20} />
-          </button>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex-1 flex flex-col overflow-hidden min-h-0"
+      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">
+          Editar Perfil
+        </h2>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-slate-700 rounded-lg transition-colors touch-target"
         >
-          <div className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto min-h-0">
+          <X className="text-slate-400" size={20} />
+        </button>
+      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 flex flex-col overflow-hidden min-h-0"
+      >
+        <div className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto min-h-0">
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Nome
@@ -150,7 +152,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     <p className="text-white text-sm">Avatar atual</p>
                     <button
                       type="button"
-                      onClick={() => setLocal((prev) => ({ ...prev, avatar: "" }))}
+                      onClick={() =>
+                        setLocal((prev) => ({ ...prev, avatar: "" }))
+                      }
                       className="text-red-400 hover:text-red-300 text-xs mt-1"
                     >
                       Remover avatar
@@ -170,105 +174,110 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   Avatares Predefinidos
                 </button>
 
-              <label
-                className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
-                  isUploading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer hover:bg-slate-700"
-                }`}
-              >
-                {isUploading ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <Upload size={18} />
-                )}
-                {isUploading ? "Processando..." : "Fazer Upload da Imagem"}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+                <label
+                  className={`flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors ${
+                    isUploading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer hover:bg-slate-700"
+                  }`}
+                >
+                  {isUploading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Upload size={18} />
+                  )}
+                  {isUploading ? "Processando..." : "Fazer Upload da Imagem"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
 
-                    setIsUploading(true);
+                      setIsUploading(true);
 
-                    try {
-                      // Validar arquivo
-                      const validation = await validateFile(file, {
-                        maxSizeInMB: 2,
-                        allowedTypes: [
-                          "image/jpeg",
-                          "image/png",
-                          "image/gif",
-                          "image/webp",
-                        ],
-                        maxWidth: 1024,
-                        maxHeight: 1024,
-                      });
+                      try {
+                        // Validar arquivo
+                        const validation = await validateFile(file, {
+                          maxSizeInMB: 2,
+                          allowedTypes: [
+                            "image/jpeg",
+                            "image/png",
+                            "image/gif",
+                            "image/webp",
+                          ],
+                          maxWidth: 1024,
+                          maxHeight: 1024,
+                        });
 
-                      if (!validation.isValid) {
-                        showError("Erro no upload da imagem", validation.error);
-                        setIsUploading(false);
-                        return;
-                      }
+                        if (!validation.isValid) {
+                          showError(
+                            "Erro no upload da imagem",
+                            validation.error,
+                          );
+                          setIsUploading(false);
+                          return;
+                        }
 
-                      // Se a imagem for muito grande, comprimir
-                      let processedFile = file;
-                      if (file.size > 1024 * 1024) {
-                        // > 1MB
-                        showWarning(
-                          "Comprimindo imagem",
-                          "A imagem está sendo otimizada para melhor performance",
-                        );
-                        processedFile = await compressImage(
-                          file,
-                          512,
-                          512,
-                          0.8,
-                        );
-                      }
+                        // Se a imagem for muito grande, comprimir
+                        let processedFile = file;
+                        if (file.size > 1024 * 1024) {
+                          // > 1MB
+                          showWarning(
+                            "Comprimindo imagem",
+                            "A imagem está sendo otimizada para melhor performance",
+                          );
+                          processedFile = await compressImage(
+                            file,
+                            512,
+                            512,
+                            0.8,
+                          );
+                        }
 
-                      // Converter para base64 para preview
-                      const reader = new FileReader();
-                      reader.onload = (ev) => {
-                        const result = ev.target?.result as string;
-                        setLocal((prev) => ({ ...prev, avatar: result }));
-                        setAvatarFile(processedFile);
-                        showSuccess(
-                          "Imagem carregada!",
-                          "Sua foto de perfil foi atualizada",
-                        );
-                        setIsUploading(false);
-                      };
+                        // Converter para base64 para preview
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                          const result = ev.target?.result as string;
+                          setLocal((prev) => ({ ...prev, avatar: result }));
+                          setAvatarFile(processedFile);
+                          showSuccess(
+                            "Imagem carregada!",
+                            "Sua foto de perfil foi atualizada",
+                          );
+                          setIsUploading(false);
+                        };
 
-                      reader.onerror = () => {
+                        reader.onerror = () => {
+                          showError(
+                            "Erro ao processar imagem",
+                            "Não foi possível carregar a imagem selecionada",
+                          );
+                          setIsUploading(false);
+                        };
+
+                        reader.readAsDataURL(processedFile);
+                      } catch (error) {
+                        console.error("Erro no upload:", error);
                         showError(
-                          "Erro ao processar imagem",
-                          "Não foi possível carregar a imagem selecionada",
+                          "Erro inesperado",
+                          "Ocorreu um erro ao processar a imagem. Tente novamente.",
                         );
                         setIsUploading(false);
-                      };
-
-                      reader.readAsDataURL(processedFile);
-                    } catch (error) {
-                      console.error("Erro no upload:", error);
-                      showError(
-                        "Erro inesperado",
-                        "Ocorreu um erro ao processar a imagem. Tente novamente.",
-                      );
-                      setIsUploading(false);
-                    }
-                  }}
-                  className="hidden"
-                  disabled={isUploading}
-                />
-              </label>
+                      }
+                    }}
+                    className="hidden"
+                    disabled={isUploading}
+                  />
+                </label>
               </div>
 
               {/* Seletor de avatares predefinidos */}
               {showAvatarSelector && (
                 <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-600/50">
-                  <h4 className="text-white font-medium mb-3">Escolha um avatar:</h4>
+                  <h4 className="text-white font-medium mb-3">
+                    Escolha um avatar:
+                  </h4>
                   <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
                     {PREDEFINED_AVATARS.map((avatarUrl, index) => (
                       <button
@@ -276,9 +285,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                         type="button"
                         onClick={() => handlePredefinedAvatarSelect(avatarUrl)}
                         className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${
-                          local.avatar === avatarUrl 
-                            ? 'border-purple-500 ring-2 ring-purple-400/50' 
-                            : 'border-slate-600 hover:border-slate-400'
+                          local.avatar === avatarUrl
+                            ? "border-purple-500 ring-2 ring-purple-400/50"
+                            : "border-slate-600 hover:border-slate-400"
                         }`}
                       >
                         <img
@@ -452,28 +461,28 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               </div>
             )}
           </div>
-          </div>
+        </div>
 
-          {/* Actions - Fixed at bottom */}
-          <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-4 sm:p-6 border-t border-white/20">
-            <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base"
-              >
-                <Save size={18} />
-                Salvar
-              </button>
-            </div>
+        {/* Actions - Fixed at bottom */}
+        <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-4 sm:p-6 border-t border-white/20">
+          <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base"
+            >
+              <Save size={18} />
+              Salvar
+            </button>
           </div>
-        </form>
+        </div>
+      </form>
     </ModalWrapper>
   );
 };

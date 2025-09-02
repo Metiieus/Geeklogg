@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Plus, TrendingUp, Star, Clock } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Plus, TrendingUp, Star, Clock } from "lucide-react";
 
 interface MinimalistHeroBannerProps {
   title: string;
@@ -32,7 +32,7 @@ export const MinimalistHeroBanner: React.FC<MinimalistHeroBannerProps> = ({
           >
             {title}
           </motion.h1>
-          
+
           {subtitle && (
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,9 @@ export const MinimalistHeroBanner: React.FC<MinimalistHeroBannerProps> = ({
                   <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Total:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Total:
+                  </span>
                   <span className="ml-1 font-semibold text-gray-900 dark:text-gray-100">
                     {stats.total}
                   </span>
@@ -69,7 +71,9 @@ export const MinimalistHeroBanner: React.FC<MinimalistHeroBannerProps> = ({
                   <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Concluídos:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Concluídos:
+                  </span>
                   <span className="ml-1 font-semibold text-gray-900 dark:text-gray-100">
                     {stats.completed}
                   </span>
@@ -81,7 +85,9 @@ export const MinimalistHeroBanner: React.FC<MinimalistHeroBannerProps> = ({
                   <Star className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Média:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Média:
+                  </span>
                   <span className="ml-1 font-semibold text-gray-900 dark:text-gray-100">
                     {stats.avgRating}
                   </span>

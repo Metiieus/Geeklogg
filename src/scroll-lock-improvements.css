@@ -54,7 +54,7 @@ body {
     transform: none;
     transition: none;
   }
-  
+
   /* Reduzir backdrop blur em dispositivos móveis */
   .backdrop-blur-sm,
   .backdrop-blur-md {
@@ -132,11 +132,11 @@ body {
   .complex-gradient {
     background: #1e293b !important;
   }
-  
+
   .complex-shadow {
     box-shadow: none !important;
   }
-  
+
   /* Simplificar animações */
   .animate-bounce,
   .animate-pulse,
@@ -157,7 +157,7 @@ body {
   .scroll-locked {
     transition: none !important;
   }
-  
+
   .modal-content {
     animation: none !important;
     transition: none !important;

@@ -1,7 +1,18 @@
-import React from 'react';
-import { X, Edit, Trash2, ExternalLink, Star, Clock, Calendar, Tag, Play, BookOpen } from 'lucide-react';
-import { MediaItem } from '../../App';
-import { ModalWrapper } from '../ModalWrapper';
+import React from "react";
+import {
+  X,
+  Edit,
+  Trash2,
+  ExternalLink,
+  Star,
+  Clock,
+  Calendar,
+  Tag,
+  Play,
+  BookOpen,
+} from "lucide-react";
+import { MediaItem } from "../../App";
+import { ModalWrapper } from "../ModalWrapper";
 
 interface MediaDetailModalProps {
   item: MediaItem;
@@ -11,28 +22,52 @@ interface MediaDetailModalProps {
 }
 
 const statusConfig = {
-  completed: { label: 'Concluído', color: 'text-emerald-400', bg: 'bg-emerald-500/20', border: 'border-emerald-500/30', icon: '✅' },
-  'in-progress': { label: 'Em Progresso', color: 'text-blue-400', bg: 'bg-blue-500/20', border: 'border-blue-500/30', icon: '⏳' },
-  dropped: { label: 'Abandonado', color: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/30', icon: '❌' },
-  planned: { label: 'Planejado', color: 'text-purple-400', bg: 'bg-purple-500/20', border: 'border-purple-500/30', icon: '📅' },
+  completed: {
+    label: "Concluído",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/20",
+    border: "border-emerald-500/30",
+    icon: "✅",
+  },
+  "in-progress": {
+    label: "Em Progresso",
+    color: "text-blue-400",
+    bg: "bg-blue-500/20",
+    border: "border-blue-500/30",
+    icon: "⏳",
+  },
+  dropped: {
+    label: "Abandonado",
+    color: "text-red-400",
+    bg: "bg-red-500/20",
+    border: "border-red-500/30",
+    icon: "❌",
+  },
+  planned: {
+    label: "Planejado",
+    color: "text-purple-400",
+    bg: "bg-purple-500/20",
+    border: "border-purple-500/30",
+    icon: "📅",
+  },
 };
 
 const typeLabels = {
-  game: 'Jogo',
-  anime: 'Anime',
-  tv: 'Série',
-  book: 'Livro',
-  movie: 'Filme',
-  manga: 'Mangá',
+  game: "Jogo",
+  anime: "Anime",
+  tv: "Série",
+  book: "Livro",
+  movie: "Filme",
+  manga: "Mangá",
 };
 
 const typeColors = {
-  game: 'from-cyan-500/20 to-cyan-400/10 text-cyan-300',
-  anime: 'from-pink-500/20 to-pink-400/10 text-pink-300',
-  tv: 'from-indigo-500/20 to-indigo-400/10 text-indigo-300',
-  book: 'from-amber-500/20 to-amber-400/10 text-amber-300',
-  movie: 'from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300',
-  manga: 'from-violet-500/20 to-violet-400/10 text-violet-300',
+  game: "from-cyan-500/20 to-cyan-400/10 text-cyan-300",
+  anime: "from-pink-500/20 to-pink-400/10 text-pink-300",
+  tv: "from-indigo-500/20 to-indigo-400/10 text-indigo-300",
+  book: "from-amber-500/20 to-amber-400/10 text-amber-300",
+  movie: "from-fuchsia-500/20 to-fuchsia-400/10 text-fuchsia-300",
+  manga: "from-violet-500/20 to-violet-400/10 text-violet-300",
 };
 
 export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
@@ -61,23 +96,29 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  target.style.display = "none";
                   const fallback = target.nextElementSibling as HTMLElement;
-                  if (fallback) fallback.style.display = 'flex';
+                  if (fallback) fallback.style.display = "flex";
                 }}
               />
             ) : null}
-            
+
             {/* Fallback sempre presente */}
-            <div 
+            <div
               className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center absolute inset-0"
-              style={{ display: item.cover ? 'none' : 'flex' }}
+              style={{ display: item.cover ? "none" : "flex" }}
             >
               <div className="text-center">
-                <div className={`w-20 h-20 bg-gradient-to-br ${typeColors[item.type] || typeColors.book} rounded-full flex items-center justify-center mb-4 border border-white/20`}>
-                  <span className="text-3xl font-bold text-white">{item.title.charAt(0)}</span>
+                <div
+                  className={`w-20 h-20 bg-gradient-to-br ${typeColors[item.type] || typeColors.book} rounded-full flex items-center justify-center mb-4 border border-white/20`}
+                >
+                  <span className="text-3xl font-bold text-white">
+                    {item.title.charAt(0)}
+                  </span>
                 </div>
-                <span className="text-white/60 text-lg font-medium">{typeLabels[item.type] || 'Mídia'}</span>
+                <span className="text-white/60 text-lg font-medium">
+                  {typeLabels[item.type] || "Mídia"}
+                </span>
               </div>
             </div>
 
@@ -102,7 +143,9 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
 
             {/* Status Badge */}
             <div className="absolute bottom-4 left-4 right-4">
-              <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.color} border ${statusInfo.border}`}>
+              <div
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.color} border ${statusInfo.border}`}
+              >
                 <span className="text-lg">{statusInfo.icon}</span>
                 <span>{statusInfo.label}</span>
               </div>
@@ -120,8 +163,10 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   {item.title}
                 </h1>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className={`px-3 py-1 bg-gradient-to-r ${typeColors[item.type] || typeColors.book} rounded-full text-sm font-medium border border-current/30`}>
-                    {typeLabels[item.type] || 'Mídia'}
+                  <span
+                    className={`px-3 py-1 bg-gradient-to-r ${typeColors[item.type] || typeColors.book} rounded-full text-sm font-medium border border-current/30`}
+                  >
+                    {typeLabels[item.type] || "Mídia"}
                   </span>
                   {item.platform && (
                     <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-sm">
@@ -138,26 +183,34 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
             {/* Description */}
             {item.description && (
               <div>
-                <h3 className="text-lg font-semibold text-white mb-3">Descrição</h3>
+                <h3 className="text-lg font-semibold text-white mb-3">
+                  Descrição
+                </h3>
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-white/10">
-                  <p className="text-white/80 leading-relaxed">{item.description}</p>
+                  <p className="text-white/80 leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
               </div>
             )}
 
             {/* Stats Grid */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-3">Estatísticas</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">
+                Estatísticas
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {item.hoursSpent && (
                   <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-white/10">
                     <Clock className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                    <p className="text-white font-semibold">{item.hoursSpent}h</p>
+                    <p className="text-white font-semibold">
+                      {item.hoursSpent}h
+                    </p>
                     <p className="text-white/60 text-sm">Tempo Gasto</p>
                   </div>
                 )}
 
-                {item.type === 'books' && item.totalPages && (
+                {item.type === "books" && item.totalPages && (
                   <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-white/10">
                     <BookOpen className="w-6 h-6 text-green-400 mx-auto mb-2" />
                     <p className="text-white font-semibold">
@@ -191,7 +244,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                       <div>
                         <p className="text-white/60 text-sm">Início</p>
                         <p className="text-white font-medium">
-                          {new Date(item.startDate).toLocaleDateString('pt-BR')}
+                          {new Date(item.startDate).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                     </div>
@@ -202,7 +255,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                       <div>
                         <p className="text-white/60 text-sm">Conclusão</p>
                         <p className="text-white font-medium">
-                          {new Date(item.endDate).toLocaleDateString('pt-BR')}
+                          {new Date(item.endDate).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                     </div>

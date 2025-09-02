@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { X, Search, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MediaSearchBar } from '../MediaSearchBar';
-import { MediaType } from '../../App';
-import { ExternalMediaResult } from '../../services/externalMediaService';
+import React, { useState } from "react";
+import { X, Search, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MediaSearchBar } from "../MediaSearchBar";
+import { MediaType } from "../../App";
+import { ExternalMediaResult } from "../../services/externalMediaService";
 
 interface AddMediaSearchModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
   onClose,
   onResultSelect,
 }) => {
-  const [selectedType, setSelectedType] = useState<MediaType>('books');
+  const [selectedType, setSelectedType] = useState<MediaType>("books");
 
   const handleResultSelect = (result: ExternalMediaResult) => {
     onResultSelect(result);
@@ -54,7 +54,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
               <div className="relative bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-8 border-b border-slate-200/50 dark:border-slate-700/50">
                 {/* Background decoration */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100/30 to-transparent dark:from-blue-900/20 rounded-bl-full" />
-                
+
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 dark:from-blue-400/30 dark:to-cyan-400/30 rounded-2xl border border-blue-200/50 dark:border-blue-700/50">
@@ -65,11 +65,12 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                         Buscar Mídia Online
                       </h1>
                       <p className="text-slate-600 dark:text-slate-400 mt-1">
-                        Encontre livros, filmes, séries e jogos em bases de dados online
+                        Encontre livros, filmes, séries e jogos em bases de
+                        dados online
                       </p>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={onClose}
                     className="p-3 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 transition-all duration-300 hover:scale-105"
@@ -96,8 +97,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                       </span>
                     </div>
                     <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                      Digite o nome do que você está procurando e escolha o tipo de mídia.
-                      Nossa busca conecta com múltiplas bases de dados para encontrar as melhores opções.
+                      Digite o nome do que você está procurando e escolha o tipo
+                      de mídia. Nossa busca conecta com múltiplas bases de dados
+                      para encontrar as melhores opções.
                     </p>
                   </motion.div>
 
@@ -113,10 +115,15 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                       onTypeChange={setSelectedType}
                       onResultSelect={handleResultSelect}
                       placeholder={`Buscar ${
-                        selectedType === 'books' ? 'livros' :
-                        selectedType === 'movies' ? 'filmes' :
-                        selectedType === 'games' ? 'jogos' :
-                        selectedType === 'series' ? 'séries' : 'mídia'
+                        selectedType === "books"
+                          ? "livros"
+                          : selectedType === "movies"
+                            ? "filmes"
+                            : selectedType === "games"
+                              ? "jogos"
+                              : selectedType === "series"
+                                ? "séries"
+                                : "mídia"
                       }...`}
                     />
                   </motion.div>

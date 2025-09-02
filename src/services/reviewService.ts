@@ -19,11 +19,7 @@ export async function getReviews(): Promise<Review[]> {
     return [];
   }
 
-  const docs = await database.getCollection<Review>([
-    "users",
-    uid,
-    "reviews",
-  ]);
+  const docs = await database.getCollection<Review>(["users", uid, "reviews"]);
 
   return docs.map((d) => ({ id: d.id, ...(d.data || d) }));
 }
@@ -58,8 +54,13 @@ export async function addReview(data: AddReviewData): Promise<Review> {
   // 2️⃣ Upload opcional da imagem
   if (imageFile instanceof File) {
     try {
-      const imageUrl = await storageClient.upload(`reviews/${docRef.id}`, imageFile);
-      await database.update(["users", uid, "reviews"], docRef.id, { image: imageUrl });
+      const imageUrl = await storageClient.upload(
+        `reviews/${docRef.id}`,
+        imageFile,
+      );
+      await database.update(["users", uid, "reviews"], docRef.id, {
+        image: imageUrl,
+      });
       (toSave as Review).image = imageUrl;
       console.log("✅ Imagem da review enviada");
     } catch (err) {
@@ -78,7 +79,10 @@ export interface UpdateReviewData extends Partial<Omit<Review, "id">> {
   imageFile?: File;
 }
 
-export async function updateReview(id: string, data: UpdateReviewData): Promise<void> {
+export async function updateReview(
+  id: string,
+  data: UpdateReviewData,
+): Promise<void> {
   ensureValidId(id, "ID ausente ou inválido ao tentar atualizar review");
   const uid = getUserId();
   const now = new Date().toISOString();

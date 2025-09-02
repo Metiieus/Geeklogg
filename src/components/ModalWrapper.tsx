@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useImprovedScrollLock } from '../hooks/useImprovedScrollLock';
+import React, { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useImprovedScrollLock } from "../hooks/useImprovedScrollLock";
 
 interface ModalWrapperProps {
   isOpen: boolean;
@@ -17,8 +17,8 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   isOpen,
   onClose,
   children,
-  maxWidth = 'max-w-4xl',
-  className = '',
+  maxWidth = "max-w-4xl",
+  className = "",
   overlay = true,
   closeOnEscape = true,
   closeOnOverlayClick = true,
@@ -31,13 +31,13 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
     if (!isOpen || !closeOnEscape) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, closeOnEscape, onClose]);
 
   // Handle overlay click
@@ -58,8 +58,8 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         transition={{ duration: 0.2 }}
         className="fixed inset-0 z-[70] flex items-center justify-center p-2 sm:p-4"
         style={{
-          backgroundColor: overlay ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
-          backdropFilter: overlay ? 'blur(8px)' : 'none',
+          backgroundColor: overlay ? "rgba(0, 0, 0, 0.7)" : "transparent",
+          backdropFilter: overlay ? "blur(8px)" : "none",
         }}
         onClick={handleOverlayClick}
       >
@@ -67,11 +67,11 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ 
-            duration: 0.3, 
-            type: "spring", 
-            damping: 25, 
-            stiffness: 200 
+          transition={{
+            duration: 0.3,
+            type: "spring",
+            damping: 25,
+            stiffness: 200,
           }}
           className={`
             w-full ${maxWidth}

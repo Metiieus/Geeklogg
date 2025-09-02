@@ -17,7 +17,11 @@ import { UserProfile } from "../types/social";
 import { getMedias } from "../services/mediaService";
 import { getReviews } from "../services/reviewService";
 import { getMilestones } from "../services/milestoneService";
-import { getUserProfile, followUser, unfollowUser } from "../services/socialService";
+import {
+  getUserProfile,
+  followUser,
+  unfollowUser,
+} from "../services/socialService";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 
@@ -35,7 +39,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
   const [reviews, setReviews] = useState<Review[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"library" | "reviews" | "milestones">("library");
+  const [activeTab, setActiveTab] = useState<
+    "library" | "reviews" | "milestones"
+  >("library");
   const { user } = useAuth();
   const { showSuccess, showError } = useToast();
 
@@ -71,11 +77,18 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     try {
       if (userProfile.isFollowing) {
         await unfollowUser(userId);
-        setUserProfile(prev => prev ? { ...prev, isFollowing: false } : null);
-        showSuccess("Deixou de seguir", `Você deixou de seguir ${userProfile.displayName}`);
+        setUserProfile((prev) =>
+          prev ? { ...prev, isFollowing: false } : null,
+        );
+        showSuccess(
+          "Deixou de seguir",
+          `Você deixou de seguir ${userProfile.displayName}`,
+        );
       } else {
         await followUser(userId);
-        setUserProfile(prev => prev ? { ...prev, isFollowing: true } : null);
+        setUserProfile((prev) =>
+          prev ? { ...prev, isFollowing: true } : null,
+        );
         showSuccess("Seguindo", `Agora você segue ${userProfile.displayName}`);
       }
     } catch (error) {
@@ -130,7 +143,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         >
           <ArrowLeft className="text-slate-400" size={20} />
         </button>
-        <h1 className="text-2xl font-bold text-white">Perfil de {userProfile.displayName}</h1>
+        <h1 className="text-2xl font-bold text-white">
+          Perfil de {userProfile.displayName}
+        </h1>
       </div>
 
       {/* Profile Info */}
@@ -141,7 +156,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
               <User className="text-white" size={32} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">{userProfile.displayName}</h2>
+              <h2 className="text-xl font-bold text-white">
+                {userProfile.displayName}
+              </h2>
               <p className="text-slate-400">{userProfile.email}</p>
               {userProfile.bio && (
                 <p className="text-slate-300 mt-2">{userProfile.bio}</p>
@@ -176,20 +193,26 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-3 bg-slate-700/30 rounded-lg">
-            <div className="text-2xl font-bold text-purple-400">{mediaItems.length}</div>
+            <div className="text-2xl font-bold text-purple-400">
+              {mediaItems.length}
+            </div>
             <div className="text-sm text-slate-400">Mídias</div>
           </div>
           <div className="text-center p-3 bg-slate-700/30 rounded-lg">
-            <div className="text-2xl font-bold text-green-400">{reviews.length}</div>
+            <div className="text-2xl font-bold text-green-400">
+              {reviews.length}
+            </div>
             <div className="text-sm text-slate-400">Reviews</div>
           </div>
           <div className="text-center p-3 bg-slate-700/30 rounded-lg">
-            <div className="text-2xl font-bold text-yellow-400">{milestones.length}</div>
+            <div className="text-2xl font-bold text-yellow-400">
+              {milestones.length}
+            </div>
             <div className="text-sm text-slate-400">Marcos</div>
           </div>
           <div className="text-center p-3 bg-slate-700/30 rounded-lg">
             <div className="text-2xl font-bold text-cyan-400">
-              {mediaItems.filter(item => item.status === "completed").length}
+              {mediaItems.filter((item) => item.status === "completed").length}
             </div>
             <div className="text-sm text-slate-400">Concluídos</div>
           </div>
@@ -229,7 +252,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
               >
                 <div className="flex items-center gap-3 mb-3">
                   {getMediaTypeIcon(item.type)}
-                  <span className="text-sm text-slate-400 capitalize">{item.type}</span>
+                  <span className="text-sm text-slate-400 capitalize">
+                    {item.type}
+                  </span>
                 </div>
                 <h3 className="font-semibold text-white mb-2">{item.title}</h3>
                 <div className="flex items-center gap-2">
@@ -238,16 +263,22 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                       item.status === "completed"
                         ? "bg-green-500/20 text-green-400"
                         : item.status === "in-progress"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-slate-500/20 text-slate-400"
+                          ? "bg-yellow-500/20 text-yellow-400"
+                          : "bg-slate-500/20 text-slate-400"
                     }`}
                   >
                     {item.status}
                   </span>
                   {item.rating && (
                     <div className="flex items-center gap-1">
-                      <Star size={12} className="text-yellow-400" fill="currentColor" />
-                      <span className="text-xs text-slate-400">{item.rating}/10</span>
+                      <Star
+                        size={12}
+                        className="text-yellow-400"
+                        fill="currentColor"
+                      />
+                      <span className="text-xs text-slate-400">
+                        {item.rating}/10
+                      </span>
                     </div>
                   )}
                 </div>
@@ -259,7 +290,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         {activeTab === "reviews" && (
           <div className="space-y-4">
             {reviews.map((review) => {
-              const media = mediaItems.find(item => item.id === review.mediaId);
+              const media = mediaItems.find(
+                (item) => item.id === review.mediaId,
+              );
               return (
                 <div
                   key={review.id}
@@ -267,17 +300,29 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="font-semibold text-white">{review.title}</h3>
+                      <h3 className="font-semibold text-white">
+                        {review.title}
+                      </h3>
                       {media && (
-                        <p className="text-sm text-slate-400">Review de {media.title}</p>
+                        <p className="text-sm text-slate-400">
+                          Review de {media.title}
+                        </p>
                       )}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Star size={16} className="text-yellow-400" fill="currentColor" />
-                      <span className="text-white font-medium">{review.rating}/10</span>
+                      <Star
+                        size={16}
+                        className="text-yellow-400"
+                        fill="currentColor"
+                      />
+                      <span className="text-white font-medium">
+                        {review.rating}/10
+                      </span>
                     </div>
                   </div>
-                  <p className="text-slate-300 text-sm leading-relaxed">{review.content}</p>
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    {review.content}
+                  </p>
                   <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
                     <Calendar size={12} />
                     {new Date(review.createdAt).toLocaleDateString("pt-BR")}
@@ -291,7 +336,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         {activeTab === "milestones" && (
           <div className="space-y-4">
             {milestones.map((milestone) => {
-              const media = milestone.mediaId ? mediaItems.find(item => item.id === milestone.mediaId) : null;
+              const media = milestone.mediaId
+                ? mediaItems.find((item) => item.id === milestone.mediaId)
+                : null;
               return (
                 <div
                   key={milestone.id}
@@ -300,8 +347,12 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                   <div className="flex items-start gap-3">
                     <div className="text-2xl">{milestone.icon}</div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-white">{milestone.title}</h3>
-                      <p className="text-slate-300 text-sm mt-1">{milestone.description}</p>
+                      <h3 className="font-semibold text-white">
+                        {milestone.title}
+                      </h3>
+                      <p className="text-slate-300 text-sm mt-1">
+                        {milestone.description}
+                      </p>
                       {media && (
                         <p className="text-xs text-purple-400 mt-2">
                           Relacionado a: {media.title}

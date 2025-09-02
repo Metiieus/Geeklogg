@@ -28,7 +28,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
-            {/* Header */}
+      {/* Header */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -82,7 +82,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           >
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-                </nav>
+        </nav>
         {menuOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -110,7 +110,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             >
               <UserPlus size={18} />
               <span>Cadastre-se</span>
-                        </button>
+            </button>
           </motion.div>
         )}
       </motion.header>
@@ -129,11 +129,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45 hidden sm:block"></div>
         </div>
 
-                <div className="relative z-10 text-center max-w-4xl mx-auto">
+        <div className="relative z-10 text-center max-w-4xl mx-auto">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 1, delay: 0.5, type: "spring", bounce: 0.3 }}
+            transition={{
+              duration: 1,
+              delay: 0.5,
+              type: "spring",
+              bounce: 0.3,
+            }}
             className="mb-6 sm:mb-8"
           >
             <div
@@ -149,7 +154,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
           </motion.div>
 
-                    <motion.h1
+          <motion.h1
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
@@ -158,7 +163,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <motion.span
               initial={{ backgroundPosition: "0% 50%" }}
               animate={{ backgroundPosition: "100% 50%" }}
-              transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse",
+              }}
               className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent"
               style={{ backgroundSize: "200% 200%" }}
             >
@@ -175,7 +184,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </motion.span>
           </motion.h1>
 
-                    <motion.p
+          <motion.p
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.4 }}
@@ -186,7 +195,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             missão épica.
           </motion.p>
 
-                    <motion.div
+          <motion.div
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.6 }}
@@ -223,7 +232,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Features Section */}
       <section className="py-12 sm:py-20 px-4 sm:px-6 relative">
         <div className="max-w-7xl mx-auto">
-                    <motion.div
+          <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
@@ -283,7 +292,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   "Veja seus padrões, evolução e marcos da sua jornada",
                 color: "from-indigo-400 to-cyan-500",
               },
-                        ].map((feature, index) => (
+            ].map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ y: 50, opacity: 0 }}
@@ -296,7 +305,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   whileHover={{
                     scale: 1.02,
                     y: -2,
-                    boxShadow: "0 15px 30px rgba(6, 182, 212, 0.1)"
+                    boxShadow: "0 15px 30px rgba(6, 182, 212, 0.1)",
                   }}
                   className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 mx-1 feature-card"
                 >
@@ -330,7 +339,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-cyan-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
         </div>
 
-                        <div className="max-w-7xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -348,12 +357,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <motion.div
                 animate={{
                   rotate: [0, 10, -10, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
                 transition={{
                   duration: 3,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               >
                 <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-cyan-400" />
@@ -367,7 +376,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
               Seu assistente pessoal que entende seus gostos, analisa seu perfil
               e cria missões personalizadas para expandir seus horizontes geek
-                        </p>
+            </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 features-grid grid-container">
@@ -393,7 +402,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   "Transforme seus dados em uma história épica da sua evolução como nerd/geek",
                 color: "from-purple-400 to-indigo-500",
               },
-                        ].map((feature, index) => (
+            ].map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ y: 100, opacity: 0, rotateY: 90 }}
@@ -402,7 +411,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   duration: 0.8,
                   delay: index * 0.2,
                   type: "spring",
-                  bounce: 0.3
+                  bounce: 0.3,
                 }}
                 viewport={{ once: true }}
                 className="group"
@@ -411,14 +420,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   whileHover={{
                     scale: 1.02,
                     y: -4,
-                    boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)"
+                    boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)",
                   }}
                   className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 mx-2 feature-card"
                 >
                   <motion.div
                     whileHover={{
                       rotate: [0, -10, 10, 0],
-                      scale: 1.1
+                      scale: 1.1,
                     }}
                     transition={{ duration: 0.6 }}
                     className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-4 sm:mb-6`}
@@ -451,7 +460,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             ))}
           </div>
 
-                    <motion.div
+          <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -461,7 +470,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <motion.div
               whileHover={{
                 scale: 1.02,
-                boxShadow: "0 20px 40px rgba(6, 182, 212, 0.1)"
+                boxShadow: "0 20px 40px rgba(6, 182, 212, 0.1)",
               }}
               className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-cyan-400/30 rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto"
             >
@@ -504,7 +513,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="absolute bottom-20 left-1/4 w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-25 transform -rotate-12"></div>
         </div>
 
-                <div className="max-w-4xl mx-auto text-center relative z-10">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.h2
             initial={{ scale: 0.5, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
@@ -539,7 +548,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileHover={{
                 scale: 1.05,
                 y: -2,
-                boxShadow: "0 15px 30px rgba(6, 182, 212, 0.3)"
+                boxShadow: "0 15px 30px rgba(6, 182, 212, 0.3)",
               }}
               whileTap={{ scale: 0.95 }}
               className="group w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all shadow-2xl mx-2"
@@ -548,12 +557,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <motion.div
                   animate={{
                     rotate: [0, 15, -15, 0],
-                    scale: [1, 1.2, 1]
+                    scale: [1, 1.2, 1],
                   }}
                   transition={{
                     duration: 2,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
                   }}
                 >
                   <Zap size={20} className="sm:w-6 sm:h-6" />

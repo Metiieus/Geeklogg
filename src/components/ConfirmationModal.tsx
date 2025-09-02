@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
 
 export interface ConfirmationModalProps {
   isOpen: boolean;
@@ -8,18 +8,18 @@ export interface ConfirmationModalProps {
   message?: string | React.ReactNode;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'danger' | 'default';
+  variant?: "danger" | "default";
   onConfirm: () => void | Promise<void>;
   onCancel: () => void;
 }
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
-  title = 'Confirmar ação',
-  message = 'Tem certeza?',
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
-  variant = 'default',
+  title = "Confirmar ação",
+  message = "Tem certeza?",
+  confirmText = "Confirmar",
+  cancelText = "Cancelar",
+  variant = "default",
   onConfirm,
   onCancel,
 }) => {
@@ -37,11 +37,11 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel();
-      if (e.key === 'Enter') onConfirm();
+      if (e.key === "Escape") onCancel();
+      if (e.key === "Enter") onConfirm();
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [isOpen, onCancel, onConfirm]);
 
   return (
@@ -62,7 +62,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2, type: 'spring', damping: 24, stiffness: 220 }}
+            transition={{
+              duration: 0.2,
+              type: "spring",
+              damping: 24,
+              stiffness: 220,
+            }}
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -71,12 +76,15 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-2xl">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 id="confirm-modal-title" className="text-xl font-bold text-white">
+                  <h2
+                    id="confirm-modal-title"
+                    className="text-xl font-bold text-white"
+                  >
                     {title}
                   </h2>
                   {message && (
                     <div className="mt-2 text-white/80 text-sm leading-relaxed">
-                      {typeof message === 'string' ? <p>{message}</p> : message}
+                      {typeof message === "string" ? <p>{message}</p> : message}
                     </div>
                   )}
                 </div>
@@ -100,9 +108,9 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   ref={confirmRef}
                   onClick={onConfirm}
                   className={`px-4 py-2 rounded-xl text-white transition-colors ${
-                    variant === 'danger'
-                      ? 'bg-red-600 hover:bg-red-500'
-                      : 'bg-cyan-600 hover:bg-cyan-500'
+                    variant === "danger"
+                      ? "bg-red-600 hover:bg-red-500"
+                      : "bg-cyan-600 hover:bg-cyan-500"
                   }`}
                 >
                   {confirmText}
