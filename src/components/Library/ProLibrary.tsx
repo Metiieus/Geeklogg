@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { SearchBar } from "./SearchBar";
+import { SearchBar } from "../SearchBar";
 import { LibraryFilters } from "./LibraryFilters";
-import { FeaturedSection } from "./FeaturedSection";
-import { CollectionGrid } from "./CollectionGrid";
+import { FeaturedSection } from "../FeaturedSection";
+import { CollectionGrid } from "../CollectionGrid";
 import { ManualAddModal } from "./ManualAddModal";
 
 import { MediaItem } from "../types/mediaTypes"; // tipagem compartilhada

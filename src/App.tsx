@@ -37,7 +37,7 @@ import { Login } from "./components/Login";
 import { LandingPage } from "./components/LandingPage";
 import { Register } from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import ProLibrary from "./components/ProLibrary"; // ✅ Nova biblioteca integrada
+import ProLibrary from "./components/Library/ProLibrary"; // ✅ Nova biblioteca integrada
 import Reviews from "./components/Reviews";
 import Timeline from "./components/Timeline";
 import Statistics from "./components/Statistics";
