@@ -40,6 +40,12 @@ const navigationItems: NavItem[] = [
     gradient: "from-pink-400 to-purple-500",
   },
   {
+    id: "modern-library",
+    icon: <Sparkles size={20} />,
+    label: "Biblioteca Moderna",
+    gradient: "from-violet-400 to-cyan-500",
+  },
+  {
     id: "reviews",
     icon: <MessageSquare size={20} />,
     label: "Resenhas",
