@@ -50,7 +50,7 @@ import Statistics from "./components/Statistics";
 import SettingsComponent from "./components/Settings";
 import Profile from "./components/Profile";
 import { AddMediaPage } from "./components/AddMediaPage";
-import EditMediaPlaceholder from "./components/EditMediaPlaceholder";
+import EditMediaPageWrapper from "./components/EditMediaPageWrapper";
 import { UserProfileView } from "./components/UserProfileView";
 import FirebaseStatus from "./components/FirebaseStatus";
 import "./utils/connectivityTest";
@@ -304,7 +304,7 @@ const AppContent: React.FC = () => {
       settings: SettingsComponent,
       profile: Profile,
       "add-media": AddMediaPage,
-      "edit-media": EditMediaPlaceholder,
+      "edit-media": EditMediaPageWrapper,
       "user-profile": UserProfileView,
       social: () => (
         <div className="flex items-center justify-center h-96">

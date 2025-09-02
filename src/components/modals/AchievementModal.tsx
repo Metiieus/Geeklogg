@@ -1,7 +1,8 @@
 import React from "react";
-import { X, Trophy, Star, Zap, Target, Award } from "lucide-react";
-import { AchievementNode } from "../types/achievements";
-import { ModalWrapper } from "./ModalWrapper";
+import React from "react";
+import { X, Trophy, Star, Zap, Target, Award, Calendar } from "lucide-react";
+import { AchievementNode } from "../../types/achievements";
+import { ModalWrapper } from "../ModalWrapper";
 
 interface AchievementModalProps {
   achievement: AchievementNode;

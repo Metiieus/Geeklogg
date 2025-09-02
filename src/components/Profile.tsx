@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Trophy,
   Crown,
@@ -12,7 +13,7 @@ import {
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { AchievementTree } from "./AchievementTree";
-import { AchievementModal } from "./AchievementModal";
+import { AchievementModal } from "./modals/AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
 import { TruncatedBio } from "./TruncatedBio";
 import { EditFavoritesModal } from "./modals/EditFavoritesModal";

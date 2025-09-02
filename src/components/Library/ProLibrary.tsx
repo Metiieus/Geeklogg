@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import React, { useState } from "react";
 import { SearchBar } from "../SearchBar";
 import { LibraryFilters } from "./LibraryFilters";
-import { FeaturedSection } from "../FeaturedSection";
-import { CollectionGrid } from "../CollectionGrid";
+import { FeaturedSection } from "./FeaturedSection";
+import { CollectionGrid } from "./CollectionGrid";
 import { ManualAddModal } from "./ManualAddModal";
 import MediaPreviewModal from "./MediaPreviewModal";
 
-import { MediaItem } from "../types/mediaTypes"; // tipagem compartilhada
+import { MediaItem } from "../../App"; // tipagem compartilhada
 
 interface ProLibraryProps {
   featured?: MediaItem[];
