@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import React, { useState } from "react";
 import { ArrowLeft, Save, Upload } from "lucide-react";
 import { MediaItem, MediaType, Status } from "../App";
 import { updateMedia } from "../services/mediaService";
