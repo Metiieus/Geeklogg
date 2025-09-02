@@ -29,4 +29,25 @@ enableIndexedDbPersistence(db).catch((err) => {
   }
 });
 
+export const isFirebaseOffline = (): boolean => {
+  return typeof navigator !== "undefined" && !navigator.onLine;
+};
+
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  delay = 1000,
+): Promise<T> {
+  let attempt = 0;
+  while (true) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt >= retries) throw err;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      attempt++;
+    }
+  }
+}
+
 console.log("🔥 Firebase inicializado com Auth:", !!auth);

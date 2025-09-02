@@ -4,7 +4,7 @@ import { LogIn, User, Lock, Sparkles, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
-import { getAuth, isFirebaseOffline } from "../firebase";
+import { auth, isFirebaseOffline } from "../firebase";
 
 interface LoginProps {
   onCancel?: () => void;
@@ -60,7 +60,6 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     }
 
     // Verificar se o Firebase está inicializado
-    const auth = getAuth();
     if (!auth || isFirebaseOffline()) {
       showError(
         "Modo Offline",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cloud, CloudOff, Wifi, WifiOff, TestTube } from 'lucide-react';
-import { getDB, getAuth, isFirebaseOffline } from '../firebase';
+import { db, auth, isFirebaseOffline } from '../firebase';
 import { logConnectivityStatus } from '../utils/connectivityTest';
 
 interface FirebaseStatusProps {
@@ -17,8 +17,6 @@ export const FirebaseStatus: React.FC<FirebaseStatusProps> = ({ showStatus = tru
   useEffect(() => {
     // Check Firebase status
     const checkFirebaseStatus = () => {
-      const db = getDB();
-      const auth = getAuth();
       const offline = isFirebaseOffline();
       setIsFirebaseConnected(!offline && !!db && !!auth);
     };

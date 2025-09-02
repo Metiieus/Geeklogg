@@ -1,4 +1,4 @@
-import { getDB, getAuth, isFirebaseOffline, withRetry } from '../firebase';
+import { db, auth, isFirebaseOffline, withRetry } from '../firebase';
 import { database } from '../services/database';
 
 export interface ConnectivityTestResult {
@@ -18,8 +18,6 @@ export const runConnectivityTest = async (): Promise<ConnectivityTestResult> => 
     const networkStatus = navigator.onLine;
     
     // Test 2: Firebase initialization status
-    const db = getDB();
-    const auth = getAuth();
     const firebaseOffline = isFirebaseOffline();
     
     const firebaseStatus = !firebaseOffline && !!db && !!auth;

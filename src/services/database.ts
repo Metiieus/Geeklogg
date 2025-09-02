@@ -1,4 +1,4 @@
-import { getDB, getAuth, isFirebaseOffline, withRetry } from "../firebase";
+import { db, auth, isFirebaseOffline, withRetry } from "../firebase";
 import { localStorageService } from "./localStorageService";
 import {
   collection,
@@ -21,14 +21,11 @@ import {
 
 // Helper to check if we should use offline mode
 const shouldUseOfflineMode = (): boolean => {
-  const db = getDB();
-  const auth = getAuth();
   return isFirebaseOffline() || !db || !auth;
 };
 
 // Helper to get current user ID
 const getCurrentUserId = (): string | null => {
-  const auth = getAuth();
   return auth?.currentUser?.uid || null;
 };
 
@@ -62,7 +59,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       return await withRetry(async () => {
@@ -131,7 +127,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       await withRetry(async () => {
@@ -177,7 +172,6 @@ export const database = {
       : collectionPath;
 
     // Protege documentos do usuário quando não autenticado
-    const auth = getAuth();
     if ((pathStr.startsWith("users/") || pathStr === "users") && !auth?.currentUser) {
       console.warn("🔒 Tentativa de acessar documento de usuário sem login:", pathStr);
       return { exists: () => false, data: () => null };
@@ -204,7 +198,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       let docRef;
@@ -261,7 +254,6 @@ export const database = {
       : collectionPath;
 
     // Protege coleção /users quando não autenticado
-    const auth = getAuth();
     if ((pathStr === "users" || pathStr.startsWith("users/")) && !auth?.currentUser) {
       console.warn("🔒 Tentativa de acessar coleção users sem login:", pathStr);
       return [];
@@ -319,7 +311,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       let q = collection(db, pathStr);
@@ -375,7 +366,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       await withRetry(async () => {
@@ -421,7 +411,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       await withRetry(async () => {
@@ -472,7 +461,6 @@ export const database = {
     }
 
     try {
-      const db = getDB();
       if (!db) throw new Error("Firestore not available");
 
       let q = collection(db, pathStr);

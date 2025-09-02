@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getAuth, getDB, isFirebaseOffline } from "../firebase";
+import { auth, db, isFirebaseOffline } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
@@ -70,9 +70,6 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       }
 
       console.log("📝 Iniciando registro...");
-
-      const auth = getAuth();
-      const db = getDB();
 
       if (!auth || isFirebaseOffline()) {
         showError(

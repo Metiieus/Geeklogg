@@ -1,4 +1,4 @@
-import { getAuth, isFirebaseOffline } from '../firebase';
+import { auth, isFirebaseOffline } from '../firebase';
 
 // --- Interfaces ---
 export interface CheckoutResponse {
@@ -31,8 +31,6 @@ const getApiUrl = (): string => {
  * Chama o backend para criar uma preferência de pagamento no Mercado Pago.
  */
 export async function createPreference(): Promise<CheckoutResponse> {
-  const auth = getAuth();
-
   if (!auth || isFirebaseOffline()) {
     console.error("Firebase auth não disponível (modo offline).");
     return { success: false, error: 'Serviço de pagamento não disponível no modo offline.' };
