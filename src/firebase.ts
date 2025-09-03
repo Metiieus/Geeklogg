@@ -19,8 +19,8 @@ const app = initializeApp(firebaseConfig);
 // ✅ Exporta serviços prontos
 export const auth = getAuth(app);
 
-// ✅ Usa o banco padrão do Firebase
-export const db = getFirestore(app);
+// 🔑 Usa o banco específico "geeklog"
+export const db = getFirestore(app, "geeklog");
 
 export const storage = getStorage(app);
 
