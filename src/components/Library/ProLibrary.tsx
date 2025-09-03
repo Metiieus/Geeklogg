@@ -1,25 +1,10 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Search,
-  Plus,
-  Star,
-  Edit2,
-  Trash2,
-  Play,
-  BookOpen,
-  Film,
-  Gamepad2,
-  Tv,
-  User
-} from "lucide-react";
 import { SearchBar } from "../SearchBar";
 import { LibraryFilters } from "./LibraryFilters";
 import { FeaturedSection } from "./FeaturedSection";
 import { CollectionGrid } from "./CollectionGrid";
 import { ManualAddModal } from "./ManualAddModal";
 import MediaPreviewModal from "./MediaPreviewModal";
-import { FloatingParticles } from "../../design-system";
 
 import { MediaItem } from "../../App"; // tipagem compartilhada
 
