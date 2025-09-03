@@ -35,23 +35,6 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setIsPreviewOpen(true);
   };
 
-  // Get category icon
-  const getCategoryIcon = (type: string) => {
-    switch (type) {
-      case "game":
-        return <Gamepad2 className="w-4 h-4" />;
-      case "book":
-        return <BookOpen className="w-4 h-4" />;
-      case "movie":
-        return <Film className="w-4 h-4" />;
-      case "tv":
-      case "series":
-        return <Tv className="w-4 h-4" />;
-      default:
-        return <BookOpen className="w-4 h-4" />;
-    }
-  };
-
   // Filtra a coleção por texto e tag
   const filteredCollection = collection.filter((item) => {
     const matchesSearch = item.title
