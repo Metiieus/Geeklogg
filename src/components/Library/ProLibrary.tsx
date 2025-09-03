@@ -122,19 +122,6 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 1, type: "spring", stiffness: 200 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setShowAddModal(true)}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-full shadow-lg hover:shadow-xl hover:shadow-violet-500/25 flex items-center justify-center transition-all duration-300 z-40"
-      >
-        <Plus className="w-6 h-6 text-white" />
-      </motion.button>
-
       {/* Modal de adicionar manualmente */}
       {showAddModal && (
         <ManualAddModal onClose={() => setShowAddModal(false)} />
