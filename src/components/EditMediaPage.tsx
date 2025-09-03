@@ -354,7 +354,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
               {/* Rating & Hours */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text sm font-medium text-slate-300 mb-2">
                     Avaliação (0-10)
                   </label>
                   <input
@@ -558,7 +558,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                 ) : (
                   <Save size={16} className="sm:w-5 sm:h-5" />
                 )}
-                {isSaving ? "Salvando..." : "Salvar Alterações"}
+                {isSaving ? "Salvando..." : "Salvar Alteraç��es"}
               </button>
             </div>
           </div>
@@ -567,3 +567,5 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
     </ModalWrapper>
   );
 };
+
+export default EditMediaPage;

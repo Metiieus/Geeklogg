@@ -13,7 +13,7 @@ import {
 import { AchievementNode, AchievementCategory } from "../types/achievements";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
-import { AchievementModal } from "./AchievementModal";
+import { AchievementModal } from "./modals/AchievementModal";
 
 interface AchievementTreeProps {
   onClose: () => void;

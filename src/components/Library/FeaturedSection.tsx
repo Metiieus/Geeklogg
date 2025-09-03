@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { RadiantMediaCard } from "./Library/RadiantMediaCard";
+import { RadiantMediaCard } from "./RadiantMediaCard";
 import { Edit3 } from "lucide-react";
-import { MediaItem } from "../../types/mediaTypes";
+import { MediaItem } from "../../App";
 
 interface FeaturedSectionProps {
   items: MediaItem[];

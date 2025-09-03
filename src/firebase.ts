@@ -10,6 +10,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // ✅ Inicializa Firebase só uma vez
@@ -18,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 // ✅ Exporta serviços prontos
 export const auth = getAuth(app);
 
-// 🔑 aqui forçamos usar o banco "geeklog"
+// 🔑 Usa o banco específico "geeklog"
 export const db = getFirestore(app, "geeklog");
 
 export const storage = getStorage(app);

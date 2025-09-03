@@ -1,6 +1,6 @@
 import React from "react";
 import { RadiantMediaCard } from "./RadiantMediaCard";
-import { MediaItem } from "../../types/mediaTypes";
+import { MediaItem } from "../../App";
 
 interface CollectionGridProps {
   items: MediaItem[];
