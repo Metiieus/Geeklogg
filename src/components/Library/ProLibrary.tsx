@@ -80,53 +80,25 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
-      {/* Background particles */}
-      <FloatingParticles count={6} color="cyan" className="absolute inset-0 opacity-30" />
-
-      {/* Fixed Header - Modern Style like reference */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-violet-500/20 to-cyan-500/20 border border-violet-500/30">
-              <div className="bg-gradient-to-r from-violet-400 to-cyan-500 bg-clip-text text-transparent">
-                <BookOpen className="w-6 h-6" />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">My Books</h1>
-              <p className="text-xs text-slate-400">Biblioteca</p>
-            </div>
-          </div>
-
-          {/* Search Bar - Centered like reference */}
-          <div className="flex-1 max-w-lg mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Buscar mídia..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
-              />
-            </div>
-          </div>
-
-          {/* User Avatar */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 via-purple-500 to-cyan-500 p-0.5">
-              <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen p-6 md:p-10 lg:p-12 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+      {/* Cabeçalho com busca */}
+      <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-100">
+            Minha Biblioteca
+          </h1>
+          <p className="text-slate-400">
+            Seu espaço geek com estilo moderno ✨
+          </p>
         </div>
+
+        <SearchBar value={search} onChange={setSearch} />
       </header>
 
-      {/* Main Content */}
-      <main className="pt-24 px-6 max-w-7xl mx-auto space-y-12">
+      {/* Filtros */}
+      <LibraryFilters activeFilter={filter} onChange={setFilter} />
+
+      <main className="space-y-16 mt-10">
         {/* Hero Section with Main Feature */}
         {featured.length > 0 && (
           <motion.section
