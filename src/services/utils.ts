@@ -22,7 +22,7 @@ export function getUserId(): string | null {
 /**
  * Remove campos com valor undefined de um objeto.
  */
-export function removeUndefinedFields<T extends Record<string, any>>(
+export function removeUndefinedFields<T extends Record<string, unknown>>(
   obj: T | null | undefined,
 ): T {
   if (!obj || typeof obj !== "object") {
@@ -42,8 +42,8 @@ export function removeUndefinedFields<T extends Record<string, any>>(
  * Sanitiza valores string de um objeto,
  * removendo tags <script>, event handlers e javascript:.
  */
-export function sanitizeStrings(obj: Record<string, any>): Record<string, any> {
-  const result: Record<string, any> = {};
+export function sanitizeStrings(obj: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === "string") {
       result[key] = value
