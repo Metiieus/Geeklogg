@@ -1,13 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Bot,
   X,
   Send,
   Sparkles,
-  Crown,
   Brain,
-  Zap,
   ChevronRight,
   Shuffle,
 } from "lucide-react";
@@ -18,7 +15,6 @@ import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
 import {
-  hasArchiviusAccess,
   canUseArchivius,
   ARCHIVIUS_CONFIG,
 } from "../config/archivius";

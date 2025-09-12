@@ -4,6 +4,8 @@ import {
   uploadBytes,
   getDownloadURL,
   deleteObject,
+  StorageReference,
+  UploadResult,
 } from "firebase/storage";
 import { getUserId } from "./utils";
 
@@ -14,14 +16,14 @@ class StorageClient {
     return !!this.storage;
   }
 
-  createRef(path: string) {
+  createRef(path: string): StorageReference {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
     return ref(this.storage, path);
   }
 
-  async uploadFile(storageRef: any, file: File | Blob) {
+  async uploadFile(storageRef: StorageReference, file: File | Blob): Promise<UploadResult> {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
@@ -34,7 +36,7 @@ class StorageClient {
     }
   }
 
-  async getDownloadURL(storageRef: any) {
+  async getDownloadURL(storageRef: StorageReference): Promise<string> {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
@@ -47,16 +49,16 @@ class StorageClient {
     }
   }
 
-  async deleteFile(storageRef: any) {
+  async deleteFile(storageRef: StorageReference): Promise<void> {
     if (!this.storage) {
       throw new Error("Storage não está inicializado");
     }
 
     try {
       return await deleteObject(storageRef);
-    } catch (e: any) {
+    } catch (e: unknown) {
       // Se o arquivo não existe, consideramos como sucesso
-      if (e.code === "storage/object-not-found") {
+      if (e && typeof e === 'object' && 'code' in e && e.code === "storage/object-not-found") {
         console.log("ℹ️ Arquivo não encontrado (já foi deletado):", e);
         return; // Não é erro, apenas ignora
       }
