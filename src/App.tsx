@@ -38,7 +38,7 @@ import { useToast } from "./context/ToastContext";
 // Components
 import { Sidebar } from "./components/Sidebar";
 import { DesktopHeader } from "./components/DesktopHeader";
-import { MobileNav } from "./components/MobileNav";
+import { MobileSidebar } from "./components/MobileSidebar";
 import { Login } from "./components/Login";
 import { LandingPage } from "./components/LandingPage";
 import { Register } from "./components/Register";
@@ -407,18 +407,25 @@ const AppContent: React.FC = () => {
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-500/10 rotate-45"></div>
         </div>
 
-        {/* Sidebar */}
-        <Sidebar />
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block">
+          <Sidebar />
+        </div>
 
-        {/* Header */}
-        <DesktopHeader
-          pageName={currentPageMeta.name}
-          pageIcon={currentPageMeta.icon}
-        />
+        {/* Mobile Sidebar */}
+        <MobileSidebar />
+
+        {/* Desktop Header */}
+        <div className="hidden md:block">
+          <DesktopHeader
+            pageName={currentPageMeta.name}
+            pageIcon={currentPageMeta.icon}
+          />
+        </div>
 
         {/* Conteúdo */}
-        <main className="md:ml-20 md:pt-16 min-h-screen">
-          <div className="p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
+        <main className="md:ml-20 md:pt-16 min-h-screen pt-16">
+          <div className="p-4 md:p-6 lg:p-8 pb-8">
             <Suspense
               fallback={
                 <div className="flex items-center justify-center h-64">
@@ -441,9 +448,6 @@ const AppContent: React.FC = () => {
             </Suspense>
           </div>
         </main>
-
-        {/* Mobile Navigation */}
-        <MobileNav />
 
         {/* Firebase Status */}
         <FirebaseStatus showStatus={!!user} />

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
+import { X, AlertTriangle } from "lucide-react";
 
 export interface ConfirmationModalProps {
   isOpen: boolean;
@@ -73,48 +73,77 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             aria-modal="true"
             aria-labelledby="confirm-modal-title"
           >
-            <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-2xl">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2
-                    id="confirm-modal-title"
-                    className="text-xl font-bold text-white"
-                  >
-                    {title}
-                  </h2>
-                  {message && (
-                    <div className="mt-2 text-white/80 text-sm leading-relaxed">
-                      {typeof message === "string" ? <p>{message}</p> : message}
+            <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+              {/* Header com ícone de alerta */}
+              <div className={`p-6 border-b ${
+                variant === "danger"
+                  ? "bg-red-500/10 border-red-500/20"
+                  : "bg-slate-800/50 border-white/10"
+              }`}>
+                <div className="flex items-start gap-4">
+                  {variant === "danger" && (
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center">
+                      <AlertTriangle className="w-6 h-6 text-red-400" />
                     </div>
                   )}
+                  <div className="flex-1">
+                    <h2
+                      id="confirm-modal-title"
+                      className="text-xl font-bold text-white"
+                    >
+                      {title}
+                    </h2>
+                  </div>
+                  <button
+                    aria-label="Fechar"
+                    onClick={onCancel}
+                    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                  >
+                    <X className="text-slate-300" size={20} />
+                  </button>
                 </div>
-                <button
-                  aria-label="Fechar"
-                  onClick={onCancel}
-                  className="p-2 rounded-lg hover:bg-slate-700/60 transition-colors"
-                >
-                  <X className="text-slate-300" size={20} />
-                </button>
               </div>
 
-              <div className="mt-6 flex items-center justify-end gap-3">
-                <button
+              {/* Body */}
+              <div className="p-6">
+                {message && (
+                  <div className="text-slate-300 text-sm leading-relaxed">
+                    {typeof message === "string" ? <p>{message}</p> : message}
+                  </div>
+                )}
+
+                {variant === "danger" && (
+                  <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <p className="text-sm text-red-300 font-medium">
+                      ⚠️ Esta ação não pode ser desfeita!
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer com botões */}
+              <div className="p-6 bg-slate-800/50 border-t border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={onCancel}
-                  className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/15 transition-colors"
+                  className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/15 transition-colors font-medium"
                 >
                   {cancelText}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   ref={confirmRef}
                   onClick={onConfirm}
-                  className={`px-4 py-2 rounded-xl text-white transition-colors ${
+                  className={`px-6 py-3 rounded-xl text-white transition-colors font-semibold shadow-lg ${
                     variant === "danger"
-                      ? "bg-red-600 hover:bg-red-500"
-                      : "bg-cyan-600 hover:bg-cyan-500"
+                      ? "bg-red-600 hover:bg-red-500 border-2 border-red-500"
+                      : "bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400"
                   }`}
                 >
                   {confirmText}
-                </button>
+                </motion.button>
               </div>
             </div>
           </motion.div>

@@ -230,34 +230,35 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   return (
     <div className="min-h-screen text-white">
       {/* Modern Header */}
-      <div className="sticky top-0 z-30 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-[1800px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between gap-4">
+      <div className="sticky top-0 md:top-16 z-30 backdrop-blur-xl border-b border-white/5">
+        <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             {/* Logo & Title */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
-                <BookOpen className="w-5 h-5" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">Minhas Mídias</h1>
+                <h1 className="text-lg sm:text-xl font-bold text-white">Minhas Mídias</h1>
                 <p className="text-xs text-slate-400">{collection.length} itens</p>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setFilter("favorites")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all ${
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all flex-1 sm:flex-none justify-center ${
                   filter === "favorites"
                     ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
                     : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
                 }`}
               >
-                <Heart className="w-4 h-4" />
-                Favoritos ({favorites.length})
+                <Heart className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Favoritos ({favorites.length})</span>
+                <span className="sm:hidden">({favorites.length})</span>
               </motion.button>
 
               <motion.button
@@ -265,15 +266,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowAddSearchModal(true)}
                 disabled={isAddingMedia}
-                className="px-4 py-2 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-violet-500/25 transition-all disabled:opacity-50"
+                className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium text-xs sm:text-sm hover:shadow-lg hover:shadow-violet-500/25 transition-all disabled:opacity-50 flex-1 sm:flex-none justify-center"
               >
-                {isAddingMedia ? "Adicionando..." : "Adicionar Mídia"}
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>{isAddingMedia ? "Adicionando..." : "Adicionar"}</span>
               </motion.button>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="flex gap-2 mt-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pb-2">
+          <div className="flex gap-2 mt-3 sm:mt-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pb-2 -mx-3 px-3 sm:mx-0 sm:px-0">
             {[
               { id: "all", label: "Todas", icon: null },
               { id: "book", label: "Livros", icon: BookOpen },
@@ -288,13 +290,13 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setFilter(category.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap text-sm font-medium ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg transition-all whitespace-nowrap text-xs sm:text-sm font-medium ${
                     filter === category.id
                       ? "bg-white/10 text-white border border-white/20"
                       : "bg-transparent text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  {Icon && <Icon className="w-4 h-4" />}
+                  {Icon && <Icon className="w-3 h-3 sm:w-4 sm:h-4" />}
                   <span>{category.label}</span>
                 </motion.button>
               );
@@ -304,7 +306,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1800px] mx-auto px-6 py-8 space-y-12">
+      <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-8 sm:space-y-12">
         {/* Hero Banner Carousel */}
         {customFeatured.length > 0 && filter === "all" && (
           <motion.section
@@ -312,7 +314,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="relative"
           >
-            <div className="relative h-[400px] rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl border border-white/10">
+            <div className="relative h-[300px] sm:h-[400px] rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl border border-white/10">
               {/* Background with blur */}
               <div
                 className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-30"
@@ -325,46 +327,47 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/90 to-transparent" />
 
               {/* Content */}
-              <div className="relative h-full flex items-center px-12">
-                <div className="max-w-2xl space-y-6">
+              <div className="relative h-full flex items-center px-4 sm:px-8 lg:px-12">
+                <div className="max-w-2xl space-y-3 sm:space-y-6">
                   <div className="flex items-center gap-2 text-violet-400">
-                    <Sparkles className="w-5 h-5" />
-                    <span className="text-sm font-medium">Coleção em Destaque</span>
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-xs sm:text-sm font-medium">Coleção em Destaque</span>
                   </div>
 
-                  <h2 className="text-5xl font-bold text-white leading-tight">
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
                     Continue sua jornada..
                   </h2>
 
-                  <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
+                  <p className="text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed max-w-xl hidden sm:block">
                     Continue explorando as histórias que você ama. Não pare de explorar sua lista e mergulhe no mundo do entretenimento.
                   </p>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleCardClick(customFeatured[0])}
-                      className="px-6 py-3 bg-slate-900 hover:bg-slate-800 rounded-xl font-medium border border-white/10 hover:border-white/20 transition-all inline-flex items-center gap-2"
+                      className="px-4 sm:px-6 py-2 sm:py-3 bg-slate-900 hover:bg-slate-800 rounded-xl font-medium text-sm border border-white/10 hover:border-white/20 transition-all inline-flex items-center justify-center gap-2"
                     >
                       Ver Mais
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                     </motion.button>
 
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleEditFeatured}
-                      className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium border border-white/10 hover:border-white/20 transition-all inline-flex items-center gap-2"
+                      className="px-4 sm:px-6 py-2 sm:py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium text-sm border border-white/10 hover:border-white/20 transition-all inline-flex items-center justify-center gap-2"
                     >
-                      <Edit2 className="w-4 h-4" />
-                      Editar Destaques
+                      <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Editar Destaques</span>
+                      <span className="sm:hidden">Editar</span>
                     </motion.button>
                   </div>
                 </div>
 
-                {/* Featured Books Carousel */}
-                <div className="absolute right-12 top-1/2 -translate-y-1/2 flex gap-4">
+                {/* Featured Books Carousel - Hidden on mobile */}
+                <div className="hidden lg:flex absolute right-12 top-1/2 -translate-y-1/2 gap-4">
                   {customFeatured.slice(0, 5).map((item, index) => (
                     <motion.div
                       key={item.id}
@@ -379,7 +382,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                         zIndex: 5 - index,
                       }}
                     >
-                      <div className="w-44 h-64 rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10 hover:border-violet-500/50 transition-all">
+                      <div className="w-32 h-48 xl:w-44 xl:h-64 rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10 hover:border-violet-500/50 transition-all">
                         {item.cover ? (
                           <img
                             src={item.cover}
@@ -388,7 +391,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                            <BookOpen className="w-12 h-12 text-slate-600" />
+                            <BookOpen className="w-8 h-8 xl:w-12 xl:h-12 text-slate-600" />
                           </div>
                         )}
                       </div>
@@ -417,7 +420,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             </div>
 
             {favorites.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3 sm:gap-4">
                 {favorites.map((item, index) => (
                   <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} />
                 ))}
@@ -440,7 +443,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
         {/* Best Items Grid - Only show when filter is "all" */}
         {filter === "all" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {bestBooks.length > 0 && (
               <BestItemsSection
                 items={bestBooks}
@@ -494,7 +497,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4">
               {customPopular.slice(0, 8).map((item, index) => (
                 <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} showInfo />
               ))}
@@ -519,7 +522,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             </div>
 
             {filteredCollection.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3 sm:gap-4">
                 {filteredCollection.map((item, index) => (
                   <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} />
                 ))}
@@ -619,11 +622,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           <ConfirmationModal
             isOpen={true}
             title="Excluir Mídia"
-            message={`Tem certeza que deseja excluir "${deleteConfirmItem.title}"? Esta ação não pode ser desfeita.`}
+            message={`Tem certeza que deseja excluir "${deleteConfirmItem.title}"?`}
             onConfirm={confirmDelete}
             onCancel={() => setDeleteConfirmItem(null)}
-            confirmText="Excluir"
+            confirmText="Excluir Permanentemente"
             cancelText="Cancelar"
+            variant="danger"
           />
         )}
       </AnimatePresence>
