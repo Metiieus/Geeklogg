@@ -1,61 +1,310 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, BookOpen, Film, Gamepad2, Tv, Image as ImageIcon, Plus } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface ManualAddModalProps {
   onClose: () => void;
 }
 
 export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState("movie");
+  const [formData, setFormData] = useState({
+    title: "",
+    type: "book",
+    cover: "",
+    year: "",
+    author: "",
+    director: "",
+    developer: "",
+    genre: "",
+    rating: "",
+    notes: "",
+  });
+
+  const mediaTypes = [
+    { id: "book", label: "Book", icon: BookOpen },
+    { id: "movie", label: "Movie", icon: Film },
+    { id: "game", label: "Game", icon: Gamepad2 },
+    { id: "tv", label: "TV Show", icon: Tv },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("➕ Nova mídia:", { title, type });
-    // TODO: salvar no backend
+    console.log("Adding media manually:", formData);
+    // TODO: Save to database
     onClose();
   };
 
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const getCreatorLabel = () => {
+    switch (formData.type) {
+      case "book":
+        return "Author";
+      case "movie":
+      case "tv":
+        return "Director";
+      case "game":
+        return "Developer";
+      default:
+        return "Creator";
+    }
+  };
+
+  const getCreatorValue = () => {
+    switch (formData.type) {
+      case "book":
+        return formData.author;
+      case "movie":
+      case "tv":
+        return formData.director;
+      case "game":
+        return formData.developer;
+      default:
+        return "";
+    }
+  };
+
+  const setCreatorValue = (value: string) => {
+    switch (formData.type) {
+      case "book":
+        handleChange("author", value);
+        break;
+      case "movie":
+      case "tv":
+        handleChange("director", value);
+        break;
+      case "game":
+        handleChange("developer", value);
+        break;
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-slate-900 p-6 rounded-xl shadow-xl max-w-md w-full relative">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-slate-400 hover:text-white"
-        >
-          <X size={20} />
-        </button>
-        <h2 className="text-xl font-semibold mb-4 text-white">
-          Adicionar Mídia Manualmente
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Título"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white"
-          />
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white"
-          >
-            <option value="movie">Filme</option>
-            <option value="game">Jogo</option>
-            <option value="anime">Anime</option>
-            <option value="tv">Série</option>
-            <option value="book">Livro</option>
-            <option value="manga">Mangá</option>
-          </select>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white"
-          >
-            Adicionar
-          </button>
-        </form>
-      </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+      />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden"
+      >
+        <div className="bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+          {/* Header */}
+          <div className="relative bg-gradient-to-r from-slate-900/90 to-slate-800/90 p-6 border-b border-white/5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
+                  <Plus className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Add Manually</h2>
+                  <p className="text-slate-400 text-sm mt-1">
+                    Fill in the details manually
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={onClose}
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+            <div className="space-y-6">
+              {/* Media Type Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-3">
+                  Media Type
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  {mediaTypes.map((type) => {
+                    const Icon = type.icon;
+                    return (
+                      <motion.button
+                        key={type.id}
+                        type="button"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleChange("type", type.id)}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+                          formData.type === type.id
+                            ? "bg-gradient-to-br from-violet-500 to-cyan-500 text-white"
+                            : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                        }`}
+                      >
+                        <Icon className="w-6 h-6" />
+                        <span className="text-xs font-medium">{type.label}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-2">
+                  Title <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  placeholder="Enter title"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                />
+              </div>
+
+              {/* Cover Image URL */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-2">
+                  Cover Image URL
+                </label>
+                <div className="relative">
+                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input
+                    type="url"
+                    value={formData.cover}
+                    onChange={(e) => handleChange("cover", e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                  />
+                </div>
+                {formData.cover && (
+                  <div className="mt-3">
+                    <img
+                      src={formData.cover}
+                      alt="Preview"
+                      className="w-32 h-48 object-cover rounded-xl border border-white/10"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Two Column Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Creator (Author/Director/Developer) */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">
+                    {getCreatorLabel()}
+                  </label>
+                  <input
+                    type="text"
+                    value={getCreatorValue()}
+                    onChange={(e) => setCreatorValue(e.target.value)}
+                    placeholder={`Enter ${getCreatorLabel().toLowerCase()}`}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                  />
+                </div>
+
+                {/* Year */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">
+                    Year
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.year}
+                    onChange={(e) => handleChange("year", e.target.value)}
+                    placeholder="2024"
+                    min="1900"
+                    max="2100"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Two Column Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Genre */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">
+                    Genre
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.genre}
+                    onChange={(e) => handleChange("genre", e.target.value)}
+                    placeholder="Action, Drama, etc."
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                  />
+                </div>
+
+                {/* Rating */}
+                <div>
+                  <label className="block text-sm font-semibold text-white mb-2">
+                    Rating (0-10)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.rating}
+                    onChange={(e) => handleChange("rating", e.target.value)}
+                    placeholder="7.5"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-2">
+                  Notes / Description
+                </label>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => handleChange("notes", e.target.value)}
+                  placeholder="Add your thoughts, notes, or description..."
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all resize-none"
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={onClose}
+                  className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition-all"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl text-white font-medium hover:shadow-lg hover:shadow-violet-500/25 transition-all"
+                >
+                  Add to Library
+                </motion.button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </motion.div>
     </div>
   );
 };
