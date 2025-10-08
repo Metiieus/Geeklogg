@@ -18,6 +18,9 @@ import MediaPreviewModal from "./MediaPreviewModal";
 import AddMediaSearchModal from "../modals/AddMediaSearchModal";
 import { EditMediaModal } from "../modals/EditMediaModal";
 import { ManualAddModal } from "./ManualAddModal";
+import { AddMediaConfirmModal } from "../modals/AddMediaConfirmModal";
+import { EditBeforeAddModal } from "../modals/EditBeforeAddModal";
+import { EditFeaturedPopularModal } from "../modals/EditFeaturedPopularModal";
 import { MediaItem } from "../../App";
 import { useAppContext } from "../../context/AppContext";
 import { useToast } from "../../context/ToastContext";
@@ -46,6 +49,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const [isAddingMedia, setIsAddingMedia] = useState(false);
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<MediaItem | null>(null);
+  const [pendingMedia, setPendingMedia] = useState<ExternalMediaResult | null>(null);
+  const [editingPendingMedia, setEditingPendingMedia] = useState<ExternalMediaResult | null>(null);
+  const [showEditFeaturedModal, setShowEditFeaturedModal] = useState(false);
+  const [showEditPopularModal, setShowEditPopularModal] = useState(false);
+  const [customFeatured, setCustomFeatured] = useState<MediaItem[]>(featured);
+  const [customPopular, setCustomPopular] = useState<MediaItem[]>(topRated);
 
   const { mediaItems, setMediaItems } = useAppContext();
   const { showToast } = useToast();
@@ -80,23 +89,29 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   // Get favorites
   const favorites = collection.filter((item) => item.isFavorite);
 
-  // Get best items by type
-  const getBestByType = (type: string) => {
+  // Get best items by type (top 3)
+  const getBestByType = (type: string, limit: number = 3) => {
     return collection
       .filter((item) => item.type?.toLowerCase() === type.toLowerCase())
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, limit);
   };
 
-  const bestBook = getBestByType("book");
-  const bestGame = getBestByType("game");
-  const bestMovie = getBestByType("movie");
+  const bestBooks = getBestByType("book");
+  const bestGames = getBestByType("game");
+  const bestMovies = getBestByType("movie");
 
   const handleCardClick = (item: MediaItem) => {
     setSelectedItem(item);
     setIsPreviewOpen(true);
   };
 
-  const handleAddMedia = async (result: ExternalMediaResult) => {
+  const handleMediaSelected = (result: ExternalMediaResult) => {
+    setPendingMedia(result);
+    setShowAddSearchModal(false);
+  };
+
+  const handleConfirmAdd = async (result: ExternalMediaResult) => {
     setIsAddingMedia(true);
     try {
       const newMedia = await addMedia({
@@ -116,12 +131,23 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
       setMediaItems([...mediaItems, newMedia]);
       showToast("Mídia adicionada com sucesso!", "success");
+      setPendingMedia(null);
     } catch (error) {
       console.error("Erro ao adicionar mídia:", error);
       showToast("Erro ao adicionar mídia. Tente novamente.", "error");
     } finally {
       setIsAddingMedia(false);
     }
+  };
+
+  const handleEditBeforeAdd = (media: ExternalMediaResult) => {
+    setEditingPendingMedia(media);
+    setPendingMedia(null);
+  };
+
+  const handleSaveEditedMedia = async (media: ExternalMediaResult) => {
+    await handleConfirmAdd(media);
+    setEditingPendingMedia(null);
   };
 
   const handleEditMedia = (item: MediaItem) => {
@@ -184,7 +210,21 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   };
 
   const handleEditFeatured = () => {
-    showToast("Funcionalidade de edição de destaques em desenvolvimento", "info");
+    setShowEditFeaturedModal(true);
+  };
+
+  const handleEditPopular = () => {
+    setShowEditPopularModal(true);
+  };
+
+  const handleSaveFeatured = (items: MediaItem[]) => {
+    setCustomFeatured(items);
+    showToast("Destaques atualizados com sucesso!", "success");
+  };
+
+  const handleSavePopular = (items: MediaItem[]) => {
+    setCustomPopular(items);
+    showToast("Populares atualizados com sucesso!", "success");
   };
 
   return (
@@ -266,7 +306,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       {/* Main Content */}
       <div className="max-w-[1800px] mx-auto px-6 py-8 space-y-12">
         {/* Hero Banner Carousel */}
-        {featured.length > 0 && filter === "all" && (
+        {customFeatured.length > 0 && filter === "all" && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -277,7 +317,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               <div
                 className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-30"
                 style={{
-                  backgroundImage: `url(${featured[0]?.cover || ""})`,
+                  backgroundImage: `url(${customFeatured[0]?.cover || ""})`,
                 }}
               />
 
@@ -304,7 +344,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => handleCardClick(featured[0])}
+                      onClick={() => handleCardClick(customFeatured[0])}
                       className="px-6 py-3 bg-slate-900 hover:bg-slate-800 rounded-xl font-medium border border-white/10 hover:border-white/20 transition-all inline-flex items-center gap-2"
                     >
                       Ver Mais
@@ -325,7 +365,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
                 {/* Featured Books Carousel */}
                 <div className="absolute right-12 top-1/2 -translate-y-1/2 flex gap-4">
-                  {featured.slice(0, 5).map((item, index) => (
+                  {customFeatured.slice(0, 5).map((item, index) => (
                     <motion.div
                       key={item.id}
                       initial={{ opacity: 0, x: 20 }}
@@ -401,37 +441,40 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         {/* Best Items Grid - Only show when filter is "all" */}
         {filter === "all" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {bestBook && (
-              <BestItemCard
-                item={bestBook}
-                title="Melhor Livro"
+            {bestBooks.length > 0 && (
+              <BestItemsSection
+                items={bestBooks}
+                title="Melhores Livros"
                 icon={BookOpen}
-                onClick={() => handleCardClick(bestBook)}
+                onItemClick={handleCardClick}
+                getCategoryIcon={getCategoryIcon}
               />
             )}
 
-            {bestGame && (
-              <BestItemCard
-                item={bestGame}
-                title="Melhor Jogo"
+            {bestGames.length > 0 && (
+              <BestItemsSection
+                items={bestGames}
+                title="Melhores Jogos"
                 icon={Gamepad2}
-                onClick={() => handleCardClick(bestGame)}
+                onItemClick={handleCardClick}
+                getCategoryIcon={getCategoryIcon}
               />
             )}
 
-            {bestMovie && (
-              <BestItemCard
-                item={bestMovie}
-                title="Melhor Filme"
+            {bestMovies.length > 0 && (
+              <BestItemsSection
+                items={bestMovies}
+                title="Melhores Filmes"
                 icon={Film}
-                onClick={() => handleCardClick(bestMovie)}
+                onItemClick={handleCardClick}
+                getCategoryIcon={getCategoryIcon}
               />
             )}
           </div>
         )}
 
         {/* Popular Section - Only show when filter is "all" */}
-        {topRated.length > 0 && filter === "all" && (
+        {customPopular.length > 0 && filter === "all" && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -443,7 +486,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 Populares
               </h3>
               <button
-                onClick={handleEditFeatured}
+                onClick={handleEditPopular}
                 className="text-sm text-violet-400 hover:text-violet-300 flex items-center gap-2"
               >
                 <Edit2 className="w-4 h-4" />
@@ -452,7 +495,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-              {topRated.slice(0, 8).map((item, index) => (
+              {customPopular.slice(0, 8).map((item, index) => (
                 <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} showInfo />
               ))}
             </div>
@@ -511,11 +554,48 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         {showAddSearchModal && (
           <AddMediaSearchModal
             onClose={() => setShowAddSearchModal(false)}
-            onAddMedia={handleAddMedia}
+            onAddMedia={handleMediaSelected}
           />
         )}
         {showManualAddModal && (
           <ManualAddModal onClose={() => setShowManualAddModal(false)} />
+        )}
+        {pendingMedia && (
+          <AddMediaConfirmModal
+            media={pendingMedia}
+            onConfirm={handleConfirmAdd}
+            onEdit={handleEditBeforeAdd}
+            onCancel={() => setPendingMedia(null)}
+          />
+        )}
+        {editingPendingMedia && (
+          <EditBeforeAddModal
+            media={editingPendingMedia}
+            onSave={handleSaveEditedMedia}
+            onCancel={() => setEditingPendingMedia(null)}
+          />
+        )}
+        {showEditFeaturedModal && (
+          <EditFeaturedPopularModal
+            isOpen={true}
+            onClose={() => setShowEditFeaturedModal(false)}
+            collection={collection}
+            currentItems={customFeatured}
+            onSave={handleSaveFeatured}
+            title="Editar Destaques"
+            maxItems={8}
+          />
+        )}
+        {showEditPopularModal && (
+          <EditFeaturedPopularModal
+            isOpen={true}
+            onClose={() => setShowEditPopularModal(false)}
+            collection={collection}
+            currentItems={customPopular}
+            onSave={handleSavePopular}
+            title="Editar Populares"
+            maxItems={8}
+          />
         )}
         {editingItem && (
           <EditMediaModal
@@ -687,6 +767,82 @@ const BestItemCard: React.FC<BestItemCardProps> = ({ item, title, icon: Icon, on
             {item.notes || "Uma das suas melhores mídias avaliadas."}
           </p>
         </div>
+      </div>
+    </motion.div>
+  );
+};
+
+interface BestItemsSectionProps {
+  items: MediaItem[];
+  title: string;
+  icon: React.ElementType;
+  onItemClick: (item: MediaItem) => void;
+  getCategoryIcon: (type: string, className?: string) => JSX.Element;
+}
+
+const BestItemsSection: React.FC<BestItemsSectionProps> = ({
+  items,
+  title,
+  icon: Icon,
+  onItemClick,
+  getCategoryIcon,
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+        <h3 className="text-lg font-bold text-white">{title}</h3>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        {items.map((item, index) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.05 }}
+            whileHover={{ scale: 1.05 }}
+            onClick={() => onItemClick(item)}
+            className="cursor-pointer group"
+          >
+            <div className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+              <div className="aspect-[2/3] relative">
+                {item.cover ? (
+                  <img
+                    src={item.cover}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                    {getCategoryIcon(item.type, "w-8 h-8 text-slate-600")}
+                  </div>
+                )}
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                {item.rating && (
+                  <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
+                    <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                    <span className="text-xs font-semibold text-white">
+                      {item.rating}
+                    </span>
+                  </div>
+                )}
+
+                <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent">
+                  <h4 className="text-xs font-semibold text-white line-clamp-2">
+                    {item.title}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </motion.div>
   );
