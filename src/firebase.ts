@@ -47,7 +47,7 @@ if (firebaseConfig.apiKey) {
   );
 }
 
-// ✅ Exporta serviços (podem ser null se Firebase não configurado)
+// �� Exporta serviços (podem ser null se Firebase não configurado)
 export const auth = _auth;
 export const db = _db;
 export const storage = _storage;
@@ -77,5 +77,5 @@ console.log(
   "🔥 Firebase inicializado com Auth:",
   !!auth,
   " | Firestore conectado em banco:",
-  db.databaseId?.database ?? "(default)",
+  db?.databaseId?.database ?? "(disabled)",
 );
