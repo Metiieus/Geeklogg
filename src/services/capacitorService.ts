@@ -1,4 +1,5 @@
 import { Capacitor } from "@capacitor/core";
+import { Capacitor } from "@capacitor/core";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Keyboard, KeyboardStyle, KeyboardResize } from "@capacitor/keyboard";
@@ -23,6 +24,12 @@ class CapacitorService {
     }
 
     console.log("📱 Inicializando Capacitor para dispositivo móvel");
+
+    // Marcar o HTML com classes específicas para estilos mobile/Capacitor
+    document.documentElement.classList.add("capacitor-app");
+    document.documentElement.classList.add(
+      Capacitor.getPlatform() === "ios" ? "platform-ios" : "platform-android",
+    );
 
     try {
       // Configurar StatusBar

@@ -2,6 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "./scroll-lock-improvements.css";
+import "./utils/viewportHeight";
 
 // Context Providers
 import { AuthProvider } from "./context/AuthContext";
