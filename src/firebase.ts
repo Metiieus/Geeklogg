@@ -13,25 +13,44 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// ✅ Inicializa Firebase só uma vez
-const app = initializeApp(firebaseConfig);
+// Inicializar Firebase somente se a chave estiver definida
+let app: any = null;
+let _auth: any = null;
+let _db: any = null;
+let _storage: any = null;
 
-// ✅ Exporta serviços prontos
-export const auth = getAuth(app);
+if (firebaseConfig.apiKey) {
+  try {
+    app = initializeApp(firebaseConfig);
+    _auth = getAuth(app);
+    _db = getFirestore(app, "geeklog");
+    _storage = getStorage(app);
 
-// 🔑 Usa o banco específico "geeklog"
-export const db = getFirestore(app, "geeklog");
-
-export const storage = getStorage(app);
-
-// ✅ Habilita cache offline do Firestore
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code === "failed-precondition") {
-    console.warn("⚠️ Persistence falhou: várias abas abertas");
-  } else if (err.code === "unimplemented") {
-    console.warn("⚠️ Navegador não suporta persistence");
+    // Habilita cache offline do Firestore
+    enableIndexedDbPersistence(_db).catch((err) => {
+      if (err.code === "failed-precondition") {
+        console.warn("⚠️ Persistence falhou: várias abas abertas");
+      } else if (err.code === "unimplemented") {
+        console.warn("⚠️ Navegador não suporta persistence");
+      }
+    });
+  } catch (e) {
+    console.warn("⚠️ Falha ao inicializar Firebase:", e);
+    app = null;
+    _auth = null;
+    _db = null;
+    _storage = null;
   }
-});
+} else {
+  console.warn(
+    "⚠️ Variáveis de ambiente do Firebase não configuradas. Autenticação e Firestore estarão desabilitados.",
+  );
+}
+
+// ✅ Exporta serviços (podem ser null se Firebase não configurado)
+export const auth = _auth;
+export const db = _db;
+export const storage = _storage;
 
 export const isFirebaseOffline = (): boolean => {
   return typeof navigator !== "undefined" && !navigator.onLine;
