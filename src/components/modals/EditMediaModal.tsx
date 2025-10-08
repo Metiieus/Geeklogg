@@ -4,9 +4,10 @@ import { MediaItem, MediaType, Status } from "../../App";
 import { updateMedia } from "../../services/mediaService";
 
 interface EditMediaModalProps {
+  isOpen: boolean;
   item: MediaItem;
   onClose: () => void;
-  onSave: (item: MediaItem) => void;
+  onSave: (id: string, updates: Partial<MediaItem>) => void;
 }
 
 const mediaTypeLabels = {
@@ -19,10 +20,12 @@ const mediaTypeLabels = {
 };
 
 export const EditMediaModal: React.FC<EditMediaModalProps> = ({
+  isOpen,
   item,
   onClose,
   onSave,
 }) => {
+  if (!isOpen) return null;
   const [formData, setFormData] = useState({
     title: item.title,
     type: item.type,
@@ -49,7 +52,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
       return;
     }
 
-    const updateRes = await updateMedia(item.id, {
+    const updates = {
       title: formData.title,
       type: formData.type,
       status: formData.status,
@@ -75,39 +78,10 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
       externalLink: formData.externalLink || undefined,
       description: formData.description || undefined,
       coverFile: formData.coverFile,
-    });
-
-    const updatedItem: MediaItem = {
-      ...item,
-      title: formData.title,
-      type: formData.type,
-      status: formData.status,
-      rating: formData.rating ? parseInt(formData.rating) : undefined,
-      hoursSpent: formData.hoursSpent
-        ? parseFloat(formData.hoursSpent)
-        : undefined,
-      totalPages: formData.totalPages
-        ? parseInt(formData.totalPages)
-        : undefined,
-      currentPage: formData.currentPage
-        ? parseInt(formData.currentPage)
-        : undefined,
-      startDate: formData.startDate || undefined,
-      endDate: formData.endDate || undefined,
-      platform: formData.platform || undefined,
-      tags: formData.tags
-        ? formData.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag.length > 0)
-        : [],
-      externalLink: formData.externalLink || undefined,
-      cover: updateRes.cover ?? item.cover,
-      description: formData.description || undefined,
-      updatedAt: new Date().toISOString(),
     };
 
-    onSave(updatedItem);
+    onSave(item.id, updates);
+    onClose();
   };
 
   const handleChange = (field: string, value: string) => {

@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   Star,
-  Search,
   BookOpen,
   Film,
   Gamepad2,
@@ -12,16 +11,19 @@ import {
   Sparkles,
   TrendingUp,
   Edit2,
-  ArrowRight
+  ArrowRight,
+  Heart
 } from "lucide-react";
 import MediaPreviewModal from "./MediaPreviewModal";
 import AddMediaSearchModal from "../modals/AddMediaSearchModal";
+import { EditMediaModal } from "../modals/EditMediaModal";
 import { ManualAddModal } from "./ManualAddModal";
 import { MediaItem } from "../../App";
 import { useAppContext } from "../../context/AppContext";
 import { useToast } from "../../context/ToastContext";
-import { addMedia } from "../../services/mediaService";
+import { addMedia, updateMedia, deleteMedia } from "../../services/mediaService";
 import { ExternalMediaResult } from "../../services/externalMediaService";
+import { ConfirmationModal } from "../ConfirmationModal";
 
 interface ProLibraryProps {
   featured?: MediaItem[];
@@ -36,13 +38,14 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   topRated = [],
   collection = [],
 }) => {
-  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
   const [showAddSearchModal, setShowAddSearchModal] = useState(false);
   const [showManualAddModal, setShowManualAddModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isAddingMedia, setIsAddingMedia] = useState(false);
+  const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState<MediaItem | null>(null);
 
   const { mediaItems, setMediaItems } = useAppContext();
   const { showToast } = useToast();
@@ -69,15 +72,13 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
   // Filter collection
   const filteredCollection = collection.filter((item) => {
-    const matchesSearch = item.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
     const matchesFilter =
       filter === "all" || item.type?.toLowerCase() === filter.toLowerCase();
-
-    return matchesSearch && matchesFilter;
+    return matchesFilter;
   });
+
+  // Get favorites
+  const favorites = collection.filter((item) => item.isFavorite);
 
   // Get best items by type
   const getBestByType = (type: string) => {
@@ -123,6 +124,65 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     }
   };
 
+  const handleEditMedia = (item: MediaItem) => {
+    setEditingItem(item);
+    setIsPreviewOpen(false);
+  };
+
+  const handleUpdateMedia = async (id: string, updates: Partial<MediaItem>) => {
+    try {
+      await updateMedia(id, updates);
+      const updatedItems = mediaItems.map((item) =>
+        item.id === id ? { ...item, ...updates } : item
+      );
+      setMediaItems(updatedItems);
+      showToast("Mídia atualizada com sucesso!", "success");
+      setEditingItem(null);
+    } catch (error) {
+      console.error("Erro ao atualizar mídia:", error);
+      showToast("Erro ao atualizar mídia. Tente novamente.", "error");
+    }
+  };
+
+  const handleDeleteMedia = async (item: MediaItem) => {
+    setDeleteConfirmItem(item);
+    setIsPreviewOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmItem) return;
+
+    try {
+      await deleteMedia(deleteConfirmItem.id);
+      const updatedItems = mediaItems.filter((item) => item.id !== deleteConfirmItem.id);
+      setMediaItems(updatedItems);
+      showToast("Mídia excluída com sucesso!", "success");
+      setDeleteConfirmItem(null);
+    } catch (error) {
+      console.error("Erro ao excluir mídia:", error);
+      showToast("Erro ao excluir mídia. Tente novamente.", "error");
+    }
+  };
+
+  const handleToggleFavorite = async (item: MediaItem) => {
+    try {
+      const newFavoriteStatus = !item.isFavorite;
+      await updateMedia(item.id, { isFavorite: newFavoriteStatus });
+      const updatedItems = mediaItems.map((m) =>
+        m.id === item.id ? { ...m, isFavorite: newFavoriteStatus } : m
+      );
+      setMediaItems(updatedItems);
+      showToast(
+        newFavoriteStatus ? "Adicionado aos favoritos!" : "Removido dos favoritos!",
+        "success"
+      );
+      setIsPreviewOpen(false);
+    } catch (error) {
+      console.error("Erro ao favoritar mídia:", error);
+      showToast("Erro ao favoritar mídia. Tente novamente.", "error");
+    }
+  };
+
   const handleEditFeatured = () => {
     showToast("Funcionalidade de edição de destaques em desenvolvimento", "info");
   };
@@ -130,7 +190,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   return (
     <div className="min-h-screen text-white">
       {/* Modern Header */}
-      <div className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-xl border-b border-white/5">
+      <div className="sticky top-0 z-30 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-[1800px] mx-auto px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo & Title */}
@@ -144,22 +204,22 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               </div>
             </div>
 
-            {/* Search Bar */}
-            <div className="flex-1 max-w-2xl">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Buscar por nome, autor, edição..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-400 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Add Button */}
+            {/* Action Buttons */}
             <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setFilter("favorites")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all ${
+                  filter === "favorites"
+                    ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                }`}
+              >
+                <Heart className="w-4 h-4" />
+                Favoritos ({favorites.length})
+              </motion.button>
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -206,7 +266,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       {/* Main Content */}
       <div className="max-w-[1800px] mx-auto px-6 py-8 space-y-12">
         {/* Hero Banner Carousel */}
-        {featured.length > 0 && (
+        {featured.length > 0 && filter === "all" && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -300,41 +360,78 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
 
-        {/* Best Items Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Best Book */}
-          {bestBook && (
-            <BestItemCard
-              item={bestBook}
-              title="Melhor Livro"
-              icon={BookOpen}
-              onClick={() => handleCardClick(bestBook)}
-            />
-          )}
+        {/* Favorites Section */}
+        {filter === "favorites" && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Heart className="w-6 h-6 text-pink-400 fill-pink-400" />
+                Meus Favoritos
+              </h3>
+              <div className="text-sm text-slate-400">
+                {favorites.length} favoritos
+              </div>
+            </div>
 
-          {/* Best Game */}
-          {bestGame && (
-            <BestItemCard
-              item={bestGame}
-              title="Melhor Jogo"
-              icon={Gamepad2}
-              onClick={() => handleCardClick(bestGame)}
-            />
-          )}
+            {favorites.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                {favorites.map((item, index) => (
+                  <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
+                  <Heart className="w-10 h-10 text-slate-500" />
+                </div>
+                <h4 className="text-xl font-semibold text-white mb-2">
+                  Nenhum favorito ainda
+                </h4>
+                <p className="text-slate-400 mb-6">
+                  Adicione mídias aos favoritos para vê-las aqui
+                </p>
+              </div>
+            )}
+          </motion.section>
+        )}
 
-          {/* Best Movie */}
-          {bestMovie && (
-            <BestItemCard
-              item={bestMovie}
-              title="Melhor Filme"
-              icon={Film}
-              onClick={() => handleCardClick(bestMovie)}
-            />
-          )}
-        </div>
+        {/* Best Items Grid - Only show when filter is "all" */}
+        {filter === "all" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {bestBook && (
+              <BestItemCard
+                item={bestBook}
+                title="Melhor Livro"
+                icon={BookOpen}
+                onClick={() => handleCardClick(bestBook)}
+              />
+            )}
 
-        {/* Popular Section */}
-        {topRated.length > 0 && (
+            {bestGame && (
+              <BestItemCard
+                item={bestGame}
+                title="Melhor Jogo"
+                icon={Gamepad2}
+                onClick={() => handleCardClick(bestGame)}
+              />
+            )}
+
+            {bestMovie && (
+              <BestItemCard
+                item={bestMovie}
+                title="Melhor Filme"
+                icon={Film}
+                onClick={() => handleCardClick(bestMovie)}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Popular Section - Only show when filter is "all" */}
+        {topRated.length > 0 && filter === "all" && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -356,144 +453,57 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
               {topRated.slice(0, 8).map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => handleCardClick(item)}
-                  className="group cursor-pointer"
-                >
-                  <div className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:shadow-violet-500/20 transition-all">
-                    <div className="aspect-[2/3] relative">
-                      {item.cover ? (
-                        <img
-                          src={item.cover}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                          {getCategoryIcon(item.type, "w-8 h-8 text-slate-600")}
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                      {item.rating && (
-                        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
-                          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                          <span className="text-xs font-semibold text-white">
-                            {item.rating}
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <h4 className="text-sm font-semibold text-white line-clamp-2 mb-1">
-                          {item.title}
-                        </h4>
-                        <div className="flex items-center gap-1">
-                          {getCategoryIcon(item.type, "w-3 h-3 text-violet-400")}
-                          <span className="text-xs text-violet-400 capitalize">
-                            {item.type}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} showInfo />
               ))}
             </div>
           </motion.section>
         )}
 
         {/* Full Collection Grid */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-white">
-              Minha Coleção
-            </h3>
-            <div className="text-sm text-slate-400">
-              {filteredCollection.length} / {collection.length} mídias
-            </div>
-          </div>
-
-          {filteredCollection.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
-              {filteredCollection.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.02 }}
-                  whileHover={{ scale: 1.05, zIndex: 10 }}
-                  onClick={() => handleCardClick(item)}
-                  className="group cursor-pointer"
-                >
-                  <div className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-violet-500/20 transition-all">
-                    <div className="aspect-[2/3] relative">
-                      {item.cover ? (
-                        <img
-                          src={item.cover}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                          {getCategoryIcon(item.type, "w-8 h-8 text-slate-600")}
-                        </div>
-                      )}
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform">
-                        <h4 className="text-sm font-semibold text-white line-clamp-2">
-                          {item.title}
-                        </h4>
-                      </div>
-
-                      {item.rating && (
-                        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                          <span className="text-xs font-semibold text-white">
-                            {item.rating}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
-                <BookOpen className="w-10 h-10 text-slate-500" />
+        {filter !== "favorites" && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white">
+                {filter === "all" ? "Minha Coleção" : `${filter === "book" ? "Livros" : filter === "game" ? "Jogos" : filter === "movie" ? "Filmes" : "Séries"}`}
+              </h3>
+              <div className="text-sm text-slate-400">
+                {filteredCollection.length} / {collection.length} mídias
               </div>
-              <h4 className="text-xl font-semibold text-white mb-2">
-                Nenhuma mídia encontrada
-              </h4>
-              <p className="text-slate-400 mb-6">
-                {search
-                  ? "Tente ajustar sua busca"
-                  : "Comece construindo sua coleção"}
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowAddSearchModal(true)}
-                className="px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium"
-              >
-                Adicionar Primeira Mídia
-              </motion.button>
             </div>
-          )}
-        </motion.section>
+
+            {filteredCollection.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                {filteredCollection.map((item, index) => (
+                  <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
+                  <BookOpen className="w-10 h-10 text-slate-500" />
+                </div>
+                <h4 className="text-xl font-semibold text-white mb-2">
+                  Nenhuma mídia encontrada
+                </h4>
+                <p className="text-slate-400 mb-6">
+                  Comece construindo sua coleção
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowAddSearchModal(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium"
+                >
+                  Adicionar Primeira Mídia
+                </motion.button>
+              </div>
+            )}
+          </motion.section>
+        )}
       </div>
 
       {/* Modals */}
@@ -507,18 +517,114 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         {showManualAddModal && (
           <ManualAddModal onClose={() => setShowManualAddModal(false)} />
         )}
+        {editingItem && (
+          <EditMediaModal
+            isOpen={true}
+            onClose={() => setEditingItem(null)}
+            item={editingItem}
+            onSave={handleUpdateMedia}
+          />
+        )}
         {isPreviewOpen && selectedItem && (
           <MediaPreviewModal
             isOpen={isPreviewOpen}
             onClose={() => setIsPreviewOpen(false)}
             item={selectedItem}
-            onEdit={(item) => console.log("Edit:", item)}
-            onDelete={(item) => console.log("Delete:", item)}
-            onToggleFavorite={(item) => console.log("Favorite:", item)}
+            onEdit={handleEditMedia}
+            onDelete={handleDeleteMedia}
+            onToggleFavorite={handleToggleFavorite}
+          />
+        )}
+        {deleteConfirmItem && (
+          <ConfirmationModal
+            isOpen={true}
+            title="Excluir Mídia"
+            message={`Tem certeza que deseja excluir "${deleteConfirmItem.title}"? Esta ação não pode ser desfeita.`}
+            onConfirm={confirmDelete}
+            onCancel={() => setDeleteConfirmItem(null)}
+            confirmText="Excluir"
+            cancelText="Cancelar"
           />
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+// Media Card Component
+interface MediaCardProps {
+  item: MediaItem;
+  index: number;
+  onClick: (item: MediaItem) => void;
+  getCategoryIcon: (type: string, className?: string) => JSX.Element;
+  showInfo?: boolean;
+}
+
+const MediaCard: React.FC<MediaCardProps> = ({ item, index, onClick, getCategoryIcon, showInfo }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.02 }}
+      whileHover={{ scale: 1.05, zIndex: 10 }}
+      onClick={() => onClick(item)}
+      className="group cursor-pointer"
+    >
+      <div className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-violet-500/20 transition-all">
+        <div className="aspect-[2/3] relative">
+          {item.cover ? (
+            <img
+              src={item.cover}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+              {getCategoryIcon(item.type, "w-8 h-8 text-slate-600")}
+            </div>
+          )}
+
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+          {item.isFavorite && (
+            <div className="absolute top-2 left-2">
+              <Heart className="w-4 h-4 text-pink-400 fill-pink-400" />
+            </div>
+          )}
+
+          {item.rating && (
+            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+              <span className="text-xs font-semibold text-white">
+                {item.rating}
+              </span>
+            </div>
+          )}
+
+          {showInfo && (
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+              <h4 className="text-sm font-semibold text-white line-clamp-2 mb-1">
+                {item.title}
+              </h4>
+              <div className="flex items-center gap-1">
+                {getCategoryIcon(item.type, "w-3 h-3 text-violet-400")}
+                <span className="text-xs text-violet-400 capitalize">
+                  {item.type}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {!showInfo && (
+            <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform">
+              <h4 className="text-sm font-semibold text-white line-clamp-2">
+                {item.title}
+              </h4>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
