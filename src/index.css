@@ -1,6 +1,11 @@
+@import "./scroll-lock-improvements.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
 
 /* Basic body styles */
 body {
@@ -10,6 +15,10 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
+}
+
+html, body, #root {
+  min-height: calc(var(--vh, 1vh) * 100);
 }
 
 /* Touch targets for mobile */
