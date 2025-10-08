@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -11,14 +11,17 @@ import {
   Book,
   Sparkles,
   TrendingUp,
-  Clock,
-  Heart,
+  Edit2,
   ArrowRight
 } from "lucide-react";
 import MediaPreviewModal from "./MediaPreviewModal";
 import AddMediaSearchModal from "../modals/AddMediaSearchModal";
 import { ManualAddModal } from "./ManualAddModal";
 import { MediaItem } from "../../App";
+import { useAppContext } from "../../context/AppContext";
+import { useToast } from "../../context/ToastContext";
+import { addMedia } from "../../services/mediaService";
+import { ExternalMediaResult } from "../../services/externalMediaService";
 
 interface ProLibraryProps {
   featured?: MediaItem[];
@@ -39,6 +42,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const [showManualAddModal, setShowManualAddModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isAddingMedia, setIsAddingMedia] = useState(false);
+
+  const { mediaItems, setMediaItems } = useAppContext();
+  const { showToast } = useToast();
 
   // Get category icon
   const getCategoryIcon = (type: string, className: string = "w-4 h-4") => {
@@ -72,18 +79,56 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     return matchesSearch && matchesFilter;
   });
 
-  // Get best rated book
-  const bestBook = featured.length > 0
-    ? featured[0]
-    : collection.sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
+  // Get best items by type
+  const getBestByType = (type: string) => {
+    return collection
+      .filter((item) => item.type?.toLowerCase() === type.toLowerCase())
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
+  };
+
+  const bestBook = getBestByType("book");
+  const bestGame = getBestByType("game");
+  const bestMovie = getBestByType("movie");
 
   const handleCardClick = (item: MediaItem) => {
     setSelectedItem(item);
     setIsPreviewOpen(true);
   };
 
+  const handleAddMedia = async (result: ExternalMediaResult) => {
+    setIsAddingMedia(true);
+    try {
+      const newMedia = await addMedia({
+        title: result.title,
+        type: result.originalType || "book",
+        cover: result.image,
+        year: result.year,
+        author: result.authors?.join(", "),
+        director: result.director,
+        genre: result.genres?.join(", "),
+        notes: result.description,
+        rating: result.rating,
+        status: "completed",
+        isFavorite: false,
+        tags: [],
+      });
+
+      setMediaItems([...mediaItems, newMedia]);
+      showToast("Mídia adicionada com sucesso!", "success");
+    } catch (error) {
+      console.error("Erro ao adicionar mídia:", error);
+      showToast("Erro ao adicionar mídia. Tente novamente.", "error");
+    } finally {
+      setIsAddingMedia(false);
+    }
+  };
+
+  const handleEditFeatured = () => {
+    showToast("Funcionalidade de edição de destaques em desenvolvimento", "info");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+    <div className="min-h-screen text-white">
       {/* Modern Header */}
       <div className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-[1800px] mx-auto px-6 py-4">
@@ -94,7 +139,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">My Books</h1>
+                <h1 className="text-xl font-bold text-white">Minhas Mídias</h1>
                 <p className="text-xs text-slate-400">{collection.length} itens</p>
               </div>
             </div>
@@ -105,7 +150,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Search book name, author, edition..."
+                  placeholder="Buscar por nome, autor, edição..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-400 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
@@ -113,15 +158,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               </div>
             </div>
 
-            {/* Profile */}
+            {/* Add Button */}
             <div className="flex items-center gap-3">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowAddSearchModal(true)}
-                className="px-4 py-2 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-violet-500/25 transition-all"
+                disabled={isAddingMedia}
+                className="px-4 py-2 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-violet-500/25 transition-all disabled:opacity-50"
               >
-                Add Media
+                {isAddingMedia ? "Adicionando..." : "Adicionar Mídia"}
               </motion.button>
             </div>
           </div>
@@ -129,11 +175,11 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           {/* Filters */}
           <div className="flex gap-2 mt-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pb-2">
             {[
-              { id: "all", label: "All", icon: null },
-              { id: "book", label: "Books", icon: BookOpen },
-              { id: "game", label: "Games", icon: Gamepad2 },
-              { id: "movie", label: "Movies", icon: Film },
-              { id: "tv", label: "TV Shows", icon: Tv },
+              { id: "all", label: "Todas", icon: null },
+              { id: "book", label: "Livros", icon: BookOpen },
+              { id: "game", label: "Jogos", icon: Gamepad2 },
+              { id: "movie", label: "Filmes", icon: Film },
+              { id: "tv", label: "Séries", icon: Tv },
             ].map((category) => {
               const Icon = category.icon;
               return (
@@ -166,7 +212,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="relative"
           >
-            <div className="relative h-[400px] rounded-3xl overflow-hidden">
+            <div className="relative h-[400px] rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-xl border border-white/10">
               {/* Background with blur */}
               <div
                 className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-30"
@@ -183,26 +229,38 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 <div className="max-w-2xl space-y-6">
                   <div className="flex items-center gap-2 text-violet-400">
                     <Sparkles className="w-5 h-5" />
-                    <span className="text-sm font-medium">Featured Collection</span>
+                    <span className="text-sm font-medium">Coleção em Destaque</span>
                   </div>
 
                   <h2 className="text-5xl font-bold text-white leading-tight">
-                    Keep the story going..
+                    Continue sua jornada..
                   </h2>
 
                   <p className="text-lg text-slate-300 leading-relaxed max-w-xl">
-                    Continue exploring the stories you love. Don't stop reading your list books and immerse yourself in the world of literature.
+                    Continue explorando as histórias que você ama. Não pare de explorar sua lista e mergulhe no mundo do entretenimento.
                   </p>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleCardClick(featured[0])}
-                    className="px-6 py-3 bg-slate-900 hover:bg-slate-800 rounded-xl font-medium border border-white/10 hover:border-white/20 transition-all inline-flex items-center gap-2"
-                  >
-                    Start reading
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
+                  <div className="flex items-center gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleCardClick(featured[0])}
+                      className="px-6 py-3 bg-slate-900 hover:bg-slate-800 rounded-xl font-medium border border-white/10 hover:border-white/20 transition-all inline-flex items-center gap-2"
+                    >
+                      Ver Mais
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.button>
+
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleEditFeatured}
+                      className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium border border-white/10 hover:border-white/20 transition-all inline-flex items-center gap-2"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                      Editar Destaques
+                    </motion.button>
+                  </div>
                 </div>
 
                 {/* Featured Books Carousel */}
@@ -242,99 +300,61 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Best Book */}
+        {/* Best Items Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Best Book */}
           {bestBook && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="lg:col-span-1"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  Best Book
-                </h3>
-                <button className="text-sm text-violet-400 hover:text-violet-300">
-                  VIEW MORE
-                </button>
-              </div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                onClick={() => handleCardClick(bestBook)}
-                className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 cursor-pointer hover:border-violet-500/50 transition-all"
-              >
-                <div className="flex gap-6">
-                  <div className="w-32 h-48 rounded-xl overflow-hidden flex-shrink-0 shadow-xl">
-                    {bestBook.cover ? (
-                      <img
-                        src={bestBook.cover}
-                        alt={bestBook.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                        <BookOpen className="w-8 h-8 text-slate-600" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex-1 space-y-3">
-                    <h4 className="text-lg font-bold text-white line-clamp-2">
-                      {bestBook.title}
-                    </h4>
-
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.round((bestBook.rating || 0) / 2)
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-slate-600"
-                          }`}
-                        />
-                      ))}
-                    </div>
-
-                    <p className="text-sm text-slate-400 line-clamp-4">
-                      {bestBook.notes || "This is one of your top-rated books. Continue your reading journey with this amazing story."}
-                    </p>
-
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full py-2 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-lg text-sm font-medium"
-                    >
-                      READ MORE
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.section>
+            <BestItemCard
+              item={bestBook}
+              title="Melhor Livro"
+              icon={BookOpen}
+              onClick={() => handleCardClick(bestBook)}
+            />
           )}
 
-          {/* Right Column - Popular */}
+          {/* Best Game */}
+          {bestGame && (
+            <BestItemCard
+              item={bestGame}
+              title="Melhor Jogo"
+              icon={Gamepad2}
+              onClick={() => handleCardClick(bestGame)}
+            />
+          )}
+
+          {/* Best Movie */}
+          {bestMovie && (
+            <BestItemCard
+              item={bestMovie}
+              title="Melhor Filme"
+              icon={Film}
+              onClick={() => handleCardClick(bestMovie)}
+            />
+          )}
+        </div>
+
+        {/* Popular Section */}
+        {topRated.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="lg:col-span-2"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-violet-400" />
-                Popular
+                Populares
               </h3>
-              <button className="text-sm text-violet-400 hover:text-violet-300">
-                ALL BOOKS
+              <button
+                onClick={handleEditFeatured}
+                className="text-sm text-violet-400 hover:text-violet-300 flex items-center gap-2"
+              >
+                <Edit2 className="w-4 h-4" />
+                Editar
               </button>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
               {topRated.slice(0, 8).map((item, index) => (
                 <motion.div
                   key={item.id}
@@ -386,7 +406,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               ))}
             </div>
           </motion.section>
-        </div>
+        )}
 
         {/* Full Collection Grid */}
         <motion.section
@@ -396,10 +416,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold text-white">
-              My Collection
+              Minha Coleção
             </h3>
             <div className="text-sm text-slate-400">
-              {filteredCollection.length} / {collection.length} books
+              {filteredCollection.length} / {collection.length} mídias
             </div>
           </div>
 
@@ -456,12 +476,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 <BookOpen className="w-10 h-10 text-slate-500" />
               </div>
               <h4 className="text-xl font-semibold text-white mb-2">
-                No books found
+                Nenhuma mídia encontrada
               </h4>
               <p className="text-slate-400 mb-6">
                 {search
-                  ? "Try adjusting your search"
-                  : "Start building your collection"}
+                  ? "Tente ajustar sua busca"
+                  : "Comece construindo sua coleção"}
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -469,7 +489,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 onClick={() => setShowAddSearchModal(true)}
                 className="px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium"
               >
-                Add Your First Book
+                Adicionar Primeira Mídia
               </motion.button>
             </div>
           )}
@@ -479,7 +499,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       {/* Modals */}
       <AnimatePresence>
         {showAddSearchModal && (
-          <AddMediaSearchModal onClose={() => setShowAddSearchModal(false)} />
+          <AddMediaSearchModal
+            onClose={() => setShowAddSearchModal(false)}
+            onAddMedia={handleAddMedia}
+          />
         )}
         {showManualAddModal && (
           <ManualAddModal onClose={() => setShowManualAddModal(false)} />
@@ -496,6 +519,70 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+// Best Item Card Component
+interface BestItemCardProps {
+  item: MediaItem;
+  title: string;
+  icon: React.ElementType;
+  onClick: () => void;
+}
+
+const BestItemCard: React.FC<BestItemCardProps> = ({ item, title, icon: Icon, onClick }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.02 }}
+      onClick={onClick}
+      className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 cursor-pointer hover:border-violet-500/50 transition-all"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+        <h3 className="text-lg font-bold text-white">{title}</h3>
+      </div>
+
+      <div className="flex gap-4">
+        <div className="w-24 h-36 rounded-xl overflow-hidden flex-shrink-0 shadow-xl">
+          {item.cover ? (
+            <img
+              src={item.cover}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+              <Icon className="w-8 h-8 text-slate-600" />
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1 space-y-2">
+          <h4 className="text-base font-bold text-white line-clamp-2">
+            {item.title}
+          </h4>
+
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`w-3 h-3 ${
+                  i < Math.round((item.rating || 0) / 2)
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-slate-600"
+                }`}
+              />
+            ))}
+          </div>
+
+          <p className="text-xs text-slate-400 line-clamp-3">
+            {item.notes || "Uma das suas melhores mídias avaliadas."}
+          </p>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

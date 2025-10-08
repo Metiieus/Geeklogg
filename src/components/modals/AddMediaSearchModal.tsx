@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, Search, Sparkles, Plus, BookOpen, Film, Gamepad2, Tv } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { MediaSearchBar } from "../MediaSearchBar";
 import { MediaType } from "../../App";
 import { ExternalMediaResult } from "../../services/externalMediaService";
@@ -8,25 +8,26 @@ import { ManualAddModal } from "../Library/ManualAddModal";
 
 interface AddMediaSearchModalProps {
   onClose: () => void;
+  onAddMedia: (result: ExternalMediaResult) => Promise<void>;
 }
 
 export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
   onClose,
+  onAddMedia,
 }) => {
   const [selectedType, setSelectedType] = useState<MediaType>("books");
   const [showManualAdd, setShowManualAdd] = useState(false);
 
-  const handleResultSelect = (result: ExternalMediaResult) => {
-    console.log("Selected media:", result);
-    // TODO: Save to database
+  const handleResultSelect = async (result: ExternalMediaResult) => {
+    await onAddMedia(result);
     onClose();
   };
 
   const mediaTypes: Array<{ id: MediaType; label: string; icon: React.ElementType }> = [
-    { id: "books", label: "Books", icon: BookOpen },
-    { id: "movies", label: "Movies", icon: Film },
-    { id: "games", label: "Games", icon: Gamepad2 },
-    { id: "series", label: "TV Shows", icon: Tv },
+    { id: "books", label: "Livros", icon: BookOpen },
+    { id: "movies", label: "Filmes", icon: Film },
+    { id: "games", label: "Jogos", icon: Gamepad2 },
+    { id: "series", label: "Séries", icon: Tv },
   ];
 
   if (showManualAdd) {
@@ -63,9 +64,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   <Search className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">Add Media</h2>
+                  <h2 className="text-2xl font-bold text-white">Adicionar Mídia</h2>
                   <p className="text-slate-400 text-sm mt-1">
-                    Search online databases or add manually
+                    Busque em bases de dados online ou adicione manualmente
                   </p>
                 </div>
               </div>
@@ -109,7 +110,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10 transition-all text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
-                <span>Add Manually</span>
+                <span>Adicionar Manualmente</span>
               </motion.button>
             </div>
           </div>
@@ -128,10 +129,10 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   <Sparkles className="w-5 h-5 text-violet-400" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold mb-1">Smart Search</h3>
+                  <h3 className="text-white font-semibold mb-1">Busca Inteligente</h3>
                   <p className="text-slate-400 text-sm">
-                    Search across multiple databases including Google Books, TMDb, and RAWG.
-                    We'll find the best matches with covers, descriptions, and metadata.
+                    Busque em múltiplas bases de dados incluindo Google Books, TMDb e RAWG.
+                    Encontraremos as melhores correspondências com capas, descrições e metadados.
                   </p>
                 </div>
               </div>
@@ -142,16 +143,16 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   selectedType={selectedType}
                   onTypeChange={setSelectedType}
                   onResultSelect={handleResultSelect}
-                  placeholder={`Search for ${
+                  placeholder={`Buscar ${
                     selectedType === "books"
-                      ? "books by title or author"
+                      ? "livros por título ou autor"
                       : selectedType === "movies"
-                        ? "movies by title"
+                        ? "filmes por título"
                         : selectedType === "games"
-                          ? "games by title"
+                          ? "jogos por título"
                           : selectedType === "series"
-                            ? "TV shows by title"
-                            : "media"
+                            ? "séries por título"
+                            : "mídias"
                   }...`}
                 />
               </div>
@@ -162,9 +163,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center mb-3">
                     <Search className="w-4 h-4 text-violet-400" />
                   </div>
-                  <h4 className="text-white font-semibold text-sm mb-1">1. Search</h4>
+                  <h4 className="text-white font-semibold text-sm mb-1">1. Buscar</h4>
                   <p className="text-slate-400 text-xs">
-                    Type the name of what you're looking for
+                    Digite o nome do que você procura
                   </p>
                 </div>
 
@@ -172,9 +173,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-3">
                     <Sparkles className="w-4 h-4 text-cyan-400" />
                   </div>
-                  <h4 className="text-white font-semibold text-sm mb-1">2. Select</h4>
+                  <h4 className="text-white font-semibold text-sm mb-1">2. Selecionar</h4>
                   <p className="text-slate-400 text-xs">
-                    Choose from the results we find
+                    Escolha entre os resultados encontrados
                   </p>
                 </div>
 
@@ -182,9 +183,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center mb-3">
                     <Plus className="w-4 h-4 text-green-400" />
                   </div>
-                  <h4 className="text-white font-semibold text-sm mb-1">3. Add</h4>
+                  <h4 className="text-white font-semibold text-sm mb-1">3. Adicionar</h4>
                   <p className="text-slate-400 text-xs">
-                    It's added to your library automatically
+                    É adicionado automaticamente à sua biblioteca
                   </p>
                 </div>
               </div>

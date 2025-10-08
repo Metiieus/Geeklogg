@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { X, BookOpen, Film, Gamepad2, Tv, Image as ImageIcon, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAppContext } from "../../context/AppContext";
+import { useToast } from "../../context/ToastContext";
+import { addMedia } from "../../services/mediaService";
 
 interface ManualAddModalProps {
   onClose: () => void;
@@ -19,19 +22,47 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
     rating: "",
     notes: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { mediaItems, setMediaItems } = useAppContext();
+  const { showToast } = useToast();
 
   const mediaTypes = [
-    { id: "book", label: "Book", icon: BookOpen },
-    { id: "movie", label: "Movie", icon: Film },
-    { id: "game", label: "Game", icon: Gamepad2 },
-    { id: "tv", label: "TV Show", icon: Tv },
+    { id: "book", label: "Livro", icon: BookOpen },
+    { id: "movie", label: "Filme", icon: Film },
+    { id: "game", label: "Jogo", icon: Gamepad2 },
+    { id: "tv", label: "Série", icon: Tv },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Adding media manually:", formData);
-    // TODO: Save to database
-    onClose();
+    setIsSubmitting(true);
+
+    try {
+      const newMedia = await addMedia({
+        title: formData.title,
+        type: formData.type,
+        cover: formData.cover,
+        year: formData.year ? parseInt(formData.year) : undefined,
+        author: formData.author,
+        director: formData.director,
+        genre: formData.genre,
+        rating: formData.rating ? parseFloat(formData.rating) : undefined,
+        notes: formData.notes,
+        status: "completed",
+        isFavorite: false,
+        tags: [],
+      });
+
+      setMediaItems([...mediaItems, newMedia]);
+      showToast("Mídia adicionada com sucesso!", "success");
+      onClose();
+    } catch (error) {
+      console.error("Erro ao adicionar mídia:", error);
+      showToast("Erro ao adicionar mídia. Tente novamente.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -41,14 +72,14 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
   const getCreatorLabel = () => {
     switch (formData.type) {
       case "book":
-        return "Author";
+        return "Autor";
       case "movie":
       case "tv":
-        return "Director";
+        return "Diretor";
       case "game":
-        return "Developer";
+        return "Desenvolvedor";
       default:
-        return "Creator";
+        return "Criador";
     }
   };
 
@@ -108,16 +139,17 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   <Plus className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">Add Manually</h2>
+                  <h2 className="text-2xl font-bold text-white">Adicionar Manualmente</h2>
                   <p className="text-slate-400 text-sm mt-1">
-                    Fill in the details manually
+                    Preencha os detalhes manualmente
                   </p>
                 </div>
               </div>
 
               <button
                 onClick={onClose}
-                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all"
+                disabled={isSubmitting}
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all disabled:opacity-50"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>
@@ -130,7 +162,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Media Type Selection */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-3">
-                  Media Type
+                  Tipo de Mídia
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {mediaTypes.map((type) => {
@@ -159,14 +191,14 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Title */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Title <span className="text-red-400">*</span>
+                  Título <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  placeholder="Enter title"
+                  placeholder="Digite o título"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                 />
               </div>
@@ -174,7 +206,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Cover Image URL */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Cover Image URL
+                  URL da Capa
                 </label>
                 <div className="relative">
                   <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -182,7 +214,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                     type="url"
                     value={formData.cover}
                     onChange={(e) => handleChange("cover", e.target.value)}
-                    placeholder="https://example.com/image.jpg"
+                    placeholder="https://exemplo.com/imagem.jpg"
                     className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -190,7 +222,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   <div className="mt-3">
                     <img
                       src={formData.cover}
-                      alt="Preview"
+                      alt="Pré-visualização"
                       className="w-32 h-48 object-cover rounded-xl border border-white/10"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
@@ -211,7 +243,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                     type="text"
                     value={getCreatorValue()}
                     onChange={(e) => setCreatorValue(e.target.value)}
-                    placeholder={`Enter ${getCreatorLabel().toLowerCase()}`}
+                    placeholder={`Digite o ${getCreatorLabel().toLowerCase()}`}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -219,7 +251,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 {/* Year */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">
-                    Year
+                    Ano
                   </label>
                   <input
                     type="number"
@@ -238,13 +270,13 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 {/* Genre */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">
-                    Genre
+                    Gênero
                   </label>
                   <input
                     type="text"
                     value={formData.genre}
                     onChange={(e) => handleChange("genre", e.target.value)}
-                    placeholder="Action, Drama, etc."
+                    placeholder="Ação, Drama, etc."
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -252,7 +284,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 {/* Rating */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">
-                    Rating (0-10)
+                    Avaliação (0-10)
                   </label>
                   <input
                     type="number"
@@ -270,12 +302,12 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Notes */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Notes / Description
+                  Notas / Descrição
                 </label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => handleChange("notes", e.target.value)}
-                  placeholder="Add your thoughts, notes, or description..."
+                  placeholder="Adicione seus pensamentos, notas ou descrição..."
                   rows={4}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all resize-none"
                 />
@@ -288,17 +320,19 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition-all"
+                  disabled={isSubmitting}
+                  className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition-all disabled:opacity-50"
                 >
-                  Cancel
+                  Cancelar
                 </motion.button>
                 <motion.button
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl text-white font-medium hover:shadow-lg hover:shadow-violet-500/25 transition-all"
+                  disabled={isSubmitting}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl text-white font-medium hover:shadow-lg hover:shadow-violet-500/25 transition-all disabled:opacity-50"
                 >
-                  Add to Library
+                  {isSubmitting ? "Adicionando..." : "Adicionar à Biblioteca"}
                 </motion.button>
               </div>
             </div>
