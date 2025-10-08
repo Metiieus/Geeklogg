@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { saveSettings } from "../services/settingsService";
 
 const Settings: React.FC = () => {
@@ -22,24 +23,25 @@ const Settings: React.FC = () => {
     setActivePage,
   } = useAppContext();
   const { user } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [localSettings, setLocalSettings] = useState(settings);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleSave = async () => {
-    console.log("💾 Salvando configurações:", localSettings);
-    setSettings(localSettings);
-    if (user?.uid) {
-      await saveSettings(user.uid, localSettings);
-    } else {
-      console.error("Usuário não autenticado");
+    try {
+      console.log("💾 Salvando configurações:", localSettings);
+      setSettings(localSettings);
+      if (user?.uid) {
+        await saveSettings(user.uid, localSettings);
+        showSuccess("Configurações salvas!", "Suas preferências foram atualizadas com sucesso.");
+      } else {
+        console.error("Usuário não autenticado");
+        showError("Erro ao salvar", "Você precisa estar autenticado para salvar as configurações.");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+      showError("Erro ao salvar", "Não foi possível salvar as configurações. Tente novamente.");
     }
-    // Feedback visual melhorado
-    const toast = document.createElement("div");
-    toast.className =
-      "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-    toast.textContent = "✅ Configurações salvas com sucesso!";
-    document.body.appendChild(toast);
-    setTimeout(() => document.body.removeChild(toast), 3000);
   };
 
   const handleExport = () => {
@@ -63,13 +65,7 @@ const Settings: React.FC = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // Feedback visual
-    const toast = document.createElement("div");
-    toast.className =
-      "fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-    toast.textContent = "📤 Backup baixado com sucesso!";
-    document.body.appendChild(toast);
-    setTimeout(() => document.body.removeChild(toast), 3000);
+    showSuccess("Backup exportado!", "Seu backup foi baixado com sucesso.");
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,21 +76,14 @@ const Settings: React.FC = () => {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target?.result as string);
-        if (data.settings) setSettings(data.settings);
-        // Feedback visual
-        const toast = document.createElement("div");
-        toast.className =
-          "fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-        toast.textContent = "✅ Backup importado com sucesso!";
-        document.body.appendChild(toast);
-        setTimeout(() => document.body.removeChild(toast), 3000);
+        if (data.settings) {
+          setSettings(data.settings);
+          showSuccess("Backup importado!", "Suas configurações foram restauradas com sucesso.");
+        } else {
+          showError("Arquivo inválido", "O arquivo selecionado não contém dados válidos.");
+        }
       } catch (error) {
-        const toast = document.createElement("div");
-        toast.className =
-          "fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-        toast.textContent = "❌ Ops! Arquivo de backup inválido 😅";
-        document.body.appendChild(toast);
-        setTimeout(() => document.body.removeChild(toast), 3000);
+        showError("Erro ao importar", "Não foi possível ler o arquivo de backup. Verifique se o arquivo está correto.");
       }
     };
     reader.readAsText(file);

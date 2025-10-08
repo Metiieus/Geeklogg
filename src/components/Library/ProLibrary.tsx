@@ -57,7 +57,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const [customPopular, setCustomPopular] = useState<MediaItem[]>(topRated);
 
   const { mediaItems, setMediaItems } = useAppContext();
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
 
   // Get category icon
   const getCategoryIcon = (type: string, className: string = "w-4 h-4") => {
@@ -130,11 +130,11 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       });
 
       setMediaItems([...mediaItems, newMedia]);
-      showToast("Mídia adicionada com sucesso!", "success");
+      showSuccess("Mídia adicionada!", "A mídia foi adicionada à sua biblioteca com sucesso.");
       setPendingMedia(null);
     } catch (error) {
       console.error("Erro ao adicionar mídia:", error);
-      showToast("Erro ao adicionar mídia. Tente novamente.", "error");
+      showError("Erro ao adicionar", "Não foi possível adicionar a mídia. Tente novamente.");
     } finally {
       setIsAddingMedia(false);
     }
@@ -162,11 +162,11 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         item.id === id ? { ...item, ...updates } : item
       );
       setMediaItems(updatedItems);
-      showToast("Mídia atualizada com sucesso!", "success");
+      showSuccess("Mídia atualizada!", "As alterações foram salvas com sucesso.");
       setEditingItem(null);
     } catch (error) {
       console.error("Erro ao atualizar mídia:", error);
-      showToast("Erro ao atualizar mídia. Tente novamente.", "error");
+      showError("Erro ao atualizar", "Não foi possível salvar as alterações. Tente novamente.");
     }
   };
 
@@ -182,11 +182,11 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       await deleteMedia(deleteConfirmItem.id);
       const updatedItems = mediaItems.filter((item) => item.id !== deleteConfirmItem.id);
       setMediaItems(updatedItems);
-      showToast("Mídia excluída com sucesso!", "success");
+      showSuccess("Mídia excluída!", `"${deleteConfirmItem.title}" foi removida da sua biblioteca.`);
       setDeleteConfirmItem(null);
     } catch (error) {
       console.error("Erro ao excluir mídia:", error);
-      showToast("Erro ao excluir mídia. Tente novamente.", "error");
+      showError("Erro ao excluir", "Não foi possível excluir a mídia. Tente novamente.");
     }
   };
 
@@ -198,14 +198,15 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         m.id === item.id ? { ...m, isFavorite: newFavoriteStatus } : m
       );
       setMediaItems(updatedItems);
-      showToast(
-        newFavoriteStatus ? "Adicionado aos favoritos!" : "Removido dos favoritos!",
-        "success"
-      );
+      if (newFavoriteStatus) {
+        showSuccess("Adicionado aos favoritos!", `"${item.title}" foi marcada como favorita.`);
+      } else {
+        showSuccess("Removido dos favoritos", `"${item.title}" não é mais favorita.`);
+      }
       setIsPreviewOpen(false);
     } catch (error) {
       console.error("Erro ao favoritar mídia:", error);
-      showToast("Erro ao favoritar mídia. Tente novamente.", "error");
+      showError("Erro ao favoritar", "Não foi possível atualizar o status de favorito. Tente novamente.");
     }
   };
 
@@ -219,12 +220,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
   const handleSaveFeatured = (items: MediaItem[]) => {
     setCustomFeatured(items);
-    showToast("Destaques atualizados com sucesso!", "success");
+    showSuccess("Destaques atualizados!", `${items.length} mídia(s) em destaque foram configuradas.`);
   };
 
   const handleSavePopular = (items: MediaItem[]) => {
     setCustomPopular(items);
-    showToast("Populares atualizados com sucesso!", "success");
+    showSuccess("Populares atualizados!", `${items.length} mídia(s) populares foram configuradas.`);
   };
 
   return (
