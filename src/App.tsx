@@ -489,10 +489,41 @@ class ErrorBoundary extends React.Component<
 }
 
 // Root App
-const App: React.FC = () => (
-  <ErrorBoundary>
-    <AppContent />
-  </ErrorBoundary>
-);
+const App: React.FC = () => {
+  useEffect(() => {
+    const handler = (event: PromiseRejectionEvent) => {
+      try {
+        const reason = (event && (event.reason as any)) || null;
+        const message =
+          reason && (reason.message || String(reason))
+            ? (reason.message || String(reason))
+            : "";
+
+        // Suppress known ReadableStreamDefaultReader constructor error coming from
+        // firebase/firestore internals in some environments where streams are locked.
+        if (
+          typeof message === "string" &&
+          message.includes("ReadableStreamDefaultReader constructor can only accept readable streams")
+        ) {
+          console.warn("Suppressed known Firestore ReadableStream error:", message);
+          event.preventDefault();
+          return;
+        }
+      } catch (e) {
+        // ignore
+      }
+      // Let other unhandled rejections surface
+    };
+
+    window.addEventListener("unhandledrejection", handler as any);
+    return () => window.removeEventListener("unhandledrejection", handler as any);
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  );
+};
 
 export default App;
