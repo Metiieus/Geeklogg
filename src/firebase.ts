@@ -26,16 +26,31 @@ if (firebaseConfig.apiKey && typeof window !== "undefined") {
     _db = getFirestore(app);
     _storage = getStorage(app);
 
-    // Habilita cache offline do Firestore
-    enableIndexedDbPersistence(_db).catch((err: any) => {
-      if (err && err.code === "failed-precondition") {
-        console.warn("⚠️ Persistence falhou: várias abas abertas");
-      } else if (err && err.code === "unimplemented") {
-        console.warn("⚠️ Navegador não suporta persistence");
+    // Habilita cache offline do Firestore somente quando apropriado.
+    // Em alguns ambientes (dev/local) a persistência pode causar erros de stream não tratados.
+    try {
+      const hostname = typeof window !== "undefined" ? window.location.hostname : "";
+      const shouldEnablePersistence = hostname !== "localhost" && !hostname.startsWith("192.168") && typeof indexedDB !== "undefined";
+      if (shouldEnablePersistence) {
+        (async () => {
+          try {
+            await enableIndexedDbPersistence(_db);
+          } catch (err: any) {
+            if (err && err.code === "failed-precondition") {
+              console.warn("⚠️ Persistence falhou: várias abas abertas");
+            } else if (err && err.code === "unimplemented") {
+              console.warn("⚠️ Navegador não suporta persistence");
+            } else {
+              console.warn("⚠️ Erro ao habilitar persistence:", err);
+            }
+          }
+        })();
       } else {
-        console.warn("⚠️ Erro ao habilitar persistence:", err);
+        console.info("ℹ️ IndexedDB persistence não habilitada neste ambiente (localhost ou não suportado).");
       }
-    });
+    } catch (err) {
+      console.warn("⚠️ Erro verificando IndexedDB/persistência:", err);
+    }
   } catch (e) {
     console.warn("⚠️ Falha ao inicializar Firebase:", e);
     app = null;
