@@ -399,7 +399,7 @@ const AppContent: React.FC = () => {
 
   return (
     <AppProvider value={appContextValue}>
-      <div className="min-h-screen mobile-full-height bg-gray-900 text-white overflow-hidden">
+      <div className="min-h-screen mobile-full-height bg-gray-900 text-white overflow-x-hidden">
         {/* Background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
