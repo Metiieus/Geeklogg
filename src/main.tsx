@@ -103,7 +103,27 @@ window.addEventListener("error", (event) => {
   console.error("❌ Erro global capturado:", event.error);
 });
 
-window.addEventListener("unhandledrejection", (event) => {
+window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
+  try {
+    const reason = (event && (event.reason as any)) || null;
+    const message = reason && (reason.message || String(reason)) ? (reason.message || String(reason)) : "";
+
+    // Suppress noisy external/network errors that are non-actionable in dev:
+    if (typeof message === "string") {
+      if (
+        message.includes("ReadableStreamDefaultReader constructor can only accept readable streams") ||
+        message.includes("Failed to fetch") ||
+        message.includes("NetworkError when attempting to fetch resource")
+      ) {
+        console.warn("Suppressed known noisy unhandled rejection:", message);
+        event.preventDefault();
+        return;
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+
   console.error("❌ Promise rejeitada não tratada:", event.reason);
 });
 
