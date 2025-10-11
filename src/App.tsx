@@ -424,7 +424,7 @@ const AppContent: React.FC = () => {
         </div>
 
         {/* Conteúdo */}
-        <main className="md:ml-20 md:pt-16 min-h-screen pt-16">
+        <main className="md:ml-20 md:pt-16 min-h-screen pt-16 overflow-y-auto">
           <div className="p-4 md:p-6 lg:p-8 pb-8">
             <Suspense
               fallback={
