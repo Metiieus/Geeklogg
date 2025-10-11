@@ -13,25 +13,27 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Inicializar Firebase somente se a chave estiver definida
+// Inicializar Firebase somente se a chave estiver definida e estivermos no browser
 let app: any = null;
 let _auth: any = null;
 let _db: any = null;
 let _storage: any = null;
 
-if (firebaseConfig.apiKey) {
+if (firebaseConfig.apiKey && typeof window !== "undefined") {
   try {
     app = initializeApp(firebaseConfig);
     _auth = getAuth(app);
-    _db = getFirestore(app, "geeklog");
+    _db = getFirestore(app);
     _storage = getStorage(app);
 
     // Habilita cache offline do Firestore
-    enableIndexedDbPersistence(_db).catch((err) => {
-      if (err.code === "failed-precondition") {
+    enableIndexedDbPersistence(_db).catch((err: any) => {
+      if (err && err.code === "failed-precondition") {
         console.warn("⚠️ Persistence falhou: várias abas abertas");
-      } else if (err.code === "unimplemented") {
+      } else if (err && err.code === "unimplemented") {
         console.warn("⚠️ Navegador não suporta persistence");
+      } else {
+        console.warn("⚠️ Erro ao habilitar persistence:", err);
       }
     });
   } catch (e) {
@@ -43,11 +45,11 @@ if (firebaseConfig.apiKey) {
   }
 } else {
   console.warn(
-    "⚠️ Variáveis de ambiente do Firebase não configuradas. Autenticação e Firestore estarão desabilitados.",
+    "⚠️ Variáveis de ambiente do Firebase não configuradas ou código rodando fora do navegador. Autenticação e Firestore estarão desabilitados.",
   );
 }
 
-// �� Exporta serviços (podem ser null se Firebase não configurado)
+// Exporta serviços (podem ser null se Firebase não configurado)
 export const auth = _auth;
 export const db = _db;
 export const storage = _storage;
@@ -76,6 +78,6 @@ export async function withRetry<T>(
 console.log(
   "🔥 Firebase inicializado com Auth:",
   !!auth,
-  " | Firestore conectado em banco:",
-  db?.databaseId?.database ?? "(disabled)",
+  " | Firestore conectado:",
+  !!db,
 );
