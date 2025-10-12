@@ -114,6 +114,29 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const handleConfirmAdd = async (result: ExternalMediaResult) => {
     setIsAddingMedia(true);
     try {
+      // Ensure category tag is present and tags are mandatory
+      const typeToCategoryTag = (t?: string): string | null => {
+        switch ((t || "").toLowerCase()) {
+          case "game":
+          case "games":
+            return "game";
+          case "movie":
+          case "movies":
+            return "filme";
+          case "tv":
+          case "series":
+            return "serie";
+          case "book":
+          case "books":
+            return "livro";
+          case "anime":
+            return "anime";
+          default:
+            return null;
+        }
+      };
+      const categoryTag = typeToCategoryTag(result.originalType || "");
+
       const newMedia = await addMedia({
         title: result.title,
         type: result.originalType || "book",
@@ -126,7 +149,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         rating: result.rating,
         status: "completed",
         isFavorite: false,
-        tags: [],
+        tags: categoryTag ? [categoryTag] : [""],
       });
 
       setMediaItems([...mediaItems, newMedia]);
