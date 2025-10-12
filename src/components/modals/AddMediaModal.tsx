@@ -491,6 +491,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
               <Tag className="inline w-4 h-4 mr-1" />
               Tags
             </label>
+            <p className="text-xs text-slate-400 mb-2">Inclua a tag da categoria (ex.: game, filme, serie, livro, anime). Obrigatório.</p>
             <input
               type="text"
               required
