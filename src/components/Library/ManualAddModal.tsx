@@ -19,6 +19,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
     director: "",
     developer: "",
     genre: "",
+    tags: "",
     rating: "",
     notes: "",
   });
