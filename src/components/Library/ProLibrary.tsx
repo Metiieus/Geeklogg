@@ -89,17 +89,20 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   // Get favorites
   const favorites = collection.filter((item) => item.isFavorite);
 
-  // Get best items by type (top 3)
-  const getBestByType = (type: string, limit: number = 3) => {
+  // Best per category by tag (Portuguese category tags)
+  const getBestByCategoryTag = (tag: string) => {
     return collection
-      .filter((item) => item.type?.toLowerCase() === type.toLowerCase())
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, limit);
+      .filter((item) => Array.isArray(item.tags) && item.tags.map((t) => (t || '').toLowerCase()).includes(tag))
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
   };
 
-  const bestBooks = getBestByType("book");
-  const bestGames = getBestByType("game");
-  const bestMovies = getBestByType("movie");
+  const bestPerCategory: { title: string; tag: string; icon: React.ElementType; item?: MediaItem }[] = [
+    { title: "Melhor Jogo", tag: "game", icon: Gamepad2 },
+    { title: "Melhor Filme", tag: "filme", icon: Film },
+    { title: "Melhor Série", tag: "serie", icon: Tv },
+    { title: "Melhor Livro", tag: "livro", icon: BookOpen },
+    { title: "Melhor Anime", tag: "anime", icon: Tv },
+  ].map((c) => ({ ...c, item: getBestByCategoryTag(c.tag) }));
 
   const handleCardClick = (item: MediaItem) => {
     setSelectedItem(item);
