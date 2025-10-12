@@ -467,38 +467,21 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
 
-        {/* Best Items Grid - Only show when filter is "all" */}
+        {/* Best per Category - Only show when filter is "all" */}
         {filter === "all" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            {bestBooks.length > 0 && (
-              <BestItemsSection
-                items={bestBooks}
-                title="Melhores Livros"
-                icon={BookOpen}
-                onItemClick={handleCardClick}
-                getCategoryIcon={getCategoryIcon}
-              />
-            )}
-
-            {bestGames.length > 0 && (
-              <BestItemsSection
-                items={bestGames}
-                title="Melhores Jogos"
-                icon={Gamepad2}
-                onItemClick={handleCardClick}
-                getCategoryIcon={getCategoryIcon}
-              />
-            )}
-
-            {bestMovies.length > 0 && (
-              <BestItemsSection
-                items={bestMovies}
-                title="Melhores Filmes"
-                icon={Film}
-                onItemClick={handleCardClick}
-                getCategoryIcon={getCategoryIcon}
-              />
-            )}
+            {bestPerCategory
+              .filter((c) => !!c.item)
+              .map((c, idx) => (
+                <BestItemsSection
+                  key={`${c.tag}-${idx}`}
+                  items={[c.item!]}
+                  title={c.title}
+                  icon={c.icon}
+                  onItemClick={handleCardClick}
+                  getCategoryIcon={getCategoryIcon}
+                />
+              ))}
           </div>
         )}
 
