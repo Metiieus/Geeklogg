@@ -236,6 +236,22 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 />
               </div>
 
+              {/* Tags (required) */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-2">
+                  Tags <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.tags}
+                  onChange={(e) => handleChange("tags", e.target.value)}
+                  placeholder="game, rpg, aventura (separado por vírgula)"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
+                />
+                <p className="text-xs text-slate-400 mt-1">Inclua a tag da categoria (ex.: game, filme, serie, livro, anime).</p>
+              </div>
+
               {/* Cover Image URL */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
