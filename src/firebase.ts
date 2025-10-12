@@ -13,27 +13,44 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Inicializar Firebase somente se a chave estiver definida
+// Inicializar Firebase somente se a chave estiver definida e estivermos no browser
 let app: any = null;
 let _auth: any = null;
 let _db: any = null;
 let _storage: any = null;
 
-if (firebaseConfig.apiKey) {
+if (firebaseConfig.apiKey && typeof window !== "undefined") {
   try {
     app = initializeApp(firebaseConfig);
     _auth = getAuth(app);
-    _db = getFirestore(app, "geeklog");
+    _db = getFirestore(app);
     _storage = getStorage(app);
 
-    // Habilita cache offline do Firestore
-    enableIndexedDbPersistence(_db).catch((err) => {
-      if (err.code === "failed-precondition") {
-        console.warn("⚠️ Persistence falhou: várias abas abertas");
-      } else if (err.code === "unimplemented") {
-        console.warn("⚠️ Navegador não suporta persistence");
+    // Habilita cache offline do Firestore somente quando apropriado.
+    // Em alguns ambientes (dev/local) a persistência pode causar erros de stream não tratados.
+    try {
+      const hostname = typeof window !== "undefined" ? window.location.hostname : "";
+      const shouldEnablePersistence = hostname !== "localhost" && !hostname.startsWith("192.168") && typeof indexedDB !== "undefined";
+      if (shouldEnablePersistence) {
+        (async () => {
+          try {
+            await enableIndexedDbPersistence(_db);
+          } catch (err: any) {
+            if (err && err.code === "failed-precondition") {
+              console.warn("⚠️ Persistence falhou: várias abas abertas");
+            } else if (err && err.code === "unimplemented") {
+              console.warn("⚠️ Navegador não suporta persistence");
+            } else {
+              console.warn("⚠️ Erro ao habilitar persistence:", err);
+            }
+          }
+        })();
+      } else {
+        console.info("ℹ️ IndexedDB persistence não habilitada neste ambiente (localhost ou não suportado).");
       }
-    });
+    } catch (err) {
+      console.warn("⚠️ Erro verificando IndexedDB/persistência:", err);
+    }
   } catch (e) {
     console.warn("⚠️ Falha ao inicializar Firebase:", e);
     app = null;
@@ -43,11 +60,11 @@ if (firebaseConfig.apiKey) {
   }
 } else {
   console.warn(
-    "⚠️ Variáveis de ambiente do Firebase não configuradas. Autenticação e Firestore estarão desabilitados.",
+    "⚠️ Variáveis de ambiente do Firebase não configuradas ou código rodando fora do navegador. Autenticação e Firestore estarão desabilitados.",
   );
 }
 
-// �� Exporta serviços (podem ser null se Firebase não configurado)
+// Exporta serviços (podem ser null se Firebase não configurado)
 export const auth = _auth;
 export const db = _db;
 export const storage = _storage;
@@ -76,6 +93,6 @@ export async function withRetry<T>(
 console.log(
   "🔥 Firebase inicializado com Auth:",
   !!auth,
-  " | Firestore conectado em banco:",
-  db?.databaseId?.database ?? "(disabled)",
+  " | Firestore conectado:",
+  !!db,
 );

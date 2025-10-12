@@ -77,6 +77,41 @@ export const AddMediaFromSearchModal: React.FC<
     e.preventDefault();
 
     try {
+      const rawTags = formData.tags
+        ? formData.tags
+            .split(",")
+            .map((t) => t.trim().toLowerCase())
+            .filter((t) => t)
+        : [];
+
+      if (rawTags.length === 0) {
+        showError("Tags obrigatórias", "Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime)");
+        return;
+      }
+
+      const typeToCategoryTag = (t?: string): string | null => {
+        switch ((t || "").toLowerCase()) {
+          case "game":
+          case "games":
+            return "game";
+          case "movie":
+          case "movies":
+            return "filme";
+          case "tv":
+          case "series":
+            return "serie";
+          case "book":
+          case "books":
+            return "livro";
+          case "anime":
+            return "anime";
+          default:
+            return null;
+        }
+      };
+      const categoryTag = typeToCategoryTag(selectedResult.originalType as string);
+      const tags = Array.from(new Set(categoryTag ? [categoryTag, ...rawTags] : rawTags));
+
       const newItem: MediaItem = {
         id: crypto.randomUUID(),
         title: selectedResult.title,
@@ -96,12 +131,7 @@ export const AddMediaFromSearchModal: React.FC<
         startDate: formData.startDate || undefined,
         endDate: formData.endDate || undefined,
         platform: formData.platform || undefined,
-        tags: formData.tags
-          ? formData.tags
-              .split(",")
-              .map((t) => t.trim())
-              .filter((t) => t)
-          : [],
+        tags,
         externalLink: selectedResult.officialWebsite,
         description:
           selectedResult.description || formData.personalNotes || undefined,

@@ -72,11 +72,53 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
   const { coverFile, ...mediaData } = data;
 
   const sanitizedData = sanitizeStrings(mediaData as Record<string, any>);
+
+  // Ensure category tag based on type (Portuguese tags as requested)
+  const typeToCategoryTag = (t?: string): string | null => {
+    switch ((t || "").toLowerCase()) {
+      case "game":
+      case "games":
+        return "game";
+      case "movie":
+      case "movies":
+        return "filme";
+      case "tv":
+      case "series":
+        return "serie";
+      case "book":
+      case "books":
+        return "livro";
+      case "anime":
+        return "anime";
+      default:
+        return null;
+    }
+  };
+
+  const categoryTag = typeToCategoryTag((sanitizedData as any).type);
+  let incomingTags: string[] = Array.isArray((sanitizedData as any).tags)
+    ? ((sanitizedData as any).tags as string[])
+    : [];
+
+  // Normalize, lowercase and ensure category tag is present
+  incomingTags = incomingTags
+    .map((t) => t.trim().toLowerCase())
+    .filter((t) => !!t);
+  if (categoryTag && !incomingTags.includes(categoryTag)) {
+    incomingTags.unshift(categoryTag);
+  }
+
+  if (incomingTags.length === 0) {
+    throw new Error(
+      "Tags são obrigatórias. Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime).",
+    );
+  }
+
   const toSave: Omit<MediaItem, "id"> = removeUndefinedFields({
     ...sanitizedData,
     createdAt: now,
     updatedAt: now,
-    tags: Array.isArray(sanitizedData.tags) ? sanitizedData.tags : [],
+    tags: Array.from(new Set(incomingTags)),
   });
 
   // 1️⃣ Adiciona o documento

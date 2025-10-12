@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
   onAuthStateChanged,
@@ -48,6 +48,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Se o firebase/auth não foi inicializado, não tente se inscrever
+    if (!auth) {
+      console.warn("⚠️ Firebase auth não inicializado. Pulando onAuthStateChanged.");
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
 
@@ -68,23 +75,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe && unsubscribe();
   }, []);
 
   // 🔑 Funções de autenticação
   const login = async (email: string, password: string) => {
+    if (!auth) throw new Error("Auth não inicializado");
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const register = async (email: string, password: string) => {
+    if (!auth) throw new Error("Auth não inicializado");
     await createUserWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
+    if (!auth) throw new Error("Auth não inicializado");
     await signOut(auth);
   };
 
   const resetPassword = async (email: string) => {
+    if (!auth) throw new Error("Auth não inicializado");
     await sendPasswordResetEmail(auth, email);
   };
 

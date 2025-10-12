@@ -121,6 +121,42 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
     setIsSaving(true);
 
     try {
+      const rawTags = formData.tags
+        .split(",")
+        .map((tag) => tag.trim().toLowerCase())
+        .filter((tag) => tag.length > 0);
+
+      // Require at least one tag
+      if (rawTags.length === 0) {
+        showError("Tags obrigatórias", "Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime)");
+        setIsSaving(false);
+        return;
+      }
+
+      // Append category tag based on type if missing
+      const typeToCategoryTag = (t: string): string | null => {
+        switch (t.toLowerCase()) {
+          case "game":
+          case "games":
+            return "game";
+          case "movie":
+          case "movies":
+            return "filme";
+          case "tv":
+          case "series":
+            return "serie";
+          case "book":
+          case "books":
+            return "livro";
+          case "anime":
+            return "anime";
+          default:
+            return null;
+        }
+      };
+      const categoryTag = typeToCategoryTag(formData.type);
+      const tags = Array.from(new Set(categoryTag ? [categoryTag, ...rawTags] : rawTags));
+
       const newItem = await addMedia({
         title: formData.title.trim(),
         type: formData.type,
@@ -138,10 +174,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         startDate: formData.startDate || undefined,
         endDate: formData.endDate || undefined,
         platform: formData.platform?.trim() || undefined,
-        tags: formData.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+        tags,
         externalLink: formData.externalLink?.trim() || undefined,
         description: formData.description?.trim() || undefined,
         coverFile: formData.coverFile,
@@ -458,12 +491,14 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
               <Tag className="inline w-4 h-4 mr-1" />
               Tags
             </label>
+            <p className="text-xs text-slate-400 mb-2">Inclua a tag da categoria (ex.: game, filme, serie, livro, anime). Obrigatório.</p>
             <input
               type="text"
+              required
               value={formData.tags}
               onChange={(e) => handleChange("tags", e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
+              placeholder="game, rpg, aventura (separado por vírgula)"
             />
           </div>
 

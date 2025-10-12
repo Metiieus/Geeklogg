@@ -89,17 +89,20 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   // Get favorites
   const favorites = collection.filter((item) => item.isFavorite);
 
-  // Get best items by type (top 3)
-  const getBestByType = (type: string, limit: number = 3) => {
+  // Best per category by tag (Portuguese category tags)
+  const getBestByCategoryTag = (tag: string) => {
     return collection
-      .filter((item) => item.type?.toLowerCase() === type.toLowerCase())
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, limit);
+      .filter((item) => Array.isArray(item.tags) && item.tags.map((t) => (t || '').toLowerCase()).includes(tag))
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
   };
 
-  const bestBooks = getBestByType("book");
-  const bestGames = getBestByType("game");
-  const bestMovies = getBestByType("movie");
+  const bestPerCategory: { title: string; tag: string; icon: React.ElementType; item?: MediaItem }[] = [
+    { title: "Melhor Jogo", tag: "game", icon: Gamepad2 },
+    { title: "Melhor Filme", tag: "filme", icon: Film },
+    { title: "Melhor Série", tag: "serie", icon: Tv },
+    { title: "Melhor Livro", tag: "livro", icon: BookOpen },
+    { title: "Melhor Anime", tag: "anime", icon: Tv },
+  ].map((c) => ({ ...c, item: getBestByCategoryTag(c.tag) }));
 
   const handleCardClick = (item: MediaItem) => {
     setSelectedItem(item);
@@ -114,6 +117,29 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const handleConfirmAdd = async (result: ExternalMediaResult) => {
     setIsAddingMedia(true);
     try {
+      // Ensure category tag is present and tags are mandatory
+      const typeToCategoryTag = (t?: string): string | null => {
+        switch ((t || "").toLowerCase()) {
+          case "game":
+          case "games":
+            return "game";
+          case "movie":
+          case "movies":
+            return "filme";
+          case "tv":
+          case "series":
+            return "serie";
+          case "book":
+          case "books":
+            return "livro";
+          case "anime":
+            return "anime";
+          default:
+            return null;
+        }
+      };
+      const categoryTag = typeToCategoryTag(result.originalType || "");
+
       const newMedia = await addMedia({
         title: result.title,
         type: result.originalType || "book",
@@ -126,7 +152,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         rating: result.rating,
         status: "completed",
         isFavorite: false,
-        tags: [],
+        tags: categoryTag ? [categoryTag] : ["geral"],
       });
 
       setMediaItems([...mediaItems, newMedia]);
@@ -441,38 +467,21 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
 
-        {/* Best Items Grid - Only show when filter is "all" */}
+        {/* Best per Category - Only show when filter is "all" */}
         {filter === "all" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            {bestBooks.length > 0 && (
-              <BestItemsSection
-                items={bestBooks}
-                title="Melhores Livros"
-                icon={BookOpen}
-                onItemClick={handleCardClick}
-                getCategoryIcon={getCategoryIcon}
-              />
-            )}
-
-            {bestGames.length > 0 && (
-              <BestItemsSection
-                items={bestGames}
-                title="Melhores Jogos"
-                icon={Gamepad2}
-                onItemClick={handleCardClick}
-                getCategoryIcon={getCategoryIcon}
-              />
-            )}
-
-            {bestMovies.length > 0 && (
-              <BestItemsSection
-                items={bestMovies}
-                title="Melhores Filmes"
-                icon={Film}
-                onItemClick={handleCardClick}
-                getCategoryIcon={getCategoryIcon}
-              />
-            )}
+            {bestPerCategory
+              .filter((c) => !!c.item)
+              .map((c, idx) => (
+                <BestItemsSection
+                  key={`${c.tag}-${idx}`}
+                  items={[c.item!]}
+                  title={c.title}
+                  icon={c.icon}
+                  onItemClick={handleCardClick}
+                  getCategoryIcon={getCategoryIcon}
+                />
+              ))}
           </div>
         )}
 

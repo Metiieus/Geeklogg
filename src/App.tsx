@@ -399,7 +399,7 @@ const AppContent: React.FC = () => {
 
   return (
     <AppProvider value={appContextValue}>
-      <div className="min-h-screen mobile-full-height bg-gray-900 text-white overflow-hidden">
+      <div className="min-h-screen mobile-full-height bg-gray-900 text-white overflow-x-hidden">
         {/* Background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
@@ -424,7 +424,7 @@ const AppContent: React.FC = () => {
         </div>
 
         {/* Conteúdo */}
-        <main className="md:ml-20 md:pt-16 min-h-screen pt-16">
+        <main className="md:ml-20 md:pt-16 min-h-screen pt-16 overflow-y-auto">
           <div className="p-4 md:p-6 lg:p-8 pb-8">
             <Suspense
               fallback={
@@ -489,10 +489,41 @@ class ErrorBoundary extends React.Component<
 }
 
 // Root App
-const App: React.FC = () => (
-  <ErrorBoundary>
-    <AppContent />
-  </ErrorBoundary>
-);
+const App: React.FC = () => {
+  useEffect(() => {
+    const handler = (event: PromiseRejectionEvent) => {
+      try {
+        const reason = (event && (event.reason as any)) || null;
+        const message =
+          reason && (reason.message || String(reason))
+            ? (reason.message || String(reason))
+            : "";
+
+        // Suppress known ReadableStreamDefaultReader constructor error coming from
+        // firebase/firestore internals in some environments where streams are locked.
+        if (
+          typeof message === "string" &&
+          message.includes("ReadableStreamDefaultReader constructor can only accept readable streams")
+        ) {
+          console.warn("Suppressed known Firestore ReadableStream error:", message);
+          event.preventDefault();
+          return;
+        }
+      } catch (e) {
+        // ignore
+      }
+      // Let other unhandled rejections surface
+    };
+
+    window.addEventListener("unhandledrejection", handler as any);
+    return () => window.removeEventListener("unhandledrejection", handler as any);
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  );
+};
 
 export default App;
