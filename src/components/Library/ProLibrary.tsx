@@ -149,7 +149,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         rating: result.rating,
         status: "completed",
         isFavorite: false,
-        tags: categoryTag ? [categoryTag] : [""],
+        tags: categoryTag ? [categoryTag] : ["geral"],
       });
 
       setMediaItems([...mediaItems, newMedia]);
