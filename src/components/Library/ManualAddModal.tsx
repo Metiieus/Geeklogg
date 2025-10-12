@@ -40,6 +40,38 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
     setIsSubmitting(true);
 
     try {
+      const rawTags = formData.tags
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter((t) => t);
+      if (rawTags.length === 0) {
+        showToast("Tags obrigatórias. Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime)", "error");
+        setIsSubmitting(false);
+        return;
+      }
+      const typeToCategoryTag = (t?: string): string | null => {
+        switch ((t || "").toLowerCase()) {
+          case "game":
+          case "games":
+            return "game";
+          case "movie":
+          case "movies":
+            return "filme";
+          case "tv":
+          case "series":
+            return "serie";
+          case "book":
+          case "books":
+            return "livro";
+          case "anime":
+            return "anime";
+          default:
+            return null;
+        }
+      };
+      const categoryTag = typeToCategoryTag(formData.type);
+      const tags = Array.from(new Set(categoryTag ? [categoryTag, ...rawTags] : rawTags));
+
       const newMedia = await addMedia({
         title: formData.title,
         type: formData.type,
@@ -52,7 +84,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
         notes: formData.notes,
         status: "completed",
         isFavorite: false,
-        tags: [],
+        tags,
       });
 
       setMediaItems([...mediaItems, newMedia]);
