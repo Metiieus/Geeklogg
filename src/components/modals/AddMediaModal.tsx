@@ -493,10 +493,11 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </label>
             <input
               type="text"
+              required
               value={formData.tags}
               onChange={(e) => handleChange("tags", e.target.value)}
               className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
+              placeholder="game, rpg, aventura (separado por vírgula)"
             />
           </div>
 
