@@ -60,7 +60,7 @@ export const AddMediaPage: React.FC = () => {
       </div>
 
       {/* Card com as opções */}
-      <div className="bg-slate-800/70 border border-white/10 rounded-2xl p-6">
+      <div className="bg-slate-800/70 border border-white/10 rounded-2xl p-4 sm:p-6">
         <AddMediaOptions
           onExternalResultSelect={(r) => setSelectedResult(r)}
           onManualAdd={() => {
