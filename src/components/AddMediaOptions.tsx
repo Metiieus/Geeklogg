@@ -55,10 +55,10 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
               <Plus className="text-white/90" size={20} />
             </div>
             <div>
-              <div className="font-semibold text-white text-lg group-hover:text-emerald-200 transition-colors">
+              <div className="font-semibold text-white text-lg group-hover:text-emerald-200 transition-colors text-balance">
                 Adicionar Manual
               </div>
-              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors">
+              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors text-balance">
                 Criar entrada personalizada
               </div>
             </div>
