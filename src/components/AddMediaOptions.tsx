@@ -34,10 +34,10 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
               <Search className="text-white/90" size={20} />
             </div>
             <div>
-              <div className="font-semibold text-white text-lg group-hover:text-cyan-200 transition-colors">
+              <div className="font-semibold text-white text-lg group-hover:text-cyan-200 transition-colors text-balance">
                 Buscar Online
               </div>
-              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors">
+              <div className="text-sm text-white/70 group-hover:text-white/80 transition-colors text-balance">
                 Google Books, TMDb, RAWG...
               </div>
             </div>
