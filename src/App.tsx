@@ -206,6 +206,7 @@ const AppContent: React.FC = () => {
     null,
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [authWaitExceeded, setAuthWaitExceeded] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
