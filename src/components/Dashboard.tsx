@@ -78,6 +78,19 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+      {/* Archivius Chat */}
+      <div className="animate-fade-in">
+        {(() => {
+          try {
+            const { ArchiviusAgent } = require("./ArchiviusAgent");
+            const Comp = ArchiviusAgent as React.FC;
+            return <Comp />;
+          } catch {
+            return null;
+          }
+        })()}
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-down">
         <div>
