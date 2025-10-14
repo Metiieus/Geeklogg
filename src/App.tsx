@@ -253,6 +253,20 @@ const AppContent: React.FC = () => {
     }
   }, [user, authLoading, showSuccess, showError]);
 
+  // Timeout de segurança: não ficar preso em loading caso auth demore
+  useEffect(() => {
+    if (!authLoading) return;
+    const t = setTimeout(() => setAuthWaitExceeded(true), 7000);
+    return () => clearTimeout(t);
+  }, [authLoading]);
+
+  // Timeout de segurança para carregamento de dados
+  useEffect(() => {
+    if (!isLoading) return;
+    const t = setTimeout(() => setIsLoading(false), 10000);
+    return () => clearTimeout(t);
+  }, [isLoading]);
+
   // Auto-save
   useEffect(() => {
     if (!user || isLoading) return;
@@ -362,7 +376,7 @@ const AppContent: React.FC = () => {
   );
 
   // Renderização especial
-  if (authLoading || isLoading) return <LoadingScreen />;
+  if ((authLoading && !authWaitExceeded) || isLoading) return <LoadingScreen />;
 
   if (!user) {
     if (showLogin) {
