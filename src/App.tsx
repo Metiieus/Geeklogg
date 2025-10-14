@@ -22,10 +22,11 @@ import {
 
 // Loading Screen
 const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+  <div className="min-h-screen mobile-full-height bg-gray-900 flex items-center justify-center px-4" aria-busy="true">
+    <div className="text-center" role="status" aria-live="polite">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-3" aria-hidden="true"></div>
       <p className="text-slate-300">Carregando...</p>
+      <span className="sr-only">Aguarde, carregando conteúdo</span>
     </div>
   </div>
 );
@@ -205,6 +206,7 @@ const AppContent: React.FC = () => {
     null,
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [authWaitExceeded, setAuthWaitExceeded] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
@@ -250,6 +252,20 @@ const AppContent: React.FC = () => {
       loadUserData();
     }
   }, [user, authLoading, showSuccess, showError]);
+
+  // Timeout de segurança: não ficar preso em loading caso auth demore
+  useEffect(() => {
+    if (!authLoading) return;
+    const t = setTimeout(() => setAuthWaitExceeded(true), 7000);
+    return () => clearTimeout(t);
+  }, [authLoading]);
+
+  // Timeout de segurança para carregamento de dados
+  useEffect(() => {
+    if (!isLoading) return;
+    const t = setTimeout(() => setIsLoading(false), 10000);
+    return () => clearTimeout(t);
+  }, [isLoading]);
 
   // Auto-save
   useEffect(() => {
@@ -360,7 +376,7 @@ const AppContent: React.FC = () => {
   );
 
   // Renderização especial
-  if (authLoading || isLoading) return <LoadingScreen />;
+  if ((authLoading && !authWaitExceeded) || isLoading) return <LoadingScreen />;
 
   if (!user) {
     if (showLogin) {
@@ -401,7 +417,7 @@ const AppContent: React.FC = () => {
     <AppProvider value={appContextValue}>
       <div className="min-h-screen mobile-full-height bg-gray-900 text-white overflow-x-hidden">
         {/* Background */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="hidden sm:block fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-500/10 rotate-45"></div>
@@ -426,13 +442,15 @@ const AppContent: React.FC = () => {
         {/* Conteúdo */}
         <main className="md:ml-20 md:pt-16 min-h-screen pt-16 overflow-y-auto">
           <div className="p-4 md:p-6 lg:p-8 pb-8">
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
-                </div>
-              }
-            >
+            <div className="max-w-screen-lg mx-auto w-full">
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center h-64" role="status" aria-live="polite">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400" aria-hidden="true"></div>
+                    <span className="sr-only">Carregando seção</span>
+                  </div>
+                }
+              >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activePage}
@@ -445,7 +463,8 @@ const AppContent: React.FC = () => {
                   <PageComponent />
                 </motion.div>
               </AnimatePresence>
-            </Suspense>
+              </Suspense>
+            </div>
           </div>
         </main>
 

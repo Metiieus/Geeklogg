@@ -15,6 +15,26 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Make media responsive by default */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent text overflow issues on mobile */
+* {
+  min-width: 0;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.break-anywhere {
+  overflow-wrap: anywhere;
 }
 
 html, body, #root {

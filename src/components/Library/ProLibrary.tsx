@@ -117,6 +117,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const handleConfirmAdd = async (result: ExternalMediaResult) => {
     setIsAddingMedia(true);
     try {
+      // Ensure type is provided
+      if (!result.originalType) {
+        showToast("Selecione o tipo de mídia antes de adicionar.", "error");
+        return;
+      }
+
       // Ensure category tag is present and tags are mandatory
       const typeToCategoryTag = (t?: string): string | null => {
         switch ((t || "").toLowerCase()) {
@@ -142,7 +148,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
       const newMedia = await addMedia({
         title: result.title,
-        type: result.originalType || "book",
+        type: result.originalType,
         cover: result.image,
         year: result.year,
         author: result.authors?.join(", "),

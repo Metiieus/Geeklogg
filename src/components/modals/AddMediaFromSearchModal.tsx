@@ -77,6 +77,11 @@ export const AddMediaFromSearchModal: React.FC<
     e.preventDefault();
 
     try {
+      if (!selectedResult.originalType) {
+        showError("Tipo obrigatório", "Selecione o tipo de mídia antes de adicionar");
+        return;
+      }
+
       const rawTags = formData.tags
         ? formData.tags
             .split(",")
@@ -116,7 +121,7 @@ export const AddMediaFromSearchModal: React.FC<
         id: crypto.randomUUID(),
         title: selectedResult.title,
         cover: selectedResult.image,
-        type: (selectedResult.originalType as MediaType) || "books",
+        type: selectedResult.originalType as MediaType,
         status: formData.status,
         rating: formData.rating ? parseFloat(formData.rating) : undefined,
         hoursSpent: formData.hoursSpent
