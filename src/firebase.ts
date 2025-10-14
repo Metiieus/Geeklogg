@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { initializeFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -23,14 +23,20 @@ if (firebaseConfig.apiKey && typeof window !== "undefined") {
   try {
     app = initializeApp(firebaseConfig);
     _auth = getAuth(app);
-    _db = getFirestore(app);
+    // Use configurações que funcionam melhor atrás de proxies/iframes
+    const forceLongPolling = true;
+    _db = initializeFirestore(app, {
+      experimentalAutoDetectLongPolling: !forceLongPolling,
+      experimentalForceLongPolling: forceLongPolling,
+      useFetchStreams: false,
+    });
     _storage = getStorage(app);
 
     // Habilita cache offline do Firestore somente quando apropriado.
     // Em alguns ambientes (dev/local) a persistência pode causar erros de stream não tratados.
     try {
       const hostname = typeof window !== "undefined" ? window.location.hostname : "";
-      const shouldEnablePersistence = hostname !== "localhost" && !hostname.startsWith("192.168") && typeof indexedDB !== "undefined";
+      const shouldEnablePersistence = typeof indexedDB !== "undefined";
       if (shouldEnablePersistence) {
         (async () => {
           try {
