@@ -2,28 +2,52 @@ import React, { useState } from "react";
 import { X, Search, Sparkles, Plus, BookOpen, Film, Gamepad2, Tv } from "lucide-react";
 import { motion } from "framer-motion";
 import { MediaSearchBar } from "../MediaSearchBar";
-import { MediaType } from "../../App";
+// Usamos um tipo local para busca; será mapeado para o tipo interno
 import { ExternalMediaResult } from "../../services/externalMediaService";
 import { ManualAddModal } from "../Library/ManualAddModal";
 
+type SearchMediaType = "books" | "movies" | "games" | "series" | "anime";
+
 interface AddMediaSearchModalProps {
   onClose: () => void;
-  onAddMedia: (result: ExternalMediaResult) => Promise<void>;
+  onResultSelect?: (result: ExternalMediaResult) => void | Promise<void>;
+  onAddMedia?: (result: ExternalMediaResult) => void | Promise<void>;
 }
 
 export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
   onClose,
+  onResultSelect,
   onAddMedia,
 }) => {
-  const [selectedType, setSelectedType] = useState<MediaType>("books");
+  const [selectedType, setSelectedType] = useState<SearchMediaType>("books");
   const [showManualAdd, setShowManualAdd] = useState(false);
 
+  const mapToOriginalType = (t: SearchMediaType): string => {
+    switch (t) {
+      case "books":
+        return "book";
+      case "movies":
+        return "movie";
+      case "games":
+        return "game";
+      case "series":
+        return "tv";
+      case "anime":
+        return "anime";
+      default:
+        return "book";
+    }
+  };
+
   const handleResultSelect = async (result: ExternalMediaResult) => {
-    await onAddMedia(result);
+    const withType = { ...result, originalType: result.originalType || mapToOriginalType(selectedType) } as ExternalMediaResult & { originalType: string };
+    if (!withType.originalType) return; // exigir tipo
+    if (onResultSelect) await onResultSelect(withType);
+    else if (onAddMedia) await onAddMedia(withType);
     onClose();
   };
 
-  const mediaTypes: Array<{ id: MediaType; label: string; icon: React.ElementType }> = [
+  const mediaTypes: Array<{ id: SearchMediaType; label: string; icon: React.ElementType }> = [
     { id: "books", label: "Livros", icon: BookOpen },
     { id: "movies", label: "Filmes", icon: Film },
     { id: "games", label: "Jogos", icon: Gamepad2 },
@@ -146,8 +170,8 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
               {/* Search Component */}
               <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 sm:p-6">
                 <MediaSearchBar
-                  selectedType={selectedType}
-                  onTypeChange={setSelectedType}
+                  selectedType={selectedType as any}
+                  onTypeChange={(t: any) => setSelectedType(t as SearchMediaType)}
                   onResultSelect={handleResultSelect}
                   placeholder={`Buscar ${
                     selectedType === "books"
