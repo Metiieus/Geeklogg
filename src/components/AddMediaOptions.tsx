@@ -67,11 +67,12 @@ export const AddMediaOptions: React.FC<AddMediaOptionsProps> = ({
       </div>
 
       {/* Search Modal */}
-      <AddMediaSearchModal
-        isOpen={isSearchModalOpen}
-        onClose={() => setIsSearchModalOpen(false)}
-        onResultSelect={handleSearchResultSelect}
-      />
+      {isSearchModalOpen && (
+        <AddMediaSearchModal
+          onClose={() => setIsSearchModalOpen(false)}
+          onResultSelect={handleSearchResultSelect}
+        />
+      )}
     </>
   );
 };
