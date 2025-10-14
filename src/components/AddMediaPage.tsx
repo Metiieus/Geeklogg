@@ -45,7 +45,7 @@ export const AddMediaPage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
       {/* Cabeçalho */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4 sm:mb-6">
         <button
           onClick={() =>
             typeof window !== "undefined" ? window.history.back() : null
@@ -56,7 +56,7 @@ export const AddMediaPage: React.FC = () => {
         >
           <ArrowLeft size={18} />
         </button>
-        <h1 className="text-2xl font-bold text-white">Adicionar Mídia</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-white text-balance">Adicionar Mídia</h1>
       </div>
 
       {/* Card com as opções */}
