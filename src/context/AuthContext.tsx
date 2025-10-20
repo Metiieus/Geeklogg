@@ -1,3 +1,4 @@
+// src/context/AuthContext.tsx
 import type { ReactNode } from "react";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
@@ -9,7 +10,8 @@ import {
   sendPasswordResetEmail,
   deleteUser,
 } from "firebase/auth";
-import { auth } from "../firebase"; // ✅ usa o auth exportado do firebase.ts
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 interface UserProfile {
   uid: string;
@@ -48,26 +50,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Se o firebase/auth não foi inicializado, não tente se inscrever
     if (!auth) {
-      console.warn("⚠️ Firebase auth não inicializado. Pulando onAuthStateChanged.");
+      console.warn("⚠️ Firebase auth não inicializado");
       setLoading(false);
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("🔐 Auth state changed:", user?.uid);
       setUser(user);
 
-      if (user) {
-        setProfile({
-          uid: user.uid,
-          email: user.email || "",
-          displayName: user.displayName || user.email?.split("@")[0] || "User",
-          isPremium: false,
-          bio: "",
-          favoriteGenres: [],
-          profileImage: "",
-        });
+      if (user && db) {
+        try {
+          // ✅ Verificar se o documento do usuário existe
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (!userDoc.exists()) {
+            // 🆕 Criar documento do usuário
+            console.log("📝 Criando documento do usuário...");
+            const userData = {
+              uid: user.uid,
+              email: user.email || "",
+              name: user.displayName || user.email?.split("@")[0] || "Usuário",
+              bio: "",
+              avatar: "",
+              cover: "",
+              isPremium: false,
+              favoriteGenres: [],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+
+            await setDoc(userDocRef, userData);
+            console.log("✅ Documento do usuário criado com sucesso!");
+          } else {
+            console.log("✅ Documento do usuário já existe");
+          }
+
+          // Carregar dados do perfil
+          const userData = userDoc.exists() ? userDoc.data() : null;
+          
+          setProfile({
+            uid: user.uid,
+            email: user.email || "",
+            displayName: userData?.name || user.displayName || user.email?.split("@")[0] || "User",
+            isPremium: userData?.isPremium || false,
+            bio: userData?.bio || "",
+            favoriteGenres: userData?.favoriteGenres || [],
+            profileImage: userData?.avatar || "",
+          });
+
+          console.log("✅ Perfil carregado:", profile);
+        } catch (error) {
+          console.error("❌ Erro ao configurar usuário:", error);
+        }
       } else {
         setProfile(null);
       }
@@ -78,7 +115,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe && unsubscribe();
   }, []);
 
-  // 🔑 Funções de autenticação
   const login = async (email: string, password: string) => {
     if (!auth) throw new Error("Auth não inicializado");
     await signInWithEmailAndPassword(auth, email, password);
