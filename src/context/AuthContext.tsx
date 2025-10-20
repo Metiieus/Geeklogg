@@ -9,7 +9,8 @@ import {
   sendPasswordResetEmail,
   deleteUser,
 } from "firebase/auth";
-import { auth } from "../firebase"; // ✅ usa o auth exportado do firebase.ts
+import { auth, db } from "../firebase"; // ✅ usa o auth e db exportados do firebase.ts
+import { doc, getDoc } from "firebase/firestore";
 
 interface UserProfile {
   uid: string;
@@ -55,19 +56,68 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
 
       if (user) {
-        setProfile({
-          uid: user.uid,
-          email: user.email || "",
-          displayName: user.displayName || user.email?.split("@")[0] || "User",
-          isPremium: false,
-          bio: "",
-          favoriteGenres: [],
-          profileImage: "",
-        });
+        // Carregar dados do perfil do Firestore
+        try {
+          if (db) {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if (userDocSnap.exists()) {
+              const userData = userDocSnap.data();
+              console.log("✅ Dados do usuário carregados do Firestore:", userData);
+              
+              setProfile({
+                uid: user.uid,
+                email: user.email || "",
+                displayName: userData.displayName || userData.name || user.email?.split("@")[0] || "User",
+                isPremium: userData.isPremium || false,
+                bio: userData.bio || "",
+                favoriteGenres: userData.favoriteGenres || [],
+                profileImage: userData.avatar || userData.profileImage || "",
+              });
+            } else {
+              console.warn("⚠️ Documento do usuário não encontrado no Firestore");
+              // Fallback para dados básicos do Firebase Auth
+              setProfile({
+                uid: user.uid,
+                email: user.email || "",
+                displayName: user.displayName || user.email?.split("@")[0] || "User",
+                isPremium: false,
+                bio: "",
+                favoriteGenres: [],
+                profileImage: "",
+              });
+            }
+          } else {
+            console.warn("⚠️ Firestore não inicializado");
+            // Fallback para dados básicos do Firebase Auth
+            setProfile({
+              uid: user.uid,
+              email: user.email || "",
+              displayName: user.displayName || user.email?.split("@")[0] || "User",
+              isPremium: false,
+              bio: "",
+              favoriteGenres: [],
+              profileImage: "",
+            });
+          }
+        } catch (error) {
+          console.error("❌ Erro ao carregar dados do usuário do Firestore:", error);
+          // Fallback para dados básicos do Firebase Auth
+          setProfile({
+            uid: user.uid,
+            email: user.email || "",
+            displayName: user.displayName || user.email?.split("@")[0] || "User",
+            isPremium: false,
+            bio: "",
+            favoriteGenres: [],
+            profileImage: "",
+          });
+        }
       } else {
         setProfile(null);
       }
