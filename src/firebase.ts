@@ -23,7 +23,7 @@ if (firebaseConfig.apiKey && typeof window !== "undefined") {
   try {
     app = initializeApp(firebaseConfig);
     _auth = getAuth(app);
-    _db = getFirestore(app);
+    _db = getFirestore(app, 'geeklog');
     _storage = getStorage(app);
 
     // Habilita cache offline do Firestore somente quando apropriado.
