@@ -41,7 +41,7 @@ const Statistics: React.FC = () => {
   const { mediaItems, reviews } = useAppContext();
 
   const getMediaStats = () => {
-    const stats: Record<
+    const stats: Record <
       string,
       { count: number; hours: number; avgRating: number; completed: number }
     > = {
@@ -247,6 +247,9 @@ const Statistics: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 animate-fade-in">
           {Object.entries(mediaStats).map(([type, stats]) => {
             const Icon = mediaTypeIcons[type as MediaType];
+            // Skip if Icon is undefined (unknown media type)
+            if (!Icon) return null;
+            
             return (
               <div
                 key={type}
@@ -254,12 +257,10 @@ const Statistics: React.FC = () => {
               >
                 <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
                   <Icon
-                    size={14}
-                    sm:size={16}
-                    md:size={20}
-                    className="text-white"
+                    size={20}
+                    className="text-white w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5"
                   />
-                  <span className="text-white font-medium">
+                  <span className="text-white font-medium text-xs sm:text-sm">
                     {mediaTypeLabels[type as MediaType]}
                   </span>
                 </div>
@@ -333,7 +334,7 @@ const Statistics: React.FC = () => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500">
-                          <Star size={10} sm:size={14} />
+                          <Star className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
                         </div>
                       )}
                     </div>
@@ -347,9 +348,7 @@ const Statistics: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
                       <Star
-                        className="text-yellow-400"
-                        size={12}
-                        sm:size={14}
+                        className="text-yellow-400 w-3 h-3 sm:w-3.5 sm:h-3.5"
                         fill="currentColor"
                       />
                       <span className="text-white font-medium text-xs sm:text-sm">
@@ -394,7 +393,7 @@ const Statistics: React.FC = () => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500">
-                          <Clock size={10} sm:size={14} />
+                          <Clock className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
                         </div>
                       )}
                     </div>
@@ -407,8 +406,8 @@ const Statistics: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-                      <Clock className="text-blue-400" size={12} sm:size={14} />
-                      <span className="text-white font-medium">
+                      <Clock className="text-blue-400 w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      <span className="text-white font-medium text-xs sm:text-sm">
                         {item.hoursSpent}h
                       </span>
                     </div>
@@ -426,4 +425,5 @@ const Statistics: React.FC = () => {
     </div>
   );
 };
+
 export default Statistics;
