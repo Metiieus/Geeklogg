@@ -10,8 +10,8 @@ import {
   sendPasswordResetEmail,
   deleteUser,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { auth, db } from "../firebase"; // ✅ usa o auth e db exportados do firebase.ts
+import { doc, getDoc } from "firebase/firestore";
 
 interface UserProfile {
   uid: string;
@@ -57,53 +57,66 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("🔐 Auth state changed:", user?.uid);
       setUser(user);
 
-      if (user && db) {
+      if (user) {
+        // Carregar dados do perfil do Firestore
         try {
-          // ✅ Verificar se o documento do usuário existe
-          const userDocRef = doc(db, 'users', user.uid);
-          const userDoc = await getDoc(userDocRef);
-
-          if (!userDoc.exists()) {
-            // 🆕 Criar documento do usuário
-            console.log("📝 Criando documento do usuário...");
-            const userData = {
+          if (db) {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if (userDocSnap.exists()) {
+              const userData = userDocSnap.data();
+              console.log("✅ Dados do usuário carregados do Firestore:", userData);
+              
+              setProfile({
+                uid: user.uid,
+                email: user.email || "",
+                displayName: userData.displayName || userData.name || user.email?.split("@")[0] || "User",
+                isPremium: userData.isPremium || false,
+                bio: userData.bio || "",
+                favoriteGenres: userData.favoriteGenres || [],
+                profileImage: userData.avatar || userData.profileImage || "",
+              });
+            } else {
+              console.warn("⚠️ Documento do usuário não encontrado no Firestore");
+              // Fallback para dados básicos do Firebase Auth
+              setProfile({
+                uid: user.uid,
+                email: user.email || "",
+                displayName: user.displayName || user.email?.split("@")[0] || "User",
+                isPremium: false,
+                bio: "",
+                favoriteGenres: [],
+                profileImage: "",
+              });
+            }
+          } else {
+            console.warn("⚠️ Firestore não inicializado");
+            // Fallback para dados básicos do Firebase Auth
+            setProfile({
               uid: user.uid,
               email: user.email || "",
-              name: user.displayName || user.email?.split("@")[0] || "Usuário",
-              bio: "",
-              avatar: "",
-              cover: "",
+              displayName: user.displayName || user.email?.split("@")[0] || "User",
               isPremium: false,
+              bio: "",
               favoriteGenres: [],
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            };
-
-            await setDoc(userDocRef, userData);
-            console.log("✅ Documento do usuário criado com sucesso!");
-          } else {
-            console.log("✅ Documento do usuário já existe");
+              profileImage: "",
+            });
           }
-
-          // Carregar dados do perfil
-          const userData = userDoc.exists() ? userDoc.data() : null;
-          
+        } catch (error) {
+          console.error("❌ Erro ao carregar dados do usuário do Firestore:", error);
+          // Fallback para dados básicos do Firebase Auth
           setProfile({
             uid: user.uid,
             email: user.email || "",
-            displayName: userData?.name || user.displayName || user.email?.split("@")[0] || "User",
-            isPremium: userData?.isPremium || false,
-            bio: userData?.bio || "",
-            favoriteGenres: userData?.favoriteGenres || [],
-            profileImage: userData?.avatar || "",
+            displayName: user.displayName || user.email?.split("@")[0] || "User",
+            isPremium: false,
+            bio: "",
+            favoriteGenres: [],
+            profileImage: "",
           });
-
-          console.log("✅ Perfil carregado:", profile);
-        } catch (error) {
-          console.error("❌ Erro ao configurar usuário:", error);
         }
       } else {
         setProfile(null);

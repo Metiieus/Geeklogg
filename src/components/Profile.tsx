@@ -82,14 +82,25 @@ const Profile: React.FC = () => {
   };
 
   const loadNotifications = useCallback(async () => {
-    if (activeTab !== "notifications") return;
+    if (!user?.uid) return;
     setLoadingNotifications(true);
     try {
-      const userNotifications = await getUserNotifications(user?.uid || "");
+      const userNotifications = await getUserNotifications(user.uid);
       // Normalizar timestamps e filtrar notificações válidas
+      // Garantir que cada notificação tenha os campos obrigatórios
       const normalizedNotifications = userNotifications
         .map(normalizeTimestamp)
-        .filter((notif) => notif && notif.id);
+        .filter((notif) => {
+          // Validar que a notificação tem os campos essenciais
+          return (
+            notif &&
+            notif.id &&
+            notif.type &&
+            notif.title &&
+            notif.message &&
+            typeof notif.read === "boolean"
+          );
+        });
       setNotifications(normalizedNotifications);
     } catch (error) {
       console.error("Erro ao carregar notificações:", error);
@@ -97,7 +108,7 @@ const Profile: React.FC = () => {
     } finally {
       setLoadingNotifications(false);
     }
-  }, [activeTab]);
+  }, [user?.uid]);
 
   // Carregar notificações quando a aba for selecionada
   useEffect(() => {
