@@ -42,17 +42,28 @@ const Statistics: React.FC = () => {
 
   const getMediaStats = () => {
     const stats: Record<
-      MediaType,
+      string,
       { count: number; hours: number; avgRating: number; completed: number }
     > = {
+      game: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       games: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       anime: { count: 0, hours: 0, avgRating: 0, completed: 0 },
+      tv: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       series: { count: 0, hours: 0, avgRating: 0, completed: 0 },
+      book: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       books: { count: 0, hours: 0, avgRating: 0, completed: 0 },
+      movie: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       movies: { count: 0, hours: 0, avgRating: 0, completed: 0 },
+      manga: { count: 0, hours: 0, avgRating: 0, completed: 0 },
     };
 
     mediaItems.forEach((item) => {
+      // Validar se o tipo existe no stats antes de acessar
+      if (!stats[item.type]) {
+        console.warn(`Tipo de mídia desconhecido: ${item.type}`);
+        stats[item.type] = { count: 0, hours: 0, avgRating: 0, completed: 0 };
+      }
+      
       stats[item.type].count++;
       stats[item.type].hours += item.hoursSpent || 0;
       if (item.rating) {
