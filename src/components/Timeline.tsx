@@ -152,9 +152,33 @@ const Timeline: React.FC = () => {
                       </div>
                     </div>
 
-                    <p className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base">
-                      {milestone.description}
+                    <p className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base" dangerouslySetInnerHTML={{ __html: milestone.description }}>
                     </p>
+
+                    {/* Images */}
+                    {milestone.images && milestone.images.length > 0 && (
+                      <div className="grid grid-cols-2 gap-3 mb-3 sm:mb-4">
+                        {milestone.images.map((imageUrl, imgIndex) => (
+                          <div
+                            key={imgIndex}
+                            className="relative rounded-lg overflow-hidden border-2 border-slate-700 hover:border-purple-500 transition-colors group cursor-pointer"
+                            onClick={() => window.open(imageUrl, '_blank')}
+                          >
+                            <img
+                              src={imageUrl}
+                              alt={`Imagem ${imgIndex + 1} de ${milestone.title}`}
+                              className="w-full h-32 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                              <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-sm">
+                                Clique para ampliar
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Related Media */}
                     {milestone.mediaId &&

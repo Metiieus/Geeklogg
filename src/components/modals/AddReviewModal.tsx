@@ -3,9 +3,10 @@ import { X, Save, Star } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { Review } from "../../App";
 import { addReview } from "../../services/reviewService";
-import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
+import { sanitizeText } from "../../utils/sanitizer";
 import { ModalWrapper } from "../ModalWrapper";
 import { useImprovedScrollLock } from "../../hooks/useImprovedScrollLock";
+import { RichTextEditor } from "../RichTextEditor";
 
 interface AddReviewModalProps {
   onClose: () => void;
@@ -45,17 +46,9 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   };
 
   const handleChange = (field: string, value: any) => {
-    // Aplicar sanitização em campos de texto
-    if (
-      typeof value === "string" &&
-      (field === "content" || field === "title")
-    ) {
-      // Para o content da resenha, usar sanitizeBioText para preservar espaços
-      if (field === "content") {
-        value = sanitizeBioText(value, 5000);
-      } else {
-        value = sanitizeText(value, 200);
-      }
+    // Aplicar sanitização apenas em campos de texto simples
+    if (typeof value === "string" && field === "title") {
+      value = sanitizeText(value, 200);
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -64,7 +57,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
     <ModalWrapper
       isOpen={isOpen}
       onClose={onClose}
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-3xl"
       className="modal-desktop-medium modal-performance modal-interactive"
     >
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 w-full flex flex-col modal-h-auto">
@@ -152,19 +145,21 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
               </div>
             </div>
 
-            {/* Content */}
+            {/* Content - Rich Text Editor */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Conteúdo da Resenha *
               </label>
-              <textarea
-                required
+              <RichTextEditor
                 value={formData.content}
-                onChange={(e) => handleChange("content", e.target.value)}
-                rows={6}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none min-h-[120px]"
-                placeholder="Escreva sua resenha aqui..."
+                onChange={(value) => handleChange("content", value)}
+                placeholder="Escreva sua resenha aqui... Use a barra de ferramentas para formatar o texto."
+                minHeight="250px"
+                maxLength={5000}
               />
+              <p className="text-xs text-slate-400 mt-2">
+                💡 Dica: Use <strong>negrito</strong>, <em>itálico</em> e listas para destacar pontos importantes!
+              </p>
             </div>
 
             {/* Favorite */}

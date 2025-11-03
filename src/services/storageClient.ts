@@ -89,3 +89,25 @@ class StorageClient {
 }
 
 export const storageClient = new StorageClient();
+
+/**
+ * Função auxiliar para upload de imagens com nome único
+ * @param file - Arquivo de imagem
+ * @param folder - Pasta de destino (ex: "milestones", "reviews")
+ * @returns URL da imagem enviada
+ */
+export async function uploadImage(file: File, folder: string): Promise<string> {
+  const uid = getUserId();
+  if (!uid) {
+    throw new Error("Usuário não autenticado");
+  }
+
+  // Gerar nome único para o arquivo
+  const timestamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 9);
+  const extension = file.name.split('.').pop() || 'jpg';
+  const fileName = `${timestamp}_${randomString}.${extension}`;
+
+  const path = `${folder}/${fileName}`;
+  return storageClient.upload(path, file);
+}

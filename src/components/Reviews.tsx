@@ -193,9 +193,10 @@ const Reviews: React.FC = () => {
                     </div>
 
                     <div className="reviews-content mb-4 overflow-hidden">
-                      <p className="text-slate-300 leading-relaxed">
-                        {review.content}
-                      </p>
+                      <div 
+                        className="text-slate-300 leading-relaxed prose prose-invert max-w-none"
+                        dangerouslySetInnerHTML={{ __html: review.content }}
+                      />
                     </div>
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm text-slate-400">

@@ -39,6 +39,7 @@ export async function getMilestones(): Promise<Milestone[]> {
 export interface AddMilestoneData
   extends Omit<Milestone, "id" | "createdAt" | "image"> {
   imageFile?: File;
+  images?: string[]; // URLs das imagens já enviadas
 }
 
 /**
@@ -87,6 +88,7 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
 
 export interface UpdateMilestoneData extends Partial<Omit<Milestone, "id">> {
   imageFile?: File;
+  images?: string[]; // URLs das imagens já enviadas
 }
 
 /**

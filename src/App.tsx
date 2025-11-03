@@ -123,6 +123,7 @@ export interface Milestone {
   date: string;
   type: "achievement" | "goal" | "event";
   mediaId?: string;
+  images?: string[]; // URLs das imagens (máximo 2)
   data?: any;
 }
 

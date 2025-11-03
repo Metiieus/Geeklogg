@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { X, Save } from "lucide-react";
+import { X, Save, Image as ImageIcon, Trash2 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { Milestone } from "../../App";
 import { updateMilestone } from "../../services/milestoneService";
+import { uploadImage } from "../../services/storageClient";
+import { RichTextEditor } from "../RichTextEditor";
 
 interface EditMilestoneModalProps {
   milestone: Milestone;
@@ -40,7 +42,10 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
     date: milestone.date,
     icon: milestone.icon,
     mediaId: milestone.mediaId || "",
+    images: (milestone as any).images || [], // URLs das imagens existentes
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +56,7 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
       date: formData.date,
       icon: formData.icon,
       mediaId: formData.mediaId || undefined,
+      images: formData.images,
     });
 
     const updatedMilestone: Milestone = {
@@ -60,6 +66,7 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
       date: formData.date,
       icon: formData.icon,
       mediaId: formData.mediaId || undefined,
+      ...(formData.images.length > 0 && { images: formData.images }),
     };
 
     onSave(updatedMilestone);
@@ -69,10 +76,59 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    // Verificar se já tem 2 imagens
+    if (formData.images.length >= 2) {
+      setImageError("Você pode adicionar no máximo 2 imagens");
+      return;
+    }
+
+    const file = files[0];
+
+    // Validar tamanho (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError("A imagem deve ter no máximo 5MB");
+      return;
+    }
+
+    // Validar tipo
+    if (!file.type.startsWith("image/")) {
+      setImageError("Apenas imagens são permitidas");
+      return;
+    }
+
+    setImageError("");
+    setUploadingImage(true);
+
+    try {
+      const imageUrl = await uploadImage(file, "milestones");
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, imageUrl],
+      }));
+    } catch (error) {
+      console.error("Erro ao fazer upload da imagem:", error);
+      setImageError("Erro ao fazer upload da imagem. Tente novamente.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_: string, i: number) => i !== index),
+    }));
+    setImageError("");
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 animate-fade-in">
       <div
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-2xl w-full overflow-hidden animate-slide-up flex flex-col"
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl border border-white/20 max-w-3xl w-full overflow-hidden animate-slide-up flex flex-col"
         style={{
           maxHeight: "calc(100vh - 2rem)",
           minHeight: "auto",
@@ -112,19 +168,89 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
               />
             </div>
 
-            {/* Description */}
+            {/* Description - Rich Text Editor */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Descrição *
               </label>
-              <textarea
-                required
+              <RichTextEditor
                 value={formData.description}
-                onChange={(e) => handleChange("description", e.target.value)}
-                rows={4}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                placeholder="Descreva este momento especial..."
+                onChange={(value) => handleChange("description", value)}
+                placeholder="Descreva este momento especial... Use a barra de ferramentas para formatar o texto."
+                minHeight="180px"
+                maxLength={2000}
               />
+              <p className="text-xs text-slate-400 mt-2">
+                💡 Dica: Use <strong>negrito</strong> e <em>itálico</em> para destacar momentos importantes!
+              </p>
+            </div>
+
+            {/* Images Upload */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Imagens (opcional - máximo 2)
+              </label>
+
+              {/* Preview das imagens */}
+              {formData.images.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  {formData.images.map((imageUrl: string, index: number) => (
+                    <div
+                      key={index}
+                      className="relative group rounded-lg overflow-hidden border-2 border-slate-600 hover:border-purple-500 transition-colors"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`Imagem ${index + 1}`}
+                        className="w-full h-32 object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                        title="Remover imagem"
+                      >
+                        <Trash2 size={16} className="text-white" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Botão de upload */}
+              {formData.images.length < 2 && (
+                <div>
+                  <label
+                    htmlFor="image-upload-edit"
+                    className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 hover:bg-slate-700/30 transition-colors ${
+                      uploadingImage ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    <ImageIcon size={20} className="text-slate-400" />
+                    <span className="text-slate-300">
+                      {uploadingImage
+                        ? "Enviando imagem..."
+                        : "Adicionar imagem"}
+                    </span>
+                  </label>
+                  <input
+                    id="image-upload-edit"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                    className="hidden"
+                  />
+                  <p className="text-xs text-slate-400 mt-2">
+                    Formatos aceitos: JPG, PNG, GIF (máximo 5MB por imagem)
+                  </p>
+                </div>
+              )}
+
+              {/* Mensagem de erro */}
+              {imageError && (
+                <p className="text-sm text-red-400 mt-2">{imageError}</p>
+              )}
             </div>
 
             {/* Date */}
@@ -203,10 +329,11 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base"
+                disabled={uploadingImage}
+                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save size={18} />
-                Salvar Alterações
+                {uploadingImage ? "Aguarde..." : "Salvar Alterações"}
               </button>
             </div>
           </div>
