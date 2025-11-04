@@ -90,9 +90,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const favorites = collection.filter((item) => item.isFavorite);
 
   // Best per category by tag (Portuguese category tags)
+  // Apenas mídias com rating definido pelo usuário (não da API)
   const getBestByCategoryTag = (tag: string) => {
     return collection
-      .filter((item) => Array.isArray(item.tags) && item.tags.map((t) => (t || '').toLowerCase()).includes(tag))
+      .filter((item) => {
+        // Verificar se tem a tag
+        const hasTag = Array.isArray(item.tags) && item.tags.map((t) => (t || '').toLowerCase()).includes(tag);
+        // Verificar se tem rating definido pelo usuário (maior que 0)
+        const hasUserRating = item.rating && item.rating > 0;
+        return hasTag && hasUserRating;
+      })
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
   };
 
@@ -149,7 +156,8 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         director: result.director,
         genre: result.genres?.join(", "),
         notes: result.description,
-        rating: result.rating,
+        // NÃO adicionar rating da API - usuário deve definir manualmente
+        rating: undefined,
         status: "completed",
         isFavorite: false,
         tags: categoryTag ? [categoryTag] : ["geral"],
@@ -332,7 +340,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-8 sm:space-y-12">
+      <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-10 sm:space-y-16">
         {/* Hero Banner Carousel */}
         {customFeatured.length > 0 && filter === "all" && (
           <motion.section
@@ -446,7 +454,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             </div>
 
             {favorites.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-4 sm:gap-5">
                 {favorites.map((item, index) => (
                   <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} />
                 ))}
@@ -469,20 +477,50 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
         {/* Best per Category - Only show when filter is "all" */}
         {filter === "all" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            {bestPerCategory
-              .filter((c) => !!c.item)
-              .map((c, idx) => (
-                <BestItemsSection
-                  key={`${c.tag}-${idx}`}
-                  items={[c.item!]}
-                  title={c.title}
-                  icon={c.icon}
-                  onItemClick={handleCardClick}
-                  getCategoryIcon={getCategoryIcon}
-                />
-              ))}
-          </div>
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+                Melhores por Categoria
+              </h3>
+            </div>
+
+            {bestPerCategory.filter((c) => !!c.item).length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+                {bestPerCategory
+                  .filter((c) => !!c.item)
+                  .map((c, idx) => (
+                    <BestItemsSection
+                      key={`${c.tag}-${idx}`}
+                      items={[c.item!]}
+                      title={c.title}
+                      icon={c.icon}
+                      onItemClick={handleCardClick}
+                      getCategoryIcon={getCategoryIcon}
+                    />
+                  ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 bg-white/5 rounded-2xl border border-white/10">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center">
+                  <Star className="w-10 h-10 text-yellow-400" />
+                </div>
+                <h4 className="text-xl font-semibold text-white mb-2">
+                  Nenhum "Melhor" definido ainda
+                </h4>
+                <p className="text-slate-400 mb-2 max-w-md mx-auto">
+                  Avalie suas mídias para que elas apareçam aqui como as melhores de cada categoria!
+                </p>
+                <p className="text-sm text-slate-500">
+                  🌟 Dica: Clique em uma mídia e dê uma nota de 1 a 10
+                </p>
+              </div>
+            )}
+          </motion.section>
         )}
 
         {/* Popular Section - Only show when filter is "all" */}
@@ -506,7 +544,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 sm:gap-5">
               {customPopular.slice(0, 8).map((item, index) => (
                 <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} showInfo />
               ))}
@@ -531,7 +569,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             </div>
 
             {filteredCollection.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-4 sm:gap-5">
                 {filteredCollection.map((item, index) => (
                   <MediaCard key={item.id} item={item} index={index} onClick={handleCardClick} getCategoryIcon={getCategoryIcon} />
                 ))}
