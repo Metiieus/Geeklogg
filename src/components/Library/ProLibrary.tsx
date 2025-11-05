@@ -27,6 +27,7 @@ import { useToast } from "../../context/ToastContext";
 import { addMedia, updateMedia, deleteMedia } from "../../services/mediaService";
 import { ExternalMediaResult } from "../../services/externalMediaService";
 import { ConfirmationModal } from "../ConfirmationModal";
+import { ArchiviusAgent } from "../ArchiviusAgent";
 
 interface ProLibraryProps {
   featured?: MediaItem[];
@@ -263,8 +264,8 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
   return (
     <div className="min-h-screen text-white">
-      {/* Modern Header */}
-      <div className="sticky top-0 md:top-16 z-30 backdrop-blur-xl border-b border-white/5">
+      {/* Modern Header - Otimizado para Capacitor */}
+      <div className="sticky top-0 md:top-16 z-30 backdrop-blur-xl border-b border-white/5 pt-safe">
         <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             {/* Logo & Title */}
@@ -339,8 +340,8 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-10 sm:space-y-16">
+      {/* Main Content - Com espaço para navegação mobile */}
+      <div className="max-w-[1800px] mx-auto px-3 sm:px-6 py-6 sm:py-10 pb-24 sm:pb-10 space-y-10 sm:space-y-16">
         {/* Hero Banner Carousel */}
         {customFeatured.length > 0 && filter === "all" && (
           <motion.section
@@ -598,6 +599,9 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
       </div>
+
+      {/* Archivius Agent - Botão Flutuante */}
+      <ArchiviusAgent />
 
       {/* Modals */}
       <AnimatePresence>

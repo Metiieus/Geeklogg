@@ -294,9 +294,9 @@ ${config.callToAction}
 
   return (
     <>
-      {/* Botão Flutuante - responsivo com espaço para navegação mobile */}
+      {/* Botão Flutuante - responsivo com espaço para navegação mobile e Capacitor */}
       <motion.div
-        className="fixed bottom-24 sm:bottom-6 right-3 sm:right-6 z-50"
+        className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 200 }}
@@ -365,7 +365,7 @@ ${config.callToAction}
       {/* Modal de Chat */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
             {/* Overlay */}
             <motion.div
               className="absolute inset-0 bg-black bg-opacity-20"
@@ -375,9 +375,9 @@ ${config.callToAction}
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Chat Window - responsivo */}
+            {/* Chat Window - responsivo e otimizado para Capacitor */}
             <motion.div
-              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md h-[90vh] sm:h-[600px] max-h-[700px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md h-[85vh] sm:h-[600px] max-h-[700px] overflow-hidden"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -627,8 +627,8 @@ ${config.callToAction}
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input - responsivo */}
-              <div className="p-3 sm:p-4 border-t border-cyan-500/20 bg-gray-800/50">
+              {/* Input - responsivo com safe area para mobile/Capacitor */}
+              <div className="p-3 sm:p-4 pb-safe border-t border-cyan-500/20 bg-gray-800/50">
                 <div className="flex gap-2">
                   <input
                     type="text"
