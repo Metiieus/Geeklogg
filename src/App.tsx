@@ -450,8 +450,8 @@ const AppContent: React.FC = () => {
           </div>
         </main>
 
-        {/* Firebase Status */}
-        <FirebaseStatus showStatus={!!user} />
+        {/* Firebase Status - Removido conforme solicitado */}
+        {/* <FirebaseStatus showStatus={!!user} /> */}
       </div>
     </AppProvider>
   );
