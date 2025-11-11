@@ -15,6 +15,32 @@ import { AddReviewModal } from "./modals/AddReviewModal";
 import { EditReviewModal } from "./modals/EditReviewModal";
 import { deleteReview } from "../services/reviewService";
 
+// Componente para texto truncado com "ver mais"
+const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, maxChars }) => {
+  const [expanded, setExpanded] = useState(false);
+  const needsTruncate = text.length > maxChars;
+  const displayText = needsTruncate && !expanded 
+    ? text.substring(0, maxChars) + '...' 
+    : text;
+
+  return (
+    <div>
+      <div 
+        className="text-slate-300 leading-relaxed prose prose-invert max-w-none" 
+        dangerouslySetInnerHTML={{ __html: displayText }}
+      />
+      {needsTruncate && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors mt-2"
+        >
+          {expanded ? '▲ Ver menos' : '▼ Ver mais'}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const Reviews: React.FC = () => {
   const { reviews, setReviews, mediaItems } = useAppContext();
   const [searchQuery, setSearchQuery] = useState("");
@@ -193,10 +219,7 @@ const Reviews: React.FC = () => {
                     </div>
 
                     <div className="reviews-content mb-4 overflow-hidden">
-                      <div 
-                        className="text-slate-300 leading-relaxed prose prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: review.content }}
-                      />
+                      <TruncatedText text={review.content} maxChars={1000} />
                     </div>
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm text-slate-400">
