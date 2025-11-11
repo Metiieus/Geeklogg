@@ -33,7 +33,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
   if (showManualAdd) {
     return <ManualAddModal onClose={() => {
       setShowManualAdd(false);
-      onClose();
+      // NÃO chama onClose() aqui - apenas volta para a tela de busca
     }} />;
   }
 
