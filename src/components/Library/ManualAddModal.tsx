@@ -33,6 +33,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
     { id: "movie", label: "Filme", icon: Film },
     { id: "game", label: "Jogo", icon: Gamepad2 },
     { id: "tv", label: "Série", icon: Tv },
+    { id: "anime", label: "Anime", icon: Tv },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

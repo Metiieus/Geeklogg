@@ -15,6 +15,32 @@ import { EditMilestoneModal } from "./modals/EditMilestoneModal";
 import { deleteMilestone } from "../services/milestoneService";
 import { parseDate, formatDateShort } from "../utils/dateUtils";
 
+// Componente para texto truncado com "ver mais"
+const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, maxChars }) => {
+  const [expanded, setExpanded] = useState(false);
+  const needsTruncate = text.length > maxChars;
+  const displayText = needsTruncate && !expanded 
+    ? text.substring(0, maxChars) + '...' 
+    : text;
+
+  return (
+    <div>
+      <p 
+        className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base" 
+        dangerouslySetInnerHTML={{ __html: displayText }}
+      />
+      {needsTruncate && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors mb-3"
+        >
+          {expanded ? '▲ Ver menos' : '▼ Ver mais'}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const Timeline: React.FC = () => {
   const { milestones, setMilestones, mediaItems } = useAppContext();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -152,8 +178,7 @@ const Timeline: React.FC = () => {
                       </div>
                     </div>
 
-                    <p className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base" dangerouslySetInnerHTML={{ __html: milestone.description }}>
-                    </p>
+                    <TruncatedText text={milestone.description} maxChars={1000} />
 
                     {/* Images */}
                     {milestone.images && milestone.images.length > 0 && (

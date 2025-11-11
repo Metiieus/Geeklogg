@@ -12,7 +12,10 @@ import {
   TrendingUp,
   Edit2,
   ArrowRight,
-  Heart
+  Heart,
+  Trophy,
+  Medal,
+  Award
 } from "lucide-react";
 import MediaPreviewModal from "./MediaPreviewModal";
 import AddMediaSearchModal from "../modals/AddMediaSearchModal";
@@ -28,6 +31,7 @@ import { addMedia, updateMedia, deleteMedia } from "../../services/mediaService"
 import { ExternalMediaResult } from "../../services/externalMediaService";
 import { ConfirmationModal } from "../ConfirmationModal";
 import { ArchiviusAgent } from "../ArchiviusAgent";
+import { BestMediaModal } from "../modals/BestMediaModal";
 
 interface ProLibraryProps {
   featured?: MediaItem[];
@@ -43,6 +47,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   collection = [],
 }) => {
   const [filter, setFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("recent"); // recent, title, rating, type
   const [showAddSearchModal, setShowAddSearchModal] = useState(false);
   const [showManualAddModal, setShowManualAddModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
@@ -56,6 +61,43 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const [showEditPopularModal, setShowEditPopularModal] = useState(false);
   const [customFeatured, setCustomFeatured] = useState<MediaItem[]>(featured);
   const [customPopular, setCustomPopular] = useState<MediaItem[]>(topRated);
+  const [showBestMediaModal, setShowBestMediaModal] = useState(false);
+  const [bestMediaCategory, setBestMediaCategory] = useState<string>("");
+  const [bestMedia, setBestMedia] = useState<Record<string, MediaItem[]>>({});
+
+  // Carregar destaques e melhores salvos
+  useEffect(() => {
+    const savedFeaturedIds = localStorage.getItem('customFeatured');
+    if (savedFeaturedIds) {
+      try {
+        const ids: string[] = JSON.parse(savedFeaturedIds);
+        const savedItems = collection.filter(item => ids.includes(item.id));
+        if (savedItems.length > 0) {
+          setCustomFeatured(savedItems);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar destaques:', error);
+      }
+    }
+
+    // Carregar melhores mídias
+    const savedBestMedia = localStorage.getItem('bestMedia');
+    if (savedBestMedia) {
+      try {
+        const bestData: Record<string, string[]> = JSON.parse(savedBestMedia);
+        const loadedBest: Record<string, MediaItem[]> = {};
+        
+        Object.keys(bestData).forEach(category => {
+          const ids = bestData[category];
+          loadedBest[category] = collection.filter(item => ids.includes(item.id));
+        });
+        
+        setBestMedia(loadedBest);
+      } catch (error) {
+        console.error('Erro ao carregar melhores mídias:', error);
+      }
+    }
+  }, [collection]);
 
   const { mediaItems, setMediaItems } = useAppContext();
   const { showToast } = useToast();
@@ -80,12 +122,27 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     }
   };
 
-  // Filter collection
-  const filteredCollection = collection.filter((item) => {
-    const matchesFilter =
-      filter === "all" || item.type?.toLowerCase() === filter.toLowerCase();
-    return matchesFilter;
-  });
+  // Filter and sort collection
+  const filteredCollection = collection
+    .filter((item) => {
+      const matchesFilter =
+        filter === "all" || item.type?.toLowerCase() === filter.toLowerCase();
+      return matchesFilter;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "title":
+          return (a.title || "").localeCompare(b.title || "");
+        case "rating":
+          return (b.rating || 0) - (a.rating || 0);
+        case "type":
+          return (a.type || "").localeCompare(b.type || "");
+        case "recent":
+        default:
+          // Ordenar por data de adição (mais recente primeiro)
+          return (b.createdAt || 0) - (a.createdAt || 0);
+      }
+    });
 
   // Get favorites
   const favorites = collection.filter((item) => item.isFavorite);
@@ -252,14 +309,46 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setShowEditPopularModal(true);
   };
 
-  const handleSaveFeatured = (items: MediaItem[]) => {
-    setCustomFeatured(items);
-    showToast("Destaques atualizados com sucesso!", "success");
+  const handleSaveFeatured = async (items: MediaItem[]) => {
+    try {
+      setCustomFeatured(items);
+      // Salvar IDs dos destaques no localStorage
+      const featuredIds = items.map(item => item.id);
+      localStorage.setItem('customFeatured', JSON.stringify(featuredIds));
+      showToast("Destaques atualizados com sucesso!", "success");
+    } catch (error) {
+      console.error('Erro ao salvar destaques:', error);
+      showToast("Erro ao salvar destaques", "error");
+    }
   };
 
   const handleSavePopular = (items: MediaItem[]) => {
     setCustomPopular(items);
     showToast("Populares atualizados com sucesso!", "success");
+  };
+
+  const handleOpenBestMedia = (category: string) => {
+    setBestMediaCategory(category);
+    setShowBestMediaModal(true);
+  };
+
+  const handleSaveBestMedia = (category: string, items: MediaItem[]) => {
+    try {
+      const newBestMedia = { ...bestMedia, [category]: items };
+      setBestMedia(newBestMedia);
+      
+      // Salvar no localStorage
+      const bestDataToSave: Record<string, string[]> = {};
+      Object.keys(newBestMedia).forEach(cat => {
+        bestDataToSave[cat] = newBestMedia[cat].map(item => item.id);
+      });
+      localStorage.setItem('bestMedia', JSON.stringify(bestDataToSave));
+      
+      showToast(`Top 3 de ${category} atualizado com sucesso!`, "success");
+    } catch (error) {
+      console.error('Erro ao salvar melhores mídias:', error);
+      showToast("Erro ao salvar", "error");
+    }
   };
 
   return (
@@ -524,6 +613,121 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
 
+        {/* Podium Section - Top 3 por Categoria */}
+        {filter === "all" && Object.keys(bestMedia).length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Trophy className="w-6 h-6 text-yellow-400" />
+                Pódio - Top 3 por Categoria
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {["book", "game", "movie", "tv", "anime"].map(category => {
+                const categoryBest = bestMedia[category];
+                if (!categoryBest || categoryBest.length === 0) return null;
+
+                const categoryLabels: Record<string, string> = {
+                  book: "Livros",
+                  game: "Jogos",
+                  movie: "Filmes",
+                  tv: "Séries",
+                  anime: "Animes",
+                };
+
+                const categoryIcons: Record<string, any> = {
+                  book: BookOpen,
+                  game: Gamepad2,
+                  movie: Film,
+                  tv: Tv,
+                  anime: Tv,
+                };
+
+                const Icon = categoryIcons[category];
+
+                return (
+                  <motion.div
+                    key={category}
+                    className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border border-white/10 p-6"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Icon className="w-5 h-5 text-cyan-400" />
+                        <h4 className="text-lg font-semibold text-white">
+                          {categoryLabels[category]}
+                        </h4>
+                      </div>
+                      <button
+                        onClick={() => handleOpenBestMedia(category)}
+                        className="px-3 py-1 text-xs bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-slate-300 hover:text-white transition-all"
+                      >
+                        Editar
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      {[0, 1, 2].map(index => {
+                        const item = categoryBest[index];
+                        const podiumColors = [
+                          "from-yellow-500/20 to-amber-500/20 border-yellow-500/30",
+                          "from-gray-400/20 to-gray-500/20 border-gray-400/30",
+                          "from-amber-600/20 to-amber-700/20 border-amber-600/30",
+                        ];
+                        const podiumIcons = [
+                          <Trophy className="w-4 h-4 text-yellow-400" />,
+                          <Medal className="w-4 h-4 text-gray-300" />,
+                          <Award className="w-4 h-4 text-amber-600" />,
+                        ];
+
+                        return (
+                          <div
+                            key={index}
+                            className={`relative rounded-xl p-3 border bg-gradient-to-br ${
+                              item ? podiumColors[index] : "from-white/5 to-white/10 border-white/10 opacity-30"
+                            } cursor-pointer hover:scale-105 transition-all`}
+                            onClick={() => item && handleCardClick(item)}
+                          >
+                            <div className="flex items-center gap-1 mb-2">
+                              {podiumIcons[index]}
+                              <span className="text-xs font-semibold text-white">
+                                {index + 1}º
+                              </span>
+                            </div>
+                            {item ? (
+                              <div className="space-y-2">
+                                {item.cover && (
+                                  <img
+                                    src={item.cover}
+                                    alt={item.title}
+                                    className="w-full h-24 object-cover rounded"
+                                  />
+                                )}
+                                <p className="text-xs text-white line-clamp-2">
+                                  {item.title}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-slate-500 text-center py-4">
+                                Vazio
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.section>
+        )}
+
         {/* Popular Section - Only show when filter is "all" */}
         {customPopular.length > 0 && filter === "all" && (
           <motion.section
@@ -560,12 +764,24 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
               <h3 className="text-2xl font-bold text-white">
                 {filter === "all" ? "Minha Coleção" : `${filter === "book" ? "Livros" : filter === "game" ? "Jogos" : filter === "movie" ? "Filmes" : "Séries"}`}
               </h3>
-              <div className="text-sm text-slate-400">
-                {filteredCollection.length} / {collection.length} mídias
+              <div className="flex items-center gap-3">
+                <div className="text-sm text-slate-400">
+                  {filteredCollection.length} / {collection.length} mídias
+                </div>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                >
+                  <option value="recent" className="bg-slate-900">Mais Recentes</option>
+                  <option value="title" className="bg-slate-900">Título (A-Z)</option>
+                  <option value="rating" className="bg-slate-900">Maior Nota</option>
+                  <option value="type" className="bg-slate-900">Tipo</option>
+                </select>
               </div>
             </div>
 
@@ -649,6 +865,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             onSave={handleSavePopular}
             title="Editar Populares"
             maxItems={8}
+          />
+        )}
+        {showBestMediaModal && (
+          <BestMediaModal
+            isOpen={true}
+            onClose={() => setShowBestMediaModal(false)}
+            collection={collection}
+            category={bestMediaCategory}
+            currentBest={bestMedia[bestMediaCategory] || []}
+            onSave={handleSaveBestMedia}
           />
         )}
         {editingItem && (
