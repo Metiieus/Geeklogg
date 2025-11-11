@@ -8,6 +8,7 @@ import {
   Film,
   Tv,
   Book,
+  BookOpen,
   Sparkles,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
@@ -83,10 +84,15 @@ const Statistics: React.FC = () => {
   };
 
   const getTotalStats = () => {
-    const totalHours = mediaItems.reduce(
-      (sum, item) => sum + (item.hoursSpent || 0),
-      0,
-    );
+    // Separar horas (jogos, filmes, séries) de páginas (livros)
+    const totalHours = mediaItems
+      .filter((item) => item.type !== "books")
+      .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
+    
+    const totalPages = mediaItems
+      .filter((item) => item.type === "books")
+      .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
+    
     const totalCompleted = mediaItems.filter(
       (item) => item.status === "completed",
     ).length;
@@ -99,6 +105,7 @@ const Statistics: React.FC = () => {
 
     return {
       totalHours,
+      totalPages,
       totalCompleted,
       avgRating,
       totalItems: mediaItems.length,
@@ -181,7 +188,27 @@ const Statistics: React.FC = () => {
             {totalStats.totalHours.toLocaleString()}
           </p>
           <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">
-            Tempo investido
+            Jogos, filmes e séries
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 border border-purple-500/20 hover:scale-[1.02] md:hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg">
+              <BookOpen className="text-purple-400" size={16} />
+            </div>
+            <span className="text-purple-400 font-medium text-xs sm:text-sm md:text-base hidden sm:inline">
+              Páginas Lidas
+            </span>
+            <span className="text-purple-400 font-medium text-xs sm:hidden">
+              Páginas
+            </span>
+          </div>
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+            {totalStats.totalPages.toLocaleString()}
+          </p>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 hidden sm:block">
+            Livros
           </p>
         </div>
 

@@ -218,9 +218,21 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       };
       const categoryTag = typeToCategoryTag(result.originalType || "");
 
+      // Normalizar tipo para plural (exceto tv e anime)
+      const normalizeType = (type: string) => {
+        const typeMap: Record<string, string> = {
+          "book": "books",
+          "game": "games",
+          "movie": "movies",
+          "tv": "tv",
+          "anime": "anime",
+        };
+        return typeMap[type] || type;
+      };
+
       const newMedia = await addMedia({
         title: result.title,
-        type: result.originalType || "book",
+        type: normalizeType(result.originalType || "book"),
         cover: result.image,
         year: result.year,
         author: result.authors?.join(", "),
@@ -415,10 +427,11 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           <div className="flex gap-2 mt-3 sm:mt-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pb-2 -mx-3 px-3 sm:mx-0 sm:px-0">
             {[
               { id: "all", label: "Todas", icon: null },
-              { id: "book", label: "Livros", icon: BookOpen },
-              { id: "game", label: "Jogos", icon: Gamepad2 },
-              { id: "movie", label: "Filmes", icon: Film },
+              { id: "books", label: "Livros", icon: BookOpen },
+              { id: "games", label: "Jogos", icon: Gamepad2 },
+              { id: "movies", label: "Filmes", icon: Film },
               { id: "tv", label: "Séries", icon: Tv },
+              { id: "anime", label: "Animes", icon: Sparkles },
             ].map((category) => {
               const Icon = category.icon;
               return (
@@ -862,7 +875,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
               <h3 className="text-2xl font-bold text-white">
-                {filter === "all" ? "Minha Coleção" : `${filter === "book" ? "Livros" : filter === "game" ? "Jogos" : filter === "movie" ? "Filmes" : "Séries"}`}
+                {filter === "all" ? "Minha Coleção" : 
+                  filter === "books" ? "Livros" : 
+                  filter === "games" ? "Jogos" : 
+                  filter === "movies" ? "Filmes" : 
+                  filter === "tv" ? "Séries" :
+                  filter === "anime" ? "Animes" : "Minha Coleção"}
               </h3>
               <div className="flex items-center gap-3">
                 <div className="text-sm text-slate-400">
