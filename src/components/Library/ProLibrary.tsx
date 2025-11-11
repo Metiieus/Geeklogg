@@ -614,7 +614,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         )}
 
         {/* Podium Section - Top 3 por Categoria */}
-        {filter === "all" && Object.keys(bestMedia).length > 0 && (
+        {filter === "all" && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -629,8 +629,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {["book", "game", "movie", "tv", "anime"].map(category => {
-                const categoryBest = bestMedia[category];
-                if (!categoryBest || categoryBest.length === 0) return null;
+                const categoryBest = bestMedia[category] || [];
 
                 const categoryLabels: Record<string, string> = {
                   book: "Livros",
