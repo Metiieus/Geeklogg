@@ -68,6 +68,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   const [bestMedia, setBestMedia] = useState<Record<string, MediaItem[]>>({});
   const [currentPodiumIndex, setCurrentPodiumIndex] = useState(0);
 
+  // Declarar mediaItems e hooks ANTES dos useEffect que os usam
+  const { mediaItems, setMediaItems } = useAppContext();
+  const { showSuccess, showError } = useToast();
+
   // Carregar destaques e melhores salvos
   useEffect(() => {
     if (mediaItems.length === 0) return;
@@ -113,9 +117,6 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
     return () => clearInterval(interval);
   }, []);
-
-  const { mediaItems, setMediaItems } = useAppContext();
-  const { showSuccess, showError } = useToast();
 
   // Get category icon
   const getCategoryIcon = (type: string, className: string = "w-4 h-4") => {
