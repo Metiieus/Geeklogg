@@ -1,315 +1,415 @@
-# 🎮 GeekLog - Diário Nerd Pessoal
+# 🎮 GeekLogg - Sua Biblioteca Nerd Definitiva
 
-![GeekLog Banner](https://via.placeholder.com/800x300/6366f1/ffffff?text=GeekLog+-+Seu+Di%C3%A1rio+Nerd)
+![GeekLogg Banner](https://via.placeholder.com/800x300/6366f1/ffffff?text=GeekLogg+-+Organize+Sua+Paix%C3%A3o+Nerd)
 
-> **GeekLog** é a plataforma definitiva para entusiastas da cultura nerd organizarem sua biblioteca pessoal de jogos, filmes, séries, animes, livros e muito mais. Acompanhe seu progresso, escreva resenhas, registre marcos memoráveis e descubra novas experiências!
+> **GeekLogg** é a plataforma completa para você organizar, acompanhar e compartilhar sua jornada através de jogos, filmes, séries, animes e livros. Muito mais que uma simples lista - é o seu diário nerd pessoal com recursos que vão te surpreender!
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com)
-[![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-blue.svg)](https://www.typescriptlang.org/)
-[![Firebase](https://img.shields.io/badge/Firebase-11.9.1-orange.svg)](https://firebase.google.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-
-## 📱 Plataformas Suportadas
-
-- **Web**: Aplicação responsiva que funciona em qualquer navegador
-- **PWA**: Instalável como Progressive Web App
-
-## ✨ Funcionalidades Principais
-
-### 📚 **Biblioteca Inteligente**
-- ✅ Organize jogos, filmes, séries, animes, livros e doramas
-- ✅ Status de progresso (Planejado, Em Progresso, Concluído, Abandonado)
-- ✅ Sistema de avaliação (0-10)
-- ✅ Controle de tempo gasto e páginas lidas
-- ✅ Tags personalizáveis e categorização
-- ✅ Busca e filtros avançados
-
-### 🔍 **Busca Externa Integrada**
-- 🎮 **Jogos**: Integração com RAWG API
-- 📖 **Livros**: Integração com Google Books API
-- 🎬 **Filmes/Séries**: Integração com TMDb API
-- 📥 Auto-preenchimento de dados (capa, descrição, gêneros, etc.)
-
-### ✍️ **Sistema de Resenhas**
-- 📝 Escreva resenhas detalhadas
-- ⭐ Sistema de favoritos
-- 🔗 Vinculação automática com mídias da biblioteca
-- 📅 Histórico organizado por data
-
-### 🏆 **Sistema de Conquistas**
-- 🎯 Conquistas automáticas baseadas no uso
-- 🏅 Diferentes níveis de raridade (Comum, Raro, Épico, Lendário)
-- 📊 Progresso por categoria (Gaming, Leitura, Cinema, etc.)
-- 🎉 Notificações de desbloqueio
-
-### �� **Estatísticas Avançadas**
-- 📊 Gráficos de progresso
-- ⏱️ Tempo total gasto por categoria
-- 📈 Médias de avaliação
-- 🎯 Metas e objetivos
-
-### 🚀 **Jornada Nerd (Timeline)**
-- 📅 Marcos memoráveis personalizados
-- 🎮 Vinculação com mídias específicas
-- 📝 Descrições detalhadas
-- 🎨 Ícones e emojis personalizáveis
-
-### 👥 **Recursos Sociais**
-- 🔍 Busca e seguimento de outros usuários
-- 👀 Visualização de perfis públicos
-- 📊 Comparação de bibliotecas
-- 🎯 Feed de atividades
-
-### 💎 **GeekLog Premium**
-- 🤖 Archivius AI - Assistente inteligente para recomendações
-- 📊 Análises avançadas de hábitos
-- 🎨 Temas exclusivos
-- ☁️ Backup em nuvem
-- 📱 Sincronização entre dispositivos
-
-## 🛠️ Tecnologias Utilizadas
-
-### **Frontend**
-- **React 18.3.1** - Biblioteca principal
-- **TypeScript 5.5.3** - Tipagem estática
-- **Vite 7.0.0** - Build tool moderna
-- **Tailwind CSS 3.4.1** - Framework de CSS
-- **Framer Motion 12.23.3** - Animações
-- **Lucide React 0.344.0** - Ícones
-
-### **Backend & Infraestrutura**
-- **Firebase 11.9.1** - Autenticação, Firestore, Storage
-- **Express 5.1.0** - API servidor
-- **Node.js** - Runtime do servidor
-
-### **Integração de Pagamentos**
-- **MercadoPago 2.8.0** - Gateway de pagamentos
-
-
-### **APIs Externas**
-- **RAWG API** - Dados de jogos
-- **Google Books API** - Dados de livros
-- **TMDb API** - Dados de filmes e séries
-
-## 🚀 Instalação e Configuração
-
-### **Pré-requisitos**
-- Node.js 18+
-- npm ou yarn
-
-### **1. Clone o Repositório**
-```bash
-git clone https://github.com/seu-usuario/geeklog.git
-cd geeklog
-```
-
-### **2. Instale as Dependências**
-```bash
-npm install
-```
-
-### **3. Configuração de Variáveis de Ambiente**
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-# Firebase Configuration
-VITE_FIREBASE_API_KEY=sua_firebase_api_key
-VITE_FIREBASE_AUTH_DOMAIN=seu-projeto.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=seu-projeto-id
-VITE_FIREBASE_STORAGE_BUCKET=seu-projeto.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-VITE_FIREBASE_APP_ID=1:123456789:web:abcdef
-
-# External APIs
-VITE_TMDB_API_KEY=sua_tmdb_api_key
-VITE_RAWG_API_KEY=sua_rawg_api_key
-
-# MercadoPago
-MP_ACCESS_TOKEN=seu_mercadopago_access_token
-
-# Server
-PORT=8080
-```
-
-### **4. Configuração do Firebase**
-
-1. Crie um projeto no [Firebase Console](https://console.firebase.google.com/)
-2. Ative Authentication (Email/Senha)
-3. Configure Firestore Database
-4. Configure Storage para imagens
-5. Copie as configurações para o `.env`
-
-### **5. Execute o Projeto**
-
-**Desenvolvimento Web:**
-```bash
-npm run dev
-```
-
-**Build para Produção:**
-```bash
-npm run build
-```
-
-**Servidor Backend:**
-```bash
-npm run server
-```
-
-
-## 📁 Estrutura do Projeto
-
-```
-geeklog/
-├── 🔧 functions/                  # Firebase Functions
-├── 📦 src/
-│   ├── 🧩 components/            # Componentes React
-│   │   ├── modals/              # Componentes de modal
-│   │   └── ...
-│   ├── 🎨 design-system/         # Sistema de design
-│   ├── 🔄 context/               # Contextos React
-│   ├── 🎣 hooks/                 # Custom hooks
-│   ├── 🔌 services/              # Serviços e APIs
-│   ├── 🛠️ utils/                 # Utilitários
-│   ├── 📊 types/                 # Tipos TypeScript
-│   ├── 🎨 styles/                # Estilos CSS
-│   └── 🔥 firebase.ts            # Configuração Firebase
-├── 📋 public/                     # Arquivos públicos
-├── ⚙️ server.js                   # Servidor Express
-├── 📦 package.json               # Dependências
-├── 🔧 vite.config.ts             # Configuração Vite
-└── 📄 README.md                  # Este arquivo
-```
-
-## 🎯 Scripts Disponíveis
-
-```bash
-npm run dev          # Inicia servidor de desenvolvimento
-npm run build        # Build para produção
-npm run preview      # Preview do build
-npm run lint         # Linting do código
-npm run server       # Inicia servidor backend
-```
-
-## 🔧 Configuração de APIs Externas
-
-### **RAWG API (Jogos)**
-1. Registre-se em [RAWG.io](https://rawg.io/apidocs)
-2. Obtenha sua API key
-3. Adicione `VITE_RAWG_API_KEY` ao `.env`
-
-### **TMDb API (Filmes/Séries)**
-1. Registre-se em [TMDb](https://www.themoviedb.org/settings/api)
-2. Obtenha sua API key
-3. Adicione `VITE_TMDB_API_KEY` ao `.env`
-
-### **Google Books API**
-1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
-2. Ative a Books API
-3. Crie credenciais de API key
-4. Adicione `VITE_GOOGLE_BOOKS_API_KEY` ao `.env`
-
-## 🔐 Recursos de Segurança
-
-- ✅ Autenticação Firebase
-- ✅ Regras de segurança Firestore
-- ✅ Sanitização de dados
-- ✅ Validação de uploads
-- ✅ Rate limiting nas APIs
-- ✅ CORS configurado
-
-## 📈 Performance e Otimização
-
-- ⚡ **Vite** para builds rápidos
-- 🎯 **Lazy loading** de componentes
-- 📦 **Code splitting** automático
-- 🗜️ **Compressão de imagens**
-- 🔄 **Cache inteligente**
-- 📱 **PWA otimizada**
-
-## 🎨 Design System
-
-O GeekLog utiliza um design system customizado baseado em:
-
-- 🎨 **Tailwind CSS** para utilitários
-- 🌈 **Paleta neon/cyberpunk**
-- ✨ **Animações Framer Motion**
-- 📱 **Design responsivo first**
-- ♿ **Acessibilidade WCAG**
-
-## 🤝 Contribuindo
-
-1. 🍴 Fork o projeto
-2. 🌟 Crie uma branch para sua feature (`git checkout -b feature/NovaFeature`)
-3. 💾 Commit suas mudanças (`git commit -m 'Adiciona NovaFeature'`)
-4. 📤 Push para a branch (`git push origin feature/NovaFeature`)
-5. 🔄 Abra um Pull Request
-
-## 📋 Roadmap
-
-### **V2.0 - Em Desenvolvimento**
-- [ ] 🤖 Melhorias na IA Archivius
-- [ ] 🎮 Integração com mais APIs de jogos
-- [ ] 📊 Dashboard analytics avançado
-- [ ] 🌐 Modo offline completo
-- [ ] 🎯 Sistema de metas gamificado
-
-### **V2.1 - Planejado**
-- [ ] 📱 App iOS
-- [ ] 🎨 Temas customizáveis
-- [ ] 🔗 Integração redes sociais
-- [ ] 📝 Editor rich text para resenhas
-- [ ] 🎵 Suporte para música/podcasts
-
-## 🐛 Reportar Bugs
-
-Encontrou um bug? Abra uma [issue](https://github.com/seu-usuario/geeklog/issues) com:
-
-- 📝 Descrição detalhada do problema
-- 🔄 Passos para reproduzir
-- 🖥️ Ambiente (navegador, OS, versão)
-- 📸 Screenshots se aplicável
-
-## 📞 Suporte
-
-- 📧 **Email**: suporte@geeklog.com
-- 💬 **Discord**: [GeekLog Community](https://discord.gg/geeklog)
-- 🐦 **Twitter**: [@GeekLogApp](https://twitter.com/geeklogapp)
-
-## 📄 Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 🙏 Agradecimentos
-
-- 🎮 **RAWG** pela API de jogos
-- 📚 **Google Books** pela API de livros  
-- 🎬 **TMDb** pela API de filmes
-- 🔥 **Firebase** pela infraestrutura
-- 💳 **MercadoPago** pelo gateway de pagamentos
-- 🎨 **Lucide** pelos ícones
-- ⚡ **Vite** pela ferramenta de build
+[![Acesse GeekLogg](https://img.shields.io/badge/🌐_Acesse-geeklogg.com-6366f1?style=for-the-badge)](https://geeklogg.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Metiieus/Geeklogg-black?style=for-the-badge&logo=github)](https://github.com/Metiieus/Geeklogg)
 
 ---
 
-<div align="center">
+## 🌟 Por Que GeekLogg?
 
-**Feito com ❤️ para a comunidade nerd**
+**GeekLogg nasceu da frustração com plataformas limitadas como Skoob.** Queríamos algo infinitamente melhor - uma plataforma moderna, completa e feita por nerds para nerds. Aqui você encontra:
 
-[🌟 Star no GitHub](https://github.com/seu-usuario/geeklog) | [🐦 Siga no Twitter](https://twitter.com/geeklogapp) | [💬 Discord](https://discord.gg/geeklog)
+✨ **Editor de texto rico** para escrever resenhas detalhadas com formatação  
+📸 **Upload de imagens** para registrar momentos especiais  
+🏆 **Sistema de conquistas** para gamificar sua experiência  
+🎨 **Personalização total** do seu perfil e biblioteca  
+🤖 **IA integrada** para recomendações personalizadas  
+📱 **Funciona perfeitamente** no celular e computador  
+🚀 **Rápido e moderno** - sem travamentos ou lentidão  
 
-</div>
+---
+
+## 📚 O Que Você Pode Fazer
+
+### 🎯 **Biblioteca Inteligente**
+
+Organize toda sua coleção de mídia nerd em um só lugar:
+
+- **📖 Livros** - Acompanhe páginas lidas, marque capítulos favoritos
+- **🎮 Jogos** - Registre horas jogadas, plataformas, conquistas
+- **🎬 Filmes** - Avalie, favorite, crie listas personalizadas
+- **📺 Séries** - Controle episódios assistidos, temporadas
+- **🎌 Animes** - Organize sua watchlist, acompanhe lançamentos
+
+**Status inteligente:**
+- 📋 **Planejado** - O que você quer consumir
+- ▶️ **Em Progresso** - O que está rolando agora
+- ✅ **Concluído** - Suas conquistas completas
+- ❌ **Abandonado** - Sem julgamentos, acontece!
+
+**Avaliação de 0 a 10** para cada mídia, com sistema de favoritos ⭐
+
+---
+
+### 🔍 **Busca Automática de Mídia**
+
+Chega de digitar tudo manualmente! Nosso sistema busca automaticamente em bases de dados gigantes:
+
+- 🎮 **Jogos** - Milhares de jogos com capas, descrições e informações
+- 📖 **Livros** - Google Books com dados completos
+- 🎬 **Filmes e Séries** - TMDb com elenco, sinopse, trailers
+- 🎌 **Animes** - Informações detalhadas de animes
+
+**Basta pesquisar, clicar e adicionar!** Tudo é preenchido automaticamente: capa, descrição, gêneros, ano de lançamento e muito mais.
+
+---
+
+### ✍️ **Editor de Texto Rico**
+
+Escreva resenhas e comentários com **formatação profissional**:
+
+- **Negrito**, *itálico*, <u>sublinhado</u>
+- 📝 Listas numeradas e com marcadores
+- 📐 Parágrafos organizados
+- 🎨 Formatação visual enquanto escreve
+
+**Sem limites de caracteres!** Escreva quanto quiser. Textos longos são automaticamente truncados com botão "Ver mais/Ver menos" para não poluir a tela.
+
+---
+
+### 🗓️ **Jornada Nerd (Timeline)**
+
+Registre os **momentos mais marcantes** da sua vida nerd:
+
+- 📅 **Marcos memoráveis** - "Zerei Dark Souls pela primeira vez!"
+- 📸 **Upload de até 2 imagens** por marco (prints, fotos, memes)
+- 📝 **Descrições ricas** com editor de texto formatado
+- 🎮 **Vincule com mídias** da sua biblioteca
+- 🎨 **Ícones e emojis** para personalizar
+
+**Exemplo de marcos:**
+- "Finalmente terminei The Witcher 3 com 100%!"
+- "Maratonei Breaking Bad em 3 dias"
+- "Li todos os livros de Harry Potter em um mês"
+
+---
+
+### 🏆 **Sistema de Conquistas**
+
+Desbloqueie conquistas enquanto usa o GeekLogg:
+
+- 🎯 **Conquistas automáticas** baseadas no seu uso
+- 🏅 **Níveis de raridade** - Comum, Raro, Épico, Lendário
+- 📊 **Categorias** - Gaming, Leitura, Cinema, Anime
+- 🎉 **Notificações** quando desbloqueia algo novo
+
+**Exemplos:**
+- 🎮 "Gamer de Verdade" - Adicione 50 jogos
+- 📚 "Devorador de Livros" - Leia 1000 páginas
+- 🎬 "Cinéfilo" - Assista 100 filmes
+- ⭐ "Crítico Exigente" - Escreva 20 resenhas
+
+---
+
+### 📊 **Estatísticas Detalhadas**
+
+Veja sua jornada nerd em números:
+
+- ⏱️ **Horas totais** gastas em jogos, filmes e séries
+- 📖 **Páginas lidas** em livros
+- ⭐ **Média de avaliações** por categoria
+- 📈 **Gráficos de progresso** ao longo do tempo
+- 🎯 **Top 3 favoritos** por categoria com carrossel animado
+
+**Estatísticas inteligentes:**
+- Livros mostram **páginas lidas**
+- Jogos, filmes e séries mostram **horas gastas**
+- Tudo separado e organizado por tipo de mídia
+
+---
+
+### 🏅 **Pódio dos Melhores**
+
+Destaque suas **3 mídias favoritas** de cada categoria:
+
+- 🥇 **1º Lugar** - Seu favorito absoluto
+- 🥈 **2º Lugar** - Quase perfeito
+- 🥉 **3º Lugar** - Merece destaque
+
+**Sistema de carrossel:** Se você tem mais de 3 favoritos, eles alternam automaticamente a cada 5 segundos com animações suaves.
+
+---
+
+### 🤖 **Archivius - Seu Assistente IA**
+
+Conheça o **Archivius**, seu guia nerd pessoal:
+
+- 💬 **Chat inteligente** flutuante na biblioteca
+- 🎯 **Recomendações personalizadas** baseadas no seu gosto
+- 🔍 **Sugestões de novas mídias** para descobrir
+- 📊 **Análise dos seus hábitos** de consumo
+
+**Pergunte coisas como:**
+- "Me recomende um livro de fantasia"
+- "Qual série combina comigo?"
+- "Jogos parecidos com The Last of Us"
+
+---
+
+### 🎨 **Personalização Total**
+
+Faça o GeekLogg ter a sua cara:
+
+- 🖼️ **Foto de perfil** personalizada
+- 📝 **Bio** para se apresentar
+- 🏷️ **Tags personalizadas** para organizar sua biblioteca
+- 🎨 **Filtros avançados** para encontrar qualquer coisa
+- 🔍 **Busca inteligente** por título, gênero, status
+
+---
+
+### 👥 **Recursos Sociais** *(Em breve)*
+
+O GeekLogg está se preparando para ser uma rede social nerd:
+
+- 🔍 **Buscar e seguir** outros usuários
+- 👀 **Ver perfis públicos** de amigos
+- 📊 **Comparar bibliotecas** e gostos
+- 💬 **Comentar** em resenhas
+- ❤️ **Curtir** conteúdos
+- 🎯 **Feed de atividades** dos seus amigos
+
+---
+
+## 🚀 Como Começar
+
+1. **Acesse** [geeklogg.com](https://geeklogg.com)
+2. **Crie sua conta** em segundos
+3. **Adicione suas primeiras mídias** usando a busca automática
+4. **Avalie, escreva resenhas** e registre marcos
+5. **Desbloqueie conquistas** e acompanhe suas estatísticas
+6. **Compartilhe** sua biblioteca com amigos *(em breve)*
+
+---
+
+## 📱 Funciona em Qualquer Lugar
+
+- 💻 **Desktop** - Experiência completa no navegador
+- 📱 **Mobile** - Interface otimizada para celular
+- 🔄 **Sincronização** - Seus dados em todos os dispositivos
+- ⚡ **Rápido** - Carrega em segundos
+- 🌐 **PWA** - Instale como app no celular
+
+---
+
+## 🎯 Diferenciais do GeekLogg
+
+| Recurso | GeekLogg | Outras Plataformas |
+|---------|----------|-------------------|
+| Editor de texto rico | ✅ | ❌ |
+| Upload de imagens | ✅ | ❌ |
+| Múltiplos tipos de mídia | ✅ | ⚠️ Limitado |
+| Sistema de conquistas | ✅ | ❌ |
+| IA para recomendações | ✅ | ❌ |
+| Timeline de marcos | ✅ | ❌ |
+| Estatísticas detalhadas | ✅ | ⚠️ Básico |
+| Interface moderna | ✅ | ❌ |
+| Rápido e responsivo | ✅ | ❌ |
+| Busca automática | ✅ | ⚠️ Limitado |
+
+---
+
+## 🎮 Casos de Uso
+
+### 📚 **Para Leitores**
+- Organize sua estante virtual
+- Acompanhe páginas lidas
+- Escreva resenhas detalhadas
+- Descubra novos livros com IA
+
+### 🎮 **Para Gamers**
+- Controle seu backlog
+- Registre horas jogadas
+- Marque jogos zerados
+- Compartilhe conquistas
+
+### 🎬 **Para Cinéfilos**
+- Crie listas de filmes
+- Avalie e resenhe
+- Acompanhe séries
+- Descubra novos títulos
+
+### 🎌 **Para Otakus**
+- Organize sua watchlist
+- Acompanhe animes em progresso
+- Avalie temporadas
+- Encontre novos animes
+
+---
+
+## 🌟 Funcionalidades em Destaque
+
+### 📸 **Upload de Imagens**
+- Até **2 imagens por marco** na timeline
+- Limite de **5MB por imagem**
+- Formatos: **JPG, PNG, GIF**
+- **Validação automática** de tamanho e formato
+
+### 📝 **Truncamento Inteligente**
+- Textos longos são **truncados em 1000 caracteres**
+- Botão **"Ver mais"** para expandir
+- Botão **"Ver menos"** para recolher
+- **Animações suaves** de transição
+
+### 🎨 **Carrossel de Pódio**
+- **Top 3 mídias** por categoria
+- **Alternância automática** a cada 5 segundos
+- **Animações fluidas** com Framer Motion
+- **Indicadores visuais** de posição
+
+### 🔍 **Filtros Avançados**
+- Filtrar por **tipo de mídia** (livros, jogos, filmes, séries, animes)
+- Filtrar por **status** (planejado, em progresso, concluído, abandonado)
+- Filtrar por **avaliação** (0-10)
+- Filtrar por **tags personalizadas**
+- **Busca por texto** em títulos e descrições
+
+---
+
+## 🛡️ Segurança e Privacidade
+
+- 🔐 **Autenticação segura** com Firebase
+- 🔒 **Dados criptografados** em trânsito e repouso
+- 👤 **Controle de privacidade** - escolha o que compartilhar
+- 🚫 **Sem anúncios** ou rastreamento invasivo
+- ☁️ **Backup automático** na nuvem
+
+---
+
+## 📈 Roadmap - O Que Vem Por Aí
+
+### **🎯 Próximas Atualizações**
+
+**V2.0 - Social** *(Em desenvolvimento)*
+- [ ] 👥 Sistema completo de seguir/seguidores
+- [ ] 💬 Comentários em resenhas
+- [ ] ❤️ Sistema de curtidas
+- [ ] 🎯 Feed de atividades
+- [ ] 🏆 Ranking de usuários
+
+**V2.1 - Gamificação**
+- [ ] 🎮 Mais conquistas e desafios
+- [ ] 🏅 Sistema de níveis e XP
+- [ ] 🎁 Recompensas por atividades
+- [ ] 🏆 Eventos e competições
+- [ ] 📊 Leaderboards globais
+
+**V2.2 - Expansão**
+- [ ] 🎵 Suporte para música e podcasts
+- [ ] 📱 App nativo iOS e Android
+- [ ] 🌍 Modo offline completo
+- [ ] 🎨 Temas customizáveis
+- [ ] 🔗 Integração com redes sociais
+
+**V3.0 - Premium+**
+- [ ] 🤖 IA ainda mais inteligente
+- [ ] 📊 Analytics avançados
+- [ ] 🎨 Personalização total
+- [ ] ☁️ Backup ilimitado
+- [ ] 🎁 Recursos exclusivos
+
+---
+
+## 🤝 Contribua com o Projeto
+
+GeekLogg é um projeto **open source** feito com ❤️ para a comunidade nerd!
+
+### **Como Contribuir:**
+
+1. 🍴 **Fork** o repositório
+2. 🌿 **Crie uma branch** para sua feature
+3. 💻 **Desenvolva** sua contribuição
+4. ✅ **Teste** tudo antes de enviar
+5. 📤 **Abra um Pull Request**
+
+### **Ideias para Contribuir:**
+
+- 🐛 Reportar bugs
+- 💡 Sugerir funcionalidades
+- 📝 Melhorar documentação
+- 🎨 Criar designs e mockups
+- 🌍 Traduzir para outros idiomas
+- 🧪 Testar e dar feedback
+
+---
+
+## 🐛 Encontrou um Bug?
+
+Abra uma [issue no GitHub](https://github.com/Metiieus/Geeklogg/issues) com:
+
+- 📝 **Descrição clara** do problema
+- 🔄 **Passos para reproduzir**
+- 🖥️ **Ambiente** (navegador, sistema operacional)
+- 📸 **Screenshots** se possível
+- 💡 **Comportamento esperado** vs real
+
+---
+
+## 💬 Comunidade e Suporte
+
+- 🌐 **Site**: [geeklogg.com](https://geeklogg.com)
+- 💻 **GitHub**: [Metiieus/Geeklogg](https://github.com/Metiieus/Geeklogg)
+- 📧 **Email**: suporte@geeklogg.com
+- 💬 **Discord**: *Em breve*
+- 🐦 **Twitter**: *Em breve*
+
+---
+
+## 🎉 Agradecimentos
+
+GeekLogg não seria possível sem:
+
+- 🎮 **RAWG** - API de jogos
+- 📚 **Google Books** - API de livros
+- 🎬 **TMDb** - API de filmes e séries
+- 🔥 **Firebase** - Infraestrutura
+- 🎨 **Lucide** - Ícones lindos
+- ❤️ **Comunidade nerd** - Por existir!
 
 ---
 
 ## 📊 Status do Projeto
 
-![GitHub last commit](https://img.shields.io/github/last-commit/seu-usuario/geeklog)
-![GitHub issues](https://img.shields.io/github/issues/seu-usuario/geeklog)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/seu-usuario/geeklog)
-![GitHub stars](https://img.shields.io/github/stars/seu-usuario/geeklog)
-![GitHub forks](https://img.shields.io/github/forks/seu-usuario/geeklog)
+![GitHub last commit](https://img.shields.io/github/last-commit/Metiieus/Geeklogg)
+![GitHub issues](https://img.shields.io/github/issues/Metiieus/Geeklogg)
+![GitHub stars](https://img.shields.io/github/stars/Metiieus/Geeklogg)
 
-**GeekLog v1.0** - Transformando a forma como nerds organizam suas paixões! 🚀
+---
+
+<div align="center">
+
+## 🚀 **Comece Agora!**
+
+**Organize sua paixão nerd de forma profissional**
+
+[![Acesse GeekLogg](https://img.shields.io/badge/🌐_Acesse_Agora-geeklogg.com-6366f1?style=for-the-badge&logo=google-chrome&logoColor=white)](https://geeklogg.com)
+
+---
+
+**Feito com ❤️ e muito ☕ por nerds para nerds**
+
+[⭐ Star no GitHub](https://github.com/Metiieus/Geeklogg) | [🐛 Reportar Bug](https://github.com/Metiieus/Geeklogg/issues) | [💡 Sugerir Feature](https://github.com/Metiieus/Geeklogg/issues)
+
+</div>
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+<div align="center">
+
+### 🎮 **GeekLogg - Organize. Acompanhe. Compartilhe.** 🎮
+
+*A plataforma definitiva para sua jornada nerd*
+
+**v1.0** - Transformando a forma como nerds organizam suas paixões! 🚀
+
+</div>
