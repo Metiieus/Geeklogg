@@ -39,10 +39,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const featuresRef = useRef(null);
   const statsRef = useRef(null);
   const testimonialsRef = useRef(null);
+  const archiviusRef = useRef(null);
   
   const featuresInView = useInView(featuresRef, { once: true, amount: 0.2 });
   const statsInView = useInView(statsRef, { once: true, amount: 0.2 });
   const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.2 });
+  const archiviusInView = useInView(archiviusRef, { once: true, amount: 0.2 });
 
   const features = [
     {
@@ -87,35 +89,58 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     { value: "5+", label: "Tipos de Mídia", icon: Film },
     { value: "∞", label: "Itens na Biblioteca", icon: BookOpen },
     { value: "100%", label: "Gratuito", icon: Heart },
-    { value: "24/7", label: "Disponível", icon: Clock },
   ];
 
   const testimonials = [
     {
       name: "João Silva",
       role: "Gamer & Leitor",
-      avatar: "🎮",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
       text: "Finalmente um lugar para organizar TUDO! Antes usava 3 apps diferentes.",
       rating: 5,
     },
     {
       name: "Maria Santos",
       role: "Cinéfila",
-      avatar: "🎬",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
       text: "O Archivius me ajudou a descobrir filmes incríveis que combinam com meu gosto!",
       rating: 5,
     },
     {
       name: "Pedro Costa",
       role: "Otaku",
-      avatar: "🎌",
+      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
       text: "Melhor que Skoob, MyAnimeList e tudo mais. Interface linda e funcional!",
       rating: 5,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white overflow-x-hidden relative">
+      {/* Floating Particles Animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 0.5, 0.2],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Header */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
@@ -125,9 +150,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       >
         <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
+            <img 
+              src="/assets/logo.png" 
+              alt="GeekLogg" 
+              className="w-12 h-12 object-contain"
+            />
             <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
               GeekLogg
             </span>
@@ -196,10 +223,46 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-        {/* Background Effects */}
+        {/* Pulsing Background Orbs */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <motion.div 
+            className="absolute top-1/4 -left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.2, 0.3, 0.2],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.3, 0.2],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+          />
+          <motion.div 
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.15, 0.25, 0.15],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+          />
         </div>
 
         <div className="relative max-w-7xl mx-auto">
@@ -256,22 +319,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span className="text-lg font-semibold">Ver Demo</span>
               </button>
             </div>
-
-            {/* Social Proof */}
-            <div className="flex items-center justify-center space-x-6 pt-8 text-slate-400">
-              <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>100% Gratuito</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>Sem Anúncios</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
-                <span>Open Source</span>
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -279,7 +326,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Stats Section */}
       <section ref={statsRef} className="py-20 px-6 bg-slate-900/50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -343,6 +390,91 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
+      {/* Archivius Showcase Section */}
+      <section ref={archiviusRef} className="py-20 px-6 bg-gradient-to-b from-slate-900/50 to-slate-950">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={archiviusInView ? { opacity: 1, x: 0 } : {}}
+              className="space-y-6"
+            >
+              <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span className="text-sm font-medium text-purple-300">
+                  Powered by AI
+                </span>
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold">
+                <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Conheça o Archivius
+                </span>
+              </h2>
+              
+              <p className="text-xl text-slate-300 leading-relaxed">
+                Seu assistente pessoal de IA que analisa seus gostos e recomenda 
+                exatamente o que você vai amar. Ele aprende com você e fica cada 
+                vez mais inteligente!
+              </p>
+              
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                  <div>
+                    <h4 className="font-semibold text-white mb-1">Recomendações Personalizadas</h4>
+                    <p className="text-slate-400">Baseadas no seu histórico e preferências reais</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                  <div>
+                    <h4 className="font-semibold text-white mb-1">Análise Profunda</h4>
+                    <p className="text-slate-400">Entende padrões e descobre joias ocultas para você</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                  <div>
+                    <h4 className="font-semibold text-white mb-1">Sempre Aprendendo</h4>
+                    <p className="text-slate-400">Quanto mais você usa, melhor ele fica</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Archivius Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={archiviusInView ? { opacity: 1, x: 0 } : {}}
+              className="relative"
+            >
+              <motion.div
+                animate={{
+                  y: [0, -20, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="relative z-10"
+              >
+                <img 
+                  src="/assets/archivius.png" 
+                  alt="Archivius" 
+                  className="w-full max-w-md mx-auto drop-shadow-2xl"
+                />
+              </motion.div>
+              
+              {/* Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section ref={testimonialsRef} className="py-20 px-6 bg-slate-900/50">
         <div className="max-w-7xl mx-auto">
@@ -379,9 +511,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   "{testimonial.text}"
                 </p>
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center text-2xl">
-                    {testimonial.avatar}
-                  </div>
+                  <img 
+                    src={testimonial.avatar} 
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-cyan-500/30"
+                  />
                   <div>
                     <div className="font-semibold text-white">
                       {testimonial.name}
@@ -435,9 +569,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
+              <img 
+                src="/assets/logo.png" 
+                alt="GeekLogg" 
+                className="w-8 h-8 object-contain"
+              />
               <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
                 GeekLogg
               </span>
