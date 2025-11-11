@@ -220,7 +220,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
             return null;
         }
       };
-      const categoryTag = typeToCategoryTag(result.originalType || "");
+      const categoryTag = typeToCategoryTag(media.originalType || "");
 
       // Normalizar tipo para plural (exceto tv e anime)
       const normalizeType = (type: string) => {
@@ -266,10 +266,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setPendingMedia(null);
   };
 
-  const handleSaveEditedMedia = async (media: ExternalMediaResult) => {
+  const handleSaveEditedMedia = useCallback(async (media: ExternalMediaResult) => {
     await handleConfirmAdd(media);
     setEditingPendingMedia(null);
-  };
+  }, [handleConfirmAdd]);
 
   const handleEditMedia = (item: MediaItem) => {
     setEditingItem(item);
