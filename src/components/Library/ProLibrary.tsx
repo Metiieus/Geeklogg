@@ -226,7 +226,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         author: result.authors?.join(", "),
         director: result.director,
         genre: result.genres?.join(", "),
-        notes: result.description,
+        notes: result.description ? result.description.substring(0, 100) : undefined,
         // NÃO adicionar rating da API - usuário deve definir manualmente
         rating: undefined,
         status: "completed",

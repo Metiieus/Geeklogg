@@ -46,9 +46,10 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   };
 
   const handleChange = (field: string, value: any) => {
-    // Aplicar sanitização apenas em campos de texto simples
+    // Não aplicar sanitização no título para permitir espaços
+    // Apenas limitar o tamanho
     if (typeof value === "string" && field === "title") {
-      value = sanitizeText(value, 200);
+      value = value.substring(0, 200);
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
   };

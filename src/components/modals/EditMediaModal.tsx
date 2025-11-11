@@ -227,16 +227,16 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Horas Gastas
+                  {formData.type === "books" ? "Páginas Lidas" : "Horas Gastas"}
                 </label>
                 <input
                   type="number"
                   min="0"
-                  step="0.5"
+                  step={formData.type === "books" ? "1" : "0.5"}
                   value={formData.hoursSpent}
                   onChange={(e) => handleChange("hoursSpent", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="25.5"
+                  placeholder={formData.type === "books" ? "350" : "25.5"}
                 />
               </div>
             </div>
