@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.geeklog.app',
-  appName: 'GeekLog',
+  appName: 'GeekLogg',
   webDir: 'dist',
   bundledWebRuntime: false,
   server: {
@@ -39,7 +39,7 @@ const config: CapacitorConfig = {
     webContentsDebuggingEnabled: true,
   },
   ios: {
-    scheme: 'GeekLog',
+    scheme: 'GeekLogg',
     backgroundColor: '#1e293b',
   },
 };
