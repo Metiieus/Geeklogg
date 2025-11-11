@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -135,30 +135,34 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     }
   };
 
-  // Filter and sort collection
-  const filteredCollection = collection
-    .filter((item) => {
-      const matchesFilter =
-        filter === "all" || item.type?.toLowerCase() === filter.toLowerCase();
-      return matchesFilter;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "title":
-          return (a.title || "").localeCompare(b.title || "");
-        case "rating":
-          return (b.rating || 0) - (a.rating || 0);
-        case "type":
-          return (a.type || "").localeCompare(b.type || "");
-        case "recent":
-        default:
-          // Ordenar por data de adição (mais recente primeiro)
-          return (b.createdAt || 0) - (a.createdAt || 0);
-      }
-    });
+  // Filter and sort collection (otimizado com useMemo)
+  const filteredCollection = useMemo(() => {
+    return collection
+      .filter((item) => {
+        const matchesFilter =
+          filter === "all" || item.type?.toLowerCase() === filter.toLowerCase();
+        return matchesFilter;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case "title":
+            return (a.title || "").localeCompare(b.title || "");
+          case "rating":
+            return (b.rating || 0) - (a.rating || 0);
+          case "type":
+            return (a.type || "").localeCompare(b.type || "");
+          case "recent":
+          default:
+            // Ordenar por data de adição (mais recente primeiro)
+            return (b.createdAt || 0) - (a.createdAt || 0);
+        }
+      });
+  }, [collection, filter, sortBy]);
 
-  // Get favorites
-  const favorites = collection.filter((item) => item.isFavorite);
+  // Get favorites (otimizado com useMemo)
+  const favorites = useMemo(() => {
+    return collection.filter((item) => item.isFavorite);
+  }, [collection]);
 
   // Best per category by tag (Portuguese category tags)
   // Apenas mídias com rating definido pelo usuário (não da API)
@@ -192,7 +196,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setShowAddSearchModal(false);
   };
 
-  const handleConfirmAdd = async (result: ExternalMediaResult) => {
+   const handleConfirmAdd = useCallback(async (media: ExternalMediaResult) => {
     setIsAddingMedia(true);
     try {
       // Ensure category tag is present and tags are mandatory
@@ -255,7 +259,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     } finally {
       setIsAddingMedia(false);
     }
-  };
+  }, [mediaItems, setMediaItems, showToast]);
 
   const handleEditBeforeAdd = (media: ExternalMediaResult) => {
     setEditingPendingMedia(media);
@@ -272,7 +276,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setIsPreviewOpen(false);
   };
 
-  const handleUpdateMedia = async (id: string, updates: Partial<MediaItem>) => {
+  const handleUpdateMedia = useCallback(async (id: string, updates: Partial<MediaItem>) => {
     try {
       await updateMedia(id, updates);
       const updatedItems = mediaItems.map((item) =>
@@ -285,7 +289,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       console.error("Erro ao atualizar mídia:", error);
       showToast("Erro ao atualizar mídia. Tente novamente.", "error");
     }
-  };
+  }, [mediaItems, setMediaItems, showToast]);
 
   const handleDeleteMedia = async (item: MediaItem) => {
     setDeleteConfirmItem(item);
@@ -307,7 +311,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     }
   };
 
-  const handleToggleFavorite = async (item: MediaItem) => {
+  const handleToggleFavorite = useCallback(async (item: MediaItem) => {
     try {
       const newFavoriteStatus = !item.isFavorite;
       await updateMedia(item.id, { isFavorite: newFavoriteStatus });
@@ -324,7 +328,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       console.error("Erro ao favoritar mídia:", error);
       showToast("Erro ao favoritar mídia. Tente novamente.", "error");
     }
-  };
+  }, [mediaItems, setMediaItems, showToast]);
 
   const handleEditFeatured = () => {
     setShowEditFeaturedModal(true);
@@ -357,7 +361,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setShowBestMediaModal(true);
   };
 
-  const handleSaveBestMedia = (category: string, items: MediaItem[]) => {
+  const handleSaveBestMedia = useCallback((category: string, items: MediaItem[]) => {
     try {
       const newBestMedia = { ...bestMedia, [category]: items };
       setBestMedia(newBestMedia);
@@ -374,7 +378,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       console.error('Erro ao salvar melhores mídias:', error);
       showToast("Erro ao salvar", "error");
     }
-  };
+  }, [bestMedia, showToast]);
 
   return (
     <div className="min-h-screen text-white">
