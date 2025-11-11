@@ -613,21 +613,27 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           </motion.section>
         )}
 
-        {/* Podium Section - Top 3 por Categoria */}
+        {/* Podium Section - Top 3 por Categoria - REDESENHADO */}
         {filter === "all" && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
+            className="space-y-6"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                <Trophy className="w-6 h-6 text-yellow-400" />
-                Pódio - Top 3 por Categoria
+            {/* Header com descrição */}
+            <div className="text-center space-y-2">
+              <h3 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+                <Trophy className="w-8 h-8 text-yellow-400" />
+                Seu Pódio Pessoal
               </h3>
+              <p className="text-slate-400 text-sm max-w-2xl mx-auto">
+                Escolha suas 3 melhores mídias de cada categoria e monte seu pódio personalizado
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Grid de categorias */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {["book", "game", "movie", "tv", "anime"].map(category => {
                 const categoryBest = bestMedia[category] || [];
 
@@ -648,77 +654,76 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 };
 
                 const Icon = categoryIcons[category];
+                const hasItems = categoryBest.length > 0;
 
                 return (
                   <motion.div
                     key={category}
-                    className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border border-white/10 p-6"
-                    whileHover={{ scale: 1.02 }}
+                    className="relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-2xl border border-white/10 overflow-hidden"
+                    whileHover={{ scale: 1.02, borderColor: "rgba(255,255,255,0.2)" }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Icon className="w-5 h-5 text-cyan-400" />
-                        <h4 className="text-lg font-semibold text-white">
-                          {categoryLabels[category]}
-                        </h4>
+                    <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 p-4 border-b border-white/10">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Icon className="w-6 h-6 text-cyan-400" />
+                          <h4 className="text-xl font-bold text-white">
+                            {categoryLabels[category]}
+                          </h4>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleOpenBestMedia(category)}
+                          className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 rounded-lg text-white font-medium text-sm shadow-lg transition-all"
+                        >
+                          {hasItems ? "Editar" : "Configurar"}
+                        </motion.button>
                       </div>
-                      <button
-                        onClick={() => handleOpenBestMedia(category)}
-                        className="px-3 py-1 text-xs bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-slate-300 hover:text-white transition-all"
-                      >
-                        Editar
-                      </button>
                     </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                      {[0, 1, 2].map(index => {
-                        const item = categoryBest[index];
-                        const podiumColors = [
-                          "from-yellow-500/20 to-amber-500/20 border-yellow-500/30",
-                          "from-gray-400/20 to-gray-500/20 border-gray-400/30",
-                          "from-amber-600/20 to-amber-700/20 border-amber-600/30",
-                        ];
-                        const podiumIcons = [
-                          <Trophy className="w-4 h-4 text-yellow-400" />,
-                          <Medal className="w-4 h-4 text-gray-300" />,
-                          <Award className="w-4 h-4 text-amber-600" />,
-                        ];
-
-                        return (
-                          <div
-                            key={index}
-                            className={`relative rounded-xl p-3 border bg-gradient-to-br ${
-                              item ? podiumColors[index] : "from-white/5 to-white/10 border-white/10 opacity-30"
-                            } cursor-pointer hover:scale-105 transition-all`}
-                            onClick={() => item && handleCardClick(item)}
-                          >
-                            <div className="flex items-center gap-1 mb-2">
-                              {podiumIcons[index]}
-                              <span className="text-xs font-semibold text-white">
-                                {index + 1}º
-                              </span>
-                            </div>
-                            {item ? (
-                              <div className="space-y-2">
-                                {item.cover && (
-                                  <img
-                                    src={item.cover}
-                                    alt={item.title}
-                                    className="w-full h-24 object-cover rounded"
-                                  />
-                                )}
-                                <p className="text-xs text-white line-clamp-2">
-                                  {item.title}
-                                </p>
+                    <div className="p-4">
+                      {hasItems ? (
+                        <div className="flex items-end justify-center gap-2">
+                          {categoryBest[1] ? (
+                            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="flex-1 cursor-pointer group" onClick={() => handleCardClick(categoryBest[1])}>
+                              <div className="bg-gradient-to-br from-gray-400/20 to-gray-600/20 border-2 border-gray-400/40 rounded-xl p-3 hover:border-gray-300 transition-all">
+                                <div className="flex items-center justify-center gap-1 mb-2"><Medal className="w-5 h-5 text-gray-300" /><span className="text-sm font-bold text-gray-200">2º</span></div>
+                                {categoryBest[1].cover && <img src={categoryBest[1].cover} alt={categoryBest[1].title} className="w-full h-32 object-cover rounded-lg mb-2 group-hover:scale-105 transition-transform" />}
+                                <p className="text-xs text-white text-center line-clamp-2 font-medium">{categoryBest[1].title}</p>
                               </div>
-                            ) : (
-                              <p className="text-xs text-slate-500 text-center py-4">
-                                Vazio
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })}
+                            </motion.div>
+                          ) : (
+                            <div className="flex-1 opacity-30"><div className="bg-white/5 border-2 border-dashed border-white/20 rounded-xl p-3 h-48 flex flex-col items-center justify-center"><Medal className="w-5 h-5 text-gray-500 mb-1" /><span className="text-xs text-gray-500">2º lugar</span></div></div>
+                          )}
+                          {categoryBest[0] ? (
+                            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex-1 cursor-pointer group" onClick={() => handleCardClick(categoryBest[0])}>
+                              <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/20 border-2 border-yellow-500/50 rounded-xl p-4 hover:border-yellow-400 transition-all">
+                                <div className="flex items-center justify-center gap-1 mb-2"><Trophy className="w-6 h-6 text-yellow-400" /><span className="text-base font-bold text-yellow-300">1º</span></div>
+                                {categoryBest[0].cover && <img src={categoryBest[0].cover} alt={categoryBest[0].title} className="w-full h-40 object-cover rounded-lg mb-2 group-hover:scale-105 transition-transform shadow-lg" />}
+                                <p className="text-sm text-white text-center line-clamp-2 font-bold">{categoryBest[0].title}</p>
+                              </div>
+                            </motion.div>
+                          ) : (
+                            <div className="flex-1 opacity-30"><div className="bg-white/5 border-2 border-dashed border-white/20 rounded-xl p-4 h-56 flex flex-col items-center justify-center"><Trophy className="w-6 h-6 text-gray-500 mb-1" /><span className="text-xs text-gray-500">1º lugar</span></div></div>
+                          )}
+                          {categoryBest[2] ? (
+                            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="flex-1 cursor-pointer group" onClick={() => handleCardClick(categoryBest[2])}>
+                              <div className="bg-gradient-to-br from-amber-700/20 to-amber-900/20 border-2 border-amber-700/40 rounded-xl p-3 hover:border-amber-600 transition-all">
+                                <div className="flex items-center justify-center gap-1 mb-2"><Award className="w-5 h-5 text-amber-600" /><span className="text-sm font-bold text-amber-500">3º</span></div>
+                                {categoryBest[2].cover && <img src={categoryBest[2].cover} alt={categoryBest[2].title} className="w-full h-32 object-cover rounded-lg mb-2 group-hover:scale-105 transition-transform" />}
+                                <p className="text-xs text-white text-center line-clamp-2 font-medium">{categoryBest[2].title}</p>
+                              </div>
+                            </motion.div>
+                          ) : (
+                            <div className="flex-1 opacity-30"><div className="bg-white/5 border-2 border-dashed border-white/20 rounded-xl p-3 h-48 flex flex-col items-center justify-center"><Award className="w-5 h-5 text-gray-500 mb-1" /><span className="text-xs text-gray-500">3º lugar</span></div></div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="py-12 text-center space-y-4">
+                          <div className="flex justify-center gap-2 opacity-30"><Trophy className="w-12 h-12 text-yellow-400" /><Medal className="w-12 h-12 text-gray-400" /><Award className="w-12 h-12 text-amber-600" /></div>
+                          <div><p className="text-slate-400 text-sm mb-2">Nenhum pódio configurado ainda</p><p className="text-slate-500 text-xs">Clique em "Configurar" para escolher suas 3 melhores</p></div>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 );
