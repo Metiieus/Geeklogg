@@ -7,6 +7,7 @@ import {
   Brain,
   ChevronRight,
   Shuffle,
+  Crown,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
@@ -51,9 +52,10 @@ export const ArchiviusAgent: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Archivius disponível para usuários premium
+  // Archivius disponível para usuários premium ou emails liberados
   const isPremium = profile?.isPremium === true;
-  const canAccess = canUseArchivius(isPremium, !!profile);
+  const userEmail = profile?.email || "";
+  const canAccess = canUseArchivius(isPremium, !!profile, userEmail);
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
   // Gerar contexto enriquecido para IA

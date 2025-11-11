@@ -16,6 +16,14 @@ interface UserAnalysis {
   recentTrends: string[];
   personalityType: string;
   preferredLength: string;
+  topTags?: string[];
+  favoriteMedia?: any[];
+  consumptionPattern?: {
+    binge: boolean;
+    diverse: boolean;
+    focused: boolean;
+    explorer: boolean;
+  };
 }
 
 export class ArchiviusService {
@@ -131,7 +139,7 @@ export class ArchiviusService {
     },
   ];
 
-  // Análise inteligente do perfil do usuário
+  // Análise inteligente e profunda do perfil do usuário
   analyzeUserProfile(
     mediaItems: any[],
     reviews: any[],
@@ -140,6 +148,9 @@ export class ArchiviusService {
     const completedItems = mediaItems.filter(
       (item) => item.status === "completed",
     );
+    
+    // Análise mais profunda de gêneros incluindo tags
+    const allTags = mediaItems.flatMap((item) => item.tags || []);
     const genres = completedItems.map((item) => item.type);
     const genreCount = genres.reduce(
       (acc, genre) => {
@@ -149,12 +160,16 @@ export class ArchiviusService {
       {} as Record<string, number>,
     );
 
+    // Gêneros dominantes com análise de tags para maior precisão
     const dominantGenres = Object.entries(genreCount)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 3)
       .map(([genre]) => genre);
+    
+    // Adicionar tags mais frequentes para contexto adicional
+    const topTags = this.getTopTags(allTags).slice(0, 5);
 
-    const ratings = reviews.map((review) => review.rating).filter((r) => r > 0);
+    const ratings = reviews.map((review: any) => review.rating).filter((r: number) => r > 0);
     const averageRating =
       ratings.length > 0
         ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
@@ -196,6 +211,9 @@ export class ArchiviusService {
       recentTrends,
       personalityType,
       preferredLength,
+      topTags, // Tags mais frequentes para recomendações precisas
+      favoriteMedia: this.getFavoriteMedia(mediaItems), // Mídias favoritas do usuário
+      consumptionPattern: this.analyzeConsumptionPattern(mediaItems), // Padrão de consumo
     };
   }
 
@@ -294,14 +312,14 @@ export class ArchiviusService {
       {} as Record<string, any[]>,
     );
 
-    return Object.entries(grouped).map(([type, items]) => ({
+    return Object.entries(grouped).map(([type, items]: [string, any[]]) => ({
       type,
       count: items.length,
-      completed: items.filter((i) => i.status === "completed").length,
+      completed: items.filter((i: any) => i.status === "completed").length,
       averageRating: this.calculateAverage(
-        items.map((i) => i.rating).filter((r) => r > 0),
+        items.map((i: any) => i.rating).filter((r: number) => r > 0),
       ),
-      topTags: this.getTopTags(items.flatMap((i) => i.tags || [])),
+      topTags: this.getTopTags(items.flatMap((i: any) => i.tags || [])),
     }));
   }
 
@@ -391,6 +409,43 @@ export class ArchiviusService {
     if (recentActivity.length >= 5) return "Muito Ativo";
     if (recentActivity.length >= 3) return "Ativo";
     return "Moderado";
+  }
+
+  // Obter mídias favoritas (rating >= 4 ou marcadas como favoritas)
+  private getFavoriteMedia(mediaItems: any[]): any[] {
+    return mediaItems
+      .filter((item) => item.rating >= 4 || item.isFavorite)
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 10)
+      .map((item) => ({
+        title: item.title,
+        type: item.type,
+        rating: item.rating,
+        tags: item.tags || [],
+      }));
+  }
+
+  // Analisar padrão de consumo do usuário
+  private analyzeConsumptionPattern(mediaItems: any[]): {
+    binge: boolean;
+    diverse: boolean;
+    focused: boolean;
+    explorer: boolean;
+  } {
+    const types = [...new Set(mediaItems.map((item) => item.type))];
+    const completedItems = mediaItems.filter(
+      (item) => item.status === "completed",
+    );
+    const inProgressItems = mediaItems.filter(
+      (item) => item.status === "in-progress",
+    );
+
+    return {
+      binge: completedItems.length > 20, // Consome muito conteúdo
+      diverse: types.length >= 3, // Consome tipos variados
+      focused: types.length <= 2, // Focado em poucos tipos
+      explorer: inProgressItems.length > 5, // Explora várias coisas ao mesmo tempo
+    };
   }
 }
 

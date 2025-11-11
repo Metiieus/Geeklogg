@@ -1,11 +1,17 @@
 // Configuração de acesso exclusivo do Archivius
 // Adicione seu email aqui para ter acesso ao Archivius épico
 
+// Lista de emails com acesso liberado (criador e beta testers)
+const ALLOWED_EMAILS = [
+  "matheusn148@gmail.com", // Criador do GeekLogg - acesso vitalício
+];
+
 export const ARCHIVIUS_CONFIG = {
   // Configurações do Archivius para produção
   betaPhase: false, // Agora está em produção
   requiresAuth: true,
   premiumFeature: true, // Agora é um recurso premium
+  allowedEmails: ALLOWED_EMAILS, // Emails com acesso liberado
 
   // Mensagem para usuários não premium
   upgradeMessage: {
@@ -26,8 +32,13 @@ export const ARCHIVIUS_CONFIG = {
   },
 };
 
-// Função para verificar se um usuário tem acesso ao Archivius (apenas usuários premium)
-export const hasArchiviusAccess = (isPremium?: boolean): boolean => {
+// Função para verificar se um usuário tem acesso ao Archivius (premium ou email liberado)
+export const hasArchiviusAccess = (isPremium?: boolean, userEmail?: string): boolean => {
+  // Criador e emails liberados têm acesso vitalício
+  if (userEmail && ALLOWED_EMAILS.includes(userEmail.toLowerCase())) {
+    return true;
+  }
+  // Usuários premium também têm acesso
   return isPremium === true;
 };
 
@@ -35,7 +46,8 @@ export const hasArchiviusAccess = (isPremium?: boolean): boolean => {
 export const canUseArchivius = (
   isPremium?: boolean,
   isLoggedIn?: boolean,
+  userEmail?: string,
 ): boolean => {
   if (!isLoggedIn) return false;
-  return hasArchiviusAccess(isPremium);
+  return hasArchiviusAccess(isPremium, userEmail);
 };
