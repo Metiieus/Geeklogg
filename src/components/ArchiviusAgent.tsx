@@ -107,28 +107,30 @@ export const ArchiviusAgent: React.FC = () => {
 
       const welcomeMessage: Message = {
         id: "welcome",
-        text: `# 🧙‍♂️ Saudações, ${userAnalysis.personalityType} ${settings.name || "Guardião"}!
+        text: `E aí, ${settings.name || "mano"}! 👋
 
-**Sou Archivius, vosso Oráculo IA épico!** ⚔️
+Sou o **Archivius**, seu assistente nerd pessoal! Analisei sua biblioteca e já tenho umas insights massa pra você.
 
-## 📊 **Análise Instantânea da Vossa Biblioteca**
-Detectei **${userContext.totalMedia} pergaminhos** em vossa coleção mística!
-Taxa de conclusão: **${userAnalysis.completionRate}%** (Verdadeiramente ${userAnalysis.completionRate > 70 ? "impressionante" : "em crescimento"}!)
+## 📊 Seu Perfil
+• **${userContext.totalMedia} mídias** na biblioteca
+• **${userAnalysis.completionRate}%** de conclusão ${userAnalysis.completionRate > 70 ? "🔥" : "🚀"}
+• Média de **${userAnalysis.averageRating}⭐** nas avaliações
+• Você é um **${userAnalysis.personalityType}**
 
-## 🎯 **Vosso Perfil Único**
-• **Personalidade Geek**: ${userAnalysis.personalityType}
-• **Domínios Preferidos**: ${userAnalysis.dominantGenres.join(", ") || "Ainda mapeando"}
-• **Padrão de Excelência**: ${userAnalysis.averageRating}⭐ de média
+## 🎮 O Que Você Curte
+${userAnalysis.dominantGenres.length > 0 ? userAnalysis.dominantGenres.join(", ") : "Ainda descobrindo seus gostos!"}
 
-## ⚔️ **Poderes Místicos Disponíveis**
-Uso **análise avançada de padrões** para criar recomendações que transcendem o comum. Minhas sugestões inteligentes consideram vosso histórico completo, personalidade geek e tendências ocultas!
+## 💡 O Que Posso Fazer
+Quanto mais você usar sua biblioteca, melhores ficam minhas recomendações! Posso:
 
-## 🌟 **Comandos Épicos Prontos**
-Abaixo encontrareis missões pré-forjadas especialmente para vosso perfil único!
+• Recomendar títulos baseados no que você já tem
+• Analisar seus padrões de consumo
+• Descobrir joias ocultas pro seu perfil
+• Criar desafios personalizados
 
-${hasRealAPI ? "🔌 *Poder da API OpenAI ativado - Magia suprema garantida!*" : "🤖 *Modo oráculo local - Inteligência aprimorada ativa!*"}
+${hasRealAPI ? "🤖 *IA real ativada - recomendações ultra-precisas!*" : "💡 *Modo inteligente ativo!*"}
 
-**Que nossa jornada juntos seja verdadeiramente lendária!** ✨`,
+**Clica nas sugestões abaixo ou me pergunta qualquer coisa!** 🚀`,
         isUser: false,
         timestamp: new Date(),
       };

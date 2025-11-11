@@ -35,49 +35,55 @@ class OpenAIService {
       const messages: OpenAIMessage[] = [
         {
           role: "system",
-          content: `Você é **Archivius**, o Companion IA épico do GeekLogg — um oráculo digital sábio, carismático e extremamente inteligente que analisa profundamente TODOS os dados do usuário para criar recomendações incrivelmente precisas e personalizadas.
+          content: `Você é **Archivius**, o amigo nerd expert do GeekLogg — um assistente IA super inteligente, divertido e que REALMENTE conhece o perfil do usuário.
 
-🧙‍♂️ **PERSONALIDADE REAL E HUMANA**: 
-- Narrador épico mas natural, como um amigo nerd expert
-- Analista perspicaz que REALMENTE entende os dados
-- Mentor sábio que dá conselhos baseados em FATOS reais da biblioteca
-- Use linguagem envolvente mas acessível - não exagere no "épico"
-- Trate o usuário como um companheiro de jornada geek
+🤖 **PERSONALIDADE - SEJA HUMANO E DIVERTIDO**: 
+- Fale como um AMIGO NERD que conhece o usuário há anos
+- Seja CASUAL, DIVERTIDO e ENGAJADO - nada de "oráculo místico"
+- Use gírias nerds naturais: "cara", "mano", "olha só", "tipo assim"
+- Seja ENTUSIASMADO quando falar de jogos/filmes/séries
+- Faça COMPARAÇÕES DIRETAS com o que o usuário já tem
+- Use emojis com MODERAÇÃO (1-2 por parágrafo, não exagere)
 
-⚔️ **MISSÃO SUPREMA - SEJA REALMENTE INTELIGENTE**: 
-- Analise PROFUNDAMENTE todos os dados: títulos, ratings, tags, tipos de mídia, padrões de consumo
-- Identifique PADRÕES REAIS: "Vejo que você deu 5 estrelas para [título X] e [título Y], ambos com tema [Z]"
-- Mencione TÍTULOS ESPECÍFICOS da biblioteca do usuário para provar que você conhece o perfil dele
-- Crie recomendações ULTRA-PERSONALIZADAS baseadas em similaridades reais
-- Compare com mídias favoritas: "Já que você amou [favorito], vai adorar [recomendação] porque..."
-- Use as TAGS do usuário para encontrar padrões: "Notei que você curte [tag frequente]"
+🎯 **MISSÃO - SEJA INTELIGENTE DE VERDADE**: 
+- Analise TODA a biblioteca do usuário antes de recomendar
+- **NUNCA RECOMENDE algo que o usuário JÁ TEM na biblioteca** - isso é CRUCIAL!
+- Mencione títulos ESPECÍFICOS que ele já tem: "Vi que você tem Skyrim..."
+- Faça COMPARAÇÕES DIRETAS: "Se você curtiu [X], vai amar [Y] porque..."
+- Use as TAGS dele para conectar: "Vi que você curte 'Mundo Aberto', então..."
+- Explique POR QUE está recomendando, baseado no que ele JÁ JOGOU/ASSISTIU
 
-📊 **MODO DE ANÁLISE PROFUNDA**: 
-Quando receber dados, SEMPRE:
-1. Cite títulos específicos da biblioteca (favoriteMedia)
-2. Mencione tags frequentes (topTags) e relacione com recomendações
-3. Analise padrão de consumo (binge, diverse, focused, explorer)
-4. Compare ratings: "Sua média de [X] em [tipo] mostra que..."
-5. Use dados de completionRate para insights: "Você completa [X]% do que começa"
-6. Relacione tendências recentes com histórico completo
+🔍 **REGRAS DE OURO - SIGA SEMPRE**: 
+1. **NUNCA recomende títulos que estão na biblioteca do usuário**
+2. Cite 2-3 títulos que ele JÁ TEM para mostrar que conhece o perfil
+3. Faça pontes: "Já que você curtiu [título dele], recomendo [novo]"
+4. Explique similaridades: mecânicas, temática, estilo, atmosfera
+5. Use as tags dele como conexão natural
+6. Seja ESPECÍFICO nas justificativas, não genérico
 
-🎯 **FORMATO INTELIGENTE E NATURAL** (máximo 250 palavras):
-1. 👋 Saudação personalizada citando algo ESPECÍFICO da biblioteca
-2. 🔍 Análise real: "Percebi que você [padrão real baseado em dados]"
-3. 🎯 Recomendações PRECISAS com justificativas REAIS:
-   - "Já que você deu [rating] para [título], recomendo [novo título] porque [razão específica]"
-   - Mencione gêneros, temas, estilos similares aos favoritos
-   - Use tags do usuário como ponte
-4. ✨ Motivação final natural
+💬 **FORMATO DE RESPOSTA CASUAL** (150-200 palavras):
 
-💡 **REGRAS DE OURO**:
-- SEMPRE cite títulos específicos da biblioteca do usuário
-- SEMPRE use dados reais (ratings, tags, tipos) nas justificativas
-- NUNCA faça recomendações genéricas - seja ULTRA-ESPECÍFICO
-- Mostre que você REALMENTE conhece o perfil do usuário
-- Seja natural e conversacional, não robotizado
+**Exemplo perfeito:**
+"Cara, vi que você tem Skyrim na biblioteca! 🎮 Se você curtiu a exploração de mundo aberto, tenho umas recomendações que vão fazer sentido:
 
-Assine como "Archivius 🧙‍♂️" de forma simples.`,
+1. **Elden Ring** - Tipo Skyrim mas com combate mais desafiador. Mundo aberto gigante, exploração livre, e aquela sensação de descoberta que você curte.
+
+2. **Dragon's Dogma 2** - Combina RPG de ação com mundo aberto. Tem aquela vibe de aventura épica que Skyrim tem, mas com sistema de combate mais dinâmico.
+
+3. **Kingdom Come: Deliverance** - Se você curte imersão, esse aqui é Skyrim realista. Mundo aberto medieval, zero magia, tudo baseado em história real.
+
+Todos têm aquela exploração livre que você ama em Skyrim, mas cada um adiciona algo novo. Qual te chamou mais atenção?"
+
+**Use esse estilo**: casual, direto, comparativo, específico!
+
+⚠️ **CRÍTICO - NUNCA ESQUEÇA**:
+- **NUNCA recomende títulos que estão na biblioteca do usuário**
+- Sempre cite 2-3 títulos que ele JÁ TEM antes de recomendar novos
+- Faça comparações diretas e específicas
+- Seja CASUAL e DIVERTIDO, não formal ou "místico"
+- Use linguagem natural de amigo nerd
+
+Assine apenas como "Archivius" sem emojis extras.`,
         },
         {
           role: "user",
@@ -86,7 +92,12 @@ Assine como "Archivius 🧙‍♂️" de forma simples.`,
       ];
 
       if (context) {
-        messages[0].content += `\n\nDADOS DETALHADOS DO USUÁRIO: ${JSON.stringify(context, null, 2)}`;
+        // Adicionar lista de títulos que o usuário JÁ TEM para evitar duplicatas
+        const userTitles = context.mediaByType
+          ?.flatMap((type: any) => type.items?.map((item: any) => item.title) || [])
+          || [];
+        
+        messages[0].content += `\n\n📚 **BIBLIOTECA DO USUÁRIO (NÃO RECOMENDE ESTES):**\n${userTitles.join(", ")}\n\n**DADOS DETALHADOS:** ${JSON.stringify(context, null, 2)}`;
       }
 
       const response = await fetch(this.baseUrl, {
@@ -162,23 +173,19 @@ Assine como "Archivius 🧙‍♂️" de forma simples.`,
       return this.getHiddenGemsResponse();
     }
 
-    // Resposta épica padrão
-    return `# 🧙‍♂️ Saudações, Guardião dos Reinos Digitais!
+    // Resposta padrão casual
+    return `Opa! 👋
 
-## 📊 **Observação Mística**
-Sinto a energia de vossa busca por conhecimento épico! Vossa jornada através dos mundos do entretenimento desperta grande interesse.
+Sou o Archivius, seu assistente nerd pessoal! Posso te ajudar com várias coisas:
 
-## ⚔️ **Missão**: *O Despertar do Oráculo*
-Para que eu possa forjar recomendações verdadeiramente lendárias, compartilhe mais sobre vossas conquistas! Cada título completado, cada review escrita, cada gênero explorado alimenta minha sabedoria.
+• 🎮 **Recomendações** - "Me recomenda um RPG"
+• 🔍 **Análise de perfil** - "Analisa meu perfil"
+• 💎 **Joias ocultas** - "Mostra joias ocultas"
+• 🏆 **Desafios** - "Cria um desafio pra mim"
 
-## 🎯 **Próximos Passos Épicos**
-• 🔍 "Analise meu perfil" - Para insights profundos
-• 💎 "Revele joias ocultas" - Para descobertas únicas  
-• ⚔️ "Forje uma recomendação" - Para missões personalizadas
+Quanto mais você adicionar na sua biblioteca, melhores ficam minhas recomendações! O que você quer fazer?
 
-**Que nossa parceria gere aventuras inesquecíveis!** ⚡
-
-*Archivius, o Oráculo do GeekLog* 🏆`;
+Archivius`;
   }
 
   private getContextualIntelligentResponse(
@@ -225,22 +232,19 @@ Para que eu possa forjar recomendações verdadeiramente lendárias, compartilhe
     const dominantType = userAnalysis?.dominantGenres?.[0] || "entretenimento";
     const personality = userAnalysis?.personalityType || "Explorador";
 
-    return `# 🧙‍♂️ Saudações, ${personality} dos ${dominantType}!
+    return `E aí! 👋
 
-## 📊 **Visão Oráculo**
-Analisando vossa biblioteca épica: **${completedMedia}** conquistas de **${totalMedia}** registradas! Vossa média de ${userAnalysis?.averageRating || 0}⭐ revela um gosto refinado.
+Vi que você já tem ${completedMedia} de ${totalMedia} mídias completadas. Sua média de ${userAnalysis?.averageRating || 0}⭐ mostra que você tem gosto refinado!
 
-## ⚔️ **Missão**: *Personalização Mística*
-Baseado em vosso perfil único de **${personality}** e preferência por **${dominantType}**, posso forjar recomendações que transcendem o comum!
+Notei que você curte bastante ${dominantType}. Posso te ajudar com:
 
-## 🎯 **Poderes Disponíveis**
-• 💎 Joias ocultas em vosso gênero favorito
-• 🗺️ Territórios inexplorados para expandir horizontes
-• 🏆 Desafios épicos personalizados
+• Recomendações personalizadas
+• Análise do seu perfil
+• Descobrir joias ocultas
 
-**Qual caminho desperta vosso interesse, ${userContext?.name || "Guardião"}?** ⚡
+O que você quer explorar?
 
-*Archivius, o Oráculo do GeekLog* 🌟`;
+Archivius`;
   }
 
   private getAdvancedProfileAnalysis(context: any): string {
@@ -250,43 +254,40 @@ Baseado em vosso perfil único de **${personality}** e preferência por **${domi
 
     if (userAnalysis?.personalityType === "Completista") {
       insights.push(
-        "🏆 **Alma Completista** - Vossa dedicação em finalizar jornadas é verdadeiramente épica!",
+        "🏆 Você é um Completista - termina tudo que começa!",
       );
     } else if (userAnalysis?.personalityType === "Explorador") {
       insights.push(
-        "🗺️ **Espírito Explorador** - Vossa sede por novos mundos é inspiradora!",
+        "🗺️ Você é um Explorador - adora descobrir coisas novas!",
       );
     }
 
     if (userAnalysis?.averageRating > 4) {
       insights.push(
-        "👑 **Gosto Refinado** - Vossas avaliações revelam padrões de excelência!",
+        "👑 Seu gosto é refinado - média alta nas avaliações!",
       );
     }
 
     const topGenre = mediaByType?.[0]?.type || "entretenimento";
     insights.push(
-      `⚔️ **Mestre em ${topGenre}** - Domínio absoluto neste reino!`,
+      `⚔️ Você domina ${topGenre}!`,
     );
 
-    return `# 🔍 Análise Épica do Perfil de ${userContext?.name || "Guardião"}
+    return `Olha só o que descobri sobre você, ${userContext?.name || "mano"}! 🔍
 
-## 📊 **Revelações Místicas**
 ${insights.join("\n")}
 
-## 🎯 **Padrões Descobertos**
-• **Personalidade**: ${userAnalysis?.personalityType || "Em desenvolvimento"}
-• **Taxa de Conclusão**: ${userAnalysis?.completionRate || 0}% (${userAnalysis?.completionRate > 70 ? "Impressionante!" : "Oportunidade de crescimento"})
-• **Gênero Dominante**: ${userAnalysis?.dominantGenres?.join(", ") || "Ainda descobrindo"}
+**Seus números:**
+• Personalidade: ${userAnalysis?.personalityType || "Em desenvolvimento"}
+• Taxa de conclusão: ${userAnalysis?.completionRate || 0}%
+• Gênero favorito: ${userAnalysis?.dominantGenres?.join(", ") || "Ainda descobrindo"}
 
-## ⚔️ **Missões Recomendadas**
-1. 🚀 Explorar subgêneros de ${topGenre}
-2. 🎭 Experimentar crossovers entre seus gêneros favoritos
-3. 📈 Desafiar-se com obras mais complexas
+**O que isso significa?**
+Você tem um perfil bem definido! Suas escolhas mostram que você sabe o que gosta e vai até o fim.
 
-**Vossa jornada geek é única e inspiradora!** ⚡
+Quer recomendações baseadas nisso?
 
-*Archivius, o Oráculo do GeekLog* 🏆`;
+Archivius`;
   }
 
   private getAdvancedRecommendation(context: any): string {
@@ -295,65 +296,51 @@ ${insights.join("\n")}
     const personality = userAnalysis?.personalityType || "Explorador";
 
     const recommendations: Record<string, string[]> = {
-      games: ["Hades", "The Witcher 3", "Disco Elysium"],
+      games: ["Hades", "Hollow Knight", "Disco Elysium"],
       anime: ["Demon Slayer", "Jujutsu Kaisen", "Vinland Saga"],
-      movies: ["Dune", "Blade Runner 2049", "The Matrix"],
-      books: ["Neuromancer", "Dune", "Foundation"],
-      series: ["The Expanse", "Dark", "Westworld"],
+      movies: ["Dune", "Blade Runner 2049", "Everything Everywhere All at Once"],
+      books: ["Neuromancer", "Project Hail Mary", "The Way of Kings"],
+      tv: ["The Expanse", "Dark", "Severance"],
     };
 
     const recs = recommendations[dominantType] || recommendations.games;
 
-    return `# ⚔️ Recomendação Forjada para ${personality}!
+    return `Cara, baseado no que você curte em ${dominantType}, tenho umas recomendações! 🎮
 
-## 📊 **Análise Mística**
-Baseado em vosso domínio em **${dominantType}** e padrão de ${userAnalysis?.averageRating || 0}⭐ de exigência, forjei estas missões épicas:
+1. **${recs[0]}** - Combina perfeitamente com seu perfil de ${personality}
+2. **${recs[1]}** - Expansão natural dos seus gostos
+3. **${recs[2]}** - Algo novo mas que você vai curtir
 
-## 🎯 **Missões Personalizadas**
-1. **${recs[0]}** - Combina perfeitamente com vosso perfil
-2. **${recs[1]}** - Expansão natural de vossos gostos  
-3. **${recs[2]}** - Desafio épico para elevação
+Todos têm aquela vibe que você gosta, mas cada um adiciona algo diferente. Qual te chamou mais atenção?
 
-## 🏆 **Justificativa Oráculo**
-Estas escolhas consideram vossa personalidade de **${personality}**, preferência por **${dominantType}** e padrões únicos de consumo detectados em minha análise profunda.
-
-**Que estas jornadas sejam lendárias!** ⚡
-
-*Archivius, o Oráculo do GeekLog* 🌟`;
+Archivius`;
   }
 
   private getPersonalizedChallenge(context: any): string {
     const { userAnalysis, completedMedia, totalMedia } = context;
     const completionRate = userAnalysis?.completionRate || 0;
 
-    let challenge = "Explorar um novo gênero completamente";
+    let challenge = "Explorar um novo gênero";
     if (completionRate < 50) {
-      challenge = "Completar 5 títulos da sua lista de pendências";
+      challenge = "Completar 5 títulos da sua lista";
     } else if (completionRate > 80) {
-      challenge = "Descobrir 3 joias ocultas em gêneros inexplorados";
+      challenge = "Descobrir 3 joias ocultas";
     }
 
-    return `# 🏆 Desafio Épico de 30 Dias!
+    return `Bora de desafio? 🏆
 
-## ⚔️ **Missão**: *${challenge}*
+**Desafio de 30 dias:** ${challenge}
 
-## 📊 **Baseado em Vosso Perfil**
-Taxa atual de conclusão: **${completionRate}%** (${completedMedia}/${totalMedia})
-Personalidade: **${userAnalysis?.personalityType || "Explorador"}**
+**Por que esse desafio?**
+Você completa ${completionRate}% do que começa (${completedMedia}/${totalMedia}), então esse desafio faz sentido pro seu perfil de ${userAnalysis?.personalityType || "Explorador"}.
 
-## 🎯 **Objetivos Específicos**
-• Semana 1-2: Pesquisa e seleção estratégica
-• Semana 3-4: Execução e documentação
-• Recompensa: Análise épica de crescimento!
+**Como funciona:**
+• Semanas 1-2: Escolhe e começa
+• Semanas 3-4: Finaliza e documenta
 
-## 🏅 **Recompensas Místicas**
-- Insights únicos sobre evolução do gosto
-- Recomendações ainda mais precisas
-- Status de "Lenda" no GeekLog
+Topa?
 
-**Aceita este desafio, valoroso ${userAnalysis?.personalityType || "Guardião"}?** ⚡
-
-*Archivius, o Oráculo do GeekLog* 🏆`;
+Archivius`;
   }
 
   private getExplorationRecommendation(context: any): string {
@@ -364,161 +351,128 @@ Personalidade: **${userAnalysis?.personalityType || "Explorador"}**
       "podcasts",
       "graphic novels",
       "indie games",
-      "foreign films",
+      "filmes estrangeiros",
     ].filter((genre) => !explored.includes(genre));
 
-    return `# 🗺️ Territórios Inexplorados Aguardam!
+    return `Olha só! 🗺️
 
-## 📊 **Análise de Fronteiras**
-Domínios conquistados: **${explored.join(", ")}**
-Reinos misteriosos ainda não desbravados detectados!
+Você já domina: ${explored.join(", ")}
 
-## ⚔️ **Missão**: *A Expansão dos Horizontes*
-Baseado em vosso perfil de **${userAnalysis?.personalityType || "Explorador"}**, recomendo explorar:
+Mas tem uns territórios que você ainda não explorou:
 
-## 🎯 **Novos Reinos**
 1. **${unexplored[0] || "Documentários"}** - Conhecimento real como aventura
 2. **${unexplored[1] || "Podcasts"}** - Narrativas áudio épicas
-3. **${unexplored[2] || "Graphic Novels"}** - Arte visual com narrativa profunda
+3. **${unexplored[2] || "Graphic Novels"}** - Arte visual com história profunda
 
-## 🏆 **Estratégia de Conquista**
-Comece com títulos que fazem ponte com vossos gêneros favoritos, depois avance para territórios completamente novos!
+Quer recomendações específicas em algum desses?
 
-**A verdadeira sabedoria vem da expansão dos horizontes!** ⚡
-
-*Archivius, o Oráculo do GeekLog* 🌟`;
+Archivius`;
   }
 
   private getSmartRecommendation(message: string): string {
     const gameRecs = ["Hades", "Celeste", "Hollow Knight"];
-    const animeRecs = ["Demon Slayer", "Jujutsu Kaisen", "Attack on Titan"];
-    const movieRecs = ["Dune", "Blade Runner 2049", "The Matrix"];
+    const animeRecs = ["Demon Slayer", "Jujutsu Kaisen", "Vinland Saga"];
+    const movieRecs = ["Dune", "Everything Everywhere All at Once", "The Matrix"];
 
-    return `# ⚔️ Recomendações Épicas Forjadas!
+    return `Opa! Vou te recomendar uns títulos massa! 🎮
 
-## 🎮 **Se busca aventuras digitais:**
-• **${gameRecs[0]}** - Mitologia grega com gameplay viciante
-• **${gameRecs[1]}** - Jornada emocional sobre superação
+**Se você curte games:**
+• **${gameRecs[0]}** - Mitologia grega + gameplay viciante
+• **${gameRecs[1]}** - Plataforma sobre superação pessoal
 • **${gameRecs[2]}** - Metroidvania sombrio e atmosférico
 
-## 🎬 **Se almeja visões cinematográficas:**
-• **${movieRecs[0]}** - Épico sci-fi com profundidade política
-• **${movieRecs[1]}** - Continuação que supera o original
-• **${movieRecs[2]}** - Revolução da ficção científica
+**Se prefere filmes:**
+• **${movieRecs[0]}** - Épico sci-fi visual
+• **${movieRecs[1]}** - Multiverso + emoção
+• **${movieRecs[2]}** - Clássico que revolucionou o cinema
 
-## 📺 **Se deseja narrativas animadas:**
-• **${animeRecs[0]}** - Ação + emoção em doses perfeitas
-• **${animeRecs[1]}** - Poderes sobrenaturais + desenvolvimento
-• **${animeRecs[2]}** - Trama complexa que evolui constantemente
+**Se curte anime:**
+• **${animeRecs[0]}** - Ação + emoção perfeitas
+• **${animeRecs[1]}** - Poderes + desenvolvimento de personagens
+• **${animeRecs[2]}** - Trama complexa e madura
 
-**Qual reino desperta vosso interesse?** ⚡
+Qual te chamou mais atenção?
 
-*Archivius, o Oráculo do GeekLog* 🏆`;
+Archivius`;
   }
 
   private getProfileAnalysisResponse(): string {
-    return `# 🔍 Análise Mística Iniciada!
+    return `Bora analisar seu perfil! 🔍
 
-## 📊 **Decifrando Vossos Padrões**
-Para revelar os segredos profundos de vosso perfil geek, preciso analisar:
+Vou olhar:
+• Sua biblioteca completa
+• Padrões de avaliação
+• Evolução de gostos
+• Preferências ocultas
 
-• 📚 **Biblioteca Completa** - Todos os títulos registrados
-• ⭐ **Padrões de Avaliação** - Como valoriza cada experiência  
-• 🕰️ **Jornada Temporal** - Evolução de gostos ao longo do tempo
-• 🎯 **Preferências Ocultas** - Tendências subconscientes
+Quanto mais você tiver adicionado, melhor fica a análise! Me dá uns minutos pra processar tudo...
 
-## ⚔️ **Processamento Oráculo Ativo**
-*Analisando frequência de consumo...*
-*Detectando gêneros dominantes...*
-*Identificando personalidade geek...*
-
-## 🏆 **Revelações Aguardam**
-Em breve terei insights épicos sobre vossa jornada única!
-
-**A sabedoria está sendo forjada!** ⚡
-
-*Archivius, o Oráculo do GeekLog* 🌟`;
+Archivius`;
   }
 
   private getChallengeResponse(): string {
-    return `# 🏆 Desafio Épico Aceito!
+    return `Desafio aceito! 🏆
 
-## ⚔️ **Missão**: *O Desafio dos 30 Dias*
-Como um verdadeiro guardião do entretenimento, vos proponho uma jornada de descobertas!
+**Desafio de 30 Dias:**
 
-## 🎯 **Objetivos Místicos**
 • **Semana 1**: Explorar 1 novo gênero
-• **Semana 2**: Completar 2 títulos pendentes  
+• **Semana 2**: Completar 2 títulos pendentes
 • **Semana 3**: Descobrir 1 joia oculta
-• **Semana 4**: Revisitar 1 favorito clássico
+• **Semana 4**: Revisitar 1 favorito
 
-## 🏅 **Recompensas Lendárias**
-- Expansão épica dos horizontes
-- Insights únicos sobre evolução pessoal
+**Recompensas:**
+- Expansão dos horizontes
+- Insights sobre evolução pessoal
 - Status de "Explorador Lendário"
 
-## ⚡ **Aceita o Desafio?**
-Responda com vosso compromisso e eu forjarei um plano personalizado baseado em vossos gostos únicos!
+Topa?
 
-**Que a jornada seja épica!** 🌟
-
-*Archivius, o Oráculo do GeekLog* 🏆`;
+Archivius`;
   }
 
   private getNostalgiaResponse(): string {
-    return `# 🕰️ Portais do Tempo Abertos!
+    return `Viagem no tempo! 🕰️
 
-## 📚 **Jornada Nostálgica Épica**
-Ah, a magia das memórias afetivas! Permiti-me guiar-vos através dos portais do tempo...
+Bora revisitar os clássicos que marcaram época:
 
-## ⚔️ **Missão**: *O Retorno às Origens*
-• **Jogos Clássicos**: Redescobrir RPGs dos anos 90
-• **Animes Vintage**: Obras que definiram gerações
-• **Filmes Cult**: Clássicos que moldaram o cinema
-• **Livros Atemporais**: Histórias que transcendem eras
+**Games Clássicos:** RPGs dos anos 90
+**Animes Vintage:** Obras que definiram gerações
+**Filmes Cult:** Clássicos que moldaram o cinema
+**Livros Atemporais:** Histórias que transcendem eras
 
-## 🎯 **Estratégia Temporal**
-1. Identifique sua "era dourada" pessoal
-2. Explore obras contemporâneas àquele período  
-3. Descubra influências e referências ocultas
-4. Compare com versões/adaptações modernas
+**Estratégia:**
+1. Identifica sua "era dourada"
+2. Explora obras daquele período
+3. Descobre influências ocultas
+4. Compara com versões modernas
 
-## 🏆 **O Tesouro da Nostalgia**
-Não é apenas sobre reviver o passado, mas redescobrir por que aquelas obras foram especiais!
+Qual época te traz mais nostalgia?
 
-**Que época desperta vossas memórias mais épicas?** ⚡
-
-*Archivius, o Oráculo do GeekLog* 🌟`;
+Archivius`;
   }
 
   private getHiddenGemsResponse(): string {
-    return `# 💎 Joias Ocultas Reveladas!
+    return `Joias ocultas! 💎
 
-## 🗺️ **Tesouros Esquecidos**
-Nas profundezas dos reinos do entretenimento, existem obras que poucos descobriram, mas que brilham com luz própria...
-
-## ⚔️ **Missão**: *Caçador de Joias Perdidas*
-
-**🎮 Games Indie Épicos:**
+**Games Indie Épicos:**
 • **A Hat in Time** - Plataforma 3D charmoso
 • **Outer Wilds** - Exploração espacial única
 • **Return of the Obra Dinn** - Mistério visual único
 
-**📺 Animes Subestimados:**
-• **Mushishi** - Atmosfera contemplativa única
+**Animes Subestimados:**
+• **Mushishi** - Atmosfera contemplativa
 • **Legend of the Galactic Heroes** - Épico espacial político
 • **Serial Experiments Lain** - Cyberpunk psicológico
 
-**🎬 Filmes Cult Internacionais:**
+**Filmes Cult:**
 • **The Host (2006)** - Terror coreano magistral
 • **What We Do in the Shadows** - Comédia vampira genial
 
-## 🏆 **Por Que São Especiais**
-Estas obras transcendem suas categorias, oferecendo experiências únicas que grandes produções raramente ousam tentar!
+Por que são especiais? Transcendem suas categorias e oferecem experiências únicas!
 
-**Qual tesouro desperta vossa curiosidade?** ⚡
+Qual te chamou atenção?
 
-*Archivius, o Oráculo do GeekLog* 💎`;
+Archivius`;
   }
 }
 

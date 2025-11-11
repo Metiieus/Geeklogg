@@ -31,52 +31,52 @@ export class ArchiviusService {
   private smartSuggestions: SmartSuggestion[] = [
     {
       id: "personalized_rec",
-      text: "Forje uma recomendação épica baseada em todas as minhas conquistas",
-      emoji: "⚔️",
+      text: "Me recomenda algo baseado no que eu já tenho",
+      emoji: "🎯",
       category: "recommendation",
       prompt:
-        "Analise todo meu histórico de mídia, reviews e padrões de consumo. Com base nisso, me recomende 3 títulos que seriam perfeitos para mim, explicando por que cada um se alinha com meus gostos únicos.",
+        "Olha minha biblioteca e me recomenda 3 títulos que fazem sentido com o que eu já tenho. Explica por que cada um combina com meu perfil, citando títulos específicos que eu já adicionei.",
       requiresContext: true,
     },
     {
       id: "hidden_gems",
-      text: "Revele joias ocultas que combinam com meu perfil",
+      text: "Mostra joias ocultas que combinam comigo",
       emoji: "💎",
       category: "discovery",
       prompt:
-        "Com base no meu histórico e preferências, encontre títulos menos conhecidos ou subestimados que seriam perfeitos para mim. Quero descobrir obras que poucos conhecem mas que eu adoraria.",
+        "Baseado no que eu curto, me mostra títulos menos conhecidos que eu provavelmente adoraria. Quero descobrir coisas que pouca gente conhece mas que fazem meu estilo.",
       requiresContext: true,
     },
     {
       id: "mood_recommendation",
-      text: "Sugira algo perfeito para meu humor atual",
+      text: "Recomenda algo pro meu mood atual",
       emoji: "🌙",
       category: "recommendation",
       prompt:
-        "Baseado no meu histórico recente e padrões de consumo, sugira algo que seja perfeito para meu estado de espírito atual. Considere se estou numa fase de exploração, nostalgia, ou buscando algo novo.",
+        "Olha o que eu tenho jogado/assistido recentemente e sugere algo que combina com meu mood atual. Considera se eu tô numa vibe de exploração, nostalgia, ou querendo algo novo.",
       requiresContext: true,
     },
     {
       id: "completion_strategy",
-      text: "Crie uma estratégia para completar minha lista de pendências",
+      text: "Me ajuda a completar minha lista de pendências",
       emoji: "📋",
       category: "analysis",
       prompt:
-        "Analise minha lista de mídias em progresso e planejadas. Crie uma estratégia personalizada para eu conseguir completar mais títulos, considerando meu tempo disponível e padrões de consumo.",
+        "Olha o que eu tenho em progresso e planejado. Me dá uma estratégia pra eu conseguir completar mais coisas, considerando meu tempo e como eu costumo consumir conteúdo.",
       requiresContext: true,
     },
     {
       id: "genre_exploration",
-      text: "Guie-me para explorar um novo território inexplorado",
+      text: "Me ajuda a explorar novos gêneros",
       emoji: "🗺️",
       category: "discovery",
       prompt:
-        "Baseado no que já consumi, identifique gêneros ou tipos de mídia que eu ainda não explorei mas que provavelmente adoraria. Me guie para uma nova descoberta épica.",
+        "Olha o que eu já curti e identifica gêneros ou tipos de mídia que eu ainda não explorei mas que provavelmente adoraria. Me guia pra uma nova descoberta.",
       requiresContext: true,
     },
     {
       id: "profile_insights",
-      text: "Desvende os segredos ocultos do meu perfil geek",
+      text: "Analisa meu perfil e me dá uns insights",
       emoji: "🔍",
       category: "analysis",
       prompt:
@@ -320,6 +320,7 @@ export class ArchiviusService {
         items.map((i: any) => i.rating).filter((r: number) => r > 0),
       ),
       topTags: this.getTopTags(items.flatMap((i: any) => i.tags || [])),
+      items, // Adiciona lista de items para IA poder filtrar recomendações
     }));
   }
 
