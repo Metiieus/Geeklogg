@@ -70,11 +70,13 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
 
   // Carregar destaques e melhores salvos
   useEffect(() => {
+    if (mediaItems.length === 0) return;
+
     const savedFeaturedIds = localStorage.getItem('customFeatured');
     if (savedFeaturedIds) {
       try {
         const ids: string[] = JSON.parse(savedFeaturedIds);
-        const savedItems = collection.filter(item => ids.includes(item.id));
+        const savedItems = mediaItems.filter(item => ids.includes(item.id));
         if (savedItems.length > 0) {
           setCustomFeatured(savedItems);
         }
@@ -92,7 +94,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         
         Object.keys(bestData).forEach(category => {
           const ids = bestData[category];
-          loadedBest[category] = collection.filter(item => ids.includes(item.id));
+          loadedBest[category] = mediaItems.filter(item => ids.includes(item.id));
         });
         
         setBestMedia(loadedBest);
@@ -100,7 +102,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         console.error('Erro ao carregar melhores mídias:', error);
       }
     }
-  }, [collection]);
+  }, [mediaItems]);
 
   // Auto-play do carrossel de pódio
   useEffect(() => {
@@ -113,7 +115,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
   }, []);
 
   const { mediaItems, setMediaItems } = useAppContext();
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
 
   // Get category icon
   const getCategoryIcon = (type: string, className: string = "w-4 h-4") => {
@@ -251,15 +253,15 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       });
 
       setMediaItems([...mediaItems, newMedia]);
-      showToast("Mídia adicionada com sucesso!", "success");
+      showSuccess("Mídia adicionada com sucesso!");
       setPendingMedia(null);
     } catch (error) {
       console.error("Erro ao adicionar mídia:", error);
-      showToast("Erro ao adicionar mídia. Tente novamente.", "error");
+      showError("Erro ao adicionar mídia. Tente novamente.");
     } finally {
       setIsAddingMedia(false);
     }
-  }, [mediaItems, setMediaItems, showToast]);
+  }, [mediaItems, setMediaItems, showSuccess, showError]);
 
   const handleEditBeforeAdd = (media: ExternalMediaResult) => {
     setEditingPendingMedia(media);
@@ -283,13 +285,13 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         item.id === id ? { ...item, ...updates } : item
       );
       setMediaItems(updatedItems);
-      showToast("Mídia atualizada com sucesso!", "success");
+      showSuccess("Mídia atualizada com sucesso!");
       setEditingItem(null);
     } catch (error) {
       console.error("Erro ao atualizar mídia:", error);
-      showToast("Erro ao atualizar mídia. Tente novamente.", "error");
+      showError("Erro ao atualizar mídia. Tente novamente.");
     }
-  }, [mediaItems, setMediaItems, showToast]);
+  }, [mediaItems, setMediaItems, showSuccess, showError]);
 
   const handleDeleteMedia = async (item: MediaItem) => {
     setDeleteConfirmItem(item);
@@ -303,11 +305,11 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       await deleteMedia(deleteConfirmItem.id);
       const updatedItems = mediaItems.filter((item) => item.id !== deleteConfirmItem.id);
       setMediaItems(updatedItems);
-      showToast("Mídia excluída com sucesso!", "success");
+      showSuccess("Mídia excluída com sucesso!");
       setDeleteConfirmItem(null);
     } catch (error) {
       console.error("Erro ao excluir mídia:", error);
-      showToast("Erro ao excluir mídia. Tente novamente.", "error");
+      showError("Erro ao excluir mídia. Tente novamente.");
     }
   };
 
@@ -319,16 +321,15 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
         m.id === item.id ? { ...m, isFavorite: newFavoriteStatus } : m
       );
       setMediaItems(updatedItems);
-      showToast(
-        newFavoriteStatus ? "Adicionado aos favoritos!" : "Removido dos favoritos!",
-        "success"
+      showSuccess(
+        newFavoriteStatus ? "Adicionado aos favoritos!" : "Removido dos favoritos!"
       );
       setIsPreviewOpen(false);
     } catch (error) {
       console.error("Erro ao favoritar mídia:", error);
-      showToast("Erro ao favoritar mídia. Tente novamente.", "error");
+      showError("Erro ao favoritar mídia. Tente novamente.");
     }
-  }, [mediaItems, setMediaItems, showToast]);
+  }, [mediaItems, setMediaItems, showSuccess, showError]);
 
   const handleEditFeatured = () => {
     setShowEditFeaturedModal(true);
@@ -344,16 +345,16 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       // Salvar IDs dos destaques no localStorage
       const featuredIds = items.map(item => item.id);
       localStorage.setItem('customFeatured', JSON.stringify(featuredIds));
-      showToast("Destaques atualizados com sucesso!", "success");
+      showSuccess("Destaques atualizados com sucesso!");
     } catch (error) {
       console.error('Erro ao salvar destaques:', error);
-      showToast("Erro ao salvar destaques", "error");
+      showError("Erro ao salvar destaques");
     }
   };
 
   const handleSavePopular = (items: MediaItem[]) => {
     setCustomPopular(items);
-    showToast("Populares atualizados com sucesso!", "success");
+    showSuccess("Populares atualizados com sucesso!");
   };
 
   const handleOpenBestMedia = (category: string) => {
@@ -373,12 +374,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       });
       localStorage.setItem('bestMedia', JSON.stringify(bestDataToSave));
       
-      showToast(`Top 3 de ${category} atualizado com sucesso!`, "success");
+      showSuccess(`Top 3 de ${category} atualizado com sucesso!`);
     } catch (error) {
       console.error('Erro ao salvar melhores mídias:', error);
-      showToast("Erro ao salvar", "error");
+      showError("Erro ao salvar");
     }
-  }, [bestMedia, showToast]);
+  }, [bestMedia, showSuccess, showError]);
 
   return (
     <div className="min-h-screen text-white">
