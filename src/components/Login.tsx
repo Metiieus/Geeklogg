@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { devLog } from "../utils/logger";
 import { motion } from "framer-motion";
 import { LogIn, User, Lock, Sparkles, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -81,11 +82,11 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       );
       setShowForgotPassword(false);
     } catch (error: any) {
-      console.error("Erro ao resetar senha:", error);
+      devLog.error("Erro ao resetar senha:", error);
 
       // Se for erro de rede e ainda não tentou 1 vez, tenta novamente com delay maior
       if (error?.code === "auth/network-request-failed" && retryCount < 1) {
-        console.log(
+        devLog.log(
           `Tentando novamente com delay maior... (tentativa ${retryCount + 1}/1)`,
         );
         setTimeout(() => {
@@ -143,7 +144,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       await login(email.trim(), password);
       showSuccess("Login realizado!", "Bem-vindo de volta!");
     } catch (error: any) {
-      console.error("Falha no login:", error);
+      devLog.error("Falha no login:", error);
       const message = getErrorMessage(error);
       showError("Falha no login", message);
     } finally {

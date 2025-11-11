@@ -1,4 +1,5 @@
 // imports principais
+import { devLog } from "./utils/logger";
 import React, {
   useState,
   useEffect,
@@ -218,7 +219,7 @@ const AppContent: React.FC = () => {
       }
 
       try {
-        console.log("🔄 Carregando dados do usuário...");
+        devLog.log("🔄 Carregando dados do usuário...");
 
         const [
           loadedSettings,
@@ -237,10 +238,10 @@ const AppContent: React.FC = () => {
         setReviews(loadedReviews);
         setMilestones(loadedMilestones);
 
-        console.log("✅ Dados carregados com sucesso");
+        devLog.log("✅ Dados carregados com sucesso");
         showSuccess("Bem-vindo!", "Seus dados foram carregados com sucesso");
       } catch (error) {
-        console.error("❌ Erro ao carregar dados:", error);
+        devLog.error("❌ Erro ao carregar dados:", error);
         showError("Erro", "Não foi possível carregar todos os seus dados");
       } finally {
         setIsLoading(false);
@@ -260,7 +261,7 @@ const AppContent: React.FC = () => {
       try {
         await saveSettings(user.uid, settings);
       } catch (error) {
-        console.warn("⚠️ Auto-save falhou:", error);
+        devLog.warn("⚠️ Auto-save falhou:", error);
       }
     };
 
@@ -472,7 +473,7 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error boundary caught an error:", error, errorInfo);
+    devLog.error("Error boundary caught an error:", error, errorInfo);
   }
 
   render() {
@@ -506,7 +507,7 @@ const App: React.FC = () => {
           typeof message === "string" &&
           message.includes("ReadableStreamDefaultReader constructor can only accept readable streams")
         ) {
-          console.warn("Suppressed known Firestore ReadableStream error:", message);
+          devLog.warn("Suppressed known Firestore ReadableStream error:", message);
           event.preventDefault();
           return;
         }

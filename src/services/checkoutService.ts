@@ -1,4 +1,5 @@
 import { auth, isFirebaseOffline } from "../firebase";
+import { devLog } from "../utils/logger";
 
 // --- Interfaces ---
 export interface CheckoutResponse {
@@ -33,7 +34,7 @@ const getApiUrl = (): string => {
  */
 export async function createPreference(): Promise<CheckoutResponse> {
   if (!auth || isFirebaseOffline()) {
-    console.error("Firebase auth não disponível (modo offline).");
+    devLog.error("Firebase auth não disponível (modo offline).");
     return {
       success: false,
       error: "Serviço de pagamento não disponível no modo offline.",
@@ -42,7 +43,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
 
   const user = auth.currentUser;
   if (!user) {
-    console.error("Tentativa de checkout sem usuário logado.");
+    devLog.error("Tentativa de checkout sem usuário logado.");
     return {
       success: false,
       error: "Você precisa estar logado para continuar.",
@@ -52,7 +53,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
   const apiUrl = getApiUrl();
 
   try {
-    console.log(`Iniciando criação de preferência na API: ${apiUrl}`);
+    devLog.log(`Iniciando criação de preferência na API: ${apiUrl}`);
     const response = await fetch(`${apiUrl}/create-preference`, {
       method: "POST",
       headers: {
@@ -74,7 +75,7 @@ export async function createPreference(): Promise<CheckoutResponse> {
       preference_id: data.preference_id,
     };
   } catch (error) {
-    console.error("Falha ao criar preferência de pagamento:", error);
+    devLog.error("Falha ao criar preferência de pagamento:", error);
     return {
       success: false,
       error:
@@ -98,7 +99,7 @@ export async function handleCheckout(): Promise<void> {
       );
     }
   } catch (error) {
-    console.error("Erro final no fluxo de checkout:", error);
+    devLog.error("Erro final no fluxo de checkout:", error);
     alert(
       `Erro ao iniciar o pagamento: ${error instanceof Error ? error.message : "Tente novamente mais tarde."}`,
     );
@@ -113,7 +114,7 @@ export async function updateUserPremium(
   preference_id: string,
 ): Promise<boolean> {
   if (!uid || !preference_id) {
-    console.error("UID ou Preference ID faltando para atualizar o plano.");
+    devLog.error("UID ou Preference ID faltando para atualizar o plano.");
     return false;
   }
 
@@ -135,10 +136,10 @@ export async function updateUserPremium(
       );
     }
 
-    console.log("Plano do usuário atualizado para Premium com sucesso!");
+    devLog.log("Plano do usuário atualizado para Premium com sucesso!");
     return true;
   } catch (error) {
-    console.error("Falha ao atualizar o plano do usuário:", error);
+    devLog.error("Falha ao atualizar o plano do usuário:", error);
     return false;
   }
 }

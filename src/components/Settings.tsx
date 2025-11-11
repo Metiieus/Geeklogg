@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { devLog } from "../utils/logger";
 import {
   Download,
   Upload,
@@ -26,12 +27,12 @@ const Settings: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleSave = async () => {
-    console.log("💾 Salvando configurações:", localSettings);
+    devLog.log("💾 Salvando configurações:", localSettings);
     setSettings(localSettings);
     if (user?.uid) {
       await saveSettings(user.uid, localSettings);
     } else {
-      console.error("Usuário não autenticado");
+      devLog.error("Usuário não autenticado");
     }
     // Feedback visual melhorado
     const toast = document.createElement("div");

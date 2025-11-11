@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { devLog } from "../utils/logger";
 import { auth, db, isFirebaseOffline } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -69,7 +70,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
         return;
       }
 
-      console.log("📝 Iniciando registro...");
+      devLog.log("📝 Iniciando registro...");
 
       if (!auth || isFirebaseOffline()) {
         showError(
@@ -138,9 +139,9 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
         `Bem-vindo(a), ${formData.apelido}! 🎉`,
       );
 
-      console.log("🚀 Registro concluído com sucesso!");
+      devLog.log("🚀 Registro concluído com sucesso!");
     } catch (error: any) {
-      console.error("❌ Erro no registro:", error);
+      devLog.error("❌ Erro no registro:", error);
 
       if (error.code === "auth/email-already-in-use") {
         showError(

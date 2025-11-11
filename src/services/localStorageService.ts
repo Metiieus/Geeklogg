@@ -1,4 +1,5 @@
 // Simple localStorage-based service for offline development fallback
+import { devLog } from "../utils/logger";
 
 export const localStorageService = {
   // Get collection from localStorage
@@ -8,7 +9,7 @@ export const localStorageService = {
       const data = localStorage.getItem(`firebase_${key}`);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.warn("localStorage getCollection error:", error);
+      devLog.warn("localStorage getCollection error:", error);
       return [];
     }
   },
@@ -31,7 +32,7 @@ export const localStorageService = {
 
       return { exists: () => false, data: () => null };
     } catch (error) {
-      console.warn("localStorage getDocument error:", error);
+      devLog.warn("localStorage getDocument error:", error);
       return { exists: () => false, data: () => null };
     }
   },
@@ -60,7 +61,7 @@ export const localStorageService = {
 
       return id;
     } catch (error) {
-      console.warn("localStorage addDocument error:", error);
+      devLog.warn("localStorage addDocument error:", error);
       return Date.now().toString();
     }
   },
@@ -83,7 +84,7 @@ export const localStorageService = {
         );
       }
     } catch (error) {
-      console.warn("localStorage updateDocument error:", error);
+      devLog.warn("localStorage updateDocument error:", error);
     }
   },
 
@@ -98,7 +99,7 @@ export const localStorageService = {
       const docKey = `${key}/${docId}`;
       localStorage.removeItem(`firebase_${docKey}`);
     } catch (error) {
-      console.warn("localStorage removeItem error:", error);
+      devLog.warn("localStorage removeItem error:", error);
     }
   },
 
@@ -112,11 +113,11 @@ export const localStorageService = {
 
   enableOfflineMode: (): void => {
     localStorage.setItem("firebase_offline_mode", "true");
-    console.log("📴 Offline mode enabled");
+    devLog.log("📴 Offline mode enabled");
   },
 
   disableOfflineMode: (): void => {
     localStorage.removeItem("firebase_offline_mode");
-    console.log("🌐 Offline mode disabled");
+    devLog.log("🌐 Offline mode disabled");
   },
 };

@@ -1,4 +1,5 @@
 // Serviço aprimorado para integração com OpenAI API - Archivius Inteligente
+import { devLog } from "../utils/logger";
 
 interface OpenAIMessage {
   role: "system" | "user" | "assistant";
@@ -23,13 +24,13 @@ class OpenAIService {
 
   async sendMessage(userMessage: string, context?: any): Promise<string> {
     if (!this.apiKey) {
-      console.log(
+      devLog.log(
         "🤖 Archivius: API key não configurada - usando respostas inteligentes",
       );
       return this.getIntelligentMockResponse(userMessage, context);
     }
 
-    console.log("🔌 Archivius: Usando API OpenAI real");
+    devLog.log("🔌 Archivius: Usando API OpenAI real");
 
     try {
       const messages: OpenAIMessage[] = [
@@ -124,7 +125,7 @@ Assine apenas como "Archivius" sem emojis extras.`,
         "Desculpe, não consegui processar sua mensagem."
       );
     } catch (error) {
-      console.error("Erro na API OpenAI:", error);
+      devLog.error("Erro na API OpenAI:", error);
       return this.getIntelligentMockResponse(userMessage, context);
     }
   }

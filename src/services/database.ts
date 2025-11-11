@@ -1,4 +1,5 @@
 // src/services/database.ts
+import { devLog } from "../utils/logger";
 import { db, auth, isFirebaseOffline, withRetry } from "../firebase";
 import { localStorageService } from "./localStorageService";
 import {
@@ -43,14 +44,14 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("➕ [ADD] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("👤 UID:", uid);
-    console.log("📄 Dados:", data);
+    devLog.log("➕ [ADD] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("👤 UID:", uid);
+    devLog.log("📄 Dados:", data);
 
     // Use offline mode if Firebase is not available
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [ADD] Usando modo offline");
+      devLog.warn("🔄 [ADD] Usando modo offline");
       const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const docData = {
         ...data,
@@ -60,7 +61,7 @@ export const database = {
       };
 
       localStorageService.setItem(pathStr, id, docData);
-      console.log("✅ [ADD] Documento salvo offline com ID:", id);
+      devLog.log("✅ [ADD] Documento salvo offline com ID:", id);
 
       return { id } as DocumentReference;
     }
@@ -74,16 +75,16 @@ export const database = {
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
-        console.log("✅ [ADD] Documento criado com sucesso! ID:", docRef.id);
+        devLog.log("✅ [ADD] Documento criado com sucesso! ID:", docRef.id);
         return docRef;
       });
     } catch (error: any) {
-      console.error("❌ [ADD] Erro ao adicionar documento:", error.message);
-      console.error("📍 Caminho completo:", pathStr);
-      console.error("🔍 Código do erro:", error.code);
-      console.error("📋 Stack:", error.stack);
+      devLog.error("❌ [ADD] Erro ao adicionar documento:", error.message);
+      devLog.error("📍 Caminho completo:", pathStr);
+      devLog.error("🔍 Código do erro:", error.code);
+      devLog.error("📋 Stack:", error.stack);
 
-      console.warn("⚠️ [ADD] Fallback para localStorage");
+      devLog.warn("⚠️ [ADD] Fallback para localStorage");
 
       const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const docData = {
@@ -94,7 +95,7 @@ export const database = {
       };
 
       localStorageService.setItem(pathStr, id, docData);
-      console.log("✅ [ADD] Documento salvo offline com ID:", id);
+      devLog.log("✅ [ADD] Documento salvo offline com ID:", id);
       return { id } as DocumentReference;
     }
   },
@@ -117,16 +118,16 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("💾 [SET] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("🆔 Doc ID:", docId);
-    console.log("👤 UID:", uid);
-    console.log("📄 Dados:", data);
-    console.log("⚙️ Opções:", options);
+    devLog.log("💾 [SET] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("🆔 Doc ID:", docId);
+    devLog.log("👤 UID:", uid);
+    devLog.log("📄 Dados:", data);
+    devLog.log("⚙️ Opções:", options);
 
     // Use offline mode if Firebase is not available
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [SET] Usando modo offline");
+      devLog.warn("🔄 [SET] Usando modo offline");
       const docData = {
         ...data,
         id: docId,
@@ -145,7 +146,7 @@ export const database = {
         localStorageService.setItem(pathStr, docId, docData);
       }
 
-      console.log("✅ [SET] Documento salvo offline");
+      devLog.log("✅ [SET] Documento salvo offline");
       return docId;
     }
 
@@ -160,15 +161,15 @@ export const database = {
         );
       });
 
-      console.log("✅ [SET] Documento atualizado com sucesso!");
+      devLog.log("✅ [SET] Documento atualizado com sucesso!");
       return docId;
     } catch (error: any) {
-      console.error("❌ [SET] Erro ao definir documento:", error.message);
-      console.error("📍 Caminho completo:", pathStr + "/" + docId);
-      console.error("🔍 Código do erro:", error.code);
-      console.error("📋 Stack:", error.stack);
+      devLog.error("❌ [SET] Erro ao definir documento:", error.message);
+      devLog.error("📍 Caminho completo:", pathStr + "/" + docId);
+      devLog.error("🔍 Código do erro:", error.code);
+      devLog.error("📋 Stack:", error.stack);
 
-      console.warn("⚠️ [SET] Fallback para localStorage");
+      devLog.warn("⚠️ [SET] Fallback para localStorage");
 
       const docData = {
         ...data,
@@ -188,7 +189,7 @@ export const database = {
         localStorageService.setItem(pathStr, docId, docData);
       }
 
-      console.log("✅ [SET] Documento salvo offline");
+      devLog.log("✅ [SET] Documento salvo offline");
       return docId;
     }
   },
@@ -202,24 +203,24 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("📖 [GET] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("🆔 Doc ID:", docId);
-    console.log("👤 UID:", uid);
+    devLog.log("📖 [GET] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("🆔 Doc ID:", docId);
+    devLog.log("👤 UID:", uid);
 
     // Protege documentos do usuário quando não autenticado
     if (
       (pathStr.startsWith("users/") || pathStr === "users") &&
       !auth?.currentUser
     ) {
-      console.warn("🔒 [GET] Tentativa de acessar documento de usuário sem login");
-      console.warn("📍 Caminho bloqueado:", pathStr);
+      devLog.warn("🔒 [GET] Tentativa de acessar documento de usuário sem login");
+      devLog.warn("📍 Caminho bloqueado:", pathStr);
       return { exists: () => false, data: () => null };
     }
 
     // Use offline mode if Firebase is not available
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [GET] Usando modo offline");
+      devLog.warn("🔄 [GET] Usando modo offline");
 
       let effectiveDocId = docId;
       if (!effectiveDocId) {
@@ -227,16 +228,16 @@ export const database = {
         if (parts.length % 2 === 0) {
           effectiveDocId = parts[parts.length - 1];
         } else {
-          console.error("❌ [GET] ID do documento ausente");
+          devLog.error("❌ [GET] ID do documento ausente");
           return { exists: () => false, data: () => null };
         }
       }
 
       const data = localStorageService.getItem(pathStr, effectiveDocId);
       if (data) {
-        console.log("✅ [GET] Documento encontrado no localStorage");
+        devLog.log("✅ [GET] Documento encontrado no localStorage");
       } else {
-        console.log("❌ [GET] Documento não encontrado no localStorage");
+        devLog.log("❌ [GET] Documento não encontrado no localStorage");
       }
 
       return data
@@ -259,14 +260,14 @@ export const database = {
         }
       }
 
-      console.log("🔍 [GET] Buscando documento...");
+      devLog.log("🔍 [GET] Buscando documento...");
       const docSnap = await withRetry(async () => await getDoc(docRef));
       
       if (docSnap.exists()) {
-        console.log("✅ [GET] Documento encontrado!");
-        console.log("📄 Dados:", docSnap.data());
+        devLog.log("✅ [GET] Documento encontrado!");
+        devLog.log("📄 Dados:", docSnap.data());
       } else {
-        console.log("❌ [GET] Documento não existe");
+        devLog.log("❌ [GET] Documento não existe");
       }
 
       return docSnap.exists()
@@ -278,12 +279,12 @@ export const database = {
           }
         : { exists: () => false, data: () => null };
     } catch (error: any) {
-      console.error("❌ [GET] Erro ao obter documento:", error.message);
-      console.error("📍 Caminho completo:", pathStr + (docId ? "/" + docId : ""));
-      console.error("🔍 Código do erro:", error.code);
-      console.error("📋 Stack:", error.stack);
+      devLog.error("❌ [GET] Erro ao obter documento:", error.message);
+      devLog.error("📍 Caminho completo:", pathStr + (docId ? "/" + docId : ""));
+      devLog.error("🔍 Código do erro:", error.code);
+      devLog.error("📋 Stack:", error.stack);
 
-      console.warn("⚠️ [GET] Fallback para localStorage");
+      devLog.warn("⚠️ [GET] Fallback para localStorage");
 
       let effectiveDocId = docId;
       if (!effectiveDocId) {
@@ -297,9 +298,9 @@ export const database = {
 
       const data = localStorageService.getItem(pathStr, effectiveDocId);
       if (data) {
-        console.log("✅ [GET] Documento encontrado no localStorage");
+        devLog.log("✅ [GET] Documento encontrado no localStorage");
       } else {
-        console.log("❌ [GET] Documento não encontrado no localStorage");
+        devLog.log("❌ [GET] Documento não encontrado no localStorage");
       }
 
       return data
@@ -324,24 +325,24 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("📚 [GET_COLLECTION] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("👤 UID:", uid);
-    console.log("⚙️ Opções de query:", queryOptions);
+    devLog.log("📚 [GET_COLLECTION] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("👤 UID:", uid);
+    devLog.log("⚙️ Opções de query:", queryOptions);
 
     // Protege coleção /users quando não autenticado
     if (
       (pathStr === "users" || pathStr.startsWith("users/")) &&
       !auth?.currentUser
     ) {
-      console.warn("🔒 [GET_COLLECTION] Tentativa de acessar coleção users sem login");
-      console.warn("📍 Caminho bloqueado:", pathStr);
+      devLog.warn("🔒 [GET_COLLECTION] Tentativa de acessar coleção users sem login");
+      devLog.warn("📍 Caminho bloqueado:", pathStr);
       return [];
     }
 
     // Use offline mode if Firebase is not available
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [GET_COLLECTION] Usando modo offline");
+      devLog.warn("🔄 [GET_COLLECTION] Usando modo offline");
       try {
         const fallback = localStorageService.getCollection(pathStr);
         let results = fallback.map((item: any, index: number) => ({
@@ -352,7 +353,7 @@ export const database = {
           ...item,
         }));
 
-        console.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados no localStorage`);
+        devLog.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados no localStorage`);
 
         // Apply query options to local data
         if (queryOptions) {
@@ -400,7 +401,7 @@ export const database = {
 
         return results;
       } catch (error) {
-        console.error("❌ [GET_COLLECTION] Erro ao buscar do localStorage:", error);
+        devLog.error("❌ [GET_COLLECTION] Erro ao buscar do localStorage:", error);
         return [];
       }
     }
@@ -413,47 +414,47 @@ export const database = {
       if (queryOptions) {
         const { where: w, orderBy: ob, limit: lim } = queryOptions;
         if (w) {
-          console.log(`🔍 [GET_COLLECTION] Aplicando filtro: ${w.field} ${w.operator} ${w.value}`);
+          devLog.log(`🔍 [GET_COLLECTION] Aplicando filtro: ${w.field} ${w.operator} ${w.value}`);
           q = query(q, where(w.field, w.operator, w.value));
         }
         if (ob) {
-          console.log(`📊 [GET_COLLECTION] Ordenando por: ${ob.field} ${ob.direction || "asc"}`);
+          devLog.log(`📊 [GET_COLLECTION] Ordenando por: ${ob.field} ${ob.direction || "asc"}`);
           q = query(q, orderBy(ob.field, ob.direction ?? "asc"));
         }
         if (lim) {
-          console.log(`📏 [GET_COLLECTION] Limitando a: ${lim} documentos`);
+          devLog.log(`📏 [GET_COLLECTION] Limitando a: ${lim} documentos`);
           q = query(q, limit(lim));
         }
       }
 
-      console.log("🔍 [GET_COLLECTION] Executando query...");
+      devLog.log("🔍 [GET_COLLECTION] Executando query...");
       const snap = await withRetry(async () => await getDocs(q));
       const results = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
       
-      console.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados!`);
+      devLog.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados!`);
       if (results.length > 0) {
-        console.log("📄 Primeiro documento:", results[0]);
+        devLog.log("📄 Primeiro documento:", results[0]);
       }
 
       return results;
     } catch (error: any) {
-      console.error("❌ [GET_COLLECTION] Erro ao buscar coleção:", error.message);
-      console.error("📍 Caminho completo:", pathStr);
-      console.error("🔍 Código do erro:", error.code);
-      console.error("📋 Stack:", error.stack);
+      devLog.error("❌ [GET_COLLECTION] Erro ao buscar coleção:", error.message);
+      devLog.error("📍 Caminho completo:", pathStr);
+      devLog.error("🔍 Código do erro:", error.code);
+      devLog.error("📋 Stack:", error.stack);
       
       // Log de permissões
       if (error.code === "permission-denied") {
-        console.error("🚫 ERRO DE PERMISSÃO!");
-        console.error("⚠️ Verifique:");
-        console.error("   1. As regras do Firestore estão corretas?");
-        console.error("   2. O usuário está autenticado?");
-        console.error("   3. O UID do usuário corresponde ao caminho?");
-        console.error(`   4. Caminho tentado: ${pathStr}`);
-        console.error(`   5. UID do usuário: ${uid}`);
+        devLog.error("🚫 ERRO DE PERMISSÃO!");
+        devLog.error("⚠️ Verifique:");
+        devLog.error("   1. As regras do Firestore estão corretas?");
+        devLog.error("   2. O usuário está autenticado?");
+        devLog.error("   3. O UID do usuário corresponde ao caminho?");
+        devLog.error(`   4. Caminho tentado: ${pathStr}`);
+        devLog.error(`   5. UID do usuário: ${uid}`);
       }
 
-      console.warn("⚠️ [GET_COLLECTION] Fallback para localStorage");
+      devLog.warn("⚠️ [GET_COLLECTION] Fallback para localStorage");
 
       try {
         const fallback = localStorageService.getCollection(pathStr);
@@ -465,7 +466,7 @@ export const database = {
           ...item,
         }));
 
-        console.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados no localStorage`);
+        devLog.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados no localStorage`);
 
         if (queryOptions?.limit) {
           results = results.slice(0, queryOptions.limit);
@@ -473,7 +474,7 @@ export const database = {
 
         return results;
       } catch (localError) {
-        console.error("❌ [GET_COLLECTION] Erro no localStorage também:", localError);
+        devLog.error("❌ [GET_COLLECTION] Erro no localStorage também:", localError);
         return [];
       }
     }
@@ -490,15 +491,15 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("✏️ [UPDATE] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("🆔 Doc ID:", docId);
-    console.log("👤 UID:", uid);
-    console.log("📄 Dados:", data);
+    devLog.log("✏️ [UPDATE] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("🆔 Doc ID:", docId);
+    devLog.log("👤 UID:", uid);
+    devLog.log("📄 Dados:", data);
 
     // Use offline mode if Firebase is not available
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [UPDATE] Usando modo offline");
+      devLog.warn("🔄 [UPDATE] Usando modo offline");
       const existing = localStorageService.getItem(pathStr, docId);
       if (existing) {
         const updated = {
@@ -507,9 +508,9 @@ export const database = {
           updatedAt: new Date().toISOString(),
         };
         localStorageService.setItem(pathStr, docId, updated);
-        console.log("✅ [UPDATE] Documento atualizado offline");
+        devLog.log("✅ [UPDATE] Documento atualizado offline");
       } else {
-        console.warn("⚠️ [UPDATE] Documento não encontrado offline");
+        devLog.warn("⚠️ [UPDATE] Documento não encontrado offline");
       }
       return docId;
     }
@@ -524,15 +525,15 @@ export const database = {
         });
       });
       
-      console.log("✅ [UPDATE] Documento atualizado com sucesso!");
+      devLog.log("✅ [UPDATE] Documento atualizado com sucesso!");
       return docId;
     } catch (error: any) {
-      console.error("❌ [UPDATE] Erro ao atualizar documento:", error.message);
-      console.error("📍 Caminho completo:", pathStr + "/" + docId);
-      console.error("🔍 Código do erro:", error.code);
-      console.error("📋 Stack:", error.stack);
+      devLog.error("❌ [UPDATE] Erro ao atualizar documento:", error.message);
+      devLog.error("📍 Caminho completo:", pathStr + "/" + docId);
+      devLog.error("🔍 Código do erro:", error.code);
+      devLog.error("📋 Stack:", error.stack);
 
-      console.warn("⚠️ [UPDATE] Fallback para localStorage");
+      devLog.warn("⚠️ [UPDATE] Fallback para localStorage");
 
       const existing = localStorageService.getItem(pathStr, docId);
       if (existing) {
@@ -542,7 +543,7 @@ export const database = {
           updatedAt: new Date().toISOString(),
         };
         localStorageService.setItem(pathStr, docId, updated);
-        console.log("✅ [UPDATE] Documento atualizado offline");
+        devLog.log("✅ [UPDATE] Documento atualizado offline");
       }
       return docId;
     }
@@ -559,10 +560,10 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("🗑️ [DELETE] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("🆔 Doc ID:", docId);
-    console.log("👤 UID:", uid);
+    devLog.log("🗑️ [DELETE] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("🆔 Doc ID:", docId);
+    devLog.log("👤 UID:", uid);
 
     if (!pathStr || pathStr.trim() === "") {
       throw new Error("Collection path é obrigatório");
@@ -574,9 +575,9 @@ export const database = {
 
     // Use offline mode if Firebase is not available
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [DELETE] Usando modo offline");
+      devLog.warn("🔄 [DELETE] Usando modo offline");
       localStorageService.removeItem(pathStr, docId);
-      console.log("✅ [DELETE] Documento removido offline");
+      devLog.log("✅ [DELETE] Documento removido offline");
       return docId;
     }
 
@@ -587,17 +588,17 @@ export const database = {
         await deleteDoc(doc(db, pathStr, docId));
       });
       
-      console.log("✅ [DELETE] Documento deletado com sucesso!");
+      devLog.log("✅ [DELETE] Documento deletado com sucesso!");
       return docId;
     } catch (error: any) {
-      console.error("❌ [DELETE] Erro ao deletar documento:", error.message);
-      console.error("📍 Caminho completo:", pathStr + "/" + docId);
-      console.error("🔍 Código do erro:", error.code);
-      console.error("📋 Stack:", error.stack);
+      devLog.error("❌ [DELETE] Erro ao deletar documento:", error.message);
+      devLog.error("📍 Caminho completo:", pathStr + "/" + docId);
+      devLog.error("🔍 Código do erro:", error.code);
+      devLog.error("📋 Stack:", error.stack);
 
-      console.warn("⚠️ [DELETE] Fallback para localStorage");
+      devLog.warn("⚠️ [DELETE] Fallback para localStorage");
       localStorageService.removeItem(pathStr, docId);
-      console.log("✅ [DELETE] Documento removido offline");
+      devLog.log("✅ [DELETE] Documento removido offline");
       return docId;
     }
   },
@@ -617,12 +618,12 @@ export const database = {
       : collectionPath;
 
     const uid = getCurrentUserId();
-    console.log("👂 [LISTEN] Iniciando...");
-    console.log("📂 Caminho:", pathStr);
-    console.log("👤 UID:", uid);
+    devLog.log("👂 [LISTEN] Iniciando...");
+    devLog.log("📂 Caminho:", pathStr);
+    devLog.log("👤 UID:", uid);
 
     if (shouldUseOfflineMode()) {
-      console.warn("🔄 [LISTEN] Usando modo offline");
+      devLog.warn("🔄 [LISTEN] Usando modo offline");
       const intervalId = setInterval(() => {
         try {
           const data = localStorageService.getCollection(pathStr);
@@ -635,13 +636,13 @@ export const database = {
             })),
           );
         } catch (error) {
-          console.warn("⚠️ [LISTEN] Erro ao ler do localStorage:", error);
+          devLog.warn("⚠️ [LISTEN] Erro ao ler do localStorage:", error);
           callback([]);
         }
       }, 1000);
 
       return () => {
-        console.log("🛑 [LISTEN] Parando listener offline");
+        devLog.log("🛑 [LISTEN] Parando listener offline");
         clearInterval(intervalId);
       };
     }
@@ -658,19 +659,19 @@ export const database = {
         if (lim) q = query(q, limit(lim));
       }
 
-      console.log("✅ [LISTEN] Listener configurado");
+      devLog.log("✅ [LISTEN] Listener configurado");
 
       return onSnapshot(
         q,
         (snap) => {
-          console.log(`📡 [LISTEN] Atualização recebida: ${snap.docs.length} documentos`);
+          devLog.log(`📡 [LISTEN] Atualização recebida: ${snap.docs.length} documentos`);
           callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
         },
         (error) => {
-          console.error("❌ [LISTEN] Erro no listener:", error.message);
-          console.error("🔍 Código do erro:", error.code);
+          devLog.error("❌ [LISTEN] Erro no listener:", error.message);
+          devLog.error("🔍 Código do erro:", error.code);
           
-          console.warn("⚠️ [LISTEN] Fallback para polling offline");
+          devLog.warn("⚠️ [LISTEN] Fallback para polling offline");
           const intervalId = setInterval(() => {
             try {
               const data = localStorageService.getCollection(pathStr);
@@ -683,20 +684,20 @@ export const database = {
                 })),
               );
             } catch (localError) {
-              console.warn("⚠️ [LISTEN] Erro no polling offline:", localError);
+              devLog.warn("⚠️ [LISTEN] Erro no polling offline:", localError);
               callback([]);
             }
           }, 1000);
 
           return () => {
-            console.log("🛑 [LISTEN] Parando polling offline");
+            devLog.log("🛑 [LISTEN] Parando polling offline");
             clearInterval(intervalId);
           };
         },
       );
     } catch (error: any) {
-      console.error("❌ [LISTEN] Erro ao configurar listener:", error.message);
-      console.error("📍 Caminho:", pathStr);
+      devLog.error("❌ [LISTEN] Erro ao configurar listener:", error.message);
+      devLog.error("📍 Caminho:", pathStr);
 
       const intervalId = setInterval(() => {
         try {
@@ -710,13 +711,13 @@ export const database = {
             })),
           );
         } catch (localError) {
-          console.warn("⚠️ [LISTEN] Erro no fallback:", localError);
+          devLog.warn("⚠️ [LISTEN] Erro no fallback:", localError);
           callback([]);
         }
       }, 1000);
 
       return () => {
-        console.log("🛑 [LISTEN] Parando listener fallback");
+        devLog.log("🛑 [LISTEN] Parando listener fallback");
         clearInterval(intervalId);
       };
     }

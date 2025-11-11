@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { devLog } from "../utils/logger";
 import {
   Trophy,
   Crown,
@@ -50,7 +51,7 @@ const Profile: React.FC = () => {
     avatarFile?: File;
     coverFile?: File;
   }) => {
-    console.log("💾 Salvando perfil:", data);
+    devLog.log("💾 Salvando perfil:", data);
     const result = await saveProfileService(data);
     const updated = {
       ...settings,
@@ -71,10 +72,10 @@ const Profile: React.FC = () => {
 
   const saveFav = async (fav: typeof settings.favorites) => {
     const updated = { ...settings, favorites: fav };
-    console.log("💾 Salvando favoritos:", updated);
+    devLog.log("💾 Salvando favoritos:", updated);
     setSettings(updated);
     if (!user?.uid) {
-      console.error("Usu��rio não autenticado");
+      devLog.error("Usu��rio não autenticado");
       return;
     }
     await saveSettings(user.uid, updated);
@@ -103,7 +104,7 @@ const Profile: React.FC = () => {
         });
       setNotifications(normalizedNotifications);
     } catch (error) {
-      console.error("Erro ao carregar notificações:", error);
+      devLog.error("Erro ao carregar notificações:", error);
       setNotifications([]);
     } finally {
       setLoadingNotifications(false);

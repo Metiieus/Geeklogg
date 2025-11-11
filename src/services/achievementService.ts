@@ -1,4 +1,5 @@
 import { database } from "./database";
+import { devLog } from "../utils/logger";
 import { getUserId } from "./utils";
 import {
   UserAchievement,
@@ -18,7 +19,7 @@ export async function getUserAchievements(): Promise<UserAchievement[]> {
     ]);
     return snap.map((d) => ({ ...(d.data || d), id: d.id }));
   } catch (error) {
-    console.error("Erro ao buscar conquistas:", error);
+    devLog.error("Erro ao buscar conquistas:", error);
     return [];
   }
 }
@@ -38,9 +39,9 @@ export async function unlockAchievement(achievementId: string): Promise<void> {
     };
 
     await database.add(["users", uid, "achievements"], userAchievement);
-    console.log("🏆 Conquista desbloqueada:", achievement.title);
+    devLog.log("🏆 Conquista desbloqueada:", achievement.title);
   } catch (error) {
-    console.error("Erro ao desbloquear conquista:", error);
+    devLog.error("Erro ao desbloquear conquista:", error);
     throw error;
   }
 }
@@ -201,7 +202,7 @@ export async function checkAchievements(
 
     return newlyUnlocked;
   } catch (error) {
-    console.error("Erro ao verificar conquistas:", error);
+    devLog.error("Erro ao verificar conquistas:", error);
     return [];
   }
 }
