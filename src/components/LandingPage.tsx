@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { colors, gradients } from "../design-system/tokens";
 import {
   BookOpen,
   Gamepad2,
-  Monitor,
-  BarChart3,
+  Film,
+  Tv,
   Sparkles,
   Zap,
   Target,
@@ -14,6 +13,16 @@ import {
   UserPlus,
   Menu,
   X,
+  Star,
+  TrendingUp,
+  Shield,
+  Smartphone,
+  Heart,
+  BarChart3,
+  Users,
+  CheckCircle2,
+  ArrowRight,
+  Play,
 } from "lucide-react";
 
 interface LandingPageProps {
@@ -26,575 +35,428 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onRegister,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  
+  const featuresRef = useRef(null);
+  const statsRef = useRef(null);
+  const testimonialsRef = useRef(null);
+  
+  const featuresInView = useInView(featuresRef, { once: true, amount: 0.2 });
+  const statsInView = useInView(statsRef, { once: true, amount: 0.2 });
+  const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.2 });
+
+  const features = [
+    {
+      icon: BookOpen,
+      title: "Biblioteca Unificada",
+      description: "Organize livros, games, filmes, séries e animes em um só lugar",
+      color: "from-green-500 to-emerald-500",
+    },
+    {
+      icon: BarChart3,
+      title: "Estatísticas Detalhadas",
+      description: "Acompanhe seu progresso com gráficos e métricas personalizadas",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: Star,
+      title: "Sistema de Avaliação",
+      description: "Avalie e organize suas mídias favoritas com notas e tags",
+      color: "from-yellow-500 to-orange-500",
+    },
+    {
+      icon: Sparkles,
+      title: "Archivius IA",
+      description: "Assistente inteligente que recomenda baseado no seu gosto",
+      color: "from-purple-500 to-pink-500",
+    },
+    {
+      icon: Target,
+      title: "Marcos e Conquistas",
+      description: "Celebre suas conquistas e acompanhe marcos importantes",
+      color: "from-red-500 to-rose-500",
+    },
+    {
+      icon: Smartphone,
+      title: "Multiplataforma",
+      description: "Acesse de qualquer dispositivo, sempre sincronizado",
+      color: "from-indigo-500 to-violet-500",
+    },
+  ];
+
+  const stats = [
+    { value: "5+", label: "Tipos de Mídia", icon: Film },
+    { value: "∞", label: "Itens na Biblioteca", icon: BookOpen },
+    { value: "100%", label: "Gratuito", icon: Heart },
+    { value: "24/7", label: "Disponível", icon: Clock },
+  ];
+
+  const testimonials = [
+    {
+      name: "João Silva",
+      role: "Gamer & Leitor",
+      avatar: "🎮",
+      text: "Finalmente um lugar para organizar TUDO! Antes usava 3 apps diferentes.",
+      rating: 5,
+    },
+    {
+      name: "Maria Santos",
+      role: "Cinéfila",
+      avatar: "🎬",
+      text: "O Archivius me ajudou a descobrir filmes incríveis que combinam com meu gosto!",
+      rating: 5,
+    },
+    {
+      name: "Pedro Costa",
+      role: "Otaku",
+      avatar: "🎌",
+      text: "Melhor que Skoob, MyAnimeList e tudo mais. Interface linda e funcional!",
+      rating: 5,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white overflow-x-hidden">
       {/* Header */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-50 px-6 py-4"
+        transition={{ duration: 0.6 }}
+        className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/10"
       >
-        <nav className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-          <div className="flex items-center space-x-2">
-            <div
-              className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center"
-              style={{
-                backgroundImage:
-                  "url(https://cdn.builder.io/api/v1/image/assets%2F7ba5873022eb4101ad2e05f96b2ac3d8%2F085f9520579a491c9159bed1a5a044b9)",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-              }}
-            />
-            <span
-              className="text-lg sm:text-2xl font-bold bg-clip-text text-transparent"
-              style={{
-                backgroundColor: "#5192c0",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-              }}
-            >
-              GeekLog
+        <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+              GeekLogg
             </span>
           </div>
-          <div className="hidden sm:flex items-center space-x-4">
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={onLogin}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400 transition-colors"
+              className="flex items-center space-x-2 px-6 py-2.5 rounded-xl border-2 border-cyan-500/30 hover:border-cyan-500 hover:bg-cyan-500/10 transition-all duration-300"
             >
               <LogIn size={18} />
-              <span>Login</span>
+              <span className="font-medium">Entrar</span>
             </button>
             <button
               onClick={onRegister}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 transition-all"
+              className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-cyan-500/25"
             >
               <UserPlus size={18} />
-              <span>Cadastre-se</span>
+              <span className="font-medium">Começar Grátis</span>
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
           <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="sm:hidden p-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400"
-            aria-label="Menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden p-2 rounded-lg border border-cyan-400/30 hover:border-cyan-400 transition-colors"
           >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </nav>
+
+        {/* Mobile Menu */}
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="sm:hidden absolute top-full right-6 mt-2 w-40 bg-gray-800 rounded-xl border border-cyan-500/20 shadow-lg"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-white/10 bg-slate-900/95 backdrop-blur-xl"
           >
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                onLogin();
-              }}
-              className="flex w-full items-center gap-2 px-4 py-2 hover:bg-gray-700 rounded-t-xl"
-            >
-              <LogIn size={18} />
-              <span>Login</span>
-            </button>
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                onRegister();
-              }}
-              className="flex w-full items-center gap-2 px-4 py-2 hover:bg-gray-700 rounded-b-xl"
-            >
-              <UserPlus size={18} />
-              <span>Cadastre-se</span>
-            </button>
+            <div className="px-6 py-4 space-y-3">
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  onLogin();
+                }}
+                className="flex w-full items-center justify-center space-x-2 px-6 py-3 rounded-xl border-2 border-cyan-500/30 hover:border-cyan-500 transition-all"
+              >
+                <LogIn size={18} />
+                <span>Entrar</span>
+              </button>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  onRegister();
+                }}
+                className="flex w-full items-center justify-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500"
+              >
+                <UserPlus size={18} />
+                <span>Começar Grátis</span>
+              </button>
+            </div>
           </motion.div>
         )}
       </motion.header>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 py-16 sm:py-20">
-        {/* Background Elements */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-cyan-500/20 to-transparent rounded-full blur-xl hidden sm:block"></div>
-          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-r from-pink-500/20 to-transparent rounded-full blur-xl hidden sm:block"></div>
-          <div className="absolute bottom-40 left-1/4 w-64 h-64 bg-gradient-to-r from-purple-500/20 to-transparent rounded-full blur-xl hidden sm:block"></div>
-
-          {/* Polygonal Elements */}
-          <div className="absolute top-32 right-32 w-16 h-16 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-30 transform rotate-45 hidden sm:block"></div>
-          <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-40 transform rotate-12 hidden sm:block"></div>
-          <div className="absolute top-1/2 right-10 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 opacity-50 transform -rotate-45 hidden sm:block"></div>
+          <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
         </div>
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto">
+        <div className="relative max-w-7xl mx-auto">
           <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{
-              duration: 1,
-              delay: 0.5,
-              type: "spring",
-              bounce: 0.3,
-            }}
-            className="mb-6 sm:mb-8"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center space-y-8"
           >
-            <div
-              className="inline-block p-2 sm:p-3 rounded-2xl backdrop-blur-sm mb-4 sm:mb-6"
-              style={{ border: "1px solid rgba(255, 255, 255, 0)" }}
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/10 to-pink-500/10 border border-cyan-500/20"
             >
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2F7ba5873022eb4101ad2e05f96b2ac3d8%2Fbd81ba3a237e40ffa01e2bae2f67765f"
-                alt="GeekLog Logo"
-                className="object-contain mx-auto w-full max-w-[300px] h-auto sm:max-w-[400px] md:max-w-[600px] lg:max-w-[827px]"
-                style={{ maxHeight: "200px" }}
-              />
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm font-medium text-cyan-300">
+                A plataforma nerd definitiva
+              </span>
+            </motion.div>
+
+            {/* Main Heading */}
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              <span className="bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent">
+                Organize Sua Vida
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                Geek em Um Lugar
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+              Livros, games, filmes, séries e animes. Tudo sincronizado,
+              organizado e com IA para recomendar o que você vai amar.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <button
+                onClick={onRegister}
+                className="group flex items-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 transition-all duration-300 shadow-2xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105"
+              >
+                <span className="text-lg font-semibold">Começar Grátis</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <button
+                onClick={onLogin}
+                className="flex items-center space-x-3 px-8 py-4 rounded-2xl border-2 border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+              >
+                <Play className="w-5 h-5" />
+                <span className="text-lg font-semibold">Ver Demo</span>
+              </button>
+            </div>
+
+            {/* Social Proof */}
+            <div className="flex items-center justify-center space-x-6 pt-8 text-slate-400">
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                <span>100% Gratuito</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                <span>Sem Anúncios</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                <span>Open Source</span>
+              </div>
             </div>
           </motion.div>
+        </div>
+      </section>
 
-          <motion.h1
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight"
-          >
-            <motion.span
-              initial={{ backgroundPosition: "0% 50%" }}
-              animate={{ backgroundPosition: "100% 50%" }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
-              className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent"
-              style={{ backgroundSize: "200% 200%" }}
-            >
-              Viva sua jornada geek
-            </motion.span>
-            <br />
-            <motion.span
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
-              className="text-white"
-            >
-              com estilo e inteligência
-            </motion.span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4"
-          >
-            O diário definitivo para gamers, leitores e nerds. Registre suas
-            aventuras, descubra novos mundos e deixe nossa IA guiar sua próxima
-            missão épica.
-          </motion.p>
-
-          <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
-          >
-            <motion.button
-              onClick={onRegister}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-lg font-semibold text-lg hover:from-cyan-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-cyan-500/25"
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Zap size={18} className="sm:w-5 sm:h-5" />
-                </motion.div>
-                <span>Comece AGORA</span>
-              </span>
-            </motion.button>
-            <motion.button
-              onClick={onLogin}
-              whileHover={{ scale: 1.02, borderColor: "#06b6d4" }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-8 py-4 border border-cyan-400/50 rounded-lg font-semibold text-lg hover:border-cyan-400 hover:bg-cyan-400/10 transition-all"
-            >
-              Já tenho conta
-            </motion.button>
-          </motion.div>
+      {/* Stats Section */}
+      <section ref={statsRef} className="py-20 px-6 bg-slate-900/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="text-center space-y-3"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-pink-500/20 border border-cyan-500/30">
+                  <stat.icon className="w-8 h-8 text-cyan-400" />
+                </div>
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                  {stat.value}
+                </div>
+                <div className="text-slate-400 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 relative">
+      <section ref={featuresRef} className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12 sm:mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            animate={featuresInView ? { opacity: 1, y: 0 } : {}}
+            className="text-center space-y-4 mb-16"
           >
-            <motion.h2
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 px-4"
-            >
-              <span className="bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
-                Suas aventuras, organizadas
+            <h2 className="text-4xl md:text-5xl font-bold">
+              <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                Funcionalidades Incríveis
               </span>
-            </motion.h2>
-            <motion.p
-              initial={{ y: 20, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4"
-            >
-              Transforme suas experiências geek em uma jornada épica e bem
-              documentada
-            </motion.p>
+            </h2>
+            <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+              Tudo que você precisa para organizar e aproveitar sua coleção nerd
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4 features-grid grid-container">
-            {[
-              {
-                icon: BookOpen,
-                title: "Biblioteca Pessoal",
-                description:
-                  "Organize livros, mangás, quadrinhos e sua lista de leitura",
-                color: "from-cyan-400 to-blue-500",
-              },
-              {
-                icon: Gamepad2,
-                title: "Gaming Journal",
-                description:
-                  "Acompanhe jogos, conquistas, tempo de jogo e reviews",
-                color: "from-pink-400 to-purple-500",
-              },
-              {
-                icon: Monitor,
-                title: "Watchlist",
-                description:
-                  "Filmes, séries, animes - nunca mais esqueça o que assistir",
-                color: "from-purple-400 to-indigo-500",
-              },
-              {
-                icon: BarChart3,
-                title: "Estatísticas",
-                description:
-                  "Veja seus padrões, evolução e marcos da sua jornada",
-                color: "from-indigo-400 to-cyan-500",
-              },
-            ].map((feature, index) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="group"
+                initial={{ opacity: 0, y: 30 }}
+                animate={featuresInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="group relative p-6 rounded-2xl bg-slate-800/50 border border-white/10 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10"
               >
-                <motion.div
-                  whileHover={{
-                    scale: 1.02,
-                    y: -2,
-                    boxShadow: "0 15px 30px rgba(6, 182, 212, 0.1)",
-                  }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 mx-1 feature-card"
-                >
-                  <motion.div
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                    className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-3 sm:mb-4`}
-                  >
-                    <feature.icon
-                      size={20}
-                      className="sm:w-6 sm:h-6 text-white"
-                    />
-                  </motion.div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-white">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </motion.div>
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} mb-4`}>
+                  <feature.icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-white">
+                  {feature.title}
+                </h3>
+                <p className="text-slate-400 leading-relaxed">
+                  {feature.description}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Companion IA Section */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-r from-cyan-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* Testimonials Section */}
+      <section ref={testimonialsRef} className="py-20 px-6 bg-slate-900/50">
+        <div className="max-w-7xl mx-auto">
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12 sm:mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
+            className="text-center space-y-4 mb-16"
           >
-            <motion.div
-              initial={{ scale: 0, rotate: 180 }}
-              whileInView={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-              viewport={{ once: true }}
-              className="inline-block p-3 sm:p-4 bg-gradient-to-r from-cyan-500/20 to-pink-500/20 rounded-2xl backdrop-blur-sm border border-cyan-400/30 mb-4 sm:mb-6"
-            >
-              <motion.div
-                animate={{
-                  rotate: [0, 10, -10, 0],
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-cyan-400" />
-              </motion.div>
-            </motion.div>
-            <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 px-4">
-              <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
-                Conheça o Archivius IA
+            <h2 className="text-4xl md:text-5xl font-bold">
+              <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                Amado Pelos Usuários
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed px-4">
-              Seu assistente pessoal que entende seus gostos, analisa seu perfil
-              e cria missões personalizadas para expandir seus horizontes geek
+            <p className="text-xl text-slate-400">
+              Veja o que a comunidade está dizendo
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 features-grid grid-container">
-            {[
-              {
-                icon: Target,
-                title: "Missões Personalizadas",
-                description:
-                  "Baseado no seu histórico, receba desafios únicos: 'Leia 3 sci-fi este mês' ou 'Explore jogos indie'",
-                color: "from-cyan-400 to-blue-500",
-              },
-              {
-                icon: Sparkles,
-                title: "Recomendações Inteligentes",
-                description:
-                  "IA que aprende seus padrões e sugere o próximo livro, jogo ou série perfeito para você",
-                color: "from-pink-400 to-purple-500",
-              },
-              {
-                icon: Clock,
-                title: "Narrativa da Jornada",
-                description:
-                  "Transforme seus dados em uma história épica da sua evolução como nerd/geek",
-                color: "from-purple-400 to-indigo-500",
-              },
-            ].map((feature, index) => (
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
-                initial={{ y: 100, opacity: 0, rotateY: 90 }}
-                whileInView={{ y: 0, opacity: 1, rotateY: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: index * 0.2,
-                  type: "spring",
-                  bounce: 0.3,
-                }}
-                viewport={{ once: true }}
-                className="group"
+                initial={{ opacity: 0, y: 30 }}
+                animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 }}
+                className="p-6 rounded-2xl bg-slate-800/50 border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
               >
-                <motion.div
-                  whileHover={{
-                    scale: 1.02,
-                    y: -4,
-                    boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)",
-                  }}
-                  className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 hover:border-cyan-400/50 transition-all duration-500 mx-2 feature-card"
-                >
-                  <motion.div
-                    whileHover={{
-                      rotate: [0, -10, 10, 0],
-                      scale: 1.1,
-                    }}
-                    transition={{ duration: 0.6 }}
-                    className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-4 sm:mb-6`}
-                  >
-                    <feature.icon
-                      size={24}
-                      className="sm:w-7 sm:h-7 text-white"
-                    />
-                  </motion.div>
-                  <motion.h3
-                    initial={{ x: -20, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.2 + 0.3 }}
-                    viewport={{ once: true }}
-                    className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-white"
-                  >
-                    {feature.title}
-                  </motion.h3>
-                  <motion.p
-                    initial={{ x: -20, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.2 + 0.5 }}
-                    viewport={{ once: true }}
-                    className="text-gray-400 leading-relaxed text-base sm:text-lg"
-                  >
-                    {feature.description}
-                  </motion.p>
-                </motion.div>
+                <div className="flex items-center space-x-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-slate-300 mb-6 leading-relaxed">
+                  "{testimonial.text}"
+                </p>
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center text-2xl">
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-sm text-slate-400">
+                      {testimonial.role}
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
-
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="text-center mt-12 sm:mt-16"
-          >
-            <motion.div
-              whileHover={{
-                scale: 1.02,
-                boxShadow: "0 20px 40px rgba(6, 182, 212, 0.1)",
-              }}
-              className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-cyan-400/30 rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto"
-            >
-              <motion.p
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                viewport={{ once: true }}
-                className="text-base sm:text-lg text-cyan-400 mb-3 sm:mb-4 font-semibold"
-              >
-                ✨ Exemplo de Archivius IA
-              </motion.p>
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                viewport={{ once: true }}
-                className="text-lg sm:text-xl text-gray-300 italic leading-relaxed"
-              >
-                "Notei que você adora RPGs e leu 3 livros de fantasia este mês.
-                Que tal experimentar 'The Witcher 3' e depois ler os livros da
-                saga? Criei uma missão especial: 'Jornada Completa do Bruxo' -
-                jogue o game, leia os livros e assista a série!"
-              </motion.p>
-            </motion.div>
-          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20"></div>
-          <div className="absolute top-10 left-5 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-r from-cyan-500/30 to-transparent rounded-full blur-xl"></div>
-          <div className="absolute bottom-10 right-5 sm:right-10 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-r from-pink-500/30 to-transparent rounded-full blur-xl"></div>
-
-          {/* More Polygonal Elements */}
-          <div className="absolute top-20 right-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-cyan-400 to-pink-500 opacity-20 transform rotate-45"></div>
-          <div className="absolute bottom-20 left-1/4 w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-400 to-cyan-500 opacity-25 transform -rotate-12"></div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.h2
-            initial={{ scale: 0.5, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-            viewport={{ once: true }}
-            className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 px-4"
-          >
-            <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
-              Comece sua jornada épica
-            </span>
-          </motion.h2>
-          <motion.p
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 leading-relaxed px-4"
-          >
-            Junte-se a milhares de nerds que já transformaram suas experiências
-            em aventuras organizadas
-          </motion.p>
-
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4"
+            className="relative p-12 rounded-3xl bg-gradient-to-r from-cyan-500/10 via-pink-500/10 to-purple-500/10 border border-cyan-500/20 text-center space-y-6 overflow-hidden"
           >
-            <motion.button
-              onClick={onRegister}
-              whileHover={{
-                scale: 1.05,
-                y: -2,
-                boxShadow: "0 15px 30px rgba(6, 182, 212, 0.3)",
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="group w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-2xl font-bold text-xl hover:from-cyan-600 hover:to-pink-600 transition-all shadow-2xl mx-2"
-            >
-              <span className="flex items-center justify-center space-x-2 sm:space-x-3">
-                <motion.div
-                  animate={{
-                    rotate: [0, 15, -15, 0],
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <Zap size={20} className="sm:w-6 sm:h-6" />
-                </motion.div>
-                <span className="text-sm sm:text-base lg:text-lg">
-                  COMECE AGORA - É GRÁTIS
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-pink-500/5 blur-3xl" />
+            
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                  Pronto Para Começar?
                 </span>
-              </span>
-            </motion.button>
+              </h2>
+              <p className="text-xl text-slate-300 mb-8">
+                Junte-se a milhares de nerds organizando suas coleções
+              </p>
+              <button
+                onClick={onRegister}
+                className="inline-flex items-center space-x-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 transition-all duration-300 shadow-2xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105 text-lg font-semibold"
+              >
+                <span>Criar Conta Grátis</span>
+                <ArrowRight className="w-6 h-6" />
+              </button>
+            </div>
           </motion.div>
-
-          <p className="text-gray-500 mt-6 sm:mt-8 text-sm sm:text-base lg:text-lg px-4 leading-relaxed">
-            ⚡ Cadastro em 30 segundos �� 🎮 Sem cartão de crédito • 🚀 Comece a
-            usar imediatamente
-          </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-12 px-4 sm:px-6 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-3 sm:mb-4">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
-              <BookOpen size={16} className="sm:w-5 sm:h-5 text-white" />
+      <footer className="py-12 px-6 border-t border-white/10 bg-slate-950">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-pink-500 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
+                GeekLogg
+              </span>
             </div>
-            <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
-              GeekLog
-            </span>
+            <div className="text-slate-400 text-sm">
+              © 2025 GeekLogg. Feito com ❤️ para a comunidade nerd.
+            </div>
+            <div className="flex items-center space-x-6 text-slate-400">
+              <a href="#" className="hover:text-cyan-400 transition-colors">
+                Privacidade
+              </a>
+              <a href="#" className="hover:text-cyan-400 transition-colors">
+                Termos
+              </a>
+              <a href="#" className="hover:text-cyan-400 transition-colors">
+                Contato
+              </a>
+            </div>
           </div>
-          <p className="text-sm sm:text-base text-gray-500">
-            © 2025 GeekLog. Feito com ❤️ para a comunidade geek.
-          </p>
         </div>
       </footer>
     </div>
