@@ -93,24 +93,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
   const testimonials = [
     {
-      name: "João Silva",
-      role: "Gamer & Leitor",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      text: "Finalmente um lugar para organizar TUDO! Antes usava 3 apps diferentes.",
+      name: "Rafael Mendes",
+      role: "Gamer & Colecionador",
+      avatar: "/assets/testimonial1.png",
+      text: "Tenho mais de 200 jogos catalogados. O sistema de tags e o pódio me ajudam a lembrar quais são meus favoritos de cada gênero. Nunca mais esqueço aquele jogo que queria rejogar!",
       rating: 5,
     },
     {
-      name: "Maria Santos",
-      role: "Cinéfila",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-      text: "O Archivius me ajudou a descobrir filmes incríveis que combinam com meu gosto!",
+      name: "Ana Carolina",
+      role: "Leitora Voraz",
+      avatar: "/assets/testimonial2.png",
+      text: "Li 47 livros ano passado e o GeekLogg me ajudou a acompanhar tudo. As estatísticas de páginas lidas e o Archivius recomendando baseado nos meus ratings são incríveis!",
       rating: 5,
     },
     {
-      name: "Pedro Costa",
-      role: "Otaku",
-      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-      text: "Melhor que Skoob, MyAnimeList e tudo mais. Interface linda e funcional!",
+      name: "Lucas Ferreira",
+      role: "Cinéfilo & Seriemaníaco",
+      avatar: "/assets/testimonial3.png",
+      text: "Migrei do Letterboxd e não me arrependo. Poder ter filmes, séries E animes no mesmo lugar, com estatísticas unificadas, mudou minha forma de organizar. O dark mode é perfeito!",
       rating: 5,
     },
   ];
