@@ -303,7 +303,7 @@ const Statistics: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400 text-xs sm:text-sm">
-                      Horas
+                      {type === 'books' || type === 'book' ? 'Páginas' : 'Horas'}
                     </span>
                     <span className="text-white font-medium text-xs sm:text-sm">
                       {stats.hours.toFixed(1)}
