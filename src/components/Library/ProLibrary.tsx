@@ -238,14 +238,14 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       };
 
       const newMedia = await addMedia({
-        title: result.title,
-        type: normalizeType(result.originalType || "book"),
-        cover: result.image,
-        year: result.year,
-        author: result.authors?.join(", "),
-        director: result.director,
-        genre: result.genres?.join(", "),
-        notes: result.description ? result.description.substring(0, 100) : undefined,
+        title: media.title,
+        type: normalizeType(media.originalType || "book"),
+        cover: media.image,
+        year: media.year,
+        author: media.authors?.join(", "),
+        director: media.director,
+        genre: media.genres?.join(", "),
+        notes: media.description ? media.description.substring(0, 100) : undefined,
         // NÃO adicionar rating da API - usuário deve definir manualmente
         rating: undefined,
         status: "completed",
