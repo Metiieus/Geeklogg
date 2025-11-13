@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { AchievementTree } from "./AchievementTree";
 import { AchievementModal } from "./modals/AchievementModal";
 import { EditProfileModal } from "./modals/EditProfileModal";
@@ -31,10 +32,13 @@ import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import { formatDate, normalizeTimestamp } from "../utils/dateUtils";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
+import { SubscriptionBadge } from "./SubscriptionBadge";
+import { UpgradeToPremiumModal } from "./modals/UpgradeToPremiumModal";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
   const { user, profile, loading, logout } = useAuth();
+  const { showSuccess } = useToast();
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] =
@@ -44,6 +48,7 @@ const Profile: React.FC = () => {
   >("summary");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const handleSaveProfile = async (data: {
     name: string;
@@ -334,6 +339,41 @@ const Profile: React.FC = () => {
                 </span>
               </div>
             </div>
+
+            {/* Botão de Upgrade para usuários Free */}
+            {!profile?.isPremium && (
+              <div className="mt-6">
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:via-yellow-600 hover:to-amber-700 text-black font-bold text-lg rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-amber-500/50 flex items-center justify-center gap-2"
+                >
+                  <Crown className="w-5 h-5 fill-current" />
+                  Assinar Premium por R$ 9,90/mês
+                  <Zap className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Informações da assinatura para usuários Premium */}
+            {profile?.isPremium && (
+              <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-cyan-500/30">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-400">Status da Assinatura</p>
+                    <p className="text-lg font-semibold text-cyan-400">Ativa</p>
+                  </div>
+                  <button
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg text-sm transition-colors"
+                    onClick={() => {
+                      // TODO: Implementar gerenciamento de assinatura
+                      showSuccess("Em breve! Gerenciamento de assinatura será implementado.");
+                    }}
+                  >
+                    Gerenciar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden w-full relative">
             {/* Capa do perfil */}
@@ -402,9 +442,15 @@ const Profile: React.FC = () => {
               </div>
 
               <div className="text-center sm:text-left flex-1 min-w-0">
-                <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
-                  {displayName}
-                </h2>
+                <div className="flex items-center justify-center sm:justify-start gap-3 flex-wrap">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
+                    {displayName}
+                  </h2>
+                  <SubscriptionBadge 
+                    tier={settings.subscriptionTier || 'free'} 
+                    size="md"
+                  />
+                </div>
                 <TruncatedBio
                   bio={displayBio}
                   maxLength={400}
@@ -556,6 +602,18 @@ const Profile: React.FC = () => {
         <AchievementModal
           achievement={selectedAchievement}
           onClose={() => setSelectedAchievement(null)}
+        />
+      )}
+
+      {/* Upgrade Modal */}
+      {showUpgradeModal && (
+        <UpgradeToPremiumModal
+          onClose={() => setShowUpgradeModal(false)}
+          onUpgrade={() => {
+            // TODO: Implementar integração com gateway de pagamento
+            showSuccess("Em breve! Sistema de pagamento será implementado.");
+            setShowUpgradeModal(false);
+          }}
         />
       )}
     </div>

@@ -13,6 +13,8 @@ export interface UserSettings {
   };
   theme?: string;
   defaultLibrarySort?: string;
+  subscriptionTier?: 'free' | 'premium';
+  subscriptionExpiresAt?: Date;
 }
 
 export async function getSettings(

@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
+import { UpgradeToPremiumModal } from "./modals/UpgradeToPremiumModal";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
 import {
@@ -50,12 +51,13 @@ export const ArchiviusAgent: React.FC = () => {
     SmartSuggestion[]
   >([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Archivius disponível para usuários premium ou emails liberados
-  const isPremium = profile?.isPremium === true;
+  // Archivius disponível apenas para usuários premium
+  const isPremium = settings.subscriptionTier === 'premium';
   const userEmail = profile?.email || "";
-  const canAccess = canUseArchivius(isPremium, !!profile, userEmail);
+  const canAccess = isPremium;
   const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
 
   // Gerar contexto enriquecido para IA
@@ -468,6 +470,22 @@ ${config.callToAction}
                         : "👑 Desperte os poderes premium para análises supremas!"}
                     </p>
 
+                    {!canAccess && (
+                      <div className="space-y-3 px-4">
+                        <button
+                          onClick={() => setShowUpgradeModal(true)}
+                          className="w-full px-4 py-3 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:via-yellow-600 hover:to-amber-700 text-black font-bold rounded-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105 shadow-lg shadow-amber-500/50"
+                        >
+                          <Crown className="w-5 h-5 fill-current" />
+                          Desbloquear Archivius
+                          <Sparkles className="w-4 h-4" />
+                        </button>
+                        <p className="text-xs text-center text-gray-400">
+                          Tenha acesso ao assistente IA mais épico do universo geek!
+                        </p>
+                      </div>
+                    )}
+
                     {canAccess && (
                       <div className="space-y-3">
                         {/* Botão de Análise Épica */}
@@ -660,6 +678,17 @@ ${config.callToAction}
           </div>
         )}
       </AnimatePresence>
+      {/* Modal de Upgrade */}
+      {showUpgradeModal && (
+        <UpgradeToPremiumModal
+          onClose={() => setShowUpgradeModal(false)}
+          onUpgrade={() => {
+            // TODO: Implementar integração com gateway de pagamento
+            showSuccess("Em breve! Sistema de pagamento será implementado.");
+            setShowUpgradeModal(false);
+          }}
+        />
+      )}
     </>
   );
 };
