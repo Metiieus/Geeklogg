@@ -1,15 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Crown, Sparkles, Check, Zap, Star, Brain } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { redirectToCheckout } from '../../services/stripeService';
 
 interface UpgradeToPremiumModalProps {
   onClose: () => void;
-  onUpgrade: () => void;
 }
 
 export const UpgradeToPremiumModal: React.FC<UpgradeToPremiumModalProps> = ({
   onClose,
-  onUpgrade,
 }) => {
+  const { user, profile } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleUpgrade = async () => {
+    if (!user || !profile?.email) {
+      setError('Usuário não autenticado');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Redirecionar para checkout do Stripe
+      await redirectToCheckout(user.uid, profile.email);
+    } catch (err) {
+      console.error('❌ Erro ao iniciar checkout:', err);
+      setError('Erro ao processar pagamento. Tente novamente.');
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-amber-500/30 shadow-2xl shadow-amber-500/20">
@@ -154,13 +176,29 @@ export const UpgradeToPremiumModal: React.FC<UpgradeToPremiumModalProps> = ({
 
           {/* CTA */}
           <div className="space-y-3">
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+                {error}
+              </div>
+            )}
+            
             <button
-              onClick={onUpgrade}
-              className="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:via-yellow-600 hover:to-amber-700 text-black font-bold text-lg rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-amber-500/50 flex items-center justify-center gap-2"
+              onClick={handleUpgrade}
+              disabled={isLoading}
+              className="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:via-yellow-600 hover:to-amber-700 disabled:from-gray-600 disabled:via-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black font-bold text-lg rounded-xl transition-all transform hover:scale-105 disabled:hover:scale-100 shadow-lg shadow-amber-500/50 flex items-center justify-center gap-2"
             >
-              <Crown className="w-5 h-5 fill-current" />
-              Assinar Premium Agora
-              <Sparkles className="w-5 h-5" />
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Processando...
+                </>
+              ) : (
+                <>
+                  <Crown className="w-5 h-5 fill-current" />
+                  Assinar Premium Agora
+                  <Sparkles className="w-5 h-5" />
+                </>
+              )}
             </button>
 
             <button

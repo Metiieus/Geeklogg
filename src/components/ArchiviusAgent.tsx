@@ -682,11 +682,6 @@ ${config.callToAction}
       {showUpgradeModal && (
         <UpgradeToPremiumModal
           onClose={() => setShowUpgradeModal(false)}
-          onUpgrade={() => {
-            // TODO: Implementar integração com gateway de pagamento
-            showSuccess("Em breve! Sistema de pagamento será implementado.");
-            setShowUpgradeModal(false);
-          }}
         />
       )}
     </>

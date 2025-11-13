@@ -54,6 +54,7 @@ import { AddMediaPage } from "./components/AddMediaPage";
 import EditMediaPageWrapper from "./components/EditMediaPageWrapper";
 import { UserProfileView } from "./components/UserProfileView";
 import FirebaseStatus from "./components/FirebaseStatus";
+import { StripeReturnHandler } from "./components/StripeReturnHandler";
 import "./utils/connectivityTest";
 
 // Services
@@ -453,6 +454,9 @@ const AppContent: React.FC = () => {
 
         {/* Firebase Status - Removido conforme solicitado */}
         {/* <FirebaseStatus showStatus={!!user} /> */}
+        
+        {/* Stripe Return Handler */}
+        <StripeReturnHandler />
       </div>
     </AppProvider>
   );

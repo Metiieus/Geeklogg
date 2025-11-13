@@ -34,6 +34,7 @@ import { formatDate, normalizeTimestamp } from "../utils/dateUtils";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { SubscriptionBadge } from "./SubscriptionBadge";
 import { UpgradeToPremiumModal } from "./modals/UpgradeToPremiumModal";
+import { redirectToCustomerPortal } from "../services/stripeService";
 
 const Profile: React.FC = () => {
   const { settings, setSettings } = useAppContext();
@@ -364,9 +365,13 @@ const Profile: React.FC = () => {
                   </div>
                   <button
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg text-sm transition-colors"
-                    onClick={() => {
-                      // TODO: Implementar gerenciamento de assinatura
-                      showSuccess("Em breve! Gerenciamento de assinatura será implementado.");
+                    onClick={async () => {
+                      if (!user?.uid) return;
+                      try {
+                        await redirectToCustomerPortal(user.uid);
+                      } catch (error) {
+                        showSuccess("Erro ao abrir portal de gerenciamento. Tente novamente.");
+                      }
                     }}
                   >
                     Gerenciar
@@ -609,11 +614,6 @@ const Profile: React.FC = () => {
       {showUpgradeModal && (
         <UpgradeToPremiumModal
           onClose={() => setShowUpgradeModal(false)}
-          onUpgrade={() => {
-            // TODO: Implementar integração com gateway de pagamento
-            showSuccess("Em breve! Sistema de pagamento será implementado.");
-            setShowUpgradeModal(false);
-          }}
         />
       )}
     </div>
