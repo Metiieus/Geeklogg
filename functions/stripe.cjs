@@ -1,5 +1,19 @@
 const admin = require("firebase-admin");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const functions = require("firebase-functions");
+const stripeLib = require("stripe");
+
+// Inicializar Stripe de forma lazy (apenas quando necessário)
+let stripe = null;
+function getStripe() {
+  if (!stripe) {
+    const secretKey = process.env.STRIPE_SECRET_KEY || functions.config().stripe?.secret_key;
+    if (!secretKey) {
+      throw new Error('STRIPE_SECRET_KEY não configurada');
+    }
+    stripe = stripeLib(secretKey);
+  }
+  return stripe;
+}
 
 // Inicializar Firebase Admin se ainda não foi inicializado
 if (!admin.apps.length) {
@@ -34,7 +48,7 @@ async function createCheckoutSession(req, res) {
 
     // Criar customer no Stripe se não existir
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: email,
         metadata: {
           firebaseUID: userId,
@@ -50,7 +64,7 @@ async function createCheckoutSession(req, res) {
     }
 
     // Criar sessão de checkout
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       payment_method_types: ["card"],
       mode: "subscription",
@@ -106,7 +120,7 @@ async function createCustomerPortal(req, res) {
     }
 
     // Criar sessão do portal
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: customerId,
       return_url: `${process.env.CLIENT_URL}/profile`,
     });
@@ -133,7 +147,7 @@ async function handleWebhook(req, res) {
 
   try {
     // Verificar assinatura do webhook
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+    event = getStripe().webhooks.constructEvent(req.rawBody, sig, webhookSecret);
   } catch (err) {
     console.error("❌ Erro na verificação do webhook:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
