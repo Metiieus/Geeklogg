@@ -1,14 +1,19 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
+const { defineSecret } = require("firebase-functions/v2/params");
 const stripeLib = require("stripe");
+
+// Definir secrets para Gen 2 (opcional, mas recomendado)
+// const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
+// const stripeWebhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 
 // Inicializar Stripe de forma lazy (apenas quando necessário)
 let stripe = null;
 function getStripe() {
   if (!stripe) {
-    const secretKey = process.env.STRIPE_SECRET_KEY || functions.config().stripe?.secret_key;
+    // Gen 2: usar process.env diretamente (configurado via Firebase Console ou CLI)
+    const secretKey = process.env.STRIPE_SECRET_KEY;
     if (!secretKey) {
-      throw new Error('STRIPE_SECRET_KEY não configurada');
+      throw new Error('STRIPE_SECRET_KEY não configurada. Configure via: firebase functions:secrets:set STRIPE_SECRET_KEY');
     }
     stripe = stripeLib(secretKey);
   }
