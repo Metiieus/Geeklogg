@@ -61,10 +61,4 @@ app.post("/stripe-create-checkout", stripeService.createCheckoutSession);
 app.post("/stripe-customer-portal", stripeService.createCustomerPortal);
 
 // --- EXPORTAÇÃO DA FUNÇÃO ---
-// Usar Gen 1 explicitamente para evitar problemas de upgrade
-exports.api = functions
-  .runWith({
-    memory: '256MB',
-    timeoutSeconds: 60,
-  })
-  .https.onRequest(app);
+exports.api = functions.https.onRequest(app);
