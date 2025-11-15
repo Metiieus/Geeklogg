@@ -1,10 +1,5 @@
 const admin = require("firebase-admin");
-const { defineSecret } = require("firebase-functions/params");
 const stripeLib = require("stripe");
-
-// Definir secrets para Gen 2 (opcional, mas recomendado)
-// const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
-// const stripeWebhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 
 // Inicializar Stripe de forma lazy (apenas quando necessário)
 let stripe = null;
