@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const { defineSecret } = require("firebase-functions/v2/params");
+const { defineSecret } = require("firebase-functions/params");
 const stripeLib = require("stripe");
 
 // Definir secrets para Gen 2 (opcional, mas recomendado)
@@ -10,7 +10,6 @@ const stripeLib = require("stripe");
 let stripe = null;
 function getStripe() {
   if (!stripe) {
-    // Gen 2: usar process.env diretamente (configurado via Firebase Console ou CLI)
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (!secretKey) {
       throw new Error('STRIPE_SECRET_KEY não configurada. Configure via: firebase functions:secrets:set STRIPE_SECRET_KEY');
@@ -38,20 +37,17 @@ async function createCheckoutSession(req, res) {
       return res.status(400).json({ error: "userId e email são obrigatórios" });
     }
 
-    // Usar o priceId fornecido ou o padrão
     const stripePriceId = priceId || process.env.STRIPE_PRICE_ID;
 
     if (!stripePriceId) {
-      return res.status(500).json({ 
-        error: "STRIPE_PRICE_ID não configurado" 
+      return res.status(500).json({
+        error: "STRIPE_PRICE_ID não configurado"
       });
     }
 
-    // Verificar se o usuário já tem um customer ID do Stripe
     const userDoc = await db.collection("users").doc(userId).get();
     let customerId = userDoc.data()?.stripeCustomerId;
 
-    // Criar customer no Stripe se não existir
     if (!customerId) {
       const customer = await getStripe().customers.create({
         email: email,
@@ -61,14 +57,12 @@ async function createCheckoutSession(req, res) {
       });
       customerId = customer.id;
 
-      // Salvar customer ID no Firestore
       await db.collection("users").doc(userId).set(
         { stripeCustomerId: customerId },
         { merge: true }
       );
     }
 
-    // Criar sessão de checkout
     const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       payment_method_types: ["card"],
@@ -97,8 +91,8 @@ async function createCheckoutSession(req, res) {
     });
   } catch (error) {
     console.error("❌ Erro ao criar checkout session:", error);
-    return res.status(500).json({ 
-      error: error.message || "Erro ao criar sessão de checkout" 
+    return res.status(500).json({
+      error: error.message || "Erro ao criar sessão de checkout"
     });
   }
 }
@@ -114,17 +108,15 @@ async function createCustomerPortal(req, res) {
       return res.status(400).json({ error: "userId é obrigatório" });
     }
 
-    // Buscar customer ID do Stripe
     const userDoc = await db.collection("users").doc(userId).get();
     const customerId = userDoc.data()?.stripeCustomerId;
 
     if (!customerId) {
-      return res.status(404).json({ 
-        error: "Cliente não encontrado no Stripe" 
+      return res.status(404).json({
+        error: "Cliente não encontrado no Stripe"
       });
     }
 
-    // Criar sessão do portal
     const session = await getStripe().billingPortal.sessions.create({
       customer: customerId,
       return_url: `${process.env.CLIENT_URL}/profile`,
@@ -135,14 +127,14 @@ async function createCustomerPortal(req, res) {
     });
   } catch (error) {
     console.error("❌ Erro ao criar portal session:", error);
-    return res.status(500).json({ 
-      error: error.message || "Erro ao criar portal de gerenciamento" 
+    return res.status(500).json({
+      error: error.message || "Erro ao criar portal de gerenciamento"
     });
   }
 }
 
 /**
- * Webhook do Stripe para processar eventos
+ * Webhook do Stripe
  */
 async function handleWebhook(req, res) {
   const sig = req.headers["stripe-signature"];
@@ -151,14 +143,12 @@ async function handleWebhook(req, res) {
   let event;
 
   try {
-    // Verificar assinatura do webhook
     event = getStripe().webhooks.constructEvent(req.rawBody, sig, webhookSecret);
   } catch (err) {
     console.error("❌ Erro na verificação do webhook:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Processar evento
   try {
     switch (event.type) {
       case "checkout.session.completed":
@@ -208,7 +198,6 @@ async function handleCheckoutCompleted(session) {
     return;
   }
 
-  // Atualizar usuário no Firestore
   await db.collection("users").doc(userId).set(
     {
       stripeCustomerId: customerId,
@@ -224,7 +213,7 @@ async function handleCheckoutCompleted(session) {
 }
 
 /**
- * Processar atualização de assinatura
+ * Atualização de assinatura
  */
 async function handleSubscriptionUpdate(subscription) {
   console.log("🔄 Assinatura atualizada:", subscription.id);
@@ -254,7 +243,7 @@ async function handleSubscriptionUpdate(subscription) {
 }
 
 /**
- * Processar cancelamento de assinatura
+ * Assinatura cancelada
  */
 async function handleSubscriptionDeleted(subscription) {
   console.log("❌ Assinatura cancelada:", subscription.id);
@@ -279,27 +268,25 @@ async function handleSubscriptionDeleted(subscription) {
 }
 
 /**
- * Processar pagamento bem-sucedido
+ * Pagamento bem-sucedido
  */
 async function handlePaymentSucceeded(invoice) {
   console.log("💰 Pagamento bem-sucedido:", invoice.id);
 
   const customerId = invoice.customer;
-  const subscriptionId = invoice.subscription;
 
-  // Buscar usuário pelo customer ID
-  const usersSnapshot = await db
+  const snapshot = await db
     .collection("users")
     .where("stripeCustomerId", "==", customerId)
     .limit(1)
     .get();
 
-  if (usersSnapshot.empty) {
-    console.error("❌ Usuário não encontrado para customer:", customerId);
+  if (snapshot.empty) {
+    console.error("❌ Usuário não encontrado:", customerId);
     return;
   }
 
-  const userId = usersSnapshot.docs[0].id;
+  const userId = snapshot.docs[0].id;
 
   await db.collection("users").doc(userId).set(
     {
@@ -315,26 +302,25 @@ async function handlePaymentSucceeded(invoice) {
 }
 
 /**
- * Processar falha de pagamento
+ * Falha no pagamento
  */
 async function handlePaymentFailed(invoice) {
   console.log("⚠️ Falha no pagamento:", invoice.id);
 
   const customerId = invoice.customer;
 
-  // Buscar usuário pelo customer ID
-  const usersSnapshot = await db
+  const snapshot = await db
     .collection("users")
     .where("stripeCustomerId", "==", customerId)
     .limit(1)
     .get();
 
-  if (usersSnapshot.empty) {
-    console.error("❌ Usuário não encontrado para customer:", customerId);
+  if (snapshot.empty) {
+    console.error("❌ Usuário não encontrado:", customerId);
     return;
   }
 
-  const userId = usersSnapshot.docs[0].id;
+  const userId = snapshot.docs[0].id;
 
   await db.collection("users").doc(userId).set(
     {
