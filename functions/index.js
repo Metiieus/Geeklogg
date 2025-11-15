@@ -10,32 +10,36 @@ const corsOptions = {
   origin: function (origin, callback) {
     // Permitir requisições sem origin (mobile apps, Postman, etc)
     if (!origin) return callback(null, true);
-    
-    // Lista de origens permitidas
+
+    // Lista de origens permitidas explicitamente
     const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:3000',
-      'http://localhost:4173',
-      'https://geeklogg.com',
-      'https://www.geeklogg.com',
-      'https://geeklog-diary.web.app',
-      'https://geeklog-diary.firebaseapp.com'
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:3000",
+      "http://localhost:4173",
+      "https://geeklogg.com",
+      "https://www.geeklogg.com",
+      "https://geeklog-diary.web.app",
+      "https://geeklog-diary.firebaseapp.com",
     ];
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
+
+    const isExplicitlyAllowed = allowedOrigins.includes(origin);
+    const isGeekloggSubdomain = /^https:\/\/[a-z0-9-]+\.geeklogg\.com$/i.test(origin);
+
+    if (isExplicitlyAllowed || isGeekloggSubdomain) {
       callback(null, true);
     } else {
-      console.log('⚠️ Origem bloqueada por CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
+      console.log("⚠️ Origem bloqueada por CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // Webhook do Stripe precisa do raw body
 app.post("/stripe-webhook", express.raw({ type: "application/json" }), (req, res) => {
