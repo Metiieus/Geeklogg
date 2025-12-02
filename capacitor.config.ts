@@ -5,9 +5,11 @@ const config: CapacitorConfig = {
   appName: 'GeekLogg',
   webDir: 'dist',
   bundledWebRuntime: false,
+
   server: {
     androidScheme: 'https'
   },
+
   plugins: {
     SplashScreen: {
       launchAutoHide: false,
@@ -33,11 +35,18 @@ const config: CapacitorConfig = {
     Haptics: {},
     Network: {},
   },
+
   android: {
     allowMixedContent: true,
     backgroundColor: '#1e293b',
     webContentsDebuggingEnabled: true,
+
+    // 🔥 Linha que resolve seu problema:
+    assets: {
+      clear: false
+    }
   },
+
   ios: {
     scheme: 'GeekLogg',
     backgroundColor: '#1e293b',
