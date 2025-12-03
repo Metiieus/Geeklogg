@@ -1,0 +1,188 @@
+[
+  {
+    "text": "Cancelar",
+    "count": 21,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\AccountDeletion.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\ManualAddModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaConfirmModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaFromSearchModal.tsx"
+    ]
+  },
+  {
+    "text": "Séries",
+    "count": 11,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\LibraryFilters.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\ProLibrary.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\MediaSearchBar.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaModal.tsx"
+    ]
+  },
+  {
+    "text": "Em Progresso",
+    "count": 10,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\Dashboard.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\FuturisticHero.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\MediaPreviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaFromSearchModal.tsx"
+    ]
+  },
+  {
+    "text": "Concluído",
+    "count": 9,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\Dashboard.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\MediaPreviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaFromSearchModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaModal.tsx"
+    ]
+  },
+  {
+    "text": "Descrição",
+    "count": 8,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\MediaPreviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AchievementModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaConfirmModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaModal.tsx"
+    ]
+  },
+  {
+    "text": "Usuário não autenticado",
+    "count": 8,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\UpgradeToPremiumModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Settings.tsx",
+      "G:\\DEV\\Geeklogg\\src\\services\\mediaService.ts",
+      "G:\\DEV\\Geeklogg\\src\\services\\milestoneService.ts",
+      "G:\\DEV\\Geeklogg\\src\\services\\profileService.ts"
+    ]
+  },
+  {
+    "text": "Promise",
+    "count": 7,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaConfirmModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaSearchModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\EditBeforeAddModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\context\\AuthContext.tsx",
+      "G:\\DEV\\Geeklogg\\src\\firebase.ts"
+    ]
+  },
+  {
+    "text": "Tags",
+    "count": 7,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\ManualAddModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\MediaPreviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaFromSearchModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaModal.tsx"
+    ]
+  },
+  {
+    "text": "Avaliação (0-10)",
+    "count": 6,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\EditMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\ManualAddModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaFromSearchModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\EditBeforeAddModal.tsx"
+    ]
+  },
+  {
+    "text": "Configurações",
+    "count": 6,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\App.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\DesktopHeader.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\MobileSidebar.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Settings.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Sidebar.tsx"
+    ]
+  },
+  {
+    "text": "Estatísticas",
+    "count": 6,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\App.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\MobileSidebar.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\MediaDetailModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Sidebar.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Statistics.tsx"
+    ]
+  },
+  {
+    "text": "Adicionar Mídia",
+    "count": 5,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\App.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\AddMediaPage.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaSearchModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\design-system\\components\\HeroBanner.tsx",
+      "G:\\DEV\\Geeklogg\\src\\design-system\\components\\MinimalistHeroBanner.tsx"
+    ]
+  },
+  {
+    "text": "Concluídos",
+    "count": 5,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\Dashboard.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\FuturisticHero.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\ProfileSummary.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Statistics.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\UserProfileView.tsx"
+    ]
+  },
+  {
+    "text": "Editar",
+    "count": 5,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\FeaturedSection.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\MediaPreviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\ProLibrary.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\MediaDetailModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Reviews.tsx"
+    ]
+  },
+  {
+    "text": "Série",
+    "count": 5,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\ManualAddModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Library\\MediaPreviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMediaFromSearchModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\EditFeaturedModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\MediaDetailModal.tsx"
+    ]
+  },
+  {
+    "text": "Usuário",
+    "count": 5,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\DesktopHeader.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\MobileSidebar.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\NotificationCenter.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Profile.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\Sidebar.tsx"
+    ]
+  },
+  {
+    "text": "💡 Dica: Use",
+    "count": 4,
+    "sampleFiles": [
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddMilestoneModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\AddReviewModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\EditMilestoneModal.tsx",
+      "G:\\DEV\\Geeklogg\\src\\components\\modals\\EditReviewModal.tsx"
+    ]
+  }
+]

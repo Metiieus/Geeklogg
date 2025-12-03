@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -12,15 +12,30 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
+import { useI18n } from "../i18n";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import { UpgradeToPremiumModal } from "./modals/UpgradeToPremiumModal";
 import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
-import {
-  canUseArchivius,
-  ARCHIVIUS_CONFIG,
-} from "../config/archivius";
+import { useArchiviusWorker } from "../hooks/useArchiviusWorker";
+import { canUseArchivius, ARCHIVIUS_CONFIG } from "../config/archivius";
 
+// Constantes
+const ARCHIVIUS_AVATAR_URL = "https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800";
+const CATEGORY_ICONS: Record<string, string> = {
+  recommendation: "⭐️",
+  analysis: "🔍",
+  discovery: "🗺️",
+  motivation: "🏆",
+};
+const CATEGORY_NAMES: Record<string, string> = {
+  recommendation: "Recomendações",
+  analysis: "Análises",
+  discovery: "Descobertas",
+  motivation: "Desafios",
+};
+
+// Tipos
 interface Message {
   id: string;
   text: string;
@@ -37,40 +52,293 @@ interface SmartSuggestion {
   requiresContext: boolean;
 }
 
+interface UserAnalysis {
+  completionRate: number;
+  averageRating: number;
+  personalityType: string;
+  dominantGenres: string[];
+}
+
+// Componentes auxiliares
+const ArchiveAvatar: React.FC<{ size?: "sm" | "md" | "lg"; className?: string }> = ({
+  size = "md",
+  className = "",
+}) => {
+  const sizeClasses = {
+    sm: "w-8 h-8",
+    md: "w-10 h-10 sm:w-12 sm:h-12",
+    lg: "w-16 h-16",
+  };
+
+  return (
+    <div
+      className={`${sizeClasses[size]} rounded-full overflow-hidden border-2 border-cyan-500/30 flex-shrink-0 ${className}`}
+    >
+      <img
+        src={ARCHIVIUS_AVATAR_URL}
+        alt="Archivius"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
+};
+
+const LoadingIndicator: React.FC = () => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="flex gap-2 justify-start"
+  >
+    <ArchiveAvatar size="sm" className="mt-1" />
+    <div className="bg-gray-700/50 border border-gray-600/30 px-4 py-2 rounded-2xl">
+      <div className="flex gap-1">
+        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
+        <div
+          className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
+          style={{ animationDelay: "0.1s" }}
+        />
+        <div
+          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+          style={{ animationDelay: "0.2s" }}
+        />
+      </div>
+    </div>
+  </motion.div>
+);
+
+const MessageBubble: React.FC<{ message: Message }> = ({ message }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className={`flex gap-2 ${message.isUser ? "justify-end" : "justify-start"}`}
+  >
+    {!message.isUser && <ArchiveAvatar size="sm" className="mt-1" />}
+    <div
+      className={`max-w-xs px-4 py-2 rounded-2xl ${
+        message.isUser
+          ? "bg-gradient-to-r from-cyan-500 to-pink-500 text-white"
+          : "bg-gray-700/50 border border-gray-600/30 text-gray-100"
+      }`}
+    >
+      <div className="text-sm whitespace-pre-wrap">{message.text}</div>
+    </div>
+  </motion.div>
+);
+
+const CategorySelector: React.FC<{
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+}> = ({ selectedCategory, onCategoryChange }) => (
+  <div className="flex gap-1 mb-3 overflow-x-auto">
+    <button
+      onClick={() => onCategoryChange("all")}
+      className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+        selectedCategory === "all"
+          ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
+          : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
+      }`}
+    >
+      ✨ Todas
+    </button>
+    {Object.entries(CATEGORY_NAMES).map(([key, name]) => (
+      <button
+        key={key}
+        onClick={() => onCategoryChange(key)}
+        className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+          selectedCategory === key
+            ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
+            : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
+        }`}
+      >
+        {CATEGORY_ICONS[key]} {name}
+      </button>
+    ))}
+  </div>
+);
+
+const SuggestionButton: React.FC<{
+  suggestion: SmartSuggestion;
+  onSuggestionClick: (prompt: string) => void;
+}> = ({ suggestion, onSuggestionClick }) => (
+  <button
+    onClick={() => onSuggestionClick(suggestion.prompt)}
+    className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors group"
+  >
+    <div className="flex items-start gap-2">
+      <span className="text-cyan-400 flex-shrink-0 mt-0.5">
+        {suggestion.emoji}
+      </span>
+      <span className="flex-1">{suggestion.text}</span>
+      <ChevronRight className="w-3 h-3 text-cyan-400/50 group-hover:text-cyan-400 transition-colors flex-shrink-0 mt-0.5" />
+    </div>
+  </button>
+);
+
+// Componente principal
 export const ArchiviusAgent: React.FC = () => {
   const { profile } = useAuth();
   const { mediaItems, reviews, settings, milestones } = useAppContext();
   const { showSuccess, showError } = useToast();
+  const { t, locale, setLocale } = useI18n();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Estado
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
-  const [currentSuggestions, setCurrentSuggestions] = useState<
-    SmartSuggestion[]
-  >([]);
+  const [currentSuggestions, setCurrentSuggestions] = useState<SmartSuggestion[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Archivius disponível apenas para usuários premium
-  const isPremium = settings.subscriptionTier === 'premium';
-  const userEmail = profile?.email || "";
-  const canAccess = isPremium;
-  const hasRealAPI = !!import.meta.env.VITE_OPENAI_API_KEY;
+  // Valores memoizados
+  const canAccess = useMemo(() => settings.subscriptionTier === "premium", [settings.subscriptionTier]);
+  const hasRealAPI = useMemo(() => !!import.meta.env.VITE_OPENAI_API_KEY, []);
 
-  // Gerar contexto enriquecido para IA
-  const generateEnhancedUserContext = () => {
+  // Callbacks
+  const generateEnhancedUserContext = useCallback(() => {
     return archiviusService.generateEnhancedContext(
       mediaItems,
       reviews,
       settings,
       milestones || [],
     );
-  };
+  }, [mediaItems, reviews, settings, milestones]);
 
-  // Carregar sugestões inteligentes
+  // Worker hook (used only for large datasets)
+  const { analyze: analyzeWithWorker } = useArchiviusWorker();
+  const [enhancedContext, setEnhancedContext] = React.useState<any | null>(null);
+  const [isContextLoading, setIsContextLoading] = React.useState(false);
+  const WORKER_THRESHOLD = 800; // use worker when mediaItems length exceeds this
+
+  // Keep an up-to-date enhanced context: use worker for big lists, otherwise compute synchronously
+  useEffect(() => {
+    let cancelled = false;
+    const compute = async () => {
+      if (mediaItems.length >= WORKER_THRESHOLD) {
+        setIsContextLoading(true);
+        try {
+          const ctx = await analyzeWithWorker(mediaItems, reviews, settings, milestones || []);
+          if (!cancelled) setEnhancedContext(ctx);
+        } catch (err) {
+          console.warn("Worker analysis failed, falling back to main thread:", err);
+          if (!cancelled) setEnhancedContext(generateEnhancedUserContext());
+        } finally {
+          if (!cancelled) setIsContextLoading(false);
+        }
+      } else {
+        setEnhancedContext(generateEnhancedUserContext());
+      }
+    };
+
+    compute();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mediaItems, reviews, settings, milestones, analyzeWithWorker, generateEnhancedUserContext]);
+
+  const createMessage = useCallback((text: string, isUser: boolean): Message => {
+    return {
+      id: Date.now().toString() + Math.random(),
+      text,
+      isUser,
+      timestamp: new Date(),
+    };
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  const getFilteredSuggestions = useCallback(() => {
+    if (selectedCategory === "all") return currentSuggestions;
+    return currentSuggestions.filter((s) => s.category === selectedCategory);
+  }, [currentSuggestions, selectedCategory]);
+
+  const shuffleSuggestions = useCallback(() => {
+    if (!canAccess) return;
+    const userAnalysis = archiviusService.analyzeUserProfile(
+      mediaItems,
+      reviews,
+      settings,
+    );
+    const newSuggestions = archiviusService.getSmartSuggestions(userAnalysis);
+    setCurrentSuggestions([...newSuggestions].sort(() => Math.random() - 0.5));
+  }, [canAccess, mediaItems, reviews, settings]);
+
+  const handleSendMessage = useCallback(
+    async (customPrompt?: string) => {
+      const messageToSend = customPrompt || inputValue;
+      if (!messageToSend.trim()) return;
+
+      if (!canAccess) {
+        const config = ARCHIVIUS_CONFIG.upgradeMessage;
+        const upgradeMessage = `# 🔒 **${config.title}**\n\n## ⚔️ **${config.subtitle}**\n\n${config.description}\n\n### 🏆 **Funcionalidades Épicas:**\n${config.features.map((feature) => `• ${feature}`).join("\n")}\n\n### 💎 **Como Obter Acesso:**\n${config.callToAction}\n\n**${config.footer}**\n\n*Archivius, o Guardião do GeekLog* 🏆`;
+        setMessages((prev) => [...prev, createMessage(upgradeMessage, false)]);
+        return;
+      }
+
+      setMessages((prev) => [...prev, createMessage(messageToSend, true)]);
+      if (!customPrompt) setInputValue("");
+      setIsLoading(true);
+
+      try {
+        const ctx = enhancedContext || generateEnhancedUserContext();
+        const aiResponseText = await openaiService.sendMessage(
+          messageToSend,
+          ctx,
+        );
+        setMessages((prev) => [...prev, createMessage(aiResponseText, false)]);
+        showSuccess(
+          "Archivius respondeu!",
+          "Análise épica baseada em seu perfil único",
+        );
+      } catch (error) {
+        console.error("Erro ao obter resposta da IA:", error);
+        const errorText =
+          "🤖 Desculpe, ocorreu um erro em meus circuitos místicos. Tentai novamente em alguns instantes, valoroso guardião!";
+        setMessages((prev) => [...prev, createMessage(errorText, false)]);
+        showError("Erro no Archivius", "Não foi possível obter resposta épica");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [inputValue, canAccess, createMessage, generateEnhancedUserContext, showSuccess, showError],
+  );
+
+  const handleAnalyzeProfile = useCallback(async () => {
+    if (!canAccess) return;
+    setIsAnalyzing(true);
+
+    try {
+      const ctx = enhancedContext || generateEnhancedUserContext();
+      const analysisPrompt =
+        "Desvenue os segredos ocultos do meu perfil geek. Faça uma análise profunda e revele padrões, tendências e insights únicos sobre meus hábitos de entretenimento que eu talvez não tenha percebido. Inclua recomendações estratégicas baseadas nesta análise.";
+      const analysis = await openaiService.sendMessage(analysisPrompt, ctx);
+      setMessages((prev) => [...prev, createMessage(analysis, false)]);
+      showSuccess(
+        "Análise épica completa!",
+        "Archivius revelou os segredos de vosso perfil",
+      );
+    } catch (error) {
+      console.error("Erro na análise:", error);
+      showError("Erro na análise mística", "Não foi possível analisar vosso perfil");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [canAccess, createMessage, generateEnhancedUserContext, showSuccess, showError]);
+
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  }, [handleSendMessage]);
+
+  // Efeitos
   useEffect(() => {
     if (canAccess && mediaItems.length > 0) {
       const userAnalysis = archiviusService.analyzeUserProfile(
@@ -83,224 +351,43 @@ export const ArchiviusAgent: React.FC = () => {
     }
   }, [canAccess, mediaItems, reviews, settings]);
 
-  // Filtrar sugestões por categoria
-  const getFilteredSuggestions = () => {
-    if (selectedCategory === "all") return currentSuggestions;
-    return currentSuggestions.filter((s) => s.category === selectedCategory);
-  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
-  // Embaralhar sugestões
-  const shuffleSuggestions = () => {
-    if (!canAccess) return;
-    const userAnalysis = archiviusService.analyzeUserProfile(
-      mediaItems,
-      reviews,
-      settings,
-    );
-    const newSuggestions = archiviusService.getSmartSuggestions(userAnalysis);
-    setCurrentSuggestions([...newSuggestions].sort(() => Math.random() - 0.5));
-  };
-
-  // Inicializar com mensagem de boas-vindas inteligente
   useEffect(() => {
     if (isOpen && !hasInitialized && canAccess) {
       const userContext = generateEnhancedUserContext();
-      const userAnalysis = userContext.userAnalysis;
+      const userAnalysis = userContext.userAnalysis as UserAnalysis;
 
-      const welcomeMessage: Message = {
-        id: "welcome",
-        text: `E aí, ${settings.name || "mano"}! 👋
-
-Sou o **Archivius**, seu assistente nerd pessoal! Analisei sua biblioteca e já tenho umas insights massa pra você.
-
-## 📊 Seu Perfil
-• **${userContext.totalMedia} mídias** na biblioteca
-• **${userAnalysis.completionRate}%** de conclusão ${userAnalysis.completionRate > 70 ? "🔥" : "🚀"}
-• Média de **${userAnalysis.averageRating}⭐** nas avaliações
-• Você é um **${userAnalysis.personalityType}**
-
-## 🎮 O Que Você Curte
-${userAnalysis.dominantGenres.length > 0 ? userAnalysis.dominantGenres.join(", ") : "Ainda descobrindo seus gostos!"}
-
-## 💡 O Que Posso Fazer
-Quanto mais você usar sua biblioteca, melhores ficam minhas recomendações! Posso:
-
-• Recomendar títulos baseados no que você já tem
-• Analisar seus padrões de consumo
-• Descobrir joias ocultas pro seu perfil
-• Criar desafios personalizados
-
-${hasRealAPI ? "🤖 *IA real ativada - recomendações ultra-precisas!*" : "💡 *Modo inteligente ativo!*"}
-
-**Clica nas sugestões abaixo ou me pergunta qualquer coisa!** 🚀`,
-        isUser: false,
-        timestamp: new Date(),
-      };
+      const welcomeMessage = createMessage(
+        `E aí, ${settings.name || "mano"}! 👋\n\nSou o **Archivius**, seu assistente nerd pessoal! Analisei sua biblioteca e já tenho umas insights massa pra você.\n\n## 📊 Seu Perfil\n• **${userContext.totalMedia} mídias** na biblioteca\n• **${userAnalysis.completionRate}%** de conclusão ${userAnalysis.completionRate > 70 ? "🔥" : "🚀"}\n• Média de **${userAnalysis.averageRating}⭐** nas avaliações\n• Você é um **${userAnalysis.personalityType}**\n\n## 🎮 O Que Você Curte\n${userAnalysis.dominantGenres.length > 0 ? userAnalysis.dominantGenres.join(", ") : "Ainda descobrindo seus gostos!"}\n\n## 💡 O Que Posso Fazer\nQuanto mais você usar sua biblioteca, melhores ficam minhas recomendações! Posso:\n\n• Recomendar títulos baseados no que você já tem\n• Analisar seus padrões de consumo\n• Descobrir joias ocultas pro seu perfil\n• Criar desafios personalizados\n\n${hasRealAPI ? "🤖 *IA real ativada - recomendações ultra-precisas!*" : "💡 *Modo inteligente ativo!*"}\n\n**Clica nas sugestões abaixo ou me pergunta qualquer coisa!** 🚀`,
+        false,
+      );
 
       setMessages([welcomeMessage]);
       setHasInitialized(true);
     }
-  }, [isOpen, hasInitialized, canAccess, settings.name, mediaItems.length]);
+  }, [
+    isOpen,
+    hasInitialized,
+    canAccess,
+    settings.name,
+    mediaItems.length,
+    generateEnhancedUserContext,
+    hasRealAPI,
+    createMessage,
+  ]);
 
-  // Reset quando fechar
   useEffect(() => {
     if (!isOpen) {
       setHasInitialized(false);
     }
   }, [isOpen]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSendMessage = async (customPrompt?: string) => {
-    const messageToSend = customPrompt || inputValue;
-    if (!messageToSend.trim()) return;
-
-    if (!canAccess) {
-      const config = ARCHIVIUS_CONFIG.upgradeMessage;
-      const upgradeMessage = `# 🔒 **${config.title}**
-
-## ⚔️ **${config.subtitle}**
-
-${config.description}
-
-### 🏆 **Funcionalidades Épicas:**
-${config.features.map((feature) => `• ${feature}`).join("\n")}
-
-### 💎 **Como Obter Acesso:**
-${config.callToAction}
-
-**${config.footer}**
-
-*Archivius, o Guardião do GeekLog* 🏆`;
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          text: upgradeMessage,
-          isUser: false,
-          timestamp: new Date(),
-        },
-      ]);
-      return;
-    }
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: messageToSend,
-      isUser: true,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    if (!customPrompt) setInputValue("");
-    setIsLoading(true);
-
-    try {
-      // Gerar contexto completo e enriquecido
-      const enhancedContext = generateEnhancedUserContext();
-
-      // Usar OpenAI service aprimorado para gerar resposta
-      const aiResponseText = await openaiService.sendMessage(
-        messageToSend,
-        enhancedContext,
-      );
-
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: aiResponseText,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
-
-      showSuccess(
-        "Archivius respondeu!",
-        "Análise épica baseada em seu perfil único",
-      );
-    } catch (error) {
-      console.error("Erro ao obter resposta da IA:", error);
-      const errorResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "🤖 Desculpe, ocorreu um erro em meus circuitos místicos. Tentai novamente em alguns instantes, valoroso guardião!",
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorResponse]);
-      showError("Erro no Archivius", "Não foi possível obter resposta épica");
-    }
-
-    setIsLoading(false);
-  };
-
-  const handleAnalyzeProfile = async () => {
-    if (!canAccess) return;
-
-    setIsAnalyzing(true);
-
-    try {
-      const enhancedContext = generateEnhancedUserContext();
-      const analysisPrompt =
-        "Desvende os segredos ocultos do meu perfil geek. Faça uma análise profunda e revele padrões, tendências e insights únicos sobre meus hábitos de entretenimento que eu talvez não tenha percebido. Inclua recomendações estratégicas baseadas nesta análise.";
-
-      const analysis = await openaiService.sendMessage(
-        analysisPrompt,
-        enhancedContext,
-      );
-
-      const analysisMessage: Message = {
-        id: Date.now().toString(),
-        text: analysis,
-        isUser: false,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, analysisMessage]);
-      showSuccess(
-        "Análise épica completa!",
-        "Archivius revelou os segredos de vosso perfil",
-      );
-    } catch (error) {
-      console.error("Erro na análise:", error);
-      showError(
-        "Erro na análise mística",
-        "Não foi possível analisar vosso perfil",
-      );
-    }
-
-    setIsAnalyzing(false);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  const categoryIcons: Record<string, string> = {
-    recommendation: "��️",
-    analysis: "🔍",
-    discovery: "🗺️",
-    motivation: "🏆",
-  };
-
-  const categoryNames: Record<string, string> = {
-    recommendation: "Recomendações",
-    analysis: "An��lises",
-    discovery: "Descobertas",
-    motivation: "Desafios",
-  };
-
   return (
     <>
-      {/* Botão Flutuante - responsivo com espaço para navegação mobile e Capacitor */}
+      {/* Botão Flutuante */}
       <motion.div
         className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50"
         initial={{ scale: 0 }}
@@ -315,20 +402,8 @@ ${config.callToAction}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {/* Avatar do Archivius - responsivo */}
-          <div
-            className={`w-12 sm:w-14 h-12 sm:h-14 rounded-full overflow-hidden border-2 ${
-              canAccess ? "border-cyan-400/50" : "border-gray-600/50"
-            }`}
-          >
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
-              alt="Archivius - Assistente IA"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <ArchiveAvatar size="md" className="border-cyan-400/50" />
 
-          {/* Texto e Status - oculto em mobile pequeno */}
           <div className="hidden sm:block px-4 py-3 pr-6">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-white text-lg">Archivius</h3>
@@ -355,7 +430,6 @@ ${config.callToAction}
             </div>
           </div>
 
-          {/* Indicador de IA */}
           {canAccess && (
             <motion.div
               className="absolute -top-0.5 -right-0.5 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full flex items-center justify-center"
@@ -372,7 +446,6 @@ ${config.callToAction}
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-            {/* Overlay */}
             <motion.div
               className="absolute inset-0 bg-black bg-opacity-20"
               initial={{ opacity: 0 }}
@@ -381,9 +454,8 @@ ${config.callToAction}
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Chat Window - responsivo e otimizado para Capacitor */}
             <motion.div
-              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md h-[85vh] sm:h-[600px] max-h-[700px] overflow-hidden"
+              className="relative bg-gray-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md h-[85vh] sm:h-[600px] max-h-[700px] overflow-hidden flex flex-col"
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -399,18 +471,18 @@ ${config.callToAction}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white/20">
-                      <img
-                        src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
-                        alt="Archivius"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    <ArchiveAvatar size="sm" className="border-white/20" />
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-white text-sm">
                           Archivius
                         </h3>
+                          {isContextLoading && (
+                            <div className="ml-2 flex items-center gap-2">
+                              <div className="w-3 h-3 border-2 border-white/25 border-t-white rounded-full animate-spin" />
+                              <span className="text-xs text-white/90">{t("archivius.analyzingBadge")}</span>
+                            </div>
+                          )}
                         {canAccess && (
                           <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-300" />
                         )}
@@ -422,7 +494,13 @@ ${config.callToAction}
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${canAccess ? (hasRealAPI ? "bg-green-400" : "bg-cyan-300") : "bg-orange-300"}`}
+                          className={`w-2 h-2 rounded-full ${
+                            canAccess
+                              ? hasRealAPI
+                                ? "bg-green-400"
+                                : "bg-cyan-300"
+                              : "bg-orange-300"
+                          }`}
                         />
                         <span className="text-white text-xs sm:text-sm opacity-90">
                           {canAccess
@@ -443,24 +521,11 @@ ${config.callToAction}
                 </div>
               </div>
 
-              {/* Messages - responsivo */}
-              <div
-                className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50"
-                style={{
-                  height: canAccess
-                    ? "calc(100% - 200px)"
-                    : "calc(100% - 130px)",
-                }}
-              >
+              {/* Messages Container */}
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-900/50">
                 {messages.length === 0 && (
                   <div className="text-center text-gray-200 mt-4">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 rounded-full overflow-hidden border-2 border-cyan-400/50">
-                      <img
-                        src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
-                        alt="Archivius"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    <ArchiveAvatar size="lg" className="mx-auto mb-3 border-cyan-400/50" />
                     <p className="text-sm sm:text-base font-medium text-white">
                       🧙‍♂️ Archivius, o Oráculo
                     </p>
@@ -469,6 +534,13 @@ ${config.callToAction}
                         ? "⚔️ Companion IA épico com análise avançada de padrões!"
                         : "👑 Desperte os poderes premium para análises supremas!"}
                     </p>
+
+                    {isContextLoading && (
+                      <div className="mt-3 flex items-center justify-center gap-2 text-sm text-cyan-300">
+                        <div className="w-3 h-3 border-2 border-cyan-300/30 border-t-cyan-300 rounded-full animate-spin" />
+                        <span>{t("archivius.analyzingNotice")}</span>
+                      </div>
+                    )}
 
                     {!canAccess && (
                       <div className="space-y-3 px-4">
@@ -488,7 +560,6 @@ ${config.callToAction}
 
                     {canAccess && (
                       <div className="space-y-3">
-                        {/* Botão de Análise Épica */}
                         <button
                           onClick={handleAnalyzeProfile}
                           disabled={isAnalyzing}
@@ -507,7 +578,6 @@ ${config.callToAction}
                           )}
                         </button>
 
-                        {/* Filtros de Categoria */}
                         {currentSuggestions.length > 0 && (
                           <div className="border-t border-gray-600/30 pt-3">
                             <div className="flex items-center justify-between mb-2">
@@ -523,57 +593,20 @@ ${config.callToAction}
                               </button>
                             </div>
 
-                            {/* Seletor de categoria */}
-                            <div className="flex gap-1 mb-3 overflow-x-auto">
-                              <button
-                                onClick={() => setSelectedCategory("all")}
-                                className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
-                                  selectedCategory === "all"
-                                    ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
-                                    : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
-                                }`}
-                              >
-                                ✨ Todas
-                              </button>
-                              {Object.entries(categoryNames).map(
-                                ([key, name]) => (
-                                  <button
-                                    key={key}
-                                    onClick={() => setSelectedCategory(key)}
-                                    className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
-                                      selectedCategory === key
-                                        ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
-                                        : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
-                                    }`}
-                                  >
-                                    {categoryIcons[key]} {name}
-                                  </button>
-                                ),
-                              )}
-                            </div>
+                            <CategorySelector
+                              selectedCategory={selectedCategory}
+                              onCategoryChange={setSelectedCategory}
+                            />
 
-                            {/* Sugestões Inteligentes */}
                             <div className="space-y-2 max-h-40 overflow-y-auto">
                               {getFilteredSuggestions()
                                 .slice(0, 6)
                                 .map((suggestion) => (
-                                  <button
+                                  <SuggestionButton
                                     key={suggestion.id}
-                                    onClick={() =>
-                                      handleSendMessage(suggestion.prompt)
-                                    }
-                                    className="block w-full text-left px-3 py-2 bg-gray-800/50 border border-cyan-500/20 rounded-lg text-gray-100 text-sm hover:bg-gray-700/50 hover:border-cyan-400/30 transition-colors group"
-                                  >
-                                    <div className="flex items-start gap-2">
-                                      <span className="text-cyan-400 flex-shrink-0 mt-0.5">
-                                        {suggestion.emoji}
-                                      </span>
-                                      <span className="flex-1">
-                                        {suggestion.text}
-                                      </span>
-                                      <ChevronRight className="w-3 h-3 text-cyan-400/50 group-hover:text-cyan-400 transition-colors flex-shrink-0 mt-0.5" />
-                                    </div>
-                                  </button>
+                                    suggestion={suggestion}
+                                    onSuggestionClick={handleSendMessage}
+                                  />
                                 ))}
                             </div>
                           </div>
@@ -584,72 +617,15 @@ ${config.callToAction}
                 )}
 
                 {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex gap-2 ${message.isUser ? "justify-end" : "justify-start"}`}
-                  >
-                    {/* Avatar do Archivius para mensagens da IA */}
-                    {!message.isUser && (
-                      <div className="w-8 h-8 rounded-full overflow-hidden border border-cyan-500/30 flex-shrink-0 mt-1">
-                        <img
-                          src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
-                          alt="Archivius"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-
-                    <div
-                      className={`max-w-xs px-4 py-2 rounded-2xl ${
-                        message.isUser
-                          ? "bg-gradient-to-r from-cyan-500 to-pink-500 text-white"
-                          : "bg-gray-700/50 border border-gray-600/30 text-gray-100"
-                      }`}
-                    >
-                      <div className="text-sm whitespace-pre-wrap">
-                        {message.text}
-                      </div>
-                    </div>
-                  </motion.div>
+                  <MessageBubble key={message.id} message={message} />
                 ))}
 
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex gap-2 justify-start"
-                  >
-                    {/* Avatar do Archivius no loading */}
-                    <div className="w-8 h-8 rounded-full overflow-hidden border border-cyan-500/30 flex-shrink-0 mt-1">
-                      <img
-                        src="https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800"
-                        alt="Archivius"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    <div className="bg-gray-700/50 border border-gray-600/30 px-4 py-2 rounded-2xl">
-                      <div className="flex gap-1">
-                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
-                        <div
-                          className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.1s" }}
-                        />
-                        <div
-                          className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.2s" }}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+                {isLoading && <LoadingIndicator />}
 
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input - responsivo com safe area para mobile/Capacitor */}
+              {/* Input Area */}
               <div className="p-3 sm:p-4 pb-safe border-t border-cyan-500/20 bg-gray-800/50">
                 <div className="flex gap-2">
                   <input
@@ -678,11 +654,10 @@ ${config.callToAction}
           </div>
         )}
       </AnimatePresence>
+
       {/* Modal de Upgrade */}
       {showUpgradeModal && (
-        <UpgradeToPremiumModal
-          onClose={() => setShowUpgradeModal(false)}
-        />
+        <UpgradeToPremiumModal onClose={() => setShowUpgradeModal(false)} />
       )}
     </>
   );

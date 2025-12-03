@@ -10,6 +10,7 @@ import { Bell, Settings, User, LogOut, Crown } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 interface DesktopHeaderProps {
   pageName: string;
@@ -99,6 +100,9 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
 
           {/* Menu do usuário */}
           <div className="flex items-center gap-4">
+            <div className="hidden lg:block">
+              <LanguageSwitcher />
+            </div>
             {/* Avatar do usuário */}
             <div className="relative" ref={menuRef}>
               <button

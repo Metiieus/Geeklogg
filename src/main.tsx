@@ -1,17 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css";
+import { I18nProvider } from "./i18n";
+import "./styles/merged.css";
 import "./utils/viewportHeight";
 
 // Context Providers
 import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
 
-// Analytics & Performance
-import "./styles/performance-optimizations.css";
-import "./styles/library-animations.css";
-import "./styles/futuristic-library.css";
+// Analytics & Performance (now imported via `src/styles/merged.css`)
 
 console.log("🚀 GeekLog inicializando...");
 
@@ -73,7 +71,9 @@ if (!rootElement) {
       <StrictMode>
         <ToastProvider>
           <AuthProvider>
-            <App />
+            <I18nProvider>
+              <App />
+            </I18nProvider>
           </AuthProvider>
         </ToastProvider>
       </StrictMode>,

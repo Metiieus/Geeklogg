@@ -12,6 +12,7 @@ import {
   X,
   LogOut,
 } from "lucide-react";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -220,12 +221,17 @@ const MobileSidebar: React.FC = () => {
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent">
                   GeekLog
                 </h2>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
-                >
-                  <X size={20} className="text-gray-400" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <div className="block lg:hidden">
+                    <LanguageSwitcher />
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
+                  >
+                    <X size={20} className="text-gray-400" />
+                  </button>
+                </div>
               </div>
 
               {/* User info */}

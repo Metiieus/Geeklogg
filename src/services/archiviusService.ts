@@ -24,6 +24,9 @@ interface UserAnalysis {
     focused: boolean;
     explorer: boolean;
   };
+  // Precomputed mediaByType and activity patterns to avoid extra passes
+  mediaByType?: any[];
+  activityPatterns?: any;
 }
 
 export class ArchiviusService {
@@ -145,64 +148,117 @@ export class ArchiviusService {
     reviews: any[],
     settings: any,
   ): UserAnalysis {
-    const completedItems = mediaItems.filter(
-      (item) => item.status === "completed",
-    );
-    
-    // Análise mais profunda de gêneros incluindo tags
-    const allTags = mediaItems.flatMap((item) => item.tags || []);
-    const genres = completedItems.map((item) => item.type);
-    const genreCount = genres.reduce(
-      (acc, genre) => {
-        acc[genre] = (acc[genre] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+    // Single-pass aggregation to avoid multiple loops over mediaItems
+    const now = Date.now();
+    const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
 
-    // Gêneros dominantes com análise de tags para maior precisão
-    const dominantGenres = Object.entries(genreCount)
+    const stats = {
+      total: 0,
+      completedCount: 0,
+      genreCount: {} as Record<string, number>,
+      tagCount: {} as Record<string, number>,
+      mediaByTypeMap: {} as Record<string, any[]>,
+      ratingsSum: 0,
+      ratingsCount: 0,
+      recentTypes: new Set<string>(),
+      favoriteMedia: [] as any[],
+      inProgressCount: 0,
+    };
+
+    for (const item of mediaItems) {
+      stats.total++;
+      const updatedAt = new Date(item.updatedAt || item.createdAt).getTime();
+
+      // status
+      if (item.status === "completed") {
+        stats.completedCount++;
+        stats.genreCount[item.type] = (stats.genreCount[item.type] || 0) + 1;
+      } else if (item.status === "in-progress") {
+        stats.inProgressCount++;
+      }
+
+      // tags
+      if (item.tags && item.tags.length) {
+        for (const t of item.tags) stats.tagCount[t] = (stats.tagCount[t] || 0) + 1;
+      }
+
+      // group by type
+      if (!stats.mediaByTypeMap[item.type]) stats.mediaByTypeMap[item.type] = [];
+      stats.mediaByTypeMap[item.type].push(item);
+
+      // recent
+      if (!isNaN(updatedAt) && updatedAt > thirtyDaysAgo) {
+        stats.recentTypes.add(item.type);
+      }
+
+      // rating
+      if (typeof item.rating === "number" && item.rating > 0) {
+        stats.ratingsSum += item.rating;
+        stats.ratingsCount++;
+      }
+
+      // favorites
+      if (item.rating >= 4 || item.isFavorite) stats.favoriteMedia.push(item);
+    }
+
+    // derive values
+    const averageRating = stats.ratingsCount ? stats.ratingsSum / stats.ratingsCount : 0;
+    const completionRate = stats.total ? (stats.completedCount / stats.total) * 100 : 0;
+
+    const dominantGenres = Object.entries(stats.genreCount)
       .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 3)
       .map(([genre]) => genre);
-    
-    // Adicionar tags mais frequentes para contexto adicional
-    const topTags = this.getTopTags(allTags).slice(0, 5);
 
-    const ratings = reviews.map((review: any) => review.rating).filter((r: number) => r > 0);
-    const averageRating =
-      ratings.length > 0
-        ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
-        : 0;
+    const topTags = Object.entries(stats.tagCount)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10)
+      .map(([tag]) => tag)
+      .slice(0, 5);
 
-    const completionRate =
-      mediaItems.length > 0
-        ? (completedItems.length / mediaItems.length) * 100
-        : 0;
+    const recentTrends = Array.from(stats.recentTypes);
 
-    // Análise de tendências recentes (últimos 30 dias)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const recentItems = completedItems.filter(
-      (item) => new Date(item.updatedAt) > thirtyDaysAgo,
-    );
-    const recentTrends = [...new Set(recentItems.map((item) => item.type))];
-
-    // Determinação do tipo de personalidade baseado nos dados
-    let personalityType = "Explorador"; // default
+    // personality heuristics
+    let personalityType = "Explorador";
     if (completionRate > 80) personalityType = "Completista";
     else if (averageRating > 4) personalityType = "Perfeccionista";
     else if (dominantGenres.length > 2) personalityType = "Explorador";
-    else if (recentItems.length > 5) personalityType = "Consumidor Voraz";
+    else if (recentTrends.length > 5) personalityType = "Consumidor Voraz";
 
-    // Preferência de duração baseada no histórico
     const preferredLength =
-      completedItems.length > 10
+      stats.completedCount > 10
         ? completionRate > 70
           ? "Projetos Longos"
           : "Experiências Rápidas"
         : "Ainda Descobrindo";
+
+    // mediaByType summary (derived from map)
+    const mediaByType = Object.entries(stats.mediaByTypeMap).map(([type, items]) => {
+      const ratings = items.map((i: any) => i.rating).filter((r: number) => r > 0);
+      const avg = ratings.length ? Math.round((ratings.reduce((s: number, n: number) => s + n, 0) / ratings.length) * 10) / 10 : 0;
+      const topTagsLocal: Record<string, number> = {};
+      for (const it of items) for (const t of it.tags || []) topTagsLocal[t] = (topTagsLocal[t] || 0) + 1;
+      return {
+        type,
+        count: items.length,
+        completed: items.filter((i: any) => i.status === "completed").length,
+        averageRating: avg,
+        topTags: Object.entries(topTagsLocal).sort(([, a], [, b]) => b - a).slice(0, 5).map(([t]) => t),
+        items,
+      };
+    });
+
+    const favoriteMedia = stats.favoriteMedia
+      .sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 10)
+      .map((item: any) => ({ title: item.title, type: item.type, rating: item.rating, tags: item.tags || [] }));
+
+    const consumptionPattern = {
+      binge: stats.completedCount > 20,
+      diverse: Object.keys(stats.mediaByTypeMap).length >= 3,
+      focused: Object.keys(stats.mediaByTypeMap).length <= 2,
+      explorer: stats.inProgressCount > 5,
+    };
 
     return {
       dominantGenres,
@@ -211,9 +267,15 @@ export class ArchiviusService {
       recentTrends,
       personalityType,
       preferredLength,
-      topTags, // Tags mais frequentes para recomendações precisas
-      favoriteMedia: this.getFavoriteMedia(mediaItems), // Mídias favoritas do usuário
-      consumptionPattern: this.analyzeConsumptionPattern(mediaItems), // Padrão de consumo
+      topTags,
+      favoriteMedia,
+      consumptionPattern,
+      mediaByType,
+      activityPatterns: {
+        recentActivityCount: Math.min(10, stats.total),
+        lastActivity: mediaItems.length ? new Date(mediaItems[mediaItems.length - 1].updatedAt || mediaItems[mediaItems.length - 1].createdAt) : null,
+        activityFrequency: this.calculateActivityFrequency([]),
+      },
     };
   }
 
@@ -274,18 +336,22 @@ export class ArchiviusService {
       // Análise avançada
       userAnalysis: analysis,
 
-      // Dados detalhados por categoria
-      mediaByType: this.groupMediaByType(mediaItems),
+      // Dados detalhados por categoria - reuse precomputed mediaByType from analysis
+      mediaByType: analysis.mediaByType || [],
       reviewInsights: this.analyzeReviews(reviews),
 
-      // Padrões temporais
-      activityPatterns: this.analyzeActivityPatterns(mediaItems, reviews),
+      // Padrões temporais - reuse precomputed activity patterns
+      activityPatterns: analysis.activityPatterns || {},
 
       // Marcos importantes
       achievements: milestones.slice(0, 5),
 
-      // Preferências extraídas
-      extractedPreferences: this.extractPreferences(mediaItems, reviews),
+      // Preferências extraídas (topTags, favoriteMedia, consumptionPattern)
+      extractedPreferences: {
+        favoriteGenres: analysis.topTags || [],
+        preferredTypes: (analysis.mediaByType || []).map((m: any) => m.type),
+        typicalRating: analysis.averageRating,
+      },
 
       // Contexto do usuário
       userContext: {
