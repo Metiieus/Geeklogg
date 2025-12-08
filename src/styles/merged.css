@@ -1,7 +1,7 @@
 /* Merged CSS entry — imports core styles to reduce imports in main.tsx
    Keep original files intact; this file centralizes the main global styles. */
 
-@import "../index.css";
+@import "./index.css";
 @import "./performance-optimizations.css";
 @import "./library-animations.css";
 @import "./futuristic-library.css";

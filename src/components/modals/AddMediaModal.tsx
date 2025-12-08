@@ -9,7 +9,7 @@ import {
   Tag,
   BookOpen,
 } from "lucide-react";
-import { MediaItem, MediaType, Status } from "../../App";
+import { MediaItem, MediaType, Status } from "../../types";
 import { addMedia } from "../../services/mediaService";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";

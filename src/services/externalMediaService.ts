@@ -1,4 +1,4 @@
-import { MediaType } from "../App";
+import { MediaType } from "../types";
 import {
   rawgService,
   RAWGSearchResult,

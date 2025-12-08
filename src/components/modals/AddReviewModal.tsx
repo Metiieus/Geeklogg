@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Save, Star } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
-import { Review } from "../../App";
+import { Review } from "../../types";
 import { addReview } from "../../services/reviewService";
 import { sanitizeText } from "../../utils/sanitizer";
 import { ModalWrapper } from "../ModalWrapper";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, Check, Star, Search } from "lucide-react";
-import { MediaItem } from "../../App";
+import { MediaItem } from "../../types";
 import { useAppContext } from "../../context/AppContext";
 import { ModalWrapper } from "../ModalWrapper";
 

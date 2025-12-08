@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Search, X, Plus, Check } from "lucide-react";
-import { MediaItem, MediaType } from "../../App";
+import { MediaItem, MediaType } from "../../types";
 import { useAppContext } from "../../context/AppContext";
 
 interface LibrarySelectorProps {

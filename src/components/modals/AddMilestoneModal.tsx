@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Save, Calendar, Image as ImageIcon, Trash2 } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
-import { Milestone } from "../../App";
+import { Milestone } from "../../types";
 import { addMilestone } from "../../services/milestoneService";
 import { uploadImage } from "../../services/storageClient";
 import { RichTextEditor } from "../RichTextEditor";

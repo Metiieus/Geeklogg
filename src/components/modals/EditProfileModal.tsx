@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Save, X, Upload, AlertCircle, User } from "lucide-react";
-import { UserSettings } from "../../App";
+import { UserSettings } from "../../types";
 import { useToast } from "../../context/ToastContext";
 import { validateFile, compressImage } from "../../utils/fileValidation";
 import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";

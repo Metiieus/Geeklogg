@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
-import { ActivePage } from "../App";
+import { ActivePage } from "../types";
 
 interface NavItem {
   id: ActivePage;

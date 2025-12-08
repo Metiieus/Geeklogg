@@ -16,7 +16,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
-import { ActivePage } from "../App";
+import { ActivePage } from "../types";
 
 interface NavItem {
   id: ActivePage;

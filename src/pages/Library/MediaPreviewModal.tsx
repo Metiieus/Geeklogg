@@ -2,7 +2,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star, Edit3, Trash2, Heart, Calendar, Clock, BookOpen, Film, Gamepad2, Tv } from "lucide-react";
-import { MediaItem } from "../../App";
+import { MediaItem } from "../../types";
 
 interface MediaPreviewModalProps {
   isOpen: boolean;

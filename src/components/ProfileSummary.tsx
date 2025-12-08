@@ -17,7 +17,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
-import { MediaType } from "../App";
+import { MediaType } from "../types";
 
 const mediaTypeIcons = {
   games: Gamepad2,

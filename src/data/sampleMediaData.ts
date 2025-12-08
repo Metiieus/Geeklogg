@@ -1,4 +1,4 @@
-import { MediaItem } from "../App";
+import { MediaItem } from "../types";
 
 export const sampleMediaData: MediaItem[] = [
   {

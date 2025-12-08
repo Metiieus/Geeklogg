@@ -1,6 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { MediaItem, Review, Milestone, UserSettings, ActivePage } from "../App";
-import { UserProfile } from "../types/social";
+import { MediaItem, Review, Milestone, UserSettings, ActivePage, UserProfile } from "../types";
 
 interface AppContextType {
   mediaItems: MediaItem[];

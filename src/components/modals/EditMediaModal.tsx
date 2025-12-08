@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, Save, Upload } from "lucide-react";
-import { MediaItem, MediaType, Status } from "../../App";
+import { MediaItem, MediaType, Status } from "../../types";
 import { updateMedia } from "../../services/mediaService";
 
 interface EditMediaModalProps {

@@ -7,7 +7,7 @@ import {
   AchievementProgress,
 } from "../types/achievements";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
-import { MediaItem, Review, UserSettings } from "../App";
+import { MediaItem, Review, UserSettings } from "../types";
 
 export async function getUserAchievements(): Promise<UserAchievement[]> {
   try {

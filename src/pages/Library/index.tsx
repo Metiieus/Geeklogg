@@ -26,7 +26,7 @@ import { ManualAddModal } from "./ManualAddModal";
 import { AddMediaConfirmModal } from "../modals/AddMediaConfirmModal";
 import { EditBeforeAddModal } from "../modals/EditBeforeAddModal";
 import { EditFeaturedPopularModal } from "../modals/EditFeaturedPopularModal";
-import { MediaItem } from "../../App";
+import { MediaItem } from "../../types";
 import { useAppContext } from "../../context/AppContext";
 import { useToast } from "../../context/ToastContext";
 import { addMedia, updateMedia, deleteMedia } from "../../services/mediaService";

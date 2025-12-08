@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Search, Sparkles, Plus, BookOpen, Film, Gamepad2, Tv } from "lucide-react";
 import { motion } from "framer-motion";
 import { MediaSearchBar } from "../MediaSearchBar";
-import { MediaType } from "../../App";
+import { MediaType } from "../../types";
 import { ExternalMediaResult } from "../../services/externalMediaService";
 import { ManualAddModal } from "../Library/ManualAddModal";
 

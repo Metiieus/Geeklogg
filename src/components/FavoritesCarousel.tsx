@@ -1,6 +1,6 @@
 import React, { useState, memo } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { FavoriteItem } from "../App";
+import { FavoriteItem } from "../types";
 
 interface FavoritesCarouselProps {
   items: FavoriteItem[];

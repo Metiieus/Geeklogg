@@ -9,7 +9,7 @@ import {
   Upload,
   Library,
 } from "lucide-react";
-import { FavoriteItem, UserSettings, MediaItem } from "../../App";
+import { FavoriteItem, UserSettings, MediaItem } from "../../types";
 import { useAppContext } from "../../context/AppContext";
 import { LibrarySelector } from "./LibrarySelector";
 import { ModalWrapper } from "../ModalWrapper";

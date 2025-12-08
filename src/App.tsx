@@ -1,4 +1,3 @@
-// imports principais
 import { devLog } from "./utils/logger";
 import React, {
   useState,
@@ -7,19 +6,50 @@ import React, {
   useCallback,
   Suspense,
 } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Routes, Route, Navigate, useNavigate, useLocation, useParams } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import { Users } from "lucide-react";
+
+// Context Providers
+import { AppProvider } from "./context/AppContext";
+import { useAuth } from "./context/AuthContext";
+import { useToast } from "./context/ToastContext";
+
+// Components & Pages
+import { Sidebar } from "./components/Sidebar"; // Still needed? MainLayout uses it.
+import { Login } from "./pages/Login";
+import { LandingPage } from "./pages/Landing";
+import { Register } from "./pages/Register";
+// Lazy Loaded Pages
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const ProLibrary = React.lazy(() => import("./pages/Library"));
+const Reviews = React.lazy(() => import("./pages/Reviews"));
+const Timeline = React.lazy(() => import("./pages/Timeline"));
+const Statistics = React.lazy(() => import("./pages/Statistics"));
+const SettingsComponent = React.lazy(() => import("./pages/Settings"));
+const Profile = React.lazy(() => import("./pages/Profile"));
+// Named exports handling helper or direct
+const AddMediaPage = React.lazy(() => import("./pages/AddMedia").then(module => ({ default: module.AddMediaPage })));
+const EditMediaPageWrapper = React.lazy(() => import("./pages/EditMedia"));
+const CreateMediaPage = React.lazy(() => import("./pages/CreateMedia"));
+const UserProfileView = React.lazy(() => import("./pages/UserProfile").then(module => ({ default: module.UserProfileView })));
+import "./utils/connectivityTest";
+
+// Layouts
+import { MainLayout } from "./layouts/MainLayout";
+
+// Queries
+import { useMedias, useReviews, useMilestones, useSettings, useUpdateSettings } from "./hooks/queries";
+
+// Types
 import {
-  Home,
-  BookOpen,
-  MessageSquare,
-  Clock,
-  BarChart3,
-  Users,
-  Settings,
-  User,
-  Plus,
-  Edit3,
-} from "lucide-react";
+  MediaItem,
+  Review,
+  Milestone,
+  UserSettings,
+  UserProfile,
+  ActivePage,
+} from "./types";
 
 // Loading Screen
 const LoadingScreen: React.FC = () => (
@@ -30,133 +60,6 @@ const LoadingScreen: React.FC = () => (
     </div>
   </div>
 );
-
-// Context Providers
-import { AppProvider } from "./context/AppContext";
-import { useAuth } from "./context/AuthContext";
-import { useToast } from "./context/ToastContext";
-
-// Components
-import { Sidebar } from "./components/Sidebar";
-import { DesktopHeader } from "./components/DesktopHeader";
-import { MobileSidebar } from "./components/MobileSidebar";
-import { Login } from "./components/Login";
-import { LandingPage } from "./components/LandingPage";
-import { Register } from "./components/Register";
-import Dashboard from "./components/Dashboard";
-import ProLibrary from "./components/Library/ProLibrary"; // ✅ Nova biblioteca integrada
-import Reviews from "./components/Reviews";
-import Timeline from "./components/Timeline";
-import Statistics from "./components/Statistics";
-import SettingsComponent from "./components/Settings";
-import Profile from "./components/Profile";
-import { AddMediaPage } from "./components/AddMediaPage";
-import EditMediaPageWrapper from "./components/EditMediaPageWrapper";
-import { UserProfileView } from "./components/UserProfileView";
-import FirebaseStatus from "./components/FirebaseStatus";
-import { StripeReturnHandler } from "./components/StripeReturnHandler";
-import "./utils/connectivityTest";
-
-// Services
-import { getSettings, saveSettings } from "./services/settingsService";
-import { getMedias } from "./services/mediaService";
-import { getReviews } from "./services/reviewService";
-import { getMilestones } from "./services/milestoneService";
-
-// Tipos
-export type MediaType = "game" | "movie" | "tv" | "book" | "anime" | "manga";
-export type Status = "completed" | "in-progress" | "dropped" | "planned";
-export type ActivePage =
-  | "dashboard"
-  | "library"
-  | "reviews"
-  | "timeline"
-  | "statistics"
-  | "social"
-  | "settings"
-  | "profile"
-  | "add-media"
-  | "edit-media"
-  | "user-profile";
-
-export interface MediaItem {
-  id: string;
-  title: string;
-  type: MediaType;
-  status: Status;
-  rating?: number;
-  notes?: string;
-  startDate?: string;
-  endDate?: string;
-  hoursSpent?: number;
-  cover?: string;
-  genres?: string[];
-  platforms?: string[];
-  createdAt: string;
-  updatedAt: string;
-  isFavorite?: boolean;
-  tags?: string[];
-  externalId?: string;
-  description?: string;
-  platform?: string;
-  totalPages?: number;
-  currentPage?: number;
-  externalLink?: string;
-}
-
-export interface Review {
-  id: string;
-  mediaId: string;
-  title: string;
-  content: string;
-  rating: number;
-  spoilers: boolean;
-  createdAt: string;
-  updatedAt: string;
-  likes?: number;
-  isPublic?: boolean;
-}
-
-export interface Milestone {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  date: string;
-  type: "achievement" | "goal" | "event";
-  mediaId?: string;
-  images?: string[]; // URLs das imagens (máximo 2)
-  data?: any;
-}
-
-export interface UserSettings {
-  name: string;
-  avatar?: string;
-  bio?: string;
-  favoriteGenres: string[];
-  theme: "dark" | "light";
-  language: "pt" | "en";
-  notifications: {
-    achievements: boolean;
-    social: boolean;
-    reminders: boolean;
-  };
-  privacy: {
-    profilePublic: boolean;
-    reviewsPublic: boolean;
-    statsPublic: boolean;
-  };
-}
-
-interface UserProfile {
-  uid: string;
-  email: string;
-  displayName?: string;
-  isPremium?: boolean;
-  bio?: string;
-  favoriteGenres?: string[];
-  profileImage?: string;
-}
 
 const defaultSettings: UserSettings = {
   name: "",
@@ -176,170 +79,123 @@ const defaultSettings: UserSettings = {
   },
 };
 
-// Page metadata
-const pageMetadata = {
-  dashboard: { name: "Dashboard", icon: <Home size={20} /> },
-  library: { name: "Biblioteca", icon: <BookOpen size={20} /> },
-  reviews: { name: "Resenhas", icon: <MessageSquare size={20} /> },
-  timeline: { name: "Jornada", icon: <Clock size={20} /> },
-  statistics: { name: "Estatísticas", icon: <BarChart3 size={20} /> },
-  social: { name: "Social", icon: <Users size={20} /> },
-  settings: { name: "Configurações", icon: <Settings size={20} /> },
-  profile: { name: "Perfil", icon: <User size={20} /> },
-  "add-media": { name: "Adicionar Mídia", icon: <Plus size={20} /> },
-  "edit-media": { name: "Editar Mídia", icon: <Edit3 size={20} /> },
-  "user-profile": { name: "Perfil do Usuário", icon: <User size={20} /> },
+// Wrapper for UserProfile to handle useParams
+const UserProfileRoute = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  if (!id) return <Navigate to="/dashboard" />;
+
+  return <UserProfileView userId={id} onBack={() => navigate(-1)} />;
 };
 
-// ======================================================
-// AppContent (conteúdo principal)
-// ======================================================
+// Main App Content
 const AppContent: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { showSuccess, showError } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(
-    null,
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
+  const [editingMediaItem, setEditingMediaItem] = useState<MediaItem | null>(null);
 
-  // Carrega dados do usuário
+  // --- React Query Implementation ---
+  const { data: mediaItems = [], isLoading: mediaLoading } = useMedias(user?.uid);
+  const { data: reviews = [], isLoading: reviewsLoading } = useReviews(user?.uid);
+  const { data: milestones = [], isLoading: milestonesLoading } = useMilestones(user?.uid);
+  const { data: serverSettings, isLoading: settingsLoading } = useSettings(user?.uid);
+
+  const updateSettingsMutation = useUpdateSettings();
+
+  // Settings State Management (Local + Sync)
+  const [localSettings, setLocalSettings] = useState<UserSettings>(defaultSettings);
+
+  // Sync server settings to local state when loaded
   useEffect(() => {
-    const loadUserData = async () => {
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        devLog.log("🔄 Carregando dados do usuário...");
-
-        const [
-          loadedSettings,
-          loadedMediaItems,
-          loadedReviews,
-          loadedMilestones,
-        ] = await Promise.all([
-          getSettings(user.uid),
-          getMedias(),
-          getReviews(),
-          getMilestones(),
-        ]);
-
-        setSettings({ ...defaultSettings, ...loadedSettings });
-        setMediaItems(loadedMediaItems);
-        setReviews(loadedReviews);
-        setMilestones(loadedMilestones);
-
-        devLog.log("✅ Dados carregados com sucesso");
-        showSuccess("Bem-vindo!", "Seus dados foram carregados com sucesso");
-      } catch (error) {
-        devLog.error("❌ Erro ao carregar dados:", error);
-        showError("Erro", "Não foi possível carregar todos os seus dados");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (!authLoading) {
-      loadUserData();
+    if (serverSettings) {
+      const safeSettings = {
+        ...defaultSettings,
+        ...serverSettings,
+        theme: (serverSettings.theme === "dark" || serverSettings.theme === "light") ? serverSettings.theme : "dark"
+      } as UserSettings;
+      setLocalSettings(safeSettings);
     }
-  }, [user, authLoading, showSuccess, showError]);
+  }, [serverSettings]);
 
-  // Auto-save
-  useEffect(() => {
-    if (!user || isLoading) return;
+  // Handle settings update
+  const handleSetSettings = useCallback((newSettingsOrFn: UserSettings | ((prev: UserSettings) => UserSettings)) => {
+    setLocalSettings(prev => {
+      const newSettings = typeof newSettingsOrFn === 'function' ? newSettingsOrFn(prev) : newSettingsOrFn;
 
-    const autoSave = async () => {
-      try {
-        await saveSettings(user.uid, settings);
-      } catch (error) {
-        devLog.warn("⚠️ Auto-save falhou:", error);
+      // Debounced save or immediate save could be implemented here
+      // For now, we save on change, but verify if user exists
+      if (user?.uid) {
+        updateSettingsMutation.mutate({ userId: user.uid, settings: newSettings });
       }
-    };
+      return newSettings;
+    });
+  }, [user, updateSettingsMutation]);
 
-    const timeoutId = setTimeout(autoSave, 5000);
-    return () => clearTimeout(timeoutId);
-  }, [user, settings, isLoading]);
+  // Sync route with activePage for legacy compatibility
+  useEffect(() => {
+    const path = location.pathname.split('/')[1] || "dashboard";
+    // Map path to ActivePage if possible
+    const validPages: ActivePage[] = [
+      "dashboard", "library", "reviews", "timeline", "statistics",
+      "social", "settings", "profile", "add-media", "edit-media", "user-profile"
+    ];
 
-  // Funções de navegação
+    let mappedPage: ActivePage = "dashboard";
+    if (path === "user") mappedPage = "user-profile";
+    else if (path === "edit-media") mappedPage = "edit-media";
+    else if (path === "add-media") mappedPage = "add-media";
+    else if (validPages.includes(path as ActivePage)) {
+      mappedPage = path as ActivePage;
+    }
+
+    setActivePage(mappedPage);
+  }, [location.pathname]);
+
+
+  // Funções de navegação (Legacy/Context support)
   const navigateToAddMedia = useCallback(() => {
-    setActivePage("add-media");
-  }, []);
+    navigate("/add-media");
+  }, [navigate]);
 
   const navigateToEditMedia = useCallback((item: MediaItem) => {
     setEditingMediaItem(item);
-    setActivePage("edit-media");
-  }, []);
+    navigate(`/edit-media/${item.id}`);
+  }, [navigate]);
 
   const navigateBack = useCallback(() => {
-    setActivePage("dashboard");
-    setEditingMediaItem(null);
-    setSelectedUser(null);
-  }, []);
-
-  // Renderer de páginas
-  const PageComponent = useMemo(() => {
-    const components = {
-      dashboard: Dashboard,
-      library: () => (
-        <ProLibrary
-          featured={mediaItems.slice(0, 4)}
-          recent={mediaItems.slice(-6)}
-          topRated={[...mediaItems]
-            .filter((m) => m.rating !== undefined)
-            .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-            .slice(0, 6)}
-          collection={mediaItems}
-        />
-      ),
-      reviews: Reviews,
-      timeline: Timeline,
-      statistics: Statistics,
-      settings: SettingsComponent,
-      profile: Profile,
-      "add-media": AddMediaPage,
-      "edit-media": EditMediaPageWrapper,
-      "user-profile": UserProfileView,
-      social: () => (
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <Users className="mx-auto mb-4 text-purple-400" size={48} />
-            <h2 className="text-xl font-semibold text-white mb-2">
-              Social em Breve
-            </h2>
-            <p className="text-slate-400">
-              Conecte-se com outros nerds e compartilhe suas descobertas!
-            </p>
-          </div>
-        </div>
-      ),
-    };
-
-    return components[activePage] || components.dashboard;
-  }, [activePage, mediaItems]);
+    navigate(-1);
+  }, [navigate]);
 
   // Contexto
   const appContextValue = useMemo(
     () => ({
       mediaItems,
-      setMediaItems,
+      setMediaItems: () => devLog.warn("Legacy setMediaItems called - prefer using Mutations"), // Placeholder
       reviews,
-      setReviews,
+      setReviews: () => devLog.warn("Legacy setReviews called"),
       milestones,
-      setMilestones,
-      settings,
-      setSettings,
+      setMilestones: () => devLog.warn("Legacy setMilestones called"),
+      settings: localSettings,
+      setSettings: handleSetSettings,
       activePage,
-      setActivePage,
+      setActivePage: (page: ActivePage) => {
+        // Backward compatibility: switch route
+        if (page === "user-profile") {
+          // Can't nav without ID
+          return;
+        }
+        if (page === "edit-media") return; // Handled by navigateToEditMedia
+
+        let path = page as string;
+        if (page === "add-media") path = "add-media";
+        navigate(`/${path}`);
+      },
       selectedUser,
       setSelectedUser,
       editingMediaItem,
@@ -349,115 +205,74 @@ const AppContent: React.FC = () => {
       navigateBack,
     }),
     [
-      mediaItems,
-      reviews,
-      milestones,
-      settings,
-      activePage,
-      selectedUser,
-      editingMediaItem,
-      navigateToAddMedia,
-      navigateToEditMedia,
-      navigateBack,
-    ],
+      mediaItems, reviews, milestones, localSettings, handleSetSettings, activePage, selectedUser, editingMediaItem,
+      navigateToAddMedia, navigateToEditMedia, navigateBack
+    ]
   );
 
-  // Renderização especial
-  if (authLoading || isLoading) return <LoadingScreen />;
+  const isLoading = authLoading || (user && (mediaLoading || reviewsLoading || milestonesLoading || settingsLoading));
 
-  if (!user) {
-    if (showLogin) {
-      return (
-        <Login
-          onCancel={() => setShowLogin(false)}
-          onRegister={() => {
-            setShowLogin(false);
-            setShowRegister(true);
-          }}
-        />
-      );
-    }
-
-    if (showRegister) {
-      return (
-        <Register
-          onCancel={() => setShowRegister(false)}
-          onLogin={() => {
-            setShowRegister(false);
-            setShowLogin(true);
-          }}
-        />
-      );
-    }
-
-    return (
-      <LandingPage
-        onLogin={() => setShowLogin(true)}
-        onRegister={() => setShowRegister(true)}
-      />
-    );
-  }
-
-  const currentPageMeta = pageMetadata[activePage];
+  if (isLoading) return <LoadingScreen />;
 
   return (
     <AppProvider value={appContextValue}>
-      <div className="min-h-screen mobile-full-height bg-gray-900 text-white overflow-x-hidden">
-        {/* Background */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-20 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-500/10 rotate-45"></div>
-        </div>
+      <Routes>
+        {/* Auth Routes */}
+        <Route path="/landing" element={
+          !user ? <LandingPage onLogin={() => navigate("/login")} onRegister={() => navigate("/register")} />
+            : <Navigate to="/dashboard" />
+        } />
+        <Route path="/login" element={
+          !user ? <Login onCancel={() => navigate("/landing")} onRegister={() => navigate("/register")} />
+            : <Navigate to="/dashboard" />
+        } />
+        <Route path="/register" element={
+          !user ? <Register onCancel={() => navigate("/landing")} onLogin={() => navigate("/login")} />
+            : <Navigate to="/dashboard" />
+        } />
 
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block">
-          <Sidebar />
-        </div>
-
-        {/* Mobile Sidebar */}
-        <MobileSidebar />
-
-        {/* Desktop Header */}
-        <div className="hidden md:block">
-          <DesktopHeader
-            pageName={currentPageMeta.name}
-            pageIcon={currentPageMeta.icon}
-          />
-        </div>
-
-        {/* Conteúdo */}
-        <main className="md:ml-20 md:pt-16 min-h-screen pt-16 overflow-y-auto">
-          <div className="p-4 md:p-6 lg:p-8 pb-8">
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+        {/* Protected Routes */}
+        {user && (
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/library" element={
+              <ProLibrary
+                featured={mediaItems.slice(0, 4)}
+                recent={mediaItems.slice(-6)}
+                topRated={[...mediaItems]
+                  .filter((m) => m.rating !== undefined)
+                  .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+                  .slice(0, 6)}
+                collection={mediaItems}
+              />
+            } />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/timeline" element={<Timeline />} />
+            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/settings" element={<SettingsComponent />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/add-media" element={<AddMediaPage />} />
+            <Route path="/media/new" element={<CreateMediaPage />} />
+            <Route path="/edit-media/:id" element={<EditMediaPageWrapper />} />
+            <Route path="/user/:id" element={<UserProfileRoute />} />
+            <Route path="/social" element={
+              <div className="flex items-center justify-center h-96">
+                <div className="text-center">
+                  <Users className="mx-auto mb-4 text-purple-400" size={48} />
+                  <h2 className="text-xl font-semibold text-white mb-2">Social em Breve</h2>
+                  <p className="text-slate-400">Conecte-se com outros nerds e compartilhe suas descobertas!</p>
                 </div>
-              }
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activePage}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="w-full"
-                >
-                  <PageComponent />
-                </motion.div>
-              </AnimatePresence>
-            </Suspense>
-          </div>
-        </main>
+              </div>
+            } />
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+          </Route>
+        )}
 
-        {/* Firebase Status - Removido conforme solicitado */}
-        {/* <FirebaseStatus showStatus={!!user} /> */}
-        
-        {/* Stripe Return Handler */}
-        <StripeReturnHandler />
-      </div>
+        {/* Default Redirect if not user */}
+        {!user && <Route path="*" element={<Navigate to="/landing" />} />}
+
+      </Routes>
     </AppProvider>
   );
 };
@@ -494,33 +309,21 @@ class ErrorBoundary extends React.Component<
   }
 }
 
-// Root App
+// Root App is handled in main.tsx (BrowserRouter)
 const App: React.FC = () => {
+  // Error handlers...
   useEffect(() => {
     const handler = (event: PromiseRejectionEvent) => {
       try {
         const reason = (event && (event.reason as any)) || null;
-        const message =
-          reason && (reason.message || String(reason))
-            ? (reason.message || String(reason))
-            : "";
-
-        // Suppress known ReadableStreamDefaultReader constructor error coming from
-        // firebase/firestore internals in some environments where streams are locked.
-        if (
-          typeof message === "string" &&
-          message.includes("ReadableStreamDefaultReader constructor can only accept readable streams")
-        ) {
+        const message = reason && (reason.message || String(reason)) ? (reason.message || String(reason)) : "";
+        if (typeof message === "string" && message.includes("ReadableStreamDefaultReader constructor can only accept readable streams")) {
           devLog.warn("Suppressed known Firestore ReadableStream error:", message);
           event.preventDefault();
           return;
         }
-      } catch (e) {
-        // ignore
-      }
-      // Let other unhandled rejections surface
+      } catch (e) { }
     };
-
     window.addEventListener("unhandledrejection", handler as any);
     return () => window.removeEventListener("unhandledrejection", handler as any);
   }, []);

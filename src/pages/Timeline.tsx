@@ -9,7 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
-import { Milestone } from "../App";
+import { Milestone } from "../types";
 import { AddMilestoneModal } from "./modals/AddMilestoneModal";
 import { EditMilestoneModal } from "./modals/EditMilestoneModal";
 import { deleteMilestone } from "../services/milestoneService";

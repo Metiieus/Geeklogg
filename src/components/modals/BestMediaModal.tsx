@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Trophy, Medal, Award } from "lucide-react";
 import { motion } from "framer-motion";
-import { MediaItem } from "../../App";
+import { MediaItem } from "../../types";
 
 interface BestMediaModalProps {
   isOpen: boolean;

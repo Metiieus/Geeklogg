@@ -1,4 +1,4 @@
-import type { Review } from "../App";
+import type { Review } from "../types";
 import { devLog } from "../utils/logger";
 import {
   getUserId,
@@ -13,8 +13,8 @@ import { storageClient } from "./storageClient";
 /*                                   READ                                     */
 /* -------------------------------------------------------------------------- */
 
-export async function getReviews(): Promise<Review[]> {
-  const uid = getUserId();
+export async function getReviews(userId?: string): Promise<Review[]> {
+  const uid = userId || getUserId();
   if (!uid) {
     devLog.warn("User not authenticated, returning empty reviews list");
     return [];

@@ -1,4 +1,4 @@
-import type { MediaItem } from "../App";
+import type { MediaItem } from "../types";
 import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
 import { database } from "./database";
 import { storageClient } from "./storageClient";
@@ -149,8 +149,8 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
 /**
  * Retorna todas as mídias da biblioteca do usuário.
  */
-export async function getMedias(): Promise<MediaItem[]> {
-  const uid = getUserId();
+export async function getMedias(userId?: string): Promise<MediaItem[]> {
+  const uid = userId || getUserId();
   if (!uid) {
     console.warn("User not authenticated, returning empty array");
     return [];

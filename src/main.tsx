@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 import { I18nProvider } from "./i18n";
 import "./styles/merged.css";
 import "./utils/viewportHeight";
@@ -8,6 +9,8 @@ import "./utils/viewportHeight";
 // Context Providers
 import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./config/queryClient";
 
 // Analytics & Performance (now imported via `src/styles/merged.css`)
 
@@ -71,9 +74,13 @@ if (!rootElement) {
       <StrictMode>
         <ToastProvider>
           <AuthProvider>
-            <I18nProvider>
-              <App />
-            </I18nProvider>
+            <QueryClientProvider client={queryClient}>
+              <I18nProvider>
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </I18nProvider>
+            </QueryClientProvider>
           </AuthProvider>
         </ToastProvider>
       </StrictMode>,

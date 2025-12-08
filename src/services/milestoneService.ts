@@ -1,4 +1,4 @@
-import type { Milestone } from "../App";
+import type { Milestone } from "../types";
 import { devLog } from "../utils/logger";
 import {
   getUserId,
@@ -16,8 +16,8 @@ import { storageClient } from "./storageClient";
 /**
  * Retorna todos os marcos (timeline) do usuário autenticado.
  */
-export async function getMilestones(): Promise<Milestone[]> {
-  const uid = getUserId();
+export async function getMilestones(userId?: string): Promise<Milestone[]> {
+  const uid = userId || getUserId();
   if (!uid) {
     devLog.warn("User not authenticated, returning empty milestones list");
     return [];

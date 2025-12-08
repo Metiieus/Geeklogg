@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Star, Check } from "lucide-react";
 import { motion } from "framer-motion";
-import { MediaItem } from "../../App";
+import { MediaItem } from "../../types";
 
 interface EditFeaturedPopularModalProps {
   isOpen: boolean;

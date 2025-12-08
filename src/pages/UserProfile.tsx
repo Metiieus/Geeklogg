@@ -12,7 +12,7 @@ import {
   UserPlus,
   UserMinus,
 } from "lucide-react";
-import { MediaItem, Review, Milestone } from "../App";
+import { MediaItem, Review, Milestone } from "../types";
 import { UserProfile } from "../types/social";
 import { getMedias } from "../services/mediaService";
 import { getReviews } from "../services/reviewService";

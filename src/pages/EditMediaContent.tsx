@@ -1,192 +1,143 @@
 import React, { useState } from "react";
 import { ArrowLeft, Save, Upload } from "lucide-react";
-import { MediaItem, MediaType, Status } from "../App";
-import { updateMedia } from "../services/mediaService";
+import { MediaItem, MediaType, Status } from "../types";
+import { updateMedia, addMedia } from "../services/mediaService";
+import { useAddMedia, useUpdateMedia } from "../hooks/queries/useMediaQueries";
 import { useToast } from "../context/ToastContext";
 import { validateFile, compressImage } from "../utils/fileValidation";
-import { sanitizeText, sanitizeUrl, sanitizeTags } from "../utils/sanitizer";
-import { ModalWrapper } from "./ModalWrapper";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { mediaSchema, MediaFormData } from "../schemas/media";
 import { useImprovedScrollLock } from "../hooks/useImprovedScrollLock";
 
+import { ModalWrapper } from "../components/ModalWrapper";
+
 interface EditMediaPageProps {
-  item: MediaItem;
+  item: Partial<MediaItem>;
   onSave: (item: MediaItem) => void;
   onBack: () => void;
+  isNew?: boolean;
 }
 
 const mediaTypeLabels = {
-  games: "Jogos",
+  game: "Jogos",
   anime: "Anime",
-  series: "Séries",
-  books: "Livros",
-  movies: "Filmes",
-  dorama: "Doramas",
+  tv: "Séries",
+  book: "Livros",
+  movie: "Filmes",
+  manga: "Mangá",
 };
 
 export const EditMediaPage: React.FC<EditMediaPageProps> = ({
   item,
   onSave,
   onBack,
+  isNew = false,
 }) => {
   const { showError, showSuccess, showWarning } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({
-    title: item.title || "",
-    type: item.type,
-    status: item.status,
-    rating: item.rating?.toString() || "",
-    hoursSpent: item.hoursSpent?.toString() || "",
-    totalPages: item.totalPages?.toString() || "",
-    currentPage: item.currentPage?.toString() || "",
-    startDate: item.startDate || "",
-    endDate: item.endDate || "",
-    platform: item.platform || "",
-    tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
-    externalLink: item.externalLink || "",
-    coverPreview: item.cover || "",
-    coverFile: undefined as File | undefined,
-    description: item.description || "",
+
+  // React Hook Form
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<MediaFormData & { coverFile?: File; coverPreview?: string }>({
+    resolver: zodResolver(mediaSchema),
+    defaultValues: {
+      title: item.title || "",
+      type: item.type || "game",
+      status: item.status || "planned",
+      rating: item.rating,
+      hoursSpent: item.hoursSpent,
+      totalPages: item.totalPages,
+      currentPage: item.currentPage,
+      startDate: item.startDate || "",
+      endDate: item.endDate || "",
+      platform: item.platform || "",
+      tags: Array.isArray(item.tags) ? item.tags : [],
+      externalLink: item.externalLink || "",
+      description: item.description || "",
+      coverPreview: item.cover || "",
+    },
   });
 
-  // Apply scroll lock for modal behavior
+  // Watch for conditional rendering
+  const type = watch("type");
+  const coverPreview = watch("coverPreview");
+
   useImprovedScrollLock(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const addMediaMutation = useAddMedia();
+  const updateMediaMutation = useUpdateMedia();
 
-    if (!item.id || typeof item.id !== "string" || item.id.trim() === "") {
-      showError("Erro", "ID inválido");
+  const onSubmit = async (data: MediaFormData & { coverFile?: File }) => {
+    if (!isNew && !item.id) {
+      showError("Erro", "ID inválido para edição");
       return;
     }
-
-    // Validações
-    if (!formData.title.trim()) {
-      showError("Título obrigatório", "Por favor, insira o título da mídia");
-      return;
-    }
-
-    if (formData.title.trim().length < 2) {
-      showError(
-        "Título muito curto",
-        "O título deve ter pelo menos 2 caracteres",
-      );
-      return;
-    }
-
-    if (
-      formData.rating &&
-      (parseInt(formData.rating) < 1 || parseInt(formData.rating) > 10)
-    ) {
-      showError("Avaliação inválida", "A avaliação deve estar entre 1 e 10");
-      return;
-    }
-
-    if (
-      formData.currentPage &&
-      formData.totalPages &&
-      parseInt(formData.currentPage) > parseInt(formData.totalPages)
-    ) {
-      showError(
-        "Páginas inválidas",
-        "A página atual não pode ser maior que o total de páginas",
-      );
-      return;
-    }
-
-    setIsSaving(true);
 
     try {
-      const updateRes = await updateMedia(item.id, {
-        title: formData.title.trim(),
-        type: formData.type,
-        status: formData.status,
-        rating: formData.rating ? parseInt(formData.rating) : undefined,
-        hoursSpent: formData.hoursSpent
-          ? parseFloat(formData.hoursSpent)
-          : undefined,
-        totalPages: formData.totalPages
-          ? parseInt(formData.totalPages)
-          : undefined,
-        currentPage: formData.currentPage
-          ? parseInt(formData.currentPage)
-          : undefined,
-        startDate: formData.startDate || undefined,
-        endDate: formData.endDate || undefined,
-        platform: formData.platform?.trim() || undefined,
-        tags: formData.tags
-          ? formData.tags
-              .split(",")
-              .map((tag) => tag.trim())
-              .filter((tag) => tag.length > 0)
-          : [],
-        externalLink: formData.externalLink?.trim() || undefined,
-        description: formData.description?.trim() || undefined,
-        coverFile: formData.coverFile,
-      });
+      if (isNew) {
+        // Create New
+        await addMediaMutation.mutateAsync({
+          ...data,
+          rating: data.rating,
+          hoursSpent: data.hoursSpent,
+          totalPages: data.totalPages,
+          currentPage: data.currentPage,
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          coverFile: data.coverFile,
+          type: data.type as MediaType,
+          status: data.status as Status,
+        });
+        showSuccess("Mídia criada!", `${data.title} foi adicionado à sua biblioteca`);
+        // We don't have the savedItem here easily unless we strip it from result, 
+        // but invalidation handles the list. 
+        // onSave might expect the item for local state? 
+        // The legacy onSave updates the array manually.
+        // If we rely on Query Cache, we might not need to manually update local state if the parent uses useMedias.
+        // But for now, let's keep onSave if parent needs it, but we can't easily get the full object back from mutateAsync depending on how it's typed.
+        // The mutation returns the result of addMedia service which IS the item.
+      } else {
+        // Update Existing
+        const id = item.id!;
+        await updateMediaMutation.mutateAsync({
+          id,
+          updates: {
+            ...data,
+            rating: data.rating,
+            hoursSpent: data.hoursSpent,
+            totalPages: data.totalPages,
+            currentPage: data.currentPage,
+            tags: Array.isArray(data.tags) ? data.tags : [],
+            coverFile: data.coverFile,
+          } as any // Cast to any to bypass Partial<MediaItem> strictness for coverFile
+        });
+        showSuccess("Mídia atualizada!", `${data.title} foi atualizado com sucesso`);
+      }
 
-      const updatedItem: MediaItem = {
-        ...item,
-        title: formData.title.trim(),
-        type: formData.type,
-        status: formData.status,
-        rating: formData.rating ? parseInt(formData.rating) : undefined,
-        hoursSpent: formData.hoursSpent
-          ? parseFloat(formData.hoursSpent)
-          : undefined,
-        totalPages: formData.totalPages
-          ? parseInt(formData.totalPages)
-          : undefined,
-        currentPage: formData.currentPage
-          ? parseInt(formData.currentPage)
-          : undefined,
-        startDate: formData.startDate || undefined,
-        endDate: formData.endDate || undefined,
-        platform: formData.platform?.trim() || undefined,
-        tags: formData.tags
-          ? formData.tags
-              .split(",")
-              .map((tag) => tag.trim())
-              .filter((tag) => tag.length > 0)
-          : [],
-        externalLink: formData.externalLink?.trim() || undefined,
-        cover: updateRes.cover ?? item.cover,
-        description: formData.description?.trim() || undefined,
-        updatedAt: new Date().toISOString(),
-      };
-
-      showSuccess(
-        "Mídia atualizada!",
-        `${formData.title} foi atualizado com sucesso`,
-      );
-      onSave(updatedItem);
+      // We call onSave with a placeholder or fetch fresh data?
+      // Since we invalidated queries, the list in App/Library should auto-update.
+      // We can just call onBack for now, or pass "true" to onSave to indicate success.
+      // But preserving existing signature:
+      onSave({ ...item, ...data } as MediaItem); // Optimistic / approx
       onBack();
     } catch (error: any) {
-      console.error("Erro ao atualizar mídia:", error);
-      showError(
-        "Erro ao salvar",
-        error.message || "Não foi possível atualizar a mídia",
-      );
-    } finally {
-      setIsSaving(false);
+      console.error("Erro ao salvar mídia:", error);
+      showError("Erro ao salvar", error.message || "Não foi possível salvar a mídia");
     }
   };
 
-  const handleChange = (field: string, value: string) => {
-    // Aplicar sanitização baseada no tipo de campo
-    let sanitizedValue = value;
-
-    if (field === "externalLink") {
-      const validUrl = sanitizeUrl(value);
-      sanitizedValue = validUrl || value; // Manter valor original se inválido para feedback visual
-    } else if (field === "description" || field === "title") {
-      sanitizedValue = sanitizeText(
-        value,
-        field === "description" ? 1000 : 200,
-      );
-    }
-
-    setFormData((prev) => ({ ...prev, [field]: sanitizedValue }));
+  // Helper to handle tags input (comma separated <-> array)
+  // We can just use a controlled input for tags linked to setValue
+  const [tagsInput, setTagsInput] = useState(Array.isArray(item.tags) ? item.tags.join(", ") : "");
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTagsInput(e.target.value);
+    const tagsArray = e.target.value.split(",").map(t => t.trim()).filter(Boolean);
+    setValue("tags", tagsArray);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,7 +147,6 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
     setIsUploading(true);
 
     try {
-      // Validar arquivo
       const validation = await validateFile(file, {
         maxSizeInMB: 5,
         allowedTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
@@ -210,32 +160,18 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
         return;
       }
 
-      // Se a imagem for muito grande, comprimir
       let processedFile = file;
       if (file.size > 2 * 1024 * 1024) {
-        // > 2MB
         showWarning("Comprimindo imagem", "A imagem está sendo otimizada");
         processedFile = await compressImage(file, 1024, 1024, 0.8);
       }
 
-      // Converter para base64 para preview
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
-        setFormData((prev) => ({
-          ...prev,
-          coverPreview: result,
-          coverFile: processedFile,
-        }));
+        setValue("coverPreview", result);
+        setValue("coverFile", processedFile);
         showSuccess("Capa carregada!", "Imagem da capa foi adicionada");
-        setIsUploading(false);
-      };
-
-      reader.onerror = () => {
-        showError(
-          "Erro ao processar imagem",
-          "Não foi possível carregar a imagem selecionada",
-        );
         setIsUploading(false);
       };
 
@@ -278,7 +214,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
 
         {/* Form */}
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="flex-1 flex flex-col overflow-hidden min-h-0"
         >
           <div
@@ -294,12 +230,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base transition-all duration-200"
+                    {...register("title")}
+                    className={`w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-slate-600'}`}
                     placeholder="Digite o título da mídia"
                   />
+                  {errors.title && <span className="text-red-400 text-xs mt-1">{errors.title.message}</span>}
                 </div>
 
                 <div>
@@ -307,9 +242,8 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     Tipo *
                   </label>
                   <select
-                    value={formData.type}
-                    onChange={(e) => handleChange("type", e.target.value)}
-                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base mobile-input transition-all duration-200"
+                    {...register("type")}
+                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-base mobile-input transition-all duration-200"
                   >
                     {Object.entries(mediaTypeLabels).map(([key, label]) => (
                       <option key={key} value={key}>
@@ -317,6 +251,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                       </option>
                     ))}
                   </select>
+                  {errors.type && <span className="text-red-400 text-xs mt-1">{errors.type.message}</span>}
                 </div>
               </div>
 
@@ -326,8 +261,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     Status *
                   </label>
                   <select
-                    value={formData.status}
-                    onChange={(e) => handleChange("status", e.target.value)}
+                    {...register("status")}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   >
                     <option value="planned">Planejado</option>
@@ -335,6 +269,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     <option value="completed">Concluído</option>
                     <option value="dropped">Abandonado</option>
                   </select>
+                  {errors.status && <span className="text-red-400 text-xs mt-1">{errors.status.message}</span>}
                 </div>
 
                 <div>
@@ -343,8 +278,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    value={formData.platform}
-                    onChange={(e) => handleChange("platform", e.target.value)}
+                    {...register("platform")}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="Steam, Netflix, etc."
                   />
@@ -362,11 +296,11 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     min="0"
                     max="10"
                     step="0.1"
-                    value={formData.rating}
-                    onChange={(e) => handleChange("rating", e.target.value)}
+                    {...register("rating")}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="8.5"
                   />
+                  {errors.rating && <span className="text-red-400 text-xs mt-1">{errors.rating.message}</span>}
                 </div>
 
                 <div>
@@ -377,15 +311,14 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     type="number"
                     min="0"
                     step="0.5"
-                    value={formData.hoursSpent}
-                    onChange={(e) => handleChange("hoursSpent", e.target.value)}
+                    {...register("hoursSpent")}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                     placeholder="25.5"
                   />
                 </div>
               </div>
 
-              {formData.type === "books" && (
+              {type === "book" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -394,10 +327,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     <input
                       type="number"
                       min="1"
-                      value={formData.totalPages}
-                      onChange={(e) =>
-                        handleChange("totalPages", e.target.value)
-                      }
+                      {...register("totalPages")}
                       className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                       placeholder="350"
                     />
@@ -409,10 +339,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                     <input
                       type="number"
                       min="0"
-                      value={formData.currentPage}
-                      onChange={(e) =>
-                        handleChange("currentPage", e.target.value)
-                      }
+                      {...register("currentPage")}
                       className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                       placeholder="42"
                     />
@@ -428,8 +355,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                   </label>
                   <input
                     type="date"
-                    value={formData.startDate}
-                    onChange={(e) => handleChange("startDate", e.target.value)}
+                    {...register("startDate")}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   />
                 </div>
@@ -440,8 +366,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                   </label>
                   <input
                     type="date"
-                    value={formData.endDate}
-                    onChange={(e) => handleChange("endDate", e.target.value)}
+                    {...register("endDate")}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   />
                 </div>
@@ -454,8 +379,8 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                 </label>
                 <input
                   type="text"
-                  value={formData.tags}
-                  onChange={(e) => handleChange("tags", e.target.value)}
+                  value={tagsInput}
+                  onChange={handleTagsChange}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
                 />
@@ -468,8 +393,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                 </label>
                 <input
                   type="url"
-                  value={formData.externalLink}
-                  onChange={(e) => handleChange("externalLink", e.target.value)}
+                  {...register("externalLink")}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
                   placeholder="https://store.steampowered.com/..."
                 />
@@ -483,11 +407,10 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                 <div className="space-y-3">
                   <div className="flex items-center justify-center sm:justify-start">
                     <label
-                      className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors cursor-pointer text-sm sm:text-base touch-target ${
-                        isUploading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-slate-700"
-                      }`}
+                      className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors cursor-pointer text-sm sm:text-base touch-target ${isUploading
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-slate-700"
+                        }`}
                     >
                       {isUploading ? (
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -506,10 +429,10 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                       />
                     </label>
                   </div>
-                  {formData.coverPreview && (
+                  {coverPreview && (
                     <div className="mt-3 flex justify-center overflow-hidden">
                       <img
-                        src={formData.coverPreview}
+                        src={coverPreview}
                         alt="Preview"
                         className="w-24 sm:w-32 h-32 sm:h-40 object-cover rounded-lg"
                       />
@@ -524,9 +447,8 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                   Descrição
                 </label>
                 <textarea
-                  value={formData.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
                   rows={3}
+                  {...register("description")}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none text-sm sm:text-base"
                   placeholder="Breve descrição ou notas..."
                 />
@@ -546,19 +468,18 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
               </button>
               <button
                 type="submit"
-                disabled={isSaving || isUploading}
-                className={`w-full sm:w-auto px-6 py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-base font-semibold touch-target no-zoom ${
-                  isSaving || isUploading
-                    ? "bg-slate-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25 active:scale-95"
-                } text-white`}
+                disabled={isSubmitting || isUploading}
+                className={`w-full sm:w-auto px-6 py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-base font-semibold touch-target no-zoom ${isSubmitting || isUploading
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25 active:scale-95"
+                  } text-white`}
               >
-                {isSaving ? (
+                {isSubmitting ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <Save size={16} className="sm:w-5 sm:h-5" />
                 )}
-                {isSaving ? "Salvando..." : "Salvar Alteraç��es"}
+                {isSubmitting ? "Salvando..." : "Salvar Alterações"}
               </button>
             </div>
           </div>

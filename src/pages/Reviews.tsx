@@ -10,7 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
-import { Review } from "../App";
+import { Review } from "../types";
 import { AddReviewModal } from "./modals/AddReviewModal";
 import { EditReviewModal } from "./modals/EditReviewModal";
 import { deleteReview } from "../services/reviewService";

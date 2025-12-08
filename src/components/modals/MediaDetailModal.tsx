@@ -11,7 +11,7 @@ import {
   Play,
   BookOpen,
 } from "lucide-react";
-import { MediaItem } from "../../App";
+import { MediaItem } from "../../types";
 import { ModalWrapper } from "../ModalWrapper";
 
 interface MediaDetailModalProps {

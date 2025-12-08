@@ -8,7 +8,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
-import { MediaItem, Status } from "../App";
+import { MediaItem, Status } from "../types";
 
 const Dashboard: React.FC = () => {
   const { mediaItems, reviews, milestones, settings, setActivePage } =

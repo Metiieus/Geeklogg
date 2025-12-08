@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { MediaItem, Review, Milestone, UserSettings, ActivePage } from "../App";
+import { MediaItem, Review, Milestone, UserSettings, ActivePage } from "../types";
 import { UserProfile } from "../types/social";
 
 interface UseOptimizedContextProps {

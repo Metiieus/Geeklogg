@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalMediaResult } from "../../services/externalMediaService";
-import { MediaItem, MediaType, Status } from "../../App";
+import { MediaItem, MediaType, Status } from "../../types";
 import { useToast } from "../../context/ToastContext";
 
 interface AddMediaFromSearchModalProps {
