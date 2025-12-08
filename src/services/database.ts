@@ -19,6 +19,8 @@ import {
   Timestamp,
   serverTimestamp,
   type DocumentReference,
+  type Query,
+  type DocumentData,
 } from "firebase/firestore";
 
 // Helper to check if we should use offline mode
@@ -262,7 +264,7 @@ export const database = {
 
       devLog.log("🔍 [GET] Buscando documento...");
       const docSnap = await withRetry(async () => await getDoc(docRef));
-      
+
       if (docSnap.exists()) {
         devLog.log("✅ [GET] Documento encontrado!");
         devLog.log("📄 Dados:", docSnap.data());
@@ -272,11 +274,11 @@ export const database = {
 
       return docSnap.exists()
         ? {
-            id: docSnap.id,
-            ...docSnap.data(),
-            exists: () => true,
-            data: () => docSnap.data(),
-          }
+          id: docSnap.id,
+          ...docSnap.data(),
+          exists: () => true,
+          data: () => docSnap.data(),
+        }
         : { exists: () => false, data: () => null };
     } catch (error: any) {
       devLog.error("❌ [GET] Erro ao obter documento:", error.message);
@@ -409,7 +411,7 @@ export const database = {
     try {
       if (!db) throw new Error("Firestore not available");
 
-      let q = collection(db, pathStr);
+      let q: Query<DocumentData> = collection(db, pathStr);
 
       if (queryOptions) {
         const { where: w, orderBy: ob, limit: lim } = queryOptions;
@@ -429,8 +431,46 @@ export const database = {
 
       devLog.log("🔍 [GET_COLLECTION] Executando query...");
       const snap = await withRetry(async () => await getDocs(q));
-      const results = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
-      
+      const dbResults = snap.docs.map((d) => ({ id: d.id, data: d.data(), ...d.data() }));
+
+      // Merge with LocalStorage data (Robust Fallback)
+      try {
+        const lsData = localStorageService.getCollection(pathStr);
+        if (lsData && lsData.length > 0) {
+          devLog.log(`Checking LocalStorage for pending items... found ${lsData.length}`);
+          // Filter LS data based on query options if provided (basic impl)
+          let filteredLs = lsData.map((item: any, index: number) => ({
+            id: item.id ?? `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${index}`,
+            data: item,
+            ...item
+          }));
+
+          // Apply basic filtering to LS data to match query
+          if (queryOptions) {
+            const { where: w } = queryOptions;
+            if (w) {
+              filteredLs = filteredLs.filter((item: any) => {
+                const val = item[w.field];
+                if (w.operator === "==") return val === w.value;
+                if (w.operator === "array-contains") return Array.isArray(val) && val.includes(w.value);
+                return true; // Simplified for robustness
+              });
+            }
+          }
+
+          // Add items from LS that are NOT in DB results
+          const newItems = filteredLs.filter((lsItem: any) => !dbResults.find((dbItem) => dbItem.id === lsItem.id));
+          if (newItems.length > 0) {
+            devLog.log(`Merging ${newItems.length} items from LocalStorage`);
+            dbResults.push(...newItems);
+          }
+        }
+      } catch (e) {
+        devLog.warn("Error merging LS data", e);
+      }
+
+      const results = dbResults;
+
       devLog.log(`✅ [GET_COLLECTION] ${results.length} documentos encontrados!`);
       if (results.length > 0) {
         devLog.log("📄 Primeiro documento:", results[0]);
@@ -442,7 +482,7 @@ export const database = {
       devLog.error("📍 Caminho completo:", pathStr);
       devLog.error("🔍 Código do erro:", error.code);
       devLog.error("📋 Stack:", error.stack);
-      
+
       // Log de permissões
       if (error.code === "permission-denied") {
         devLog.error("🚫 ERRO DE PERMISSÃO!");
@@ -524,7 +564,7 @@ export const database = {
           updatedAt: serverTimestamp(),
         });
       });
-      
+
       devLog.log("✅ [UPDATE] Documento atualizado com sucesso!");
       return docId;
     } catch (error: any) {
@@ -587,7 +627,7 @@ export const database = {
       await withRetry(async () => {
         await deleteDoc(doc(db, pathStr, docId));
       });
-      
+
       devLog.log("✅ [DELETE] Documento deletado com sucesso!");
       return docId;
     } catch (error: any) {
@@ -650,7 +690,7 @@ export const database = {
     try {
       if (!db) throw new Error("Firestore not available");
 
-      let q = collection(db, pathStr);
+      let q: Query<DocumentData> = collection(db, pathStr);
 
       if (queryOptions) {
         const { where: w, orderBy: ob, limit: lim } = queryOptions;
@@ -670,7 +710,7 @@ export const database = {
         (error) => {
           devLog.error("❌ [LISTEN] Erro no listener:", error.message);
           devLog.error("🔍 Código do erro:", error.code);
-          
+
           devLog.warn("⚠️ [LISTEN] Fallback para polling offline");
           const intervalId = setInterval(() => {
             try {

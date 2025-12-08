@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { X, BookOpen, Film, Gamepad2, Tv, Image as ImageIcon, Plus } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAppContext } from "../../context/AppContext";
+import { useAddMedia } from "../../hooks/queries";
 import { useToast } from "../../context/ToastContext";
-import { addMedia } from "../../services/mediaService";
+import { MediaType } from "../../types";
 
 interface ManualAddModalProps {
   onClose: () => void;
@@ -25,8 +25,9 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { mediaItems, setMediaItems } = useAppContext();
-  const { showToast } = useToast();
+  const addMediaMutation = useAddMedia();
+  const { showSuccess, showError } = useToast();
+  const [lastError, setLastError] = useState<string | null>(null);
 
   const mediaTypes = [
     { id: "book", label: "Livro", icon: BookOpen },
@@ -39,6 +40,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setLastError(null);
 
     try {
       const rawTags = formData.tags
@@ -46,7 +48,8 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
         .map((t) => t.trim().toLowerCase())
         .filter((t) => t);
       if (rawTags.length === 0) {
-        showToast("Tags obrigatórias. Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime)", "error");
+        showError("Erro", "Tags obrigatórias. Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime)");
+        setLastError("Tags obrigatórias.");
         setIsSubmitting(false);
         return;
       }
@@ -73,13 +76,14 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
       const categoryTag = typeToCategoryTag(formData.type);
       const tags = Array.from(new Set(categoryTag ? [categoryTag, ...rawTags] : rawTags));
 
-      const newMedia = await addMedia({
+      await addMediaMutation.mutateAsync({
         title: formData.title,
-        type: formData.type,
+        type: formData.type as MediaType,
         cover: formData.cover,
         year: formData.year ? parseInt(formData.year) : undefined,
         author: formData.author,
         director: formData.director,
+        developer: formData.developer,
         genre: formData.genre,
         rating: formData.rating ? parseFloat(formData.rating) : undefined,
         notes: formData.notes,
@@ -88,12 +92,13 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
         tags,
       });
 
-      setMediaItems([...mediaItems, newMedia]);
-      showToast("Mídia adicionada com sucesso!", "success");
+      showSuccess("Sucesso", "Mídia adicionada com sucesso!");
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao adicionar mídia:", error);
-      showToast("Erro ao adicionar mídia. Tente novamente.", "error");
+      const msg = error?.message || "Erro desconhecido";
+      showError("Erro", `Erro ao adicionar mídia: ${msg}`);
+      setLastError(`Erro: ${msg}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -208,11 +213,10 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleChange("type", type.id)}
-                        className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
-                          formData.type === type.id
-                            ? "bg-gradient-to-br from-violet-500 to-cyan-500 text-white"
-                            : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
-                        }`}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${formData.type === type.id
+                          ? "bg-gradient-to-br from-violet-500 to-cyan-500 text-white"
+                          : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                          }`}
                       >
                         <Icon className="w-6 h-6" />
                         <span className="text-xs font-medium">{type.label}</span>

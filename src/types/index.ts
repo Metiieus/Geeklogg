@@ -37,6 +37,11 @@ export interface MediaItem {
     totalPages?: number;
     currentPage?: number;
     externalLink?: string;
+    author?: string;
+    director?: string;
+    developer?: string;
+    year?: number;
+    genre?: string; // ManualAddModal uses singular genre, MediaItem has genres[] plural. Let's add singular for compatibility or map it? ManualAddModal passes 'genre'.
 }
 
 export interface Review {

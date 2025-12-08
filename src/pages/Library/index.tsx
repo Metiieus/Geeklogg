@@ -20,20 +20,20 @@ import {
   ChevronRight
 } from "lucide-react";
 import MediaPreviewModal from "./MediaPreviewModal";
-import AddMediaSearchModal from "../modals/AddMediaSearchModal";
-import { EditMediaModal } from "../modals/EditMediaModal";
-import { ManualAddModal } from "./ManualAddModal";
-import { AddMediaConfirmModal } from "../modals/AddMediaConfirmModal";
-import { EditBeforeAddModal } from "../modals/EditBeforeAddModal";
-import { EditFeaturedPopularModal } from "../modals/EditFeaturedPopularModal";
+import AddMediaSearchModal from "../../components/modals/AddMediaSearchModal";
+import { EditMediaModal } from "../../components/modals/EditMediaModal";
+import { ManualAddModal } from "./ManualAddModal"; // Local?
+import { AddMediaConfirmModal } from "../../components/modals/AddMediaConfirmModal";
+import { EditBeforeAddModal } from "../../components/modals/EditBeforeAddModal";
+import { EditFeaturedPopularModal } from "../../components/modals/EditFeaturedPopularModal";
 import { MediaItem } from "../../types";
 import { useAppContext } from "../../context/AppContext";
 import { useToast } from "../../context/ToastContext";
 import { addMedia, updateMedia, deleteMedia } from "../../services/mediaService";
 import { ExternalMediaResult } from "../../services/externalMediaService";
-import { ConfirmationModal } from "../ConfirmationModal";
-import { ArchiviusAgent } from "../ArchiviusAgent";
-import { BestMediaModal } from "../modals/BestMediaModal";
+import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { ArchiviusAgent } from "../../components/ArchiviusAgent";
+import { BestMediaModal } from "../../components/modals/BestMediaModal";
 
 interface ProLibraryProps {
   featured?: MediaItem[];
@@ -95,12 +95,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
       try {
         const bestData: Record<string, string[]> = JSON.parse(savedBestMedia);
         const loadedBest: Record<string, MediaItem[]> = {};
-        
+
         Object.keys(bestData).forEach(category => {
           const ids = bestData[category];
           loadedBest[category] = mediaItems.filter(item => ids.includes(item.id));
         });
-        
+
         setBestMedia(loadedBest);
       } catch (error) {
         console.error('Erro ao carregar melhores mídias:', error);
@@ -199,7 +199,7 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     setShowAddSearchModal(false);
   };
 
-   const handleConfirmAdd = useCallback(async (media: ExternalMediaResult) => {
+  const handleConfirmAdd = useCallback(async (media: ExternalMediaResult) => {
     setIsAddingMedia(true);
     try {
       // Ensure category tag is present and tags are mandatory
@@ -367,14 +367,14 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
     try {
       const newBestMedia = { ...bestMedia, [category]: items };
       setBestMedia(newBestMedia);
-      
+
       // Salvar no localStorage
       const bestDataToSave: Record<string, string[]> = {};
       Object.keys(newBestMedia).forEach(cat => {
         bestDataToSave[cat] = newBestMedia[cat].map(item => item.id);
       });
       localStorage.setItem('bestMedia', JSON.stringify(bestDataToSave));
-      
+
       showSuccess(`Top 3 de ${category} atualizado com sucesso!`);
     } catch (error) {
       console.error('Erro ao salvar melhores mídias:', error);
@@ -405,11 +405,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setFilter("favorites")}
-                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all flex-1 sm:flex-none justify-center ${
-                  filter === "favorites"
-                    ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
-                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
-                }`}
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl font-medium text-xs sm:text-sm transition-all flex-1 sm:flex-none justify-center ${filter === "favorites"
+                  ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
+                  }`}
               >
                 <Heart className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Favoritos ({favorites.length})</span>
@@ -446,11 +445,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setFilter(category.id)}
-                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg transition-all whitespace-nowrap text-xs sm:text-sm font-medium ${
-                    filter === category.id
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "bg-transparent text-slate-400 hover:text-white hover:bg-white/5"
-                  }`}
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg transition-all whitespace-nowrap text-xs sm:text-sm font-medium ${filter === category.id
+                    ? "bg-white/10 text-white border border-white/20"
+                    : "bg-transparent text-slate-400 hover:text-white hover:bg-white/5"
+                    }`}
                 >
                   {Icon && <Icon className="w-3 h-3 sm:w-4 sm:h-4" />}
                   <span>{category.label}</span>
@@ -827,11 +825,10 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
                   <button
                     key={idx}
                     onClick={() => setCurrentPodiumIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      idx === currentPodiumIndex
-                        ? "bg-cyan-400 w-8"
-                        : "bg-white/30 hover:bg-white/50"
-                    }`}
+                    className={`w-2 h-2 rounded-full transition-all ${idx === currentPodiumIndex
+                      ? "bg-cyan-400 w-8"
+                      : "bg-white/30 hover:bg-white/50"
+                      }`}
                   />
                 ))}
               </div>
@@ -881,12 +878,12 @@ const ProLibrary: React.FC<ProLibraryProps> = ({
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
               <h3 className="text-2xl font-bold text-white">
-                {filter === "all" ? "Minha Coleção" : 
-                  filter === "books" ? "Livros" : 
-                  filter === "games" ? "Jogos" : 
-                  filter === "movies" ? "Filmes" : 
-                  filter === "tv" ? "Séries" :
-                  filter === "anime" ? "Animes" : "Minha Coleção"}
+                {filter === "all" ? "Minha Coleção" :
+                  filter === "books" ? "Livros" :
+                    filter === "games" ? "Jogos" :
+                      filter === "movies" ? "Filmes" :
+                        filter === "tv" ? "Séries" :
+                          filter === "anime" ? "Animes" : "Minha Coleção"}
               </h3>
               <div className="flex items-center gap-3">
                 <div className="text-sm text-slate-400">
@@ -1155,11 +1152,10 @@ const BestItemCard: React.FC<BestItemCardProps> = ({ item, title, icon: Icon, on
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-3 h-3 ${
-                  i < Math.round((item.rating || 0) / 2)
-                    ? "text-yellow-400 fill-yellow-400"
-                    : "text-slate-600"
-                }`}
+                className={`w-3 h-3 ${i < Math.round((item.rating || 0) / 2)
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-slate-600"
+                  }`}
               />
             ))}
           </div>

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { MediaSearchBar } from "../MediaSearchBar";
 import { MediaType } from "../../types";
 import { ExternalMediaResult } from "../../services/externalMediaService";
-import { ManualAddModal } from "../Library/ManualAddModal";
+import { ManualAddModal } from "../../pages/Library/ManualAddModal";
 
 interface AddMediaSearchModalProps {
   onClose: () => void;
@@ -92,11 +92,10 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedType(type.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-sm font-medium ${
-                      selectedType === type.id
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all text-sm font-medium ${selectedType === type.id
                         ? "bg-gradient-to-r from-violet-500 to-cyan-500 text-white"
                         : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10"
-                    }`}
+                      }`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{type.label}</span>
@@ -146,8 +145,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                   selectedType={selectedType}
                   onTypeChange={setSelectedType}
                   onResultSelect={handleResultSelect}
-                  placeholder={`Buscar ${
-                    selectedType === "books"
+                  placeholder={`Buscar ${selectedType === "books"
                       ? "livros por título ou autor"
                       : selectedType === "movies"
                         ? "filmes por título"
@@ -156,7 +154,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           : selectedType === "series"
                             ? "séries por título"
                             : "mídias"
-                  }...`}
+                    }...`}
                 />
               </div>
 
