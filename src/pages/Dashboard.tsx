@@ -110,27 +110,6 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="animate-slide-in-left">
-        <QuickActions onAddMedia={() => navigate('/library')} />
-      </div>
-
-      {/* Gamification Row - Streak & Challenges */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-slide-in-right">
-        <StreakCard userId={user.uid} />
-        <WeeklyChallengesCard userId={user.uid} mediaItems={mediaItems} />
-      </div>
-
-      {/* Achievements & Goals Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-in-scale">
-        <AchievementsCard 
-          userId={user.uid} 
-          mediaItems={mediaItems} 
-          currentStreak={getStreakData(user.uid).currentStreak}
-        />
-        <GoalsCard mediaItems={mediaItems} />
-      </div>
-
       {/* Featured Content & Quick Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 animate-slide-in-left">
         {/* Featured Item */}
@@ -242,6 +221,27 @@ const Dashboard: React.FC = () => {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="animate-slide-in-left">
+        <QuickActions onAddMedia={() => navigate('/library')} />
+      </div>
+
+      {/* Gamification Row - Streak & Challenges */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-slide-in-right">
+        <StreakCard userId={user.uid} />
+        <WeeklyChallengesCard userId={user.uid} mediaItems={mediaItems} />
+      </div>
+
+      {/* Achievements & Goals Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-in-scale">
+        <AchievementsCard 
+          userId={user.uid} 
+          mediaItems={mediaItems} 
+          currentStreak={getStreakData(user.uid).currentStreak}
+        />
+        <GoalsCard mediaItems={mediaItems} />
       </div>
 
       {/* Status Overview */}
