@@ -30,6 +30,7 @@ export interface MediaItem {
     createdAt: string;
     updatedAt: string;
     isFavorite?: boolean;
+    isFeatured?: boolean;
     tags?: string[];
     externalId?: string;
     description?: string;

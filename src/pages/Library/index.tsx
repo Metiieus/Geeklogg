@@ -953,8 +953,9 @@ const ProLibrary: React.FC = () => {
       <AnimatePresence>
         {showAddSearchModal && (
           <AddMediaSearchModal
+            isOpen={showAddSearchModal}
             onClose={() => setShowAddSearchModal(false)}
-            onAddMedia={handleMediaSelected}
+            onResultSelect={handleMediaSelected}
           />
         )}
         {showManualAddModal && (

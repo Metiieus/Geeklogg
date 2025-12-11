@@ -119,7 +119,7 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
     createdAt: now,
     updatedAt: now,
     tags: Array.from(new Set(incomingTags)),
-  });
+  }) as Omit<MediaItem, "id">;
 
   // 1️⃣ Adiciona o documento
   const docRef = await database.add(["users", uid, "medias"], toSave);

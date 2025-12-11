@@ -195,10 +195,7 @@ export const NotificationCenter: React.FC = () => {
 
                           <div className="flex items-center gap-1 sm:gap-2 ml-1 sm:ml-2">
                             <span className="text-xs text-slate-500">
-                              {formatTimeAgo(
-                                notification.timestamp ||
-                                notification.createdAt,
-                              )}
+                              {formatTimeAgo(notification.timestamp)}
                             </span>
                             {!notification.read && (
                               <button

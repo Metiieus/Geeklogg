@@ -243,12 +243,10 @@ class ExternalMediaService {
           return await this.searchBooks(query, limit);
         case "movie":
           return await this.searchMovies(query, limit);
+        case "tv":
+          return await this.searchTvShows(query, limit);
         case "game":
           return await this.searchGames(query, limit);
-        case "tv":
-          return await this.searchTvShows(query, limit).then((results) =>
-            results.filter((result) => result.originalType !== "anime"),
-          );
         case "anime":
           return await this.searchTvShows(query, limit).then((results) =>
             results.filter((result) => result.originalType === "anime"),
@@ -267,7 +265,9 @@ class ExternalMediaService {
   }
 
   // Buscar detalhes específicos de um item (para quando o usuário seleciona)
-  async getMovieDetails(tmdbId: number): Promise<Partial<ExternalMediaResult>> {
+  async getMovieDetails(
+    tmdbId: number,
+  ): Promise<Partial<ExternalMediaResult>> {
     try {
       const url = `${TMDB_API_URL}/movie/${tmdbId}?api_key=${TMDB_API_KEY}&language=pt-BR&append_to_response=credits`;
 
@@ -445,7 +445,7 @@ class ExternalMediaService {
       10751: "Família",
       10762: "Infantil",
       9648: "Mistério",
-      10763: "Not��cias",
+      10763: "Notícias",
       10764: "Reality",
       10765: "Ficção Científica e Fantasia",
       10766: "Novela",

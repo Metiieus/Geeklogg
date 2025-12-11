@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 interface UseOptimizedAvatarProps {
   avatarUrl?: string;
   fallbackText: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 interface UseOptimizedAvatarReturn {

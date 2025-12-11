@@ -227,52 +227,34 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  {formData.type === "book" ? "Páginas Lidas" : "Horas Gastas"}
+                  Páginas Totais
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.totalPages}
+                  onChange={(e) => handleChange("totalPages", e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="350"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Página Atual
                 </label>
                 <input
                   type="number"
                   min="0"
-                  step={formData.type === "book" ? "1" : "0.5"}
-                  value={formData.hoursSpent}
-                  onChange={(e) => handleChange("hoursSpent", e.target.value)}
+                  value={formData.currentPage}
+                  onChange={(e) =>
+                    handleChange("currentPage", e.target.value)
+                  }
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder={formData.type === "book" ? "350" : "25.5"}
+                  placeholder="42"
                 />
               </div>
             </div>
 
-            {formData.type === "book" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Páginas Totais
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.totalPages}
-                    onChange={(e) => handleChange("totalPages", e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="350"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Página Atual
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.currentPage}
-                    onChange={(e) =>
-                      handleChange("currentPage", e.target.value)
-                    }
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="42"
-                  />
-                </div>
-              </div>
-            )}
 
             {/* Dates */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

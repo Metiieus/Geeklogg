@@ -23,9 +23,9 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const saved = localStorage.getItem("locale");
       if (saved === "en" || saved === "pt") return saved;
-    } catch (e) {}
+    } catch (e) { }
 
-    const nav = (typeof navigator !== "undefined" && (navigator.language || "")).toLowerCase();
+    const nav = (typeof navigator !== "undefined" ? (navigator.language || "") : "").toLowerCase();
     if (nav.startsWith("en")) return "en";
     return "pt";
   });
@@ -33,7 +33,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     try {
       localStorage.setItem("locale", locale);
-    } catch (e) {}
+    } catch (e) { }
   }, [locale]);
 
   const t = useMemo(() => {

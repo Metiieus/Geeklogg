@@ -1,4 +1,5 @@
 // Serviço avançado para Archivius com recomendações inteligentes
+import { MediaItem, Review, UserSettings } from "../types";
 
 interface SmartSuggestion {
   id: string;
@@ -144,9 +145,9 @@ export class ArchiviusService {
 
   // Análise inteligente e profunda do perfil do usuário
   analyzeUserProfile(
-    mediaItems: any[],
-    reviews: any[],
-    settings: any,
+    mediaItems: MediaItem[],
+    reviews: Review[],
+    settings: UserSettings,
   ): UserAnalysis {
     // Single-pass aggregation to avoid multiple loops over mediaItems
     const now = Date.now();
@@ -198,7 +199,7 @@ export class ArchiviusService {
       }
 
       // favorites
-      if (item.rating >= 4 || item.isFavorite) stats.favoriteMedia.push(item);
+      if ((item.rating || 0) >= 4 || item.isFavorite) stats.favoriteMedia.push(item);
     }
 
     // derive values
@@ -378,15 +379,15 @@ export class ArchiviusService {
       {} as Record<string, any[]>,
     );
 
-    return Object.entries(grouped).map(([type, items]: [string, any[]]) => ({
+    return Object.entries(grouped).map(([type, items]) => ({
       type,
-      count: items.length,
-      completed: items.filter((i: any) => i.status === "completed").length,
+      count: (items as any[]).length,
+      completed: (items as any[]).filter((i: any) => i.status === "completed").length,
       averageRating: this.calculateAverage(
-        items.map((i: any) => i.rating).filter((r: number) => r > 0),
+        (items as any[]).map((i: any) => i.rating).filter((r: number) => r > 0),
       ),
-      topTags: this.getTopTags(items.flatMap((i: any) => i.tags || [])),
-      items, // Adiciona lista de items para IA poder filtrar recomendações
+      topTags: this.getTopTags((items as any[]).flatMap((i: any) => i.tags || [])),
+      items: (items as any[]), // Adiciona lista de items para IA poder filtrar recomendações
     }));
   }
 

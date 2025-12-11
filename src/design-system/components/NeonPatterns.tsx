@@ -173,10 +173,10 @@ export const TribalDivider: React.FC<TribalDividerProps> = ({
   const PatternComponent = animated ? motion.div : "div";
   const animationProps = animated
     ? {
-        initial: { opacity: 0, scaleX: 0 },
-        animate: { opacity: 1, scaleX: 1 },
-        transition: { duration: 1.5, ease: "easeOut" },
-      }
+      initial: { opacity: 0, scaleX: 0 },
+      animate: { opacity: 1, scaleX: 1 },
+      transition: { duration: 1.5, ease: "easeOut" } as const,
+    }
     : {};
 
   return (
@@ -420,10 +420,10 @@ export const NeonOrnament: React.FC<NeonOrnamentProps> = ({
   const OrnamentComponent = animated ? motion.div : "div";
   const animationProps = animated
     ? {
-        initial: { opacity: 0, scale: 0.8, rotate: -10 },
-        animate: { opacity: 1, scale: 1, rotate: 0 },
-        transition: { duration: 1, ease: "easeOut", delay: 0.5 },
-      }
+      initial: { opacity: 0, scale: 0.8, rotate: -10 },
+      animate: { opacity: 1, scale: 1, rotate: 0 },
+      transition: { duration: 1, ease: "easeOut", delay: 0.5 } as const,
+    }
     : {};
 
   return (
@@ -476,7 +476,7 @@ export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
             repeat: Infinity,
             delay: Math.random() * 4,
             ease: "easeOut",
-          }}
+          } as const}
         />
       ))}
     </div>

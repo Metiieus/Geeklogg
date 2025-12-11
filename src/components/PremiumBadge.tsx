@@ -34,15 +34,15 @@ export const PremiumBadge: React.FC<PremiumBadgeProps> = ({
   const BadgeContent = () => {
     const commonMotionProps = animated
       ? {
-          initial: { scale: 0.8, rotate: -10 },
-          animate: { scale: 1, rotate: 0 },
-          transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 20,
-            duration: 0.3,
-          },
-        }
+        initial: { scale: 0.8, rotate: -10 },
+        animate: { scale: 1, rotate: 0 },
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 20,
+          duration: 0.3,
+        } as const,
+      }
       : {};
 
     switch (variant) {
@@ -66,7 +66,7 @@ export const PremiumBadge: React.FC<PremiumBadgeProps> = ({
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut",
-                }}
+                } as const}
               />
             )}
           </motion.div>
@@ -111,7 +111,7 @@ export const PremiumBadge: React.FC<PremiumBadgeProps> = ({
                     duration: 2,
                     repeat: Infinity,
                     ease: "linear",
-                  }}
+                  } as const}
                 />
                 <motion.div
                   className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 rounded-full opacity-75 blur-sm"
@@ -123,7 +123,7 @@ export const PremiumBadge: React.FC<PremiumBadgeProps> = ({
                     duration: 1.5,
                     repeat: Infinity,
                     ease: "easeInOut",
-                  }}
+                  } as const}
                 />
               </>
             )}

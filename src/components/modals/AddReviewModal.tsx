@@ -30,6 +30,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
     rating: 5,
     mediaId: "",
     isFavorite: false,
+    spoilers: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,6 +42,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
       rating: formData.rating,
       mediaId: formData.mediaId,
       isFavorite: formData.isFavorite,
+      spoilers: formData.spoilers,
     });
 
     onSave();
@@ -164,18 +166,33 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
               </p>
             </div>
 
-            {/* Favorite */}
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="favorite"
-                checked={formData.isFavorite}
-                onChange={(e) => handleChange("isFavorite", e.target.checked)}
-                className="w-4 h-4 text-pink-500 bg-slate-700 border-slate-600 rounded focus:ring-pink-500"
-              />
-              <label htmlFor="favorite" className="text-slate-300">
-                Marcar como resenha favorita
-              </label>
+            {/* Spoilers & Favorite */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="spoilers"
+                  checked={formData.spoilers}
+                  onChange={(e) => handleChange("spoilers", e.target.checked)}
+                  className="w-4 h-4 text-purple-500 bg-slate-700 border-slate-600 rounded focus:ring-purple-500"
+                />
+                <label htmlFor="spoilers" className="text-slate-300">
+                  Contém spoilers
+                </label>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="favorite"
+                  checked={formData.isFavorite}
+                  onChange={(e) => handleChange("isFavorite", e.target.checked)}
+                  className="w-4 h-4 text-pink-500 bg-slate-700 border-slate-600 rounded focus:ring-pink-500"
+                />
+                <label htmlFor="favorite" className="text-slate-300">
+                  Marcar como favorita
+                </label>
+              </div>
             </div>
           </div>
 

@@ -206,17 +206,6 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                     <p className="text-white font-semibold">
                       {item.hoursSpent}h
                     </p>
-                    <p className="text-white/60 text-sm">Tempo Gasto</p>
-                  </div>
-                )}
-
-                {item.type === "book" && item.totalPages && (
-                  <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-white/10">
-                    <BookOpen className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                    <p className="text-white font-semibold">
-                      {item.currentPage || 0}/{item.totalPages}
-                    </p>
-                    <p className="text-white/60 text-sm">Páginas</p>
                   </div>
                 )}
 

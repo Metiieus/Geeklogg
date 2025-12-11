@@ -85,19 +85,13 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
     async (searchQuery: string, mediaType: MediaType) => {
       if (!searchQuery.trim() || searchQuery.length < 2) {
         setResults([]);
-        setIsOpen(false);
         return;
       }
 
-      // Usar o tipo selecionado pelo usuário sempre
-      const finalType = mediaType;
-
       // Verificar se a API necessária está disponível
-      const needsGoogleBooks = finalType === "book";
-      const needsTmdb = ["movie", "tv", "anime"].includes(
-        finalType,
-      );
-      const needsRawg = finalType === "game";
+      const needsGoogleBooks = mediaType === "book";
+      const needsTmdb = ["movie", "tv", "anime"].includes(mediaType);
+      const needsRawg = mediaType === "game";
 
       if (
         (needsGoogleBooks && !apiStatus.googleBooks) ||
@@ -106,7 +100,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       ) {
         showError(
           "API Indisponível",
-          `Busca para ${finalType} temporariamente indisponível`,
+          `Busca para ${mediaType} temporariamente indisponível`,
         );
         return;
       }
@@ -117,79 +111,37 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       try {
         const searchResults = await externalMediaService.searchMedia({
           query: searchQuery,
-          type: finalType,
-          limit: 8,
+          type: mediaType,
         });
-
         setResults(searchResults);
-        setIsOpen(true);
-
-        if (searchResults.length === 0) {
-          showWarning(
-            "Nenhum resultado",
-            `Nenhum resultado encontrado para "${searchQuery}"`,
-          );
+        if (searchResults.length > 0) {
+          setIsOpen(true);
         }
       } catch (error) {
         console.error("Erro na busca:", error);
         setHasError(true);
-        setResults([]);
-        showError(
-          "Erro na busca",
-          "Não foi possível realizar a busca. Tente novamente.",
-        );
       } finally {
         setIsLoading(false);
       }
     },
-    [apiStatus, showError, showWarning],
+    [apiStatus, showError],
   );
 
-  // Debounce da busca
   const handleInputChange = (value: string) => {
-    let finalType: MediaType = selectedType;
-    // Detectar tags como #anime, #filme, #serie, #jogo
-    const tagMatch = value.match(
-      /#(anime|filme|filmes|serie|série|series|jogo|jogos|game|games|livro|livros)/i,
-    );
-    if (tagMatch) {
-      const tag = tagMatch[1].toLowerCase();
-      switch (tag) {
-        case "anime":
-          finalType = "anime";
-          break;
-        case "filme":
-        case "filmes":
-          finalType = "movie";
-          break;
-        case "serie":
-        case "série":
-        case "series":
-          finalType = "tv";
-          break;
-        case "jogo":
-        case "jogos":
-        case "game":
-        case "games":
-          finalType = "game";
-          break;
-        case "livro":
-        case "livros":
-          finalType = "book";
-          break;
-      }
-      onTypeChange(finalType);
-      value = value.replace(tagMatch[0], "").trim();
-    }
-
     setQuery(value);
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
+    if (value.trim().length < 2) {
+      setResults([]);
+      setIsOpen(false);
+      return;
+    }
+
     timeoutRef.current = setTimeout(() => {
-      performSearch(value, finalType);
+      performSearch(value, selectedType);
     }, 500);
   };
 

@@ -267,7 +267,7 @@ export const GlassSelect: React.FC<GlassSelectProps> = ({
 // ============= GLASS CONTAINER =============
 
 interface GlassContainerProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   variant?: "default" | "light" | "dark";
 }
@@ -351,10 +351,9 @@ export const GlassFilterBar: React.FC<GlassFilterBarProps> = ({
             className={`
               relative px-4 py-2 rounded-full border transition-all duration-200
               ${glassmorphism.backdrop}
-              ${
-                isSelected
-                  ? "bg-gradient-to-r from-violet-500/30 to-cyan-500/30 border-violet-400/50 text-white shadow-lg"
-                  : "bg-white/5 border-white/20 text-white/80 hover:bg-white/10 hover:border-white/30"
+              ${isSelected
+                ? "bg-gradient-to-r from-violet-500/30 to-cyan-500/30 border-violet-400/50 text-white shadow-lg"
+                : "bg-white/5 border-white/20 text-white/80 hover:bg-white/10 hover:border-white/30"
               }
             `}
             style={{ fontFamily: typography.fontFamily.primary }}

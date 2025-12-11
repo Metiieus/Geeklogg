@@ -1,6 +1,5 @@
 import { Capacitor } from "@capacitor/core";
 import { devLog } from "../utils/logger";
-import { Capacitor } from "@capacitor/core";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Keyboard, KeyboardStyle, KeyboardResize } from "@capacitor/keyboard";
