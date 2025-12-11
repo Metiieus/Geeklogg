@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Flame, TrendingUp, Calendar, Award } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   updateStreak,
   getStreakData,
@@ -47,126 +47,125 @@ export const StreakCard: React.FC<StreakCardProps> = ({ userId }) => {
       className="relative overflow-hidden"
     >
       {/* Celebration Effect */}
-      {showCelebration && (
-        <motion.div
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 3, opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-        >
-          <span className="text-6xl">🎉</span>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {showCelebration && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-xl"
+          >
+            <div className="text-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: [0, 1.2, 1] }}
+                transition={{ duration: 0.5 }}
+                className="text-6xl mb-2"
+              >
+                🎉
+              </motion.div>
+              <p className="text-white font-bold text-xl">Sequência Mantida!</p>
+              <p className="text-slate-300 text-sm">Continue assim!</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div
-        className={`bg-gradient-to-br ${
-          streakData.currentStreak >= 7
-            ? 'from-orange-500/20 to-red-500/20 border-orange-500/30'
-            : 'from-orange-500/10 to-red-500/10 border-orange-500/20'
-        } backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border hover:scale-105 transition-all duration-300 ${
-          streakData.currentStreak >= 7 ? 'hover:shadow-lg hover:shadow-orange-500/20' : ''
-        }`}
-      >
+      {/* Card Content */}
+      <div className={`bg-slate-800/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border transition-all duration-300 ${
+        atRisk ? 'border-amber-500/30' : 'border-white/10'
+      }`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Flame
-              className={`${
-                streakData.currentStreak >= 7 ? 'text-orange-400' : 'text-orange-300'
-              } ${streakData.currentStreak >= 7 ? 'animate-pulse' : ''}`}
-              size={24}
-            />
+            <Flame className={atRisk ? 'text-amber-400' : 'text-orange-400'} size={24} />
             <h3 className="text-lg font-semibold text-white">Sequência</h3>
           </div>
-          <span className="text-3xl">{emoji}</span>
+          <span className="text-2xl">{emoji}</span>
         </div>
 
-        {/* Current Streak */}
+        {/* Streak Counter */}
         <div className="mb-4">
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-4xl font-bold text-white">
+            <motion.span
+              key={streakData.currentStreak}
+              initial={{ scale: 1.2, color: '#f59e0b' }}
+              animate={{ scale: 1, color: '#ffffff' }}
+              className="text-5xl font-bold text-white"
+            >
               {streakData.currentStreak}
-            </span>
-            <span className="text-lg text-slate-300">
-              {streakData.currentStreak === 1 ? 'dia' : 'dias'}
-            </span>
+            </motion.span>
+            <span className="text-slate-400 text-lg">dia{streakData.currentStreak !== 1 ? 's' : ''}</span>
           </div>
           <p className="text-sm text-slate-400">{message}</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-black/20 rounded-lg p-3">
+          <div className="bg-slate-900/50 rounded-lg p-3 border border-white/5">
             <div className="flex items-center gap-2 mb-1">
               <Award className="text-yellow-400" size={16} />
               <span className="text-xs text-slate-400">Recorde</span>
             </div>
-            <p className="text-lg font-bold text-white">
-              {streakData.longestStreak}
-            </p>
+            <p className="text-xl font-bold text-white">{streakData.longestStreak}</p>
           </div>
-
-          <div className="bg-black/20 rounded-lg p-3">
+          <div className="bg-slate-900/50 rounded-lg p-3 border border-white/5">
             <div className="flex items-center gap-2 mb-1">
-              <Calendar className="text-blue-400" size={16} />
+              <TrendingUp className="text-emerald-400" size={16} />
               <span className="text-xs text-slate-400">Total</span>
             </div>
-            <p className="text-lg font-bold text-white">
-              {streakData.totalDays}
-            </p>
+            <p className="text-xl font-bold text-white">{streakData.totalDays}</p>
           </div>
         </div>
 
-        {/* Warning if at risk */}
-        {atRisk && streakData.currentStreak > 3 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-red-500/20 border border-red-500/30 rounded-lg p-3"
-          >
-            <p className="text-sm text-red-300 flex items-center gap-2">
-              <span className="text-lg">⚠️</span>
-              Sua sequência está em risco! Volte amanhã para mantê-la!
-            </p>
-          </motion.div>
-        )}
-
-        {/* Progress to next milestone */}
-        {streakData.currentStreak > 0 && streakData.currentStreak < 100 && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-slate-400">
-                Próximo marco
-              </span>
-              <span className="text-xs text-slate-300 font-medium">
-                {getNextMilestone(streakData.currentStreak)} dias
+        {/* Progress to Next Milestone */}
+        {streakData.currentStreak < 100 && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-400">Próximo marco</span>
+              <span className="text-slate-300 font-medium">
+                {streakData.currentStreak < 7 ? '7 dias' : 
+                 streakData.currentStreak < 30 ? '30 dias' : '100 dias'}
               </span>
             </div>
-            <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-slate-900/50 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{
-                  width: `${getMilestoneProgress(streakData.currentStreak)}%`,
+                animate={{ 
+                  width: `${
+                    streakData.currentStreak < 7 
+                      ? (streakData.currentStreak / 7) * 100
+                      : streakData.currentStreak < 30
+                      ? (streakData.currentStreak / 30) * 100
+                      : (streakData.currentStreak / 100) * 100
+                  }%` 
                 }}
-                transition={{ duration: 1, ease: 'easeOut' }}
-                className="h-full bg-gradient-to-r from-orange-500 to-red-500"
+                transition={{ duration: 0.5 }}
+                className="h-full bg-gradient-to-r from-orange-500 to-amber-500"
               />
             </div>
           </div>
         )}
+
+        {/* At Risk Warning */}
+        {atRisk && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+          >
+            <div className="flex items-start gap-2">
+              <Calendar className="text-amber-400 flex-shrink-0 mt-0.5" size={16} />
+              <div>
+                <p className="text-sm font-medium text-amber-300">Sequência em risco!</p>
+                <p className="text-xs text-amber-400/80 mt-1">
+                  Faz mais de 20 horas desde seu último acesso. Continue hoje para manter sua sequência!
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
-};
-
-// Helper functions
-const getNextMilestone = (current: number): number => {
-  const milestones = [7, 14, 30, 50, 100, 365];
-  return milestones.find((m) => m > current) || 365;
-};
-
-const getMilestoneProgress = (current: number): number => {
-  const next = getNextMilestone(current);
-  const previous = [0, 7, 14, 30, 50, 100].reverse().find((m) => m < current) || 0;
-  return ((current - previous) / (next - previous)) * 100;
 };

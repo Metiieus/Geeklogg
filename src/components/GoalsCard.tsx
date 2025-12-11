@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Target, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Target, TrendingUp, CheckCircle2, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MediaItem } from '../types';
 
@@ -9,8 +9,8 @@ interface Goal {
   description: string;
   current: number;
   target: number;
-  icon: string;
-  color: string;
+  icon: React.ReactNode;
+  iconColor: string;
 }
 
 interface GoalsCardProps {
@@ -30,8 +30,8 @@ export const GoalsCard: React.FC<GoalsCardProps> = ({ mediaItems }) => {
         description: 'Completar 10 mídias este mês',
         current: Math.min(completed, 10),
         target: 10,
-        icon: '🎯',
-        color: 'from-blue-500 to-cyan-500',
+        icon: <Target size={20} />,
+        iconColor: 'text-pink-400',
       },
       {
         id: 'hours-goal',
@@ -39,8 +39,8 @@ export const GoalsCard: React.FC<GoalsCardProps> = ({ mediaItems }) => {
         description: 'Alcançar 100 horas totais',
         current: Math.min(Math.floor(totalHours), 100),
         target: 100,
-        icon: '⏰',
-        color: 'from-purple-500 to-pink-500',
+        icon: <TrendingUp size={20} />,
+        iconColor: 'text-cyan-400',
       },
       {
         id: 'rating-goal',
@@ -48,8 +48,8 @@ export const GoalsCard: React.FC<GoalsCardProps> = ({ mediaItems }) => {
         description: 'Avaliar 25 mídias',
         current: Math.min(rated, 25),
         target: 25,
-        icon: '⭐',
-        color: 'from-yellow-500 to-orange-500',
+        icon: <Star size={20} />,
+        iconColor: 'text-amber-400',
       },
     ];
   }, [mediaItems]);
@@ -60,16 +60,16 @@ export const GoalsCard: React.FC<GoalsCardProps> = ({ mediaItems }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10"
+      className="bg-slate-800/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Target className="text-green-400" size={24} />
+          <Target className="text-emerald-400" size={24} />
           <h3 className="text-lg font-semibold text-white">Metas</h3>
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-300">
-          <CheckCircle2 size={16} className="text-green-400" />
+          <CheckCircle2 size={16} className="text-emerald-400" />
           <span>
             {completedGoals}/{goals.length}
           </span>
@@ -77,7 +77,7 @@ export const GoalsCard: React.FC<GoalsCardProps> = ({ mediaItems }) => {
       </div>
 
       {/* Goals List */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {goals.map((goal, index) => (
           <GoalItem key={goal.id} goal={goal} index={index} />
         ))}
@@ -88,20 +88,20 @@ export const GoalsCard: React.FC<GoalsCardProps> = ({ mediaItems }) => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mt-4 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-lg"
+          className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg"
         >
           <div className="flex items-center gap-3">
             <span className="text-3xl">🎉</span>
             <div>
               <p className="text-white font-semibold">Todas as metas concluídas!</p>
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-emerald-300">
                 Você está arrasando! Continue assim!
               </p>
             </div>
           </div>
         </motion.div>
       ) : (
-        <div className="mt-4 p-3 bg-black/20 rounded-lg">
+        <div className="mt-4 p-3 bg-slate-900/50 rounded-lg border border-white/5">
           <p className="text-sm text-slate-300 text-center">
             Continue progredindo para alcançar suas metas! 💪
           </p>
@@ -126,52 +126,58 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, index }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.1 }}
-      className={`p-4 rounded-lg border ${
+      className={`p-3 rounded-lg border ${
         isCompleted
-          ? 'bg-green-500/10 border-green-500/30'
-          : 'bg-black/20 border-white/10'
+          ? 'bg-emerald-500/10 border-emerald-500/20'
+          : 'bg-slate-900/50 border-white/5'
       }`}
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
-        <div className="text-3xl flex-shrink-0">{goal.icon}</div>
+        <div className={`p-2 bg-slate-900/50 rounded-lg ${goal.iconColor}`}>
+          {isCompleted ? <CheckCircle2 size={20} className="text-emerald-400" /> : goal.icon}
+        </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
             <div>
-              <h4 className="text-white font-semibold text-sm">{goal.title}</h4>
+              <h4 className="text-white font-medium text-sm">{goal.title}</h4>
               <p className="text-xs text-slate-400">{goal.description}</p>
             </div>
             {isCompleted && (
-              <CheckCircle2 className="text-green-400 flex-shrink-0" size={20} />
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">
+                ✓ Completo
+              </span>
             )}
           </div>
 
           {/* Progress */}
-          <div className="mt-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-300">
+          <div className="mt-2">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-slate-300">
                 {goal.current}/{goal.target}
               </span>
-              <span className="text-sm font-semibold text-white">
-                {Math.round(progress)}%
-              </span>
+              <span className="text-xs text-slate-400">{Math.round(progress)}%</span>
             </div>
 
             {/* Progress Bar */}
-            <div className="h-2 bg-black/30 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-black/30 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`h-full bg-gradient-to-r ${goal.color}`}
+                className={`h-full ${
+                  isCompleted
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-500'
+                    : 'bg-gradient-to-r from-cyan-500 to-blue-500'
+                }`}
               />
             </div>
 
             {/* Remaining */}
             {!isCompleted && (
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-400 mt-1">
                 Faltam {goal.target - goal.current} para completar
               </p>
             )}

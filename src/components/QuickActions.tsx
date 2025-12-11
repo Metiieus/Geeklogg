@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, TrendingUp, BarChart3, BookOpen, Zap } from 'lucide-react';
+import { Plus, TrendingUp, BarChart3, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ interface QuickAction {
   title: string;
   description: string;
   icon: React.ReactNode;
-  color: string;
+  iconColor: string;
   action: () => void;
 }
 
@@ -25,7 +25,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAddMedia }) => {
       title: 'Adicionar Mídia',
       description: 'Expanda sua biblioteca',
       icon: <Plus size={20} />,
-      color: 'from-pink-500 to-purple-600',
+      iconColor: 'text-purple-400',
       action: () => {
         if (onAddMedia) {
           onAddMedia();
@@ -39,7 +39,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAddMedia }) => {
       title: 'Atualizar Progresso',
       description: 'Marque o que assistiu',
       icon: <TrendingUp size={20} />,
-      color: 'from-blue-500 to-cyan-600',
+      iconColor: 'text-cyan-400',
       action: () => navigate('/library'),
     },
     {
@@ -47,7 +47,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAddMedia }) => {
       title: 'Ver Estatísticas',
       description: 'Analise seus dados',
       icon: <BarChart3 size={20} />,
-      color: 'from-green-500 to-emerald-600',
+      iconColor: 'text-emerald-400',
       action: () => navigate('/statistics'),
     },
     {
@@ -55,7 +55,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAddMedia }) => {
       title: 'Escrever Resenha',
       description: 'Compartilhe sua opinião',
       icon: <BookOpen size={20} />,
-      color: 'from-orange-500 to-red-600',
+      iconColor: 'text-amber-400',
       action: () => navigate('/reviews'),
     },
   ];
@@ -64,7 +64,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onAddMedia }) => {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Zap className="text-yellow-400" size={20} />
+        <span className="text-yellow-400">⚡</span>
         <h3 className="text-lg font-semibold text-white">Ações Rápidas</h3>
       </div>
 
@@ -87,42 +87,28 @@ interface QuickActionButtonProps {
 const QuickActionButton: React.FC<QuickActionButtonProps> = ({ action, index }) => {
   return (
     <motion.button
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02, y: -2 }}
+      whileTap={{ scale: 0.98 }}
       onClick={action.action}
-      className={`relative overflow-hidden bg-gradient-to-br ${action.color} rounded-xl p-4 text-left group transition-all duration-300 hover:shadow-lg`}
+      className="relative overflow-hidden bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-left group transition-all duration-300 hover:bg-slate-800/80 hover:border-white/20"
     >
-      {/* Glow Effect */}
-      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
-
       {/* Content */}
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-2">
-          <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-3">
+          <div className={`p-2 bg-slate-900/50 rounded-lg ${action.iconColor}`}>
             {action.icon}
           </div>
-          <motion.div
-            initial={{ x: -5, opacity: 0 }}
-            animate={{ x: 0, opacity: 0 }}
-            whileHover={{ x: 5, opacity: 1 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Zap size={16} className="text-white" />
-          </motion.div>
         </div>
 
         <h4 className="text-white font-semibold text-sm mb-1">{action.title}</h4>
-        <p className="text-white/80 text-xs">{action.description}</p>
+        <p className="text-slate-400 text-xs">{action.description}</p>
       </div>
 
-      {/* Animated Border */}
-      <motion.div
-        className="absolute inset-0 border-2 border-white/0 group-hover:border-white/30 rounded-xl transition-all duration-300"
-        initial={false}
-      />
+      {/* Subtle Glow on Hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/0 group-hover:from-white/5 group-hover:to-transparent transition-all duration-300" />
     </motion.button>
   );
 };

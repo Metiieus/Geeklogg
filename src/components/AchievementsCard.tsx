@@ -62,20 +62,20 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({
             initial={{ opacity: 0, y: -20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl shadow-2xl"
+            className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20 bg-amber-500/20 border border-amber-500/30 text-white px-6 py-3 rounded-xl shadow-2xl backdrop-blur-sm"
           >
             <div className="flex items-center gap-3">
               <span className="text-3xl">{newUnlock.icon}</span>
               <div>
                 <p className="font-bold text-sm">Conquista Desbloqueada!</p>
-                <p className="text-xs">{newUnlock.title}</p>
+                <p className="text-xs text-amber-300">{newUnlock.title}</p>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300">
+      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({
           {onViewAll && (
             <button
               onClick={onViewAll}
-              className="flex items-center gap-1 text-sm text-yellow-400 hover:text-yellow-300 transition-colors"
+              className="flex items-center gap-1 text-sm text-slate-300 hover:text-white transition-colors"
             >
               <span>Ver Todas</span>
               <ChevronRight size={16} />
@@ -94,7 +94,7 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({
         </div>
 
         {/* Progress Overview */}
-        <div className="mb-4 p-3 bg-black/20 rounded-lg">
+        <div className="mb-4 p-3 bg-slate-900/50 rounded-lg border border-white/5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-slate-300">Progresso Geral</span>
             <span className="text-sm font-semibold text-white">
@@ -106,7 +106,7 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
-              className="h-full bg-gradient-to-r from-yellow-500 to-orange-500"
+              className="h-full bg-gradient-to-r from-yellow-500 to-amber-600"
             />
           </div>
           <p className="text-xs text-slate-400 mt-1 text-center">
@@ -134,13 +134,13 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({
         <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
           <div>
             <p className="text-xs text-slate-400">Bronze</p>
-            <p className="text-lg font-bold text-amber-600">
+            <p className="text-lg font-bold text-orange-400">
               {achievements.filter((a) => a.tier === 'bronze' && a.unlocked).length}
             </p>
           </div>
           <div>
             <p className="text-xs text-slate-400">Prata</p>
-            <p className="text-lg font-bold text-slate-400">
+            <p className="text-lg font-bold text-slate-300">
               {achievements.filter((a) => a.tier === 'silver' && a.unlocked).length}
             </p>
           </div>
@@ -164,8 +164,15 @@ interface AchievementItemProps {
 
 const AchievementItem: React.FC<AchievementItemProps> = ({ achievement, index }) => {
   const progress = (achievement.current / achievement.requirement) * 100;
-  const tierColor = getTierColor(achievement.tier);
   const tierLabel = getTierLabel(achievement.tier);
+
+  // Subtle tier colors
+  const tierClasses = {
+    bronze: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
+    silver: 'text-slate-300 bg-slate-500/10 border-slate-500/20',
+    gold: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+    platinum: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+  };
 
   return (
     <motion.div
@@ -174,22 +181,26 @@ const AchievementItem: React.FC<AchievementItemProps> = ({ achievement, index })
       transition={{ delay: index * 0.1 }}
       className={`p-3 rounded-lg border ${
         achievement.unlocked
-          ? `bg-gradient-to-r ${tierColor} border-white/20`
-          : 'bg-black/20 border-white/10'
+          ? 'bg-amber-500/10 border-amber-500/20'
+          : 'bg-slate-900/50 border-white/5'
       }`}
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
         <div className="text-2xl flex-shrink-0 mt-1">
-          {achievement.unlocked ? achievement.icon : <Lock size={20} className="text-slate-500" />}
+          {achievement.unlocked ? achievement.icon : <Lock size={20} className="text-slate-600" />}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h4 className="text-white font-medium text-sm">{achievement.title}</h4>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
-              achievement.unlocked ? 'bg-white/20' : 'bg-black/20'
+            <h4 className={`font-medium text-sm ${
+              achievement.unlocked ? 'text-white' : 'text-slate-400'
+            }`}>
+              {achievement.title}
+            </h4>
+            <span className={`text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${
+              tierClasses[achievement.tier]
             }`}>
               {tierLabel}
             </span>
@@ -211,7 +222,7 @@ const AchievementItem: React.FC<AchievementItemProps> = ({ achievement, index })
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="h-full bg-gradient-to-r from-yellow-500 to-orange-500"
+                  className="h-full bg-gradient-to-r from-yellow-500 to-amber-600"
                 />
               </div>
             </div>
