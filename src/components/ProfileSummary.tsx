@@ -7,36 +7,31 @@ import {
   Star,
   TrendingUp,
   Trophy,
-  Target,
-  Gamepad2,
-  Film,
-  Tv,
-  Book,
-  Sparkles,
   Play,
   CheckCircle,
+  Gamepad2,
+  Tv,
+  Book,
+  Film,
+  Sparkles,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
-import { MediaType } from "../types";
+import { useAuth } from "../context/AuthContext";
+import { useMedias, useReviews, useMilestones } from "../hooks/queries";
 
-const mediaTypeIcons = {
-  games: Gamepad2,
-  anime: Sparkles,
-  series: Tv,
-  books: Book,
-  movies: Film,
-};
-
-const mediaTypeLabels = {
-  games: "Jogos",
+const mediaTypeLabels: Record<string, string> = {
+  game: "Jogos",
   anime: "Anime",
-  series: "Séries",
-  books: "Livros",
-  movies: "Filmes",
+  tv: "Séries",
+  book: "Livros",
+  movie: "Filmes",
+  manga: "Mangás",
 };
 
 const ProfileSummary: React.FC = () => {
-  const { mediaItems, reviews, milestones } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const { data: reviews = [] } = useReviews(user?.uid);
+  const { data: milestones = [] } = useMilestones(user?.uid);
 
   // Estatísticas principais
   const totalHours = mediaItems.reduce(
@@ -53,11 +48,11 @@ const ProfileSummary: React.FC = () => {
   const avgRating =
     ratedItems.length > 0
       ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) /
-        ratedItems.length
+      ratedItems.length
       : 0;
 
   // Atividade recente (últimos 5 itens)
-  const recentActivity = mediaItems
+  const recentActivity = [...mediaItems]
     .sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
@@ -65,7 +60,7 @@ const ProfileSummary: React.FC = () => {
     .slice(0, 5);
 
   // Top 3 melhor avaliados
-  const topRated = mediaItems
+  const topRated = [...mediaItems]
     .filter((item) => item.rating && item.rating >= 8)
     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 3);
@@ -157,15 +152,14 @@ const ProfileSummary: React.FC = () => {
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          item.status === "completed"
+                        className={`text-xs px-2 py-1 rounded-full ${item.status === "completed"
                             ? "bg-green-500/20 text-green-400"
                             : item.status === "in-progress"
                               ? "bg-yellow-500/20 text-yellow-400"
                               : item.status === "planned"
                                 ? "bg-blue-500/20 text-blue-400"
                                 : "bg-red-500/20 text-red-400"
-                        }`}
+                          }`}
                       >
                         {item.status === "completed"
                           ? "Concluído"

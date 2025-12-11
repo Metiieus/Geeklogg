@@ -314,14 +314,14 @@ export const database = {
   /* ------------------------------------------------------------------ *
    * GET COLLECTION – lista documentos
    * ------------------------------------------------------------------ */
-  getCollection: async (
+  getCollection: async <T = DocumentData>(
     collectionPath: string | string[],
     queryOptions?: {
       where?: { field: string; operator: any; value: any };
       orderBy?: { field: string; direction?: "asc" | "desc" };
       limit?: number;
     },
-  ) => {
+  ): Promise<T[]> => {
     const pathStr = Array.isArray(collectionPath)
       ? collectionPath.join("/")
       : collectionPath;
@@ -476,7 +476,7 @@ export const database = {
         devLog.log("📄 Primeiro documento:", results[0]);
       }
 
-      return results;
+      return results as unknown as T[];
     } catch (error: any) {
       devLog.error("❌ [GET_COLLECTION] Erro ao buscar coleção:", error.message);
       devLog.error("📍 Caminho completo:", pathStr);
@@ -512,7 +512,7 @@ export const database = {
           results = results.slice(0, queryOptions.limit);
         }
 
-        return results;
+        return results as unknown as T[];
       } catch (localError) {
         devLog.error("❌ [GET_COLLECTION] Erro no localStorage também:", localError);
         return [];

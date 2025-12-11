@@ -7,12 +7,19 @@ import {
   Plus,
   BookOpen,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useMedias, useMilestones, useSettings } from "../hooks/queries";
 import { MediaItem, Status } from "../types";
 
 const Dashboard: React.FC = () => {
-  const { mediaItems, reviews, milestones, settings, setActivePage } =
-    useAppContext();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Direct Data Fetching
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const { data: milestones = [] } = useMilestones(user?.uid);
+  const { data: settings } = useSettings(user?.uid);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -23,7 +30,7 @@ const Dashboard: React.FC = () => {
 
   const getRecentItem = (): MediaItem | null => {
     if (mediaItems.length === 0) return null;
-    return mediaItems.sort(
+    return [...mediaItems].sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
     )[0];
@@ -41,7 +48,7 @@ const Dashboard: React.FC = () => {
     const avgRating =
       ratedItems.length > 0
         ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) /
-          ratedItems.length
+        ratedItems.length
         : 0;
 
     return { totalHours, completed, avgRating };
@@ -82,7 +89,7 @@ const Dashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-down">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
-            {getGreeting()}, {settings.name || "Nerd"}
+            {getGreeting()}, {settings?.name || "Nerd"}
           </h1>
           <p className="text-slate-400 text-sm sm:text-base">
             Bem-vindo de volta à sua jornada nerd
@@ -116,7 +123,7 @@ const Dashboard: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-500">
-                      <BookOpen size={16} sm:size={20} />
+                      <BookOpen size={16} />
                     </div>
                   )}
                 </div>
@@ -155,7 +162,7 @@ const Dashboard: React.FC = () => {
                   Nenhum item na sua biblioteca ainda
                 </p>
                 <button
-                  onClick={() => setActivePage("add-media")}
+                  onClick={() => navigate("/add-media")}
                   className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-200"
                 >
                   Adicionar Primeiro Item
@@ -172,8 +179,6 @@ const Dashboard: React.FC = () => {
               <Clock
                 className="text-blue-400"
                 size={16}
-                sm:size={18}
-                md:size={20}
               />
               <span className="text-blue-400 font-medium text-sm sm:text-base">
                 Total de Horas
@@ -186,7 +191,7 @@ const Dashboard: React.FC = () => {
 
           <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-green-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
             <div className="flex items-center gap-3 mb-2">
-              <TrendingUp className="text-green-400" size={18} sm:size={20} />
+              <TrendingUp className="text-green-400" size={18} />
               <span className="text-green-400 font-medium text-sm sm:text-base">
                 Concluídos
               </span>
@@ -198,7 +203,7 @@ const Dashboard: React.FC = () => {
 
           <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-yellow-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20">
             <div className="flex items-center gap-3 mb-2">
-              <Star className="text-yellow-400" size={18} sm:size={20} />
+              <Star className="text-yellow-400" size={18} />
               <span className="text-yellow-400 font-medium text-sm sm:text-base">
                 Nota Média
               </span>
@@ -249,14 +254,13 @@ const Dashboard: React.FC = () => {
       {/* Recent Activity */}
       <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/10 animate-fade-in hover:scale-105 transition-all duration-300">
         <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
-          <Calendar className="text-purple-400" size={18} sm:size={20} />
+          <Calendar className="text-purple-400" size={18} />
           Marcos Recentes
         </h2>
 
         {milestones.length > 0 ? (
           <div className="space-y-2 sm:space-y-3">
             {milestones.slice(0, 3).map((milestone) => {
-              console.log("Dashboard milestone", milestone);
               return (
                 <div
                   key={milestone.id}

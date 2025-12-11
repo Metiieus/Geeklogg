@@ -45,7 +45,7 @@ function getMockUsers(query: string): UserProfile[] {
   return mockUsers.filter(
     (u) =>
       u.name.toLowerCase().includes(query.toLowerCase()) ||
-      u.bio.toLowerCase().includes(query.toLowerCase()),
+      (u.bio || "").toLowerCase().includes(query.toLowerCase()),
   );
 }
 
@@ -84,7 +84,7 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
       .filter(
         (u) =>
           u.name.toLowerCase().includes(query.toLowerCase()) ||
-          u.bio.toLowerCase().includes(query.toLowerCase()),
+          (u.bio || "").toLowerCase().includes(query.toLowerCase()),
       )
       .slice(0, 20);
 
@@ -136,7 +136,7 @@ export async function updateUserProfile(
   const uid = getUserId();
   ensureValidId(uid, "updateUserProfile: UID inválido");
   const toUpdate = removeUndefinedFields(sanitizeStrings(profile as any));
-  await database.update(["users", uid], toUpdate);
+  await database.update("users", uid, toUpdate);
 }
 
 // Seguir / deixar de seguir
@@ -194,7 +194,6 @@ export async function getFollowingActivities(): Promise<UserActivity[]> {
 
   const acts = await database.getCollection<UserActivity>(["activities"]);
   return acts
-    .map((a) => ({ ...a.data, id: a.id }))
     .filter((a) => following.includes(a.userId))
     .sort(
       (a, b) =>
@@ -228,7 +227,6 @@ export async function getUserNotifications(
     "notifications",
   ]);
   return nots
-    .map((d) => ({ ...d.data, id: d.id }))
     .sort(
       (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
@@ -259,6 +257,8 @@ export async function sendFollowRequest(targetUserId: string): Promise<void> {
   const req: Omit<FollowRequest, "id"> = {
     fromUserId: uid,
     toUserId: targetUserId,
+    fromUserName: me?.name || "Usuário",
+    fromUserAvatar: me?.avatar,
     timestamp: new Date().toISOString(),
     status: "pending",
   };
@@ -293,7 +293,6 @@ export async function getPendingFollowRequests(
   ensureValidId(userId, "getPendingFollowRequests: userId inválido");
   const all = await database.getCollection<FollowRequest>(["followRequests"]);
   return all
-    .map((d) => ({ ...d.data, id: d.id }))
     .filter((r) => r.toUserId === userId && r.status === "pending")
     .sort(
       (a, b) =>

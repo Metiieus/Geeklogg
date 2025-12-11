@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { X, Save, Image as ImageIcon, Trash2 } from "lucide-react";
-import { useAppContext } from "../../context/AppContext";
+import { useAuth } from "../../context/AuthContext";
 import { Milestone } from "../../types";
-import { updateMilestone } from "../../services/milestoneService";
+import { useMedias, useUpdateMilestone } from "../../hooks/queries";
 import { uploadImage } from "../../services/storageClient";
 import { RichTextEditor } from "../RichTextEditor";
 
 interface EditMilestoneModalProps {
   milestone: Milestone;
   onClose: () => void;
-  onSave: (milestone: Milestone) => void;
+  onSave: () => void;
 }
 
 const commonIcons = [
@@ -35,7 +35,10 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const { mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const updateMilestoneMutation = useUpdateMilestone();
+
   const [formData, setFormData] = useState({
     title: milestone.title,
     description: milestone.description,
@@ -50,26 +53,19 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await updateMilestone(milestone.id, {
-      title: formData.title,
-      description: formData.description,
-      date: formData.date,
-      icon: formData.icon,
-      mediaId: formData.mediaId || undefined,
-      images: formData.images,
+    await updateMilestoneMutation.mutateAsync({
+      id: milestone.id,
+      updates: {
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        icon: formData.icon,
+        mediaId: formData.mediaId || undefined,
+        images: formData.images,
+      },
     });
 
-    const updatedMilestone: Milestone = {
-      ...milestone,
-      title: formData.title,
-      description: formData.description,
-      date: formData.date,
-      icon: formData.icon,
-      mediaId: formData.mediaId || undefined,
-      ...(formData.images.length > 0 && { images: formData.images }),
-    };
-
-    onSave(updatedMilestone);
+    onSave();
   };
 
   const handleChange = (field: string, value: string) => {
@@ -222,9 +218,8 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
                 <div>
                   <label
                     htmlFor="image-upload-edit"
-                    className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 hover:bg-slate-700/30 transition-colors ${
-                      uploadingImage ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 hover:bg-slate-700/30 transition-colors ${uploadingImage ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                   >
                     <ImageIcon size={20} className="text-slate-400" />
                     <span className="text-slate-300">
@@ -278,11 +273,10 @@ export const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({
                     key={icon}
                     type="button"
                     onClick={() => handleChange("icon", icon)}
-                    className={`p-3 text-2xl rounded-lg border-2 transition-all ${
-                      formData.icon === icon
+                    className={`p-3 text-2xl rounded-lg border-2 transition-all ${formData.icon === icon
                         ? "border-purple-500 bg-purple-500/20"
                         : "border-slate-600 hover:border-slate-500"
-                    }`}
+                      }`}
                   >
                     {icon}
                   </button>

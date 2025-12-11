@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { Search, X, Plus, Check } from "lucide-react";
-import { MediaItem, MediaType } from "../../types";
-import { useAppContext } from "../../context/AppContext";
+import { MediaItem } from "../../types";
+import { useAuth } from "../../context/AuthContext";
+import { useMedias } from "../../hooks/queries";
 
 interface LibrarySelectorProps {
   mediaType: "games" | "movies"; // movies inclui filmes, séries e anime
@@ -23,7 +24,8 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
   maxSelection,
   selectedItems = [],
 }) => {
-  const { mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
   const [searchTerm, setSearchTerm] = useState("");
   const [localSelected, setLocalSelected] = useState<string[]>(selectedItems);
 
@@ -33,10 +35,10 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
 
     // Filtrar por tipo
     if (mediaType === "games") {
-      items = items.filter((item) => item.type === "games");
+      items = items.filter((item) => item.type === "game");
     } else {
       items = items.filter((item) =>
-        ["movies", "series", "anime"].includes(item.type),
+        ["movie", "tv", "anime"].includes(item.type),
       );
     }
 
@@ -140,13 +142,12 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                     key={item.id}
                     onClick={() => handleToggleItem(item.id)}
                     disabled={!canSelect}
-                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border transition-all text-left touch-target ${
-                      isSelected
+                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border transition-all text-left touch-target ${isSelected
                         ? "bg-purple-500/20 border-purple-500/50"
                         : canSelect
                           ? "bg-slate-800/50 border-slate-600 hover:bg-slate-800/80 hover:border-slate-500"
                           : "bg-slate-800/30 border-slate-700 opacity-50 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     {/* Cover */}
                     <div className="w-10 h-12 sm:w-12 sm:h-16 bg-slate-700 rounded overflow-hidden flex-shrink-0">
@@ -178,15 +179,14 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
                           </div>
                         )}
                         <span
-                          className={`text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${
-                            item.status === "completed"
+                          className={`text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${item.status === "completed"
                               ? "bg-green-500/20 text-green-400"
                               : item.status === "in-progress"
                                 ? "bg-yellow-500/20 text-yellow-400"
                                 : item.status === "planned"
                                   ? "bg-blue-500/20 text-blue-400"
                                   : "bg-red-500/20 text-red-400"
-                          }`}
+                            }`}
                         >
                           {item.status === "completed"
                             ? "Concluído"
@@ -201,13 +201,12 @@ export const LibrarySelector: React.FC<LibrarySelectorProps> = ({
 
                     {/* Selection indicator */}
                     <div
-                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                        isSelected
+                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isSelected
                           ? "bg-purple-500 border-purple-500"
                           : canSelect
                             ? "border-slate-400"
                             : "border-slate-600"
-                      }`}
+                        }`}
                     >
                       {isSelected && (
                         <Check

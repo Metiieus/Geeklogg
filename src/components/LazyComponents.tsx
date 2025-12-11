@@ -26,7 +26,7 @@ export const LazyAddMediaFromSearchModal = lazy(() =>
 );
 
 export const LazyAchievementModal = lazy(() =>
-  import("./AchievementModal").then((module) => ({
+  import("./modals/AchievementModal").then((module) => ({
     default: module.AchievementModal,
   })),
 );
@@ -45,7 +45,7 @@ export const LazyArchiviusAgent = lazy(() =>
 );
 
 export const LazyUserProfileView = lazy(() =>
-  import("./UserProfileView").then((module) => ({
+  import("../pages/UserProfile").then((module) => ({
     default: module.UserProfileView,
   })),
 );

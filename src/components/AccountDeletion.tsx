@@ -7,12 +7,12 @@ import {
   Download,
   Clock,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useNavigate } from "react-router-dom";
 
 const AccountDeletion: React.FC = () => {
-  const { setActivePage } = useAppContext();
+  const navigate = useNavigate();
   const { user, deleteAccount } = useAuth();
   const { showSuccess, showError } = useToast();
   const [step, setStep] = useState<"warning" | "confirmation" | "final">(
@@ -103,11 +103,10 @@ const AccountDeletion: React.FC = () => {
         <button
           onClick={handleExportData}
           disabled={hasExportedData}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            hasExportedData
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${hasExportedData
               ? "bg-green-500/20 text-green-400 border border-green-500/30"
               : "bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30"
-          }`}
+            }`}
         >
           {hasExportedData ? "✓ Dados Exportados" : "Exportar Meus Dados"}
         </button>
@@ -132,7 +131,7 @@ const AccountDeletion: React.FC = () => {
 
       <div className="flex gap-4">
         <button
-          onClick={() => setActivePage("settings")}
+          onClick={() => navigate(-1)}
           className="flex-1 px-6 py-3 bg-gray-600/20 text-gray-300 rounded-lg font-medium hover:bg-gray-600/30 transition-colors border border-gray-600/30"
         >
           Cancelar
@@ -211,7 +210,7 @@ const AccountDeletion: React.FC = () => {
         {/* Header */}
         <div className="flex items-center mb-8">
           <button
-            onClick={() => setActivePage("settings")}
+            onClick={() => navigate(-1)}
             className="mr-4 p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors border border-gray-700/50"
           >
             <ArrowLeft size={20} className="text-gray-300" />

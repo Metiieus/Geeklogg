@@ -22,7 +22,7 @@ export async function getReviews(userId?: string): Promise<Review[]> {
 
   const docs = await database.getCollection<Review>(["users", uid, "reviews"]);
 
-  return docs.map((d) => ({ id: d.id, ...(d.data || d) }));
+  return docs;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -36,6 +36,7 @@ export interface AddReviewData
 
 export async function addReview(data: AddReviewData): Promise<Review> {
   const uid = getUserId();
+  ensureValidId(uid, "User not authenticated");
   const now = new Date().toISOString();
 
   const { imageFile, ...rest } = data;
@@ -69,7 +70,7 @@ export async function addReview(data: AddReviewData): Promise<Review> {
     }
   }
 
-  return { id: docRef.id, ...(toSave as Review) };
+  return { id: docRef.id, ...toSave } as Review;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,6 +87,7 @@ export async function updateReview(
 ): Promise<void> {
   ensureValidId(id, "ID ausente ou inválido ao tentar atualizar review");
   const uid = getUserId();
+  ensureValidId(uid, "User not authenticated");
   const now = new Date().toISOString();
 
   const { imageFile, ...rest } = data;

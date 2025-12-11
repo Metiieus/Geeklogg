@@ -13,9 +13,10 @@ import {
   Users,
   Crown,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useSettings } from "../hooks/queries";
 import { ActivePage } from "../types";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 
@@ -24,6 +25,7 @@ interface NavItem {
   icon: React.ReactNode;
   label: string;
   gradient?: string;
+  path: string;
 }
 
 const navigationItems: NavItem[] = [
@@ -32,65 +34,79 @@ const navigationItems: NavItem[] = [
     icon: <Home size={20} />,
     label: "Dashboard",
     gradient: "from-cyan-400 to-blue-500",
+    path: "/dashboard",
   },
   {
     id: "library",
     icon: <BookOpen size={20} />,
     label: "Biblioteca",
     gradient: "from-pink-400 to-purple-500",
+    path: "/library",
   },
   {
     id: "reviews",
     icon: <MessageSquare size={20} />,
     label: "Resenhas",
     gradient: "from-purple-400 to-indigo-500",
+    path: "/reviews",
   },
   {
     id: "timeline",
     icon: <Clock size={20} />,
     label: "Jornada",
     gradient: "from-indigo-400 to-cyan-500",
+    path: "/timeline",
   },
   {
     id: "statistics",
     icon: <BarChart3 size={20} />,
     label: "Estatísticas",
     gradient: "from-cyan-400 to-pink-500",
+    path: "/statistics",
   },
   {
     id: "social",
     icon: <Users size={20} />,
     label: "Social",
     gradient: "from-pink-400 to-purple-500",
+    path: "/social",
   },
 ];
 
 const Sidebar: React.FC = () => {
-  const { activePage, setActivePage, settings } = useAppContext();
   const { logout, profile, user } = useAuth();
+  const { data: settings } = useSettings(user?.uid);
   const { showInfo } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Derive active page from location
+  const getActivePage = (pathname: string): string => {
+    const path = pathname.split("/")[1] || "dashboard";
+    return path;
+  };
+
+  const activePage = getActivePage(location.pathname);
   const isPremium = profile?.isPremium || false;
 
   const handleNavigation = useCallback(
-    (itemId: ActivePage) => {
-      if (itemId === "social") {
+    (item: NavItem) => {
+      if (item.id === "social") {
         showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
         return;
       }
-      setActivePage(itemId);
+      navigate(item.path);
     },
-    [showInfo, setActivePage],
+    [showInfo, navigate],
   );
 
   return (
     <>
       {/* Desktop Sidebar */}
       <div
-        className={`hidden md:flex fixed left-0 top-0 h-full backdrop-blur-xl border-r border-white/10 transition-all duration-300 z-40 ${
-          isExpanded ? "w-64" : "w-20"
-        }`}
+        className={`hidden md:flex fixed left-0 top-0 h-full backdrop-blur-xl border-r border-white/10 transition-all duration-300 z-40 ${isExpanded ? "w-64" : "w-20"
+          }`}
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
@@ -143,95 +159,113 @@ const Sidebar: React.FC = () => {
             role="navigation"
             aria-label="Menu principal"
           >
-            {navigationItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavigation(item.id)}
-                aria-label={`Navegar para ${item.label}`}
-                aria-current={activePage === item.id ? "page" : undefined}
-                disabled={item.id === "social"}
-                className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${
-                  item.id === "social"
-                    ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30 border border-transparent"
-                    : activePage === item.id
-                      ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
-                      : "hover:bg-gray-800/50 border border-transparent"
-                }`}
-              >
-                {/* Icon com gradiente ativo e melhor visual */}
-                <div
-                  className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
-                    activePage === item.id
-                      ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
-                      : "bg-slate-800/50 group-hover:bg-slate-700/50"
-                  }`}
-                >
-                  <div
-                    className={`${
-                      activePage === item.id
-                        ? "text-white"
-                        : "text-gray-300 group-hover:text-white"
-                    } transition-colors duration-300`}
+            {navigationItems.map((item) => {
+              if (item.id === "social") {
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavigation(item)}
+                    aria-label={`Navegar para ${item.label}`}
+                    disabled={true}
+                    className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target opacity-50 cursor-not-allowed hover:bg-gray-800/30 border border-transparent`}
                   >
-                    {item.icon}
-                  </div>
-                  {activePage === item.id && (
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
-                  )}
-                </div>
+                    <div
+                      className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 bg-slate-800/50 group-hover:bg-slate-700/50`}
+                    >
+                      <div
+                        className={`text-gray-300 group-hover:text-white transition-colors duration-300`}
+                      >
+                        {item.icon}
+                      </div>
+                    </div>
 
-                {isExpanded && (
-                  <span
-                    className={`ml-3 text-sm font-medium transition-colors whitespace-nowrap ${
-                      item.id === "social"
-                        ? "text-gray-400"
-                        : activePage === item.id
-                          ? "text-white"
-                          : "text-gray-200 group-hover:text-white"
-                    }`}
-                  >
-                    {item.label}
-                    {item.id === "social" && (
-                      <span className="ml-1 text-xs text-purple-400">
-                        Em breve
+                    {isExpanded && (
+                      <span
+                        className={`ml-3 text-sm font-medium transition-colors whitespace-nowrap text-gray-400`}
+                      >
+                        {item.label}
+                        <span className="ml-1 text-xs text-purple-400">
+                          Em breve
+                        </span>
                       </span>
                     )}
-                  </span>
-                )}
+                  </button>
+                );
+              }
 
-                {/* Indicador ativo */}
-                {activePage === item.id && (
-                  <div className="absolute right-0 w-1 h-8 bg-gradient-to-b from-cyan-400 to-pink-500 rounded-l-full"></div>
-                )}
-              </button>
-            ))}
+              return (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  aria-label={`Navegar para ${item.label}`}
+                  aria-current={activePage === item.id ? "page" : undefined}
+                  className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${activePage === item.id
+                    ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
+                    : "hover:bg-gray-800/50 border border-transparent"
+                    }`}
+                >
+                  {/* Icon com gradiente ativo e melhor visual */}
+                  <div
+                    className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${activePage === item.id
+                      ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
+                      : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                      }`}
+                  >
+                    <div
+                      className={`${activePage === item.id
+                        ? "text-white"
+                        : "text-gray-300 group-hover:text-white"
+                        } transition-colors duration-300`}
+                    >
+                      {item.icon}
+                    </div>
+                    {activePage === item.id && (
+                      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                    )}
+                  </div>
+
+                  {isExpanded && (
+                    <span
+                      className={`ml-3 text-sm font-medium transition-colors whitespace-nowrap ${activePage === item.id
+                        ? "text-white"
+                        : "text-gray-200 group-hover:text-white"
+                        }`}
+                    >
+                      {item.label}
+                    </span>
+                  )}
+
+                  {/* Indicador ativo */}
+                  {activePage === item.id && (
+                    <div className="absolute right-0 w-1 h-8 bg-gradient-to-b from-cyan-400 to-pink-500 rounded-l-full"></div>
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* User Actions */}
           <div className="space-y-2 pt-4 border-t border-gray-800">
             <button
-              onClick={() => setActivePage("profile")}
+              onClick={() => navigate("/profile")}
               aria-label="Ir para perfil do usuário"
               aria-current={activePage === "profile" ? "page" : undefined}
-              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${
-                activePage === "profile"
-                  ? "bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30"
-                  : "hover:bg-gray-800/50 border border-transparent"
-              }`}
+              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${activePage === "profile"
+                ? "bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30"
+                : "hover:bg-gray-800/50 border border-transparent"
+                }`}
             >
               <div
-                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
-                  activePage === "profile"
-                    ? "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/25"
-                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
-                }`}
+                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${activePage === "profile"
+                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg shadow-purple-500/25"
+                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                  }`}
               >
                 <div
-                  className={`${
-                    activePage === "profile"
-                      ? "text-white"
-                      : "text-gray-300 group-hover:text-white"
-                  } transition-colors duration-300`}
+                  className={`${activePage === "profile"
+                    ? "text-white"
+                    : "text-gray-300 group-hover:text-white"
+                    } transition-colors duration-300`}
                 >
                   <User size={20} />
                 </div>
@@ -241,11 +275,10 @@ const Sidebar: React.FC = () => {
               </div>
               {isExpanded && (
                 <span
-                  className={`ml-3 text-sm font-medium whitespace-nowrap ${
-                    activePage === "profile"
-                      ? "text-white"
-                      : "text-gray-200 group-hover:text-white"
-                  }`}
+                  className={`ml-3 text-sm font-medium whitespace-nowrap ${activePage === "profile"
+                    ? "text-white"
+                    : "text-gray-200 group-hover:text-white"
+                    }`}
                 >
                   Perfil
                 </span>
@@ -253,28 +286,25 @@ const Sidebar: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActivePage("settings")}
+              onClick={() => navigate("/settings")}
               aria-label="Abrir configurações"
               aria-current={activePage === "settings" ? "page" : undefined}
-              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${
-                activePage === "settings"
-                  ? "bg-gradient-to-r from-gray-700/50 to-gray-600/50 border border-gray-600/30"
-                  : "hover:bg-gray-800/50 border border-transparent"
-              }`}
+              className={`group relative w-full flex items-center p-3 rounded-xl transition-all duration-300 touch-target ${activePage === "settings"
+                ? "bg-gradient-to-r from-gray-700/50 to-gray-600/50 border border-gray-600/30"
+                : "hover:bg-gray-800/50 border border-transparent"
+                }`}
             >
               <div
-                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
-                  activePage === "settings"
-                    ? "bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg shadow-gray-500/25"
-                    : "bg-slate-800/50 group-hover:bg-slate-700/50"
-                }`}
+                className={`relative flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${activePage === "settings"
+                  ? "bg-gradient-to-r from-gray-600 to-gray-500 shadow-lg shadow-gray-500/25"
+                  : "bg-slate-800/50 group-hover:bg-slate-700/50"
+                  }`}
               >
                 <div
-                  className={`${
-                    activePage === "settings"
-                      ? "text-white"
-                      : "text-gray-300 group-hover:text-white"
-                  } transition-colors duration-300`}
+                  className={`${activePage === "settings"
+                    ? "text-white"
+                    : "text-gray-300 group-hover:text-white"
+                    } transition-colors duration-300`}
                 >
                   <Settings size={20} />
                 </div>
@@ -284,11 +314,10 @@ const Sidebar: React.FC = () => {
               </div>
               {isExpanded && (
                 <span
-                  className={`ml-3 text-sm font-medium whitespace-nowrap ${
-                    activePage === "settings"
-                      ? "text-white"
-                      : "text-gray-200 group-hover:text-white"
-                  }`}
+                  className={`ml-3 text-sm font-medium whitespace-nowrap ${activePage === "settings"
+                    ? "text-white"
+                    : "text-gray-200 group-hover:text-white"
+                    }`}
                 >
                   Configurações
                 </span>
@@ -306,10 +335,6 @@ const Sidebar: React.FC = () => {
                         alt={settings.name || profile?.displayName || "Usuário"}
                         className="w-full h-full object-cover rounded-full"
                         onError={(e) => {
-                          console.log(
-                            "Erro ao carregar avatar:",
-                            settings.avatar,
-                          );
                           const target = e.target as HTMLImageElement;
                           target.style.display = "none";
                           const fallback =

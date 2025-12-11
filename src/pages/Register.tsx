@@ -7,6 +7,8 @@ import { doc, setDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { User, Mail, Lock, Calendar, UserPlus, ArrowLeft, Sparkles, Shield } from "lucide-react";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
 
 interface RegisterProps {
   onCancel: () => void;
@@ -22,8 +24,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
     senha: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser } = useAuth();
-  const { showError, showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
 
   const validateAge = (birthDate: string): boolean => {
     const today = new Date();
@@ -123,10 +124,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
         `Bem-vindo(a), ${formData.apelido}! 🎉`,
       );
 
-      setUser({
-        uid: user.uid,
-        ...userData,
-      });
+
     } catch (error: any) {
       devLog.error("❌ Erro ao criar conta:", error);
 
@@ -197,136 +195,76 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
           {/* Register Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Nome Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Nome Completo
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className="w-5 h-5 text-cyan-400" />
-                </div>
-                <input
-                  type="text"
-                  name="nome"
-                  value={formData.nome}
-                  onChange={handleInputChange}
-                  placeholder="João Silva"
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
+            <Input
+              label="Nome Completo"
+              name="nome"
+              value={formData.nome}
+              onChange={handleInputChange}
+              placeholder="João Silva"
+              required
+              leftIcon={<User size={20} className="text-cyan-400" />}
+              containerClassName="text-left"
+            />
 
-            {/* Apelido Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Apelido
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className="w-5 h-5 text-purple-400" />
-                </div>
-                <input
-                  type="text"
-                  name="apelido"
-                  value={formData.apelido}
-                  onChange={handleInputChange}
-                  placeholder="JoãoGamer"
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
+            <Input
+              label="Apelido"
+              name="apelido"
+              value={formData.apelido}
+              onChange={handleInputChange}
+              placeholder="JoãoGamer"
+              required
+              leftIcon={<User size={20} className="text-purple-400" />}
+              containerClassName="text-left"
+            />
 
-            {/* Data de Nascimento Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Data de Nascimento
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Calendar className="w-5 h-5 text-pink-400" />
-                </div>
-                <input
-                  type="date"
-                  name="dataNascimento"
-                  value={formData.dataNascimento}
-                  onChange={handleInputChange}
-                  required
-                  max={new Date().toISOString().split("T")[0]}
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <p className="text-xs text-slate-500">
-                Você deve ter pelo menos 13 anos
-              </p>
-            </div>
+            <Input
+              label="Data de Nascimento"
+              type="date"
+              name="dataNascimento"
+              value={formData.dataNascimento}
+              onChange={handleInputChange}
+              required
+              max={new Date().toISOString().split("T")[0]}
+              leftIcon={<Calendar size={20} className="text-pink-400" />}
+              helperText="Você deve ter pelo menos 13 anos"
+              containerClassName="text-left"
+            />
 
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="w-5 h-5 text-cyan-400" />
-                </div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="seu@email.com"
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
+            <Input
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="seu@email.com"
+              required
+              leftIcon={<Mail size={20} className="text-cyan-400" />}
+              containerClassName="text-left"
+            />
 
-            {/* Senha Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Senha
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="w-5 h-5 text-pink-400" />
-                </div>
-                <input
-                  type="password"
-                  name="senha"
-                  value={formData.senha}
-                  onChange={handleInputChange}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <p className="text-xs text-slate-500">
-                Mínimo de 6 caracteres
-              </p>
-            </div>
+            <Input
+              label="Senha"
+              type="password"
+              name="senha"
+              value={formData.senha}
+              onChange={handleInputChange}
+              placeholder="••••••••"
+              required
+              minLength={6}
+              leftIcon={<Lock size={20} className="text-pink-400" />}
+              helperText="Mínimo de 6 caracteres"
+              containerClassName="text-left"
+            />
 
             {/* Register Button */}
-            <button
+            <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 disabled:from-slate-600 disabled:to-slate-600 transition-all duration-300 font-semibold shadow-lg shadow-cyan-500/25 disabled:shadow-none flex items-center justify-center space-x-2 group"
+              isLoading={isLoading}
+              className="w-full"
+              rightIcon={!isLoading && <UserPlus size={20} className="group-hover:translate-x-1 transition-transform" />}
             >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Criando conta...</span>
-                </>
-              ) : (
-                <>
-                  <span>Criar Conta</span>
-                  <UserPlus className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
+              Criar Conta
+            </Button>
           </form>
 
           {/* Divider */}
@@ -342,13 +280,14 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
           </div>
 
           {/* Login Button */}
-          <button
+          <Button
+            variant="outline"
             onClick={onLogin || onCancel}
-            className="w-full py-3 rounded-xl border-2 border-white/10 hover:border-cyan-500/50 hover:bg-white/5 transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
+            className="w-full border-white/10 hover:border-cyan-500/50"
+            leftIcon={<Shield size={20} className="text-cyan-400" />}
           >
-            <Shield className="w-5 h-5 text-cyan-400" />
-            <span>Fazer Login</span>
-          </button>
+            Fazer Login
+          </Button>
 
           {/* Security Badge */}
           <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-slate-500">

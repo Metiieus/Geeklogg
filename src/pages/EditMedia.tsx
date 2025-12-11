@@ -1,28 +1,32 @@
-import React from "react";
-import { useAppContext } from "../context/AppContext";
+import React, { useEffect } from "react";
 import EditMediaPage from "./EditMediaContent";
-
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useMedias, useUpdateMedia } from "../hooks/queries";
+import { useToast } from "../context/ToastContext";
 
 const EditMediaPageWrapper: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const {
-    mediaItems,
-    setMediaItems,
-    setActivePage,
-  } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const updateMediaMutation = useUpdateMedia();
+  const { showSuccess, showError } = useToast();
 
   // Find item by ID from URL
   const itemToEdit = mediaItems.find((item) => item.id === id);
 
-  if (!itemToEdit) {
-    // Item not found
-    React.useEffect(() => {
-      // navigate("/library"); // Better to navigate explicitly than use setActivePage side-effect
-      // But preventing immediate redirect loop logic if possible
-    }, []);
+  useEffect(() => {
+    if (!itemToEdit && mediaItems.length > 0) {
+      // Only redirect if media loaded but item not found
+      // navigate("/library"); 
+    }
+  }, [itemToEdit, mediaItems, navigate]);
 
+  if (!itemToEdit) {
+    if (mediaItems.length === 0) {
+      return <div className="text-white text-center py-8">Carregando...</div>;
+    }
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="text-center">
@@ -38,13 +42,18 @@ const EditMediaPageWrapper: React.FC = () => {
     );
   }
 
-  const handleSave = (updatedItem: any) => {
-    // Atualiza o item na lista
-    const updatedItems = mediaItems.map((item) =>
-      item.id === updatedItem.id ? updatedItem : item,
-    );
-    setMediaItems(updatedItems);
-    navigate("/library");
+  const handleSave = async (updatedItem: any) => {
+    try {
+      await updateMediaMutation.mutateAsync({
+        id: updatedItem.id,
+        updates: updatedItem
+      });
+      showSuccess("Mídia atualizada com sucesso!");
+      navigate("/library");
+    } catch (error) {
+      console.error("Failed to update media", error);
+      showError("Erro ao atualizar mídia.");
+    }
   };
 
   const handleBack = () => {

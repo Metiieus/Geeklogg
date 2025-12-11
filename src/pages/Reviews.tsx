@@ -9,24 +9,25 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
+import { useReviews, useMedias, useDeleteReview, useUpdateReview } from "../hooks/queries";
 import { Review } from "../types";
-import { AddReviewModal } from "./modals/AddReviewModal";
-import { EditReviewModal } from "./modals/EditReviewModal";
-import { deleteReview } from "../services/reviewService";
+import { AddReviewModal } from "../components/modals/AddReviewModal";
+import { EditReviewModal } from "../components/modals/EditReviewModal";
+import { ReviewSkeleton } from "../components/skeletons";
 
 // Componente para texto truncado com "ver mais"
 const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, maxChars }) => {
   const [expanded, setExpanded] = useState(false);
   const needsTruncate = text.length > maxChars;
-  const displayText = needsTruncate && !expanded 
-    ? text.substring(0, maxChars) + '...' 
+  const displayText = needsTruncate && !expanded
+    ? text.substring(0, maxChars) + '...'
     : text;
 
   return (
     <div>
-      <div 
-        className="text-slate-300 leading-relaxed prose prose-invert max-w-none" 
+      <div
+        className="text-slate-300 leading-relaxed prose prose-invert max-w-none"
         dangerouslySetInnerHTML={{ __html: displayText }}
       />
       {needsTruncate && (
@@ -42,7 +43,12 @@ const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, max
 };
 
 const Reviews: React.FC = () => {
-  const { reviews, setReviews, mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: reviews = [], isLoading } = useReviews(user?.uid);
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const deleteReviewMutation = useDeleteReview();
+  const updateReviewMutation = useUpdateReview();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);
@@ -71,8 +77,7 @@ const Reviews: React.FC = () => {
   const confirmDelete = async () => {
     if (reviewToDelete && reviewToDelete.id) {
       try {
-        await deleteReview(reviewToDelete.id);
-        setReviews(reviews.filter((review) => review.id !== reviewToDelete.id));
+        await deleteReviewMutation.mutateAsync(reviewToDelete.id);
         // Feedback visual
         const toast = document.createElement("div");
         toast.className =
@@ -94,22 +99,22 @@ const Reviews: React.FC = () => {
     }
   };
 
-  const handleToggleFavorite = (reviewId: string) => {
-    setReviews(
-      reviews.map((review) =>
-        review.id === reviewId
-          ? { ...review, isFavorite: !review.isFavorite }
-          : review,
-      ),
-    );
+  const handleToggleFavorite = async (reviewId: string) => {
+    const review = reviews.find(r => r.id === reviewId);
+    if (!review) return;
+
+    try {
+      await updateReviewMutation.mutateAsync({
+        id: reviewId,
+        updates: { isFavorite: !review.isFavorite }
+      });
+    } catch (error) {
+      console.error("Error toggling favorite", error);
+    }
   };
 
   const handleEditReview = (updatedReview: Review) => {
-    setReviews(
-      reviews.map((review) =>
-        review.id === updatedReview.id ? updatedReview : review,
-      ),
-    );
+    // Mutation implicitly updates via query invalidation
     setEditingReview(null);
   };
 
@@ -151,9 +156,10 @@ const Reviews: React.FC = () => {
 
       {/* Reviews List */}
       <div className="space-y-6 animate-fade-in">
-        {filteredReviews.length > 0 ? (
+        {isLoading ? (
+          <ReviewSkeleton />
+        ) : filteredReviews.length > 0 ? (
           filteredReviews.map((review) => {
-            console.log("Review item", review);
             const media = mediaItems.find((item) => item.id === review.mediaId);
             return (
               <div
@@ -194,11 +200,10 @@ const Reviews: React.FC = () => {
                       <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                         <button
                           onClick={() => handleToggleFavorite(review.id)}
-                          className={`p-1 rounded transition-colors ${
-                            review.isFavorite
-                              ? "text-red-400"
-                              : "text-slate-400 hover:text-red-400"
-                          }`}
+                          className={`p-1 rounded transition-colors ${review.isFavorite
+                            ? "text-red-400"
+                            : "text-slate-400 hover:text-red-400"
+                            }`}
                         >
                           <Heart
                             size={16}
@@ -278,8 +283,7 @@ const Reviews: React.FC = () => {
       {showAddModal && (
         <AddReviewModal
           onClose={() => setShowAddModal(false)}
-          onSave={(newReview) => {
-            setReviews([...reviews, newReview]);
+          onSave={() => {
             setShowAddModal(false);
           }}
         />
@@ -290,7 +294,7 @@ const Reviews: React.FC = () => {
         <EditReviewModal
           review={editingReview}
           onClose={() => setEditingReview(null)}
-          onSave={handleEditReview}
+          onSave={() => setEditingReview(null)}
         />
       )}
 

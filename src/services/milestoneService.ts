@@ -30,7 +30,7 @@ export async function getMilestones(userId?: string): Promise<Milestone[]> {
   ]);
 
   devLog.log("📥 Milestones carregadas:", docs.length);
-  return docs.map((d) => ({ id: d.id, ...(d.data || d) }));
+  return docs;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,12 +48,13 @@ export interface AddMilestoneData
  */
 export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
   const uid = getUserId();
+  ensureValidId(uid, "User not authenticated");
   const now = new Date().toISOString();
   const { imageFile, ...rest } = data;
 
   // Limpa e prepara o objeto para salvar
   let toSave: Omit<Milestone, "id"> = {
-    ...sanitizeStrings(rest as Record<string, any>),
+    ...(sanitizeStrings(rest as Record<string, any>) as any),
     createdAt: now,
   };
   toSave = removeUndefinedFields(toSave);
@@ -102,6 +103,7 @@ export async function updateMilestone(
   ensureValidId(id, "ID ausente ou inválido ao tentar atualizar marco");
 
   const uid = getUserId();
+  ensureValidId(uid, "User not authenticated");
   const { imageFile, ...rest } = data;
 
   const toUpdate = removeUndefinedFields(
@@ -138,7 +140,7 @@ export async function deleteMilestone(id: string): Promise<void> {
   );
 
   const uid = getUserId();
-  if (!uid) throw new Error("Usuário não autenticado");
+  ensureValidId(uid, "Usuário não autenticado");
 
   // 1️⃣ Remove documento
   await database.delete(["users", uid, "milestones"], id);

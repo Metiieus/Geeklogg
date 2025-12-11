@@ -10,7 +10,6 @@ import {
   Crown,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { useAppContext } from "../context/AppContext";
 import { useToast } from "../context/ToastContext";
 import { useI18n } from "../i18n";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
@@ -19,6 +18,13 @@ import { openaiService } from "../services/openaiService";
 import { archiviusService } from "../services/archiviusService";
 import { useArchiviusWorker } from "../hooks/useArchiviusWorker";
 import { canUseArchivius, ARCHIVIUS_CONFIG } from "../config/archivius";
+import {
+  useMedias,
+  useReviews,
+  useSettings,
+  useMilestones
+} from "../hooks/queries";
+import { UserSettings } from "../types";
 
 // Constantes
 const ARCHIVIUS_AVATAR_URL = "https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800";
@@ -114,11 +120,10 @@ const MessageBubble: React.FC<{ message: Message }> = ({ message }) => (
   >
     {!message.isUser && <ArchiveAvatar size="sm" className="mt-1" />}
     <div
-      className={`max-w-xs px-4 py-2 rounded-2xl ${
-        message.isUser
+      className={`max-w-xs px-4 py-2 rounded-2xl ${message.isUser
           ? "bg-gradient-to-r from-cyan-500 to-pink-500 text-white"
           : "bg-gray-700/50 border border-gray-600/30 text-gray-100"
-      }`}
+        }`}
     >
       <div className="text-sm whitespace-pre-wrap">{message.text}</div>
     </div>
@@ -132,11 +137,10 @@ const CategorySelector: React.FC<{
   <div className="flex gap-1 mb-3 overflow-x-auto">
     <button
       onClick={() => onCategoryChange("all")}
-      className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
-        selectedCategory === "all"
+      className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${selectedCategory === "all"
           ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
           : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
-      }`}
+        }`}
     >
       ✨ Todas
     </button>
@@ -144,11 +148,10 @@ const CategorySelector: React.FC<{
       <button
         key={key}
         onClick={() => onCategoryChange(key)}
-        className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
-          selectedCategory === key
+        className={`px-2 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${selectedCategory === key
             ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
             : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
-        }`}
+          }`}
       >
         {CATEGORY_ICONS[key]} {name}
       </button>
@@ -176,10 +179,24 @@ const SuggestionButton: React.FC<{
 
 // Componente principal
 export const ArchiviusAgent: React.FC = () => {
-  const { profile } = useAuth();
-  const { mediaItems, reviews, settings, milestones } = useAppContext();
+  const { user } = useAuth(); // Removed redundant 'profile' here as using user.uid mostly
+  // If we need profile details like isPremium, we can get it from useSettings or AuthContext
+  const { profile } = useAuth(); // Actually keeping profile is fine.
+
+  // Hooks replacing AppContext
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const { data: reviews = [] } = useReviews(user?.uid);
+  const { data: milestones = [] } = useMilestones(user?.uid);
+  const { data: settingsData } = useSettings(user?.uid);
+
+  // Default settings if loading or null
+  const settings: UserSettings = settingsData || {
+    favorites: { characters: [], games: [], movies: [] },
+    defaultLibrarySort: "updatedAt",
+  };
+
   const { showSuccess, showError } = useToast();
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Estado
@@ -306,7 +323,7 @@ export const ArchiviusAgent: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [inputValue, canAccess, createMessage, generateEnhancedUserContext, showSuccess, showError],
+    [inputValue, canAccess, createMessage, generateEnhancedUserContext, showSuccess, showError, enhancedContext],
   );
 
   const handleAnalyzeProfile = useCallback(async () => {
@@ -329,7 +346,7 @@ export const ArchiviusAgent: React.FC = () => {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [canAccess, createMessage, generateEnhancedUserContext, showSuccess, showError]);
+  }, [canAccess, createMessage, generateEnhancedUserContext, showSuccess, showError, enhancedContext]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -396,9 +413,8 @@ export const ArchiviusAgent: React.FC = () => {
       >
         <motion.button
           onClick={() => setIsOpen(true)}
-          className={`group relative flex items-center bg-gray-800/50 backdrop-blur-xl rounded-full shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
-            canAccess ? "border-cyan-500/30" : "border-gray-600/30"
-          }`}
+          className={`group relative flex items-center bg-gray-800/50 backdrop-blur-xl rounded-full shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${canAccess ? "border-cyan-500/30" : "border-gray-600/30"
+            }`}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -463,11 +479,10 @@ export const ArchiviusAgent: React.FC = () => {
             >
               {/* Header */}
               <div
-                className={`p-3 sm:p-4 border-b border-cyan-500/20 ${
-                  canAccess
+                className={`p-3 sm:p-4 border-b border-cyan-500/20 ${canAccess
                     ? "bg-gradient-to-r from-cyan-500 to-pink-500"
                     : "bg-gradient-to-r from-gray-600 to-gray-700"
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -477,12 +492,12 @@ export const ArchiviusAgent: React.FC = () => {
                         <h3 className="font-semibold text-white text-sm">
                           Archivius
                         </h3>
-                          {isContextLoading && (
-                            <div className="ml-2 flex items-center gap-2">
-                              <div className="w-3 h-3 border-2 border-white/25 border-t-white rounded-full animate-spin" />
-                              <span className="text-xs text-white/90">{t("archivius.analyzingBadge")}</span>
-                            </div>
-                          )}
+                        {isContextLoading && (
+                          <div className="ml-2 flex items-center gap-2">
+                            <div className="w-3 h-3 border-2 border-white/25 border-t-white rounded-full animate-spin" />
+                            <span className="text-xs text-white/90">{t("archivius.analyzingBadge")}</span>
+                          </div>
+                        )}
                         {canAccess && (
                           <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-300" />
                         )}
@@ -494,13 +509,12 @@ export const ArchiviusAgent: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${
-                            canAccess
+                          className={`w-2 h-2 rounded-full ${canAccess
                               ? hasRealAPI
                                 ? "bg-green-400"
                                 : "bg-cyan-300"
                               : "bg-orange-300"
-                          }`}
+                            }`}
                         />
                         <span className="text-white text-xs sm:text-sm opacity-90">
                           {canAccess

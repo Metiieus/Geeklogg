@@ -13,9 +13,10 @@ import {
   LogOut,
 } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { useAppContext } from "../context/AppContext";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import { useSettings } from "../hooks/queries";
 import { ActivePage } from "../types";
 
 interface NavItem {
@@ -23,6 +24,7 @@ interface NavItem {
   icon: React.ReactNode;
   label: string;
   gradient: string;
+  path: string;
 }
 
 const navItems: NavItem[] = [
@@ -31,66 +33,81 @@ const navItems: NavItem[] = [
     icon: <Home size={20} />,
     label: "Home",
     gradient: "from-cyan-400 to-blue-500",
+    path: "/dashboard",
   },
   {
     id: "library",
     icon: <BookOpen size={20} />,
     label: "Biblioteca",
     gradient: "from-pink-400 to-purple-500",
+    path: "/library",
   },
   {
     id: "reviews",
     icon: <MessageSquare size={20} />,
     label: "Reviews",
     gradient: "from-purple-400 to-indigo-500",
+    path: "/reviews",
   },
   {
     id: "timeline",
     icon: <Clock size={20} />,
     label: "Jornada",
     gradient: "from-indigo-400 to-cyan-500",
+    path: "/timeline",
   },
   {
     id: "statistics",
     icon: <BarChart3 size={20} />,
     label: "Estatísticas",
     gradient: "from-cyan-400 to-pink-500",
+    path: "/statistics",
   },
   {
     id: "social",
     icon: <Users size={20} />,
     label: "Social",
     gradient: "from-pink-400 to-purple-500",
+    path: "/social",
   },
   {
     id: "profile",
     icon: <User size={20} />,
     label: "Perfil",
     gradient: "from-cyan-400 to-pink-500",
+    path: "/profile",
   },
 ];
 
 const MobileSidebar: React.FC = () => {
-  const { activePage, setActivePage, settings } = useAppContext();
   const { logout, user, profile } = useAuth();
+  const { data: settings } = useSettings(user?.uid);
   const { showInfo } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
+  const getActivePage = (pathname: string): string => {
+    const path = pathname.split("/")[1] || "dashboard";
+    return path;
+  };
+  const activePage = getActivePage(location.pathname);
+
   const handleNavigation = useCallback(
-    (itemId: ActivePage) => {
-      if (itemId === "social") {
+    (item: NavItem) => {
+      if (item.id === "social") {
         showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
         return;
       }
-      setActivePage(itemId);
+      navigate(item.path);
     },
-    [showInfo, setActivePage],
+    [showInfo, navigate],
   );
 
   // Close sidebar when page changes
   useEffect(() => {
     setIsOpen(false);
-  }, [activePage]);
+  }, [location.pathname]);
 
   // Close sidebar on escape key
   useEffect(() => {
@@ -115,8 +132,14 @@ const MobileSidebar: React.FC = () => {
   }, [isOpen]);
 
   const getCurrentPageInfo = () => {
-    return navItems.find((item) => item.id === activePage) || navItems[0];
+    return (
+      navItems.find((item) => item.id === activePage) ||
+      navItems.find((item) => item.id === "dashboard") ||
+      navItems[0]
+    );
   };
+
+  const currentPage = getCurrentPageInfo();
 
   return (
     <>
@@ -137,13 +160,13 @@ const MobileSidebar: React.FC = () => {
           {/* Current Page Indicator */}
           <div className="flex items-center gap-3 flex-1 justify-center min-w-0">
             <div
-              className={`relative p-2 rounded-lg bg-gradient-to-r ${getCurrentPageInfo().gradient} shadow-lg transition-all duration-300 flex-shrink-0`}
+              className={`relative p-2 rounded-lg bg-gradient-to-r ${currentPage.gradient} shadow-lg transition-all duration-300 flex-shrink-0`}
             >
-              <div className="text-white">{getCurrentPageInfo().icon}</div>
+              <div className="text-white">{currentPage.icon}</div>
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
             </div>
             <span className="text-white font-semibold text-lg truncate">
-              {getCurrentPageInfo().label}
+              {currentPage.label}
             </span>
           </div>
 
@@ -197,9 +220,8 @@ const MobileSidebar: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`sm:hidden fixed top-0 left-0 bottom-0 z-50 w-72 transform transition-transform duration-300 ease-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`sm:hidden fixed top-0 left-0 bottom-0 z-50 w-72 transform transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div
           className="h-full border-r border-white/10 overflow-hidden"
@@ -239,8 +261,8 @@ const MobileSidebar: React.FC = () => {
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-cyan-500 p-0.5">
                   <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden">
                     {profile?.avatar ||
-                    profile?.profileImage ||
-                    settings?.avatar ? (
+                      profile?.profileImage ||
+                      settings?.avatar ? (
                       <img
                         src={
                           profile?.avatar ||
@@ -250,7 +272,6 @@ const MobileSidebar: React.FC = () => {
                         alt="Profile"
                         className="w-full h-full rounded-full object-cover"
                         onError={(e) => {
-                          // Fallback se a imagem falhar ao carregar
                           const target = e.target as HTMLImageElement;
                           target.style.display = "none";
                           target.nextElementSibling?.setAttribute(
@@ -265,8 +286,8 @@ const MobileSidebar: React.FC = () => {
                       style={{
                         display:
                           profile?.avatar ||
-                          profile?.profileImage ||
-                          settings?.avatar
+                            profile?.profileImage ||
+                            settings?.avatar
                             ? "none"
                             : "flex",
                       }}
@@ -295,63 +316,75 @@ const MobileSidebar: React.FC = () => {
 
             {/* Navigation Items */}
             <div className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavigation(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${
-                    item.id === "social"
-                      ? "opacity-50 cursor-not-allowed hover:bg-gray-800/30"
-                      : activePage === item.id
+              {navItems.map((item) => {
+                if (item.id === "social") {
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavigation(item)}
+                      className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 opacity-50 cursor-not-allowed hover:bg-gray-800/30`}
+                    >
+                      <div
+                        className={`relative p-2 rounded-lg transition-all duration-300 bg-gray-700/50`}
+                      >
+                        <div className="text-gray-400">{item.icon}</div>
+                      </div>
+                      <span className="font-medium transition-colors duration-300 text-gray-400">
+                        {item.label}
+                        <span className="ml-1 text-xs text-purple-400">
+                          Em breve
+                        </span>
+                      </span>
+                    </button>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.id}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${activePage === item.id
                         ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105 shadow-lg"
                         : "hover:bg-gray-800/50 active:scale-95"
-                  }`}
-                >
-                  <div
-                    className={`relative p-2 rounded-lg transition-all duration-300 ${
-                      activePage === item.id
-                        ? `bg-gradient-to-r ${item.gradient} shadow-lg`
-                        : "bg-gray-700/50"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`transition-colors duration-300 ${
-                        activePage === item.id ? "text-white" : "text-gray-400"
-                      }`}
+                      className={`relative p-2 rounded-lg transition-all duration-300 ${activePage === item.id
+                        ? `bg-gradient-to-r ${item.gradient} shadow-lg`
+                        : "bg-gray-700/50"
+                        }`}
                     >
-                      {item.icon}
+                      <div
+                        className={`transition-colors duration-300 ${activePage === item.id ? "text-white" : "text-gray-400"
+                          }`}
+                      >
+                        {item.icon}
+                      </div>
+                      {activePage === item.id && (
+                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                      )}
                     </div>
+                    <span
+                      className={`font-medium transition-colors duration-300 ${activePage === item.id
+                        ? "text-white"
+                        : "text-gray-300"
+                        }`}
+                    >
+                      {item.label}
+                    </span>
                     {activePage === item.id && (
-                      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                      <div className="ml-auto w-2 h-2 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full animate-pulse"></div>
                     )}
-                  </div>
-                  <span
-                    className={`font-medium transition-colors duration-300 ${
-                      item.id === "social"
-                        ? "text-gray-400"
-                        : activePage === item.id
-                          ? "text-white"
-                          : "text-gray-300"
-                    }`}
-                  >
-                    {item.label}
-                    {item.id === "social" && (
-                      <span className="ml-1 text-xs text-purple-400">
-                        Em breve
-                      </span>
-                    )}
-                  </span>
-                  {activePage === item.id && (
-                    <div className="ml-auto w-2 h-2 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full animate-pulse"></div>
-                  )}
-                </button>
-              ))}
+                  </Link>
+                )
+              })}
             </div>
 
             {/* Footer Actions */}
             <div className="px-4 py-4 border-t border-gray-700/50 space-y-1 safe-area-inset-bottom">
               <button
-                onClick={() => setActivePage("settings")}
+                onClick={() => navigate("/settings")}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 hover:bg-gray-800/50 active:scale-95"
               >
                 <div className="relative p-2 rounded-lg bg-gray-700/50 hover:bg-gray-600/50 transition-colors duration-300">

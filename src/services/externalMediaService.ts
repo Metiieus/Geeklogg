@@ -32,6 +32,8 @@ export interface ExternalMediaResult {
   source: "google-books" | "tmdb" | "rawg";
   // Tipo original da API
   originalType?: string;
+  // Rating opcional (pode vir da API)
+  rating?: number;
 }
 
 export interface SearchParams {
@@ -237,13 +239,13 @@ class ExternalMediaService {
 
     try {
       switch (type) {
-        case "books":
+        case "book":
           return await this.searchBooks(query, limit);
-        case "movies":
+        case "movie":
           return await this.searchMovies(query, limit);
-        case "games":
+        case "game":
           return await this.searchGames(query, limit);
-        case "series":
+        case "tv":
           return await this.searchTvShows(query, limit).then((results) =>
             results.filter((result) => result.originalType !== "anime"),
           );
@@ -251,10 +253,9 @@ class ExternalMediaService {
           return await this.searchTvShows(query, limit).then((results) =>
             results.filter((result) => result.originalType === "anime"),
           );
-        case "dorama":
-          return await this.searchTvShows(query, limit).then((results) =>
-            results.filter((result) => this.detectIfDorama(result)),
-          );
+        case "manga":
+          // Fallback temporário ou implementação futura
+          return [];
         default:
           // Para tipos não suportados, retorna array vazio
           return [];

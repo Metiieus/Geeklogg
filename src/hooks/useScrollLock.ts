@@ -19,7 +19,7 @@ export const useScrollLock = (isLocked: boolean) => {
       document.body.style.overflow = "hidden";
 
       // Para iOS Safari - Previne bounce scroll
-      document.body.style.webkitOverflowScrolling = "auto";
+      (document.body.style as any).webkitOverflowScrolling = "auto";
       document.body.style.overscrollBehavior = "none";
 
       // Bloquear scroll no HTML também
@@ -50,7 +50,7 @@ export const useScrollLock = (isLocked: boolean) => {
         document.body.style.width = "";
         document.body.style.height = "";
         document.body.style.overflow = "";
-        document.body.style.webkitOverflowScrolling = "";
+        (document.body.style as any).webkitOverflowScrolling = "";
         document.body.style.overscrollBehavior = "";
 
         // Restaurar estilos do HTML

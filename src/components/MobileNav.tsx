@@ -9,7 +9,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
 import { ActivePage } from "../types";
 
@@ -18,6 +18,7 @@ interface NavItem {
   icon: React.ReactNode;
   label: string;
   gradient: string;
+  path: string;
 }
 
 const navItems: NavItem[] = [
@@ -26,43 +27,55 @@ const navItems: NavItem[] = [
     icon: <Home size={20} />,
     label: "Home",
     gradient: "from-cyan-400 to-blue-500",
+    path: "/dashboard",
   },
   {
     id: "reviews",
     icon: <MessageSquare size={20} />,
     label: "Reviews",
     gradient: "from-purple-400 to-indigo-500",
+    path: "/reviews",
   },
   {
     id: "timeline",
     icon: <Clock size={20} />,
     label: "Jornada",
     gradient: "from-indigo-400 to-cyan-500",
+    path: "/timeline",
   },
   {
     id: "social",
     icon: <Users size={20} />,
     label: "Social",
     gradient: "from-pink-400 to-purple-500",
+    path: "/social",
   },
   {
     id: "profile",
     icon: <User size={20} />,
     label: "Perfil",
     gradient: "from-cyan-400 to-pink-500",
+    path: "/profile",
   },
 ];
 
 export const MobileNav: React.FC = () => {
-  const { activePage, setActivePage } = useAppContext();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { showInfo } = useToast();
 
-  const handleNavigation = (itemId: ActivePage) => {
-    if (itemId === "social") {
+  const getActivePage = (pathname: string): string => {
+    const path = pathname.split("/")[1] || "dashboard";
+    return path;
+  };
+  const activePage = getActivePage(location.pathname);
+
+  const handleNavigation = (item: NavItem) => {
+    if (item.id === "social") {
       showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
       return;
     }
-    setActivePage(itemId);
+    navigate(item.path);
   };
 
   return (
@@ -76,56 +89,56 @@ export const MobileNav: React.FC = () => {
         </div>
 
         <div className="relative z-10 flex items-center justify-around py-2 px-2 safe-area-inset-bottom">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavigation(item.id)}
-              className={`flex flex-col items-center justify-center min-w-0 flex-1 py-2 px-1 transition-all duration-300 ${
-                item.id === "social"
-                  ? "opacity-50 cursor-not-allowed"
-                  : activePage === item.id
-                    ? "scale-110"
-                    : "active:scale-95"
-              }`}
-            >
-              {/* Container do ícone com efeito ativo */}
-              <div
-                className={`relative flex items-center justify-center w-9 sm:w-10 h-9 sm:h-10 rounded-xl transition-all duration-300 ${
-                  activePage === item.id
-                    ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30"
-                    : "active:bg-gray-800/50"
-                }`}
+          {navItems.map((item) => {
+            if (item.id === "social") {
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavigation(item)}
+                  className="flex flex-col items-center justify-center min-w-0 flex-1 py-2 px-1 transition-all duration-300 opacity-50 cursor-not-allowed"
+                >
+                  <div className="relative p-1.5 rounded-lg transition-all duration-300 active:scale-95">
+                    <div className="text-gray-400">{item.icon}</div>
+                  </div>
+                  <span className="text-[10px] font-medium mt-1 truncate max-w-full transition-colors text-gray-500">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            }
+
+            return (
+              <Link
+                key={item.id}
+                to={item.path}
+                className={`flex flex-col items-center justify-center min-w-0 flex-1 py-2 px-1 transition-all duration-300 ${activePage === item.id ? "scale-110" : "active:scale-95"
+                  }`}
               >
                 <div
-                  className={`${
-                    activePage === item.id
-                      ? `bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`
-                      : "text-gray-200"
-                  }`}
+                  className={`relative p-1.5 rounded-lg transition-all duration-300 ${activePage === item.id
+                      ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
+                      : ""
+                    }`}
                 >
-                  {item.icon}
+                  <div
+                    className={`${activePage === item.id ? "text-white" : "text-gray-400"
+                      }`}
+                  >
+                    {item.icon}
+                  </div>
+                  {activePage === item.id && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/20 to-white/5 pointer-events-none"></div>
+                  )}
                 </div>
-
-                {/* Indicador ativo */}
-                {activePage === item.id && (
-                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full"></div>
-                )}
-              </div>
-
-              {/* Label */}
-              <span
-                className={`text-xs mt-1 font-medium transition-colors truncate max-w-full ${
-                  item.id === "social"
-                    ? "text-gray-400"
-                    : activePage === item.id
-                      ? "text-white"
-                      : "text-gray-200"
-                }`}
-              >
-                {item.id === "social" ? "Em breve" : item.label}
-              </span>
-            </button>
-          ))}
+                <span
+                  className={`text-[10px] font-medium mt-1 truncate max-w-full transition-colors ${activePage === item.id ? "text-white" : "text-gray-400"
+                    }`}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

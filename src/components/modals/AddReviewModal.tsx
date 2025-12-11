@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { X, Save, Star } from "lucide-react";
-import { useAppContext } from "../../context/AppContext";
+import { useAuth } from "../../context/AuthContext";
 import { Review } from "../../types";
-import { addReview } from "../../services/reviewService";
-import { sanitizeText } from "../../utils/sanitizer";
+import { useMedias, useAddReview } from "../../hooks/queries";
 import { ModalWrapper } from "../ModalWrapper";
 import { useImprovedScrollLock } from "../../hooks/useImprovedScrollLock";
 import { RichTextEditor } from "../RichTextEditor";
 
 interface AddReviewModalProps {
   onClose: () => void;
-  onSave: (review: Review) => void;
+  onSave: () => void;
   isOpen?: boolean;
 }
 
@@ -19,7 +18,9 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   onSave,
   isOpen = true,
 }) => {
-  const { mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const addReviewMutation = useAddReview();
 
   // Apply scroll lock
   useImprovedScrollLock(isOpen);
@@ -34,7 +35,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newReview = await addReview({
+    await addReviewMutation.mutateAsync({
       title: formData.title,
       content: formData.content,
       rating: formData.rating,
@@ -42,7 +43,7 @@ export const AddReviewModal: React.FC<AddReviewModalProps> = ({
       isFavorite: formData.isFavorite,
     });
 
-    onSave(newReview);
+    onSave();
   };
 
   const handleChange = (field: string, value: any) => {

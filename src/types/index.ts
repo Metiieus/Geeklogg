@@ -55,6 +55,9 @@ export interface Review {
     updatedAt: string;
     likes?: number;
     isPublic?: boolean;
+
+    isFavorite?: boolean;
+    image?: string;
 }
 
 export interface Milestone {
@@ -66,22 +69,34 @@ export interface Milestone {
     type: "achievement" | "goal" | "event";
     mediaId?: string;
     images?: string[]; // URLs das imagens (máximo 2)
+    image?: string;
     data?: any;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface UserSettings {
-    name: string;
+    name?: string;
     avatar?: string;
+    cover?: string;
     bio?: string;
-    favoriteGenres: string[];
-    theme: "dark" | "light";
-    language: "pt" | "en";
-    notifications: {
+    favorites: {
+        characters: FavoriteItem[];
+        games: FavoriteItem[];
+        movies: FavoriteItem[];
+    };
+    theme?: string; // "dark" | "light"
+    defaultLibrarySort?: string;
+    subscriptionTier?: 'free' | 'premium';
+    subscriptionExpiresAt?: Date;
+    favoriteGenres?: string[];
+    language?: "pt" | "en";
+    notifications?: boolean | {
         achievements: boolean;
         social: boolean;
         reminders: boolean;
     };
-    privacy: {
+    privacy?: {
         profilePublic: boolean;
         reviewsPublic: boolean;
         statsPublic: boolean;
@@ -95,6 +110,7 @@ export interface UserProfile {
     displayName: string;
     name?: string; // Legacy/Social compatibility
     avatar?: string; // Social compatibility
+    cover?: string;
     profileImage?: string; // Auth compatibility
     isPremium?: boolean;
     bio?: string;

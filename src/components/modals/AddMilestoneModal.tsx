@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { X, Save, Calendar, Image as ImageIcon, Trash2 } from "lucide-react";
-import { useAppContext } from "../../context/AppContext";
-import { Milestone } from "../../types";
-import { addMilestone } from "../../services/milestoneService";
+import { useAuth } from "../../context/AuthContext";
+import { useMedias, useAddMilestone } from "../../hooks/queries";
 import { uploadImage } from "../../services/storageClient";
 import { RichTextEditor } from "../RichTextEditor";
 
 interface AddMilestoneModalProps {
   onClose: () => void;
-  onSave: (milestone: Milestone) => void;
+  onSave: () => void;
 }
 
 const commonIcons = [
@@ -33,7 +32,10 @@ export const AddMilestoneModal: React.FC<AddMilestoneModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const { mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const addMilestoneMutation = useAddMilestone();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -48,16 +50,17 @@ export const AddMilestoneModal: React.FC<AddMilestoneModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newMilestone = await addMilestone({
+    await addMilestoneMutation.mutateAsync({
       title: formData.title,
       description: formData.description,
       date: formData.date,
       icon: formData.icon,
+      type: "achievement", // Default type
       mediaId: formData.mediaId || undefined,
       images: formData.images,
     });
 
-    onSave(newMilestone);
+    onSave();
   };
 
   const handleChange = (field: string, value: string) => {
@@ -210,9 +213,8 @@ export const AddMilestoneModal: React.FC<AddMilestoneModalProps> = ({
                 <div>
                   <label
                     htmlFor="image-upload"
-                    className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 hover:bg-slate-700/30 transition-colors ${
-                      uploadingImage ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 hover:bg-slate-700/30 transition-colors ${uploadingImage ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                   >
                     <ImageIcon size={20} className="text-slate-400" />
                     <span className="text-slate-300">
@@ -266,11 +268,10 @@ export const AddMilestoneModal: React.FC<AddMilestoneModalProps> = ({
                     key={icon}
                     type="button"
                     onClick={() => handleChange("icon", icon)}
-                    className={`p-3 text-2xl rounded-lg border-2 transition-all ${
-                      formData.icon === icon
+                    className={`p-3 text-2xl rounded-lg border-2 transition-all ${formData.icon === icon
                         ? "border-purple-500 bg-purple-500/20"
                         : "border-slate-600 hover:border-slate-500"
-                    }`}
+                      }`}
                   >
                     {icon}
                   </button>

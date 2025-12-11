@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { devLog } from "../utils/logger";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogIn, User, Lock, Sparkles, X, Mail, ArrowLeft, Shield } from "lucide-react";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
@@ -187,15 +189,12 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                   </p>
 
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className="w-5 h-5 text-cyan-400" />
-                    </div>
-                    <input
+                    <Input
                       type="email"
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       placeholder="seu@email.com"
-                      className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                      leftIcon={<Mail size={20} className="text-cyan-400" />}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleForgotPassword();
@@ -204,20 +203,13 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                     />
                   </div>
 
-                  <button
+                  <Button
                     onClick={handleForgotPassword}
-                    disabled={isResettingPassword}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 disabled:from-slate-600 disabled:to-slate-600 transition-all duration-300 font-semibold shadow-lg shadow-cyan-500/25 disabled:shadow-none"
+                    isLoading={isResettingPassword}
+                    className="w-full mt-4"
                   >
-                    {isResettingPassword ? (
-                      <span className="flex items-center justify-center space-x-2">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Enviando...</span>
-                      </span>
-                    ) : (
-                      "Enviar Email"
-                    )}
-                  </button>
+                    Enviar Email
+                  </Button>
                 </motion.div>
               </motion.div>
             )}
@@ -225,45 +217,27 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className="w-5 h-5 text-cyan-400" />
-                </div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
+            <Input
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              required
+              leftIcon={<User size={20} />}
+              containerClassName="text-left"
+            />
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">
-                Senha
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="w-5 h-5 text-pink-400" />
-                </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
+            <Input
+              label="Senha"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              leftIcon={<Lock size={20} />}
+              containerClassName="text-left"
+            />
 
             {/* Forgot Password Link */}
             <div className="flex justify-end">
@@ -277,23 +251,14 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
             </div>
 
             {/* Login Button */}
-            <button
+            <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 disabled:from-slate-600 disabled:to-slate-600 transition-all duration-300 font-semibold shadow-lg shadow-cyan-500/25 disabled:shadow-none flex items-center justify-center space-x-2 group"
+              isLoading={isLoading}
+              className="w-full"
+              rightIcon={!isLoading && <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />}
             >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Entrando...</span>
-                </>
-              ) : (
-                <>
-                  <span>Entrar</span>
-                  <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
+              Entrar
+            </Button>
           </form>
 
           {/* Divider */}
@@ -309,7 +274,8 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
           </div>
 
           {/* Register Button */}
-          <button
+          <Button
+            variant="outline"
             onClick={() => {
               if (onRegister) {
                 onRegister();
@@ -317,11 +283,11 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                 setShowRegister(true);
               }
             }}
-            className="w-full py-3 rounded-xl border-2 border-white/10 hover:border-cyan-500/50 hover:bg-white/5 transition-all duration-300 font-semibold flex items-center justify-center space-x-2 group"
+            className="w-full border-white/10 hover:border-cyan-500/50"
+            leftIcon={<Shield size={20} className="text-cyan-400" />}
           >
-            <Shield className="w-5 h-5 text-cyan-400" />
-            <span>Criar Conta Grátis</span>
-          </button>
+            Criar Conta Grátis
+          </Button>
 
           {/* Security Badge */}
           <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-slate-500">

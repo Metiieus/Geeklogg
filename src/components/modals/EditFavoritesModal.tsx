@@ -10,7 +10,6 @@ import {
   Library,
 } from "lucide-react";
 import { FavoriteItem, UserSettings, MediaItem } from "../../types";
-import { useAppContext } from "../../context/AppContext";
 import { LibrarySelector } from "./LibrarySelector";
 import { ModalWrapper } from "../ModalWrapper";
 import { useImprovedScrollLock } from "../../hooks/useImprovedScrollLock";
@@ -40,7 +39,6 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({
   const [showLibrarySelector, setShowLibrarySelector] = useState<
     "games" | "movies" | null
   >(null);
-  const { mediaItems } = useAppContext();
 
   const handleLibrarySelection = (
     category: "games" | "movies",
@@ -210,11 +208,10 @@ export const EditFavoritesModal: React.FC<EditFavoritesModalProps> = ({
         type="button"
         onClick={() => addItem(cat)}
         disabled={local[cat].length >= 3}
-        className={`flex items-center gap-2 transition-colors ${
-          local[cat].length >= 3
+        className={`flex items-center gap-2 transition-colors ${local[cat].length >= 3
             ? "text-slate-500 cursor-not-allowed"
             : "text-purple-400 hover:text-purple-500"
-        }`}
+          }`}
       >
         <Plus size={18} />
         {local[cat].length >= 3 ? "Máximo 3 itens" : "Adicionar"}

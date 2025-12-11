@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { devLog } from "../utils/logger";
 import {
   Download,
@@ -9,43 +9,75 @@ import {
   FileText,
   UserX,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
-import { saveSettings } from "../services/settingsService";
+import {
+  useSettings,
+  useUpdateSettings,
+  useMedias,
+  useReviews,
+  useMilestones,
+} from "../hooks/queries";
+import { UserSettings } from "../types";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
+
+// Services for deletion
+import { getMedias, deleteMedia } from "../services/mediaService";
+import { getReviews, deleteReview } from "../services/reviewService";
+import { getMilestones, deleteMilestone } from "../services/milestoneService";
+
+const defaultSettings: UserSettings = {
+  favorites: { characters: [], games: [], movies: [] },
+  defaultLibrarySort: "updatedAt",
+  theme: "dark",
+  language: "pt"
+};
 
 const Settings: React.FC = () => {
-  const {
-    settings,
-    setSettings,
-    mediaItems,
-    reviews,
-    milestones,
-    setActivePage,
-  } = useAppContext();
   const { user } = useAuth();
-  const [localSettings, setLocalSettings] = useState(settings);
+  const navigate = useNavigate();
+  const { showSuccess, showError } = useToast();
+
+  const { data: settingsData } = useSettings(user?.uid);
+  const updateSettingsMutation = useUpdateSettings();
+
+  // For export (keep hooks)
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const { data: reviews = [] } = useReviews(user?.uid);
+  const { data: milestones = [] } = useMilestones(user?.uid);
+
+  const [localSettings, setLocalSettings] =
+    useState<UserSettings>(defaultSettings);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (settingsData) {
+      setLocalSettings(prev => ({ ...prev, ...settingsData }));
+    }
+  }, [settingsData]);
 
   const handleSave = async () => {
-    devLog.log("💾 Salvando configurações:", localSettings);
-    setSettings(localSettings);
-    if (user?.uid) {
-      await saveSettings(user.uid, localSettings);
-    } else {
+    if (!user?.uid) {
       devLog.error("Usuário não autenticado");
+      return;
     }
-    // Feedback visual melhorado
-    const toast = document.createElement("div");
-    toast.className =
-      "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-    toast.textContent = "✅ Configurações salvas com sucesso!";
-    document.body.appendChild(toast);
-    setTimeout(() => document.body.removeChild(toast), 3000);
+
+    devLog.log("💾 Salvando configurações:", localSettings);
+    try {
+      await updateSettingsMutation.mutateAsync({
+        userId: user.uid,
+        settings: localSettings,
+      });
+      showSuccess("Configurações salvas!", "Suas preferências foram atualizadas com sucesso.");
+    } catch (error) {
+      showError("Erro ao salvar", "Não foi possível salvar suas configurações. Tente novamente.");
+    }
   };
 
   const handleExport = () => {
     const data = {
-      settings,
+      settings: localSettings,
       mediaItems,
       reviews,
       milestones,
@@ -64,13 +96,7 @@ const Settings: React.FC = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // Feedback visual
-    const toast = document.createElement("div");
-    toast.className =
-      "fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-    toast.textContent = "📤 Backup baixado com sucesso!";
-    document.body.appendChild(toast);
-    setTimeout(() => document.body.removeChild(toast), 3000);
+    showSuccess("Backup exportado!", "O download do seu backup deve começar em instantes.");
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,43 +104,73 @@ const Settings: React.FC = () => {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = JSON.parse(e.target?.result as string);
-        if (data.settings) setSettings(data.settings);
-        // Feedback visual
-        const toast = document.createElement("div");
-        toast.className =
-          "fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-        toast.textContent = "✅ Backup importado com sucesso!";
-        document.body.appendChild(toast);
-        setTimeout(() => document.body.removeChild(toast), 3000);
+        if (data.settings) {
+          setLocalSettings(prev => ({ ...prev, ...data.settings }));
+          showSuccess("Importação realizada", "Configurações carregadas. Clique em Salvar para persistir.");
+        } else {
+          showError("Arquivo inválido", "O arquivo selecionado não parece ser um backup válido.");
+        }
       } catch (error) {
-        const toast = document.createElement("div");
-        toast.className =
-          "fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up";
-        toast.textContent = "❌ Ops! Arquivo de backup inválido 😅";
-        document.body.appendChild(toast);
-        setTimeout(() => document.body.removeChild(toast), 3000);
+        showError("Erro na importação", "Falha ao ler o arquivo de backup.");
       }
     };
     reader.readAsText(file);
   };
 
-  const handleDeleteAllData = () => {
-    const confirmMessage = `🚨 ATENÇÃO! 🚨\n\nVai apagar TODOS os seus dados mesmo?\n\n• Todas as mídias\n• Todas as resenhas\n• Todos os marcos\n• Todas as configurações\n\nEssa ação é IRREVERSÍVEL!\n\nTem certeza ABSOLUTA?`;
+  const handleDeleteAllData = async () => {
+    if (!user?.uid) return;
+
+    const confirmMessage = `🚨 ATENÇÃO! 🚨\n\nIsso apagará PERMANENTEMENTE:\n• ${mediaItems.length} Mídias\n• ${reviews.length} Resenhas\n• ${milestones.length} Marcos\n\nEssa ação é IRREVERSÍVEL!`;
 
     if (!confirm(confirmMessage)) return;
 
-    const finalConfirm = `Última chance! 🛑\n\nDigite "APAGAR TUDO" para confirmar:`;
+    const finalConfirm = `Digite "APAGAR TUDO" para confirmar a exclusão:`;
     const userInput = prompt(finalConfirm);
 
     if (userInput !== "APAGAR TUDO") {
-      alert("Ufa! Dados salvos 😅");
+      alert("Ação cancelada. Seus dados estão seguros.");
       return;
     }
 
-    window.location.reload();
+    setIsDeleting(true);
+
+    try {
+      // Fetch fresh IDs to ensure we delete everything on server
+      const [serverMedias, serverReviews, serverMilestones] = await Promise.all([
+        getMedias(user.uid),
+        getReviews(user.uid),
+        getMilestones(user.uid)
+      ]);
+
+      const deletePromises: Promise<any>[] = [];
+
+      // Delete Medias
+      serverMedias.forEach(m => deletePromises.push(deleteMedia(m.id).catch(e => console.error(e))));
+      // Delete Reviews
+      serverReviews.forEach(r => deletePromises.push(deleteReview(r.id).catch(e => console.error(e))));
+      // Delete Milestones
+      serverMilestones.forEach(m => deletePromises.push(deleteMilestone(m.id).catch(e => console.error(e))));
+
+      await Promise.all(deletePromises);
+
+      // Reset Settings
+      await updateSettingsMutation.mutateAsync({
+        userId: user.uid,
+        settings: defaultSettings,
+      });
+
+      showSuccess("Dados excluídos", "Sua conta foi resetada com sucesso.");
+      // Reload to refresh all queries / disconnect valid states
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Critical error wiping data", error);
+      showError("Erro Crítico", "Falha ao apagar alguns dados. Tente novamente.");
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -214,12 +270,14 @@ const Settings: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   onClick={handleDeleteAllData}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-wait"
                 >
-                  Sim, Excluir Tudo
+                  {isDeleting ? "Excluindo..." : "Sim, Excluir Tudo"}
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
                   className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Cancelar
@@ -248,7 +306,7 @@ const Settings: React.FC = () => {
               Saiba como coletamos, usamos e protegemos seus dados
             </p>
             <button
-              onClick={() => setActivePage("privacy-policy")}
+              onClick={() => navigate("/privacy-policy")}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Ver Política de Privacidade
@@ -265,7 +323,7 @@ const Settings: React.FC = () => {
               Excluir permanentemente sua conta e todos os dados
             </p>
             <button
-              onClick={() => setActivePage("account-deletion")}
+              onClick={() => navigate("/account-deletion")}
               className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               Gerenciar Exclusão de Conta

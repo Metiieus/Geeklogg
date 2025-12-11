@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import Profile from "./Profile";
+import Profile from "../pages/Profile";
 
 // Componente Profile otimizado com memoização
 const OptimizedProfile = memo(Profile, (prevProps, nextProps) => {

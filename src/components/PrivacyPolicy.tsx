@@ -1,9 +1,9 @@
 import React from "react";
 import { ArrowLeft, Shield, Eye, UserX, Database, Clock } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const PrivacyPolicy: React.FC = () => {
-  const { setActivePage } = useAppContext();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
@@ -16,7 +16,7 @@ const PrivacyPolicy: React.FC = () => {
         {/* Header */}
         <div className="flex items-center mb-8">
           <button
-            onClick={() => setActivePage("settings")}
+            onClick={() => navigate(-1)}
             className="mr-4 p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors border border-gray-700/50"
           >
             <ArrowLeft size={20} className="text-gray-300" />

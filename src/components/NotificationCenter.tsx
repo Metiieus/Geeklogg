@@ -7,22 +7,19 @@ import {
   X,
   Users,
   Star,
-  BookOpen,
-  Trophy,
 } from "lucide-react";
 import {
   getUserNotifications,
-  markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "../services/socialService";
 import { Notification } from "../types/social";
 import { useAuth } from "../context/AuthContext";
-import { useAppContext } from "../context/AppContext";
-import { formatTimeAgo, normalizeTimestamp } from "../utils/dateUtils";
+import { formatTimeAgo } from "../utils/dateUtils";
+import { useNavigate } from "react-router-dom";
 
 export const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
-  const { setActivePage, setSelectedUser } = useAppContext();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -80,21 +77,9 @@ export const NotificationCenter: React.FC = () => {
 
   const navigateToUserProfile = (
     fromUserId: string,
-    fromUserName: string,
-    fromUserAvatar?: string,
   ) => {
-    const userProfile = {
-      uid: fromUserId,
-      name: fromUserName,
-      avatar: fromUserAvatar,
-      bio: "",
-      isPublic: true,
-      followers: [],
-      following: [],
-      createdAt: new Date().toISOString(),
-    };
-    setSelectedUser(userProfile);
-    setActivePage("social");
+    if (!fromUserId) return;
+    navigate(`/user/${fromUserId}`);
     setIsOpen(false);
   };
 
@@ -112,8 +97,6 @@ export const NotificationCenter: React.FC = () => {
         return <Bell size={16} className="text-slate-400" />;
     }
   };
-
-  // Usando função utilitária para formatação segura de tempo
 
   return (
     <div className="relative">
@@ -173,9 +156,8 @@ export const NotificationCenter: React.FC = () => {
                 .map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-3 sm:p-4 border-b border-white/10 hover:bg-slate-700/30 transition-colors ${
-                      !notification.read ? "bg-purple-500/5" : ""
-                    }`}
+                    className={`p-3 sm:p-4 border-b border-white/10 hover:bg-slate-700/30 transition-colors ${!notification.read ? "bg-purple-500/5" : ""
+                      }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
@@ -183,8 +165,6 @@ export const NotificationCenter: React.FC = () => {
                         onClick={() =>
                           navigateToUserProfile(
                             notification.fromUserId || "",
-                            notification.fromUserName || "Usuário",
-                            notification.fromUserAvatar,
                           )
                         }
                       >
@@ -217,7 +197,7 @@ export const NotificationCenter: React.FC = () => {
                             <span className="text-xs text-slate-500">
                               {formatTimeAgo(
                                 notification.timestamp ||
-                                  notification.createdAt,
+                                notification.createdAt,
                               )}
                             </span>
                             {!notification.read && (

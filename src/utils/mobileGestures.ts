@@ -226,7 +226,7 @@ export function preventScrollBounce() {
  * Otimiza performance de scroll em containers específicos
  */
 export function optimizeScrollContainer(container: HTMLElement) {
-  container.style.webkitOverflowScrolling = "touch";
+  (container.style as any).webkitOverflowScrolling = "touch";
   container.style.overscrollBehavior = "contain";
   container.style.scrollBehavior = "smooth";
 

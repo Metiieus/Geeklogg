@@ -11,11 +11,11 @@ interface EditMediaModalProps {
 }
 
 const mediaTypeLabels = {
-  games: "Jogos",
+  game: "Jogos",
   anime: "Anime",
-  series: "Séries",
-  books: "Livros",
-  movies: "Filmes",
+  tv: "Séries",
+  book: "Livros",
+  movie: "Filmes",
   dorama: "Doramas",
 };
 
@@ -71,9 +71,9 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
       platform: formData.platform || undefined,
       tags: formData.tags
         ? formData.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag.length > 0)
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0)
         : [],
       externalLink: formData.externalLink || undefined,
       description: formData.description || undefined,
@@ -227,21 +227,21 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  {formData.type === "books" ? "Páginas Lidas" : "Horas Gastas"}
+                  {formData.type === "book" ? "Páginas Lidas" : "Horas Gastas"}
                 </label>
                 <input
                   type="number"
                   min="0"
-                  step={formData.type === "books" ? "1" : "0.5"}
+                  step={formData.type === "book" ? "1" : "0.5"}
                   value={formData.hoursSpent}
                   onChange={(e) => handleChange("hoursSpent", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder={formData.type === "books" ? "350" : "25.5"}
+                  placeholder={formData.type === "book" ? "350" : "25.5"}
                 />
               </div>
             </div>
 
-            {formData.type === "books" && (
+            {formData.type === "book" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">

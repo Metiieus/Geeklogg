@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { z } from "zod";
 import { ArrowLeft, Save, Upload } from "lucide-react";
 import { MediaItem, MediaType, Status } from "../types";
 import { updateMedia, addMedia } from "../services/mediaService";
@@ -11,6 +12,9 @@ import { mediaSchema, MediaFormData } from "../schemas/media";
 import { useImprovedScrollLock } from "../hooks/useImprovedScrollLock";
 
 import { ModalWrapper } from "../components/ModalWrapper";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
 
 interface EditMediaPageProps {
   item: Partial<MediaItem>;
@@ -37,6 +41,14 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
   const { showError, showSuccess, showWarning } = useToast();
   const [isUploading, setIsUploading] = useState(false);
 
+  // Extend schema for form handling including file upload
+  const formSchema = mediaSchema.extend({
+    coverFile: z.any().optional(),
+    coverPreview: z.string().optional(),
+  });
+
+  type FormDataType = z.infer<typeof formSchema>;
+
   // React Hook Form
   const {
     register,
@@ -44,8 +56,8 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<MediaFormData & { coverFile?: File; coverPreview?: string }>({
-    resolver: zodResolver(mediaSchema),
+  } = useForm<FormDataType>({
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       title: item.title || "",
       type: item.type || "game",
@@ -73,7 +85,9 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
   const addMediaMutation = useAddMedia();
   const updateMediaMutation = useUpdateMedia();
 
-  const onSubmit = async (data: MediaFormData & { coverFile?: File }) => {
+
+
+  const onSubmit = async (data: FormDataType) => {
     if (!isNew && !item.id) {
       showError("Erro", "ID inválido para edição");
       return;
@@ -224,198 +238,137 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
             <div className="space-y-4 sm:space-y-6 pb-safe">
               {/* Basic Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Título *
-                  </label>
-                  <input
-                    type="text"
-                    {...register("title")}
-                    className={`w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base transition-all duration-200 ${errors.title ? 'border-red-500' : 'border-slate-600'}`}
-                    placeholder="Digite o título da mídia"
-                  />
-                  {errors.title && <span className="text-red-400 text-xs mt-1">{errors.title.message}</span>}
-                </div>
+                <Input
+                  label="Título"
+                  required
+                  placeholder="Digite o título da mídia"
+                  {...register("title")}
+                  error={errors.title?.message}
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Tipo *
-                  </label>
-                  <select
-                    {...register("type")}
-                    className="w-full px-3 sm:px-4 py-3 sm:py-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-base mobile-input transition-all duration-200"
-                  >
-                    {Object.entries(mediaTypeLabels).map(([key, label]) => (
-                      <option key={key} value={key}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.type && <span className="text-red-400 text-xs mt-1">{errors.type.message}</span>}
-                </div>
+                <Select
+                  label="Tipo"
+                  required
+                  {...register("type")}
+                  error={errors.type?.message}
+                >
+                  {Object.entries(mediaTypeLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Status *
-                  </label>
-                  <select
-                    {...register("status")}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                  >
-                    <option value="planned">Planejado</option>
-                    <option value="in-progress">Em Progresso</option>
-                    <option value="completed">Concluído</option>
-                    <option value="dropped">Abandonado</option>
-                  </select>
-                  {errors.status && <span className="text-red-400 text-xs mt-1">{errors.status.message}</span>}
-                </div>
+                <Select
+                  label="Status"
+                  required
+                  {...register("status")}
+                  error={errors.status?.message}
+                >
+                  <option value="planned">Planejado</option>
+                  <option value="in-progress">Em Progresso</option>
+                  <option value="completed">Concluído</option>
+                  <option value="dropped">Abandonado</option>
+                </Select>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Plataforma
-                  </label>
-                  <input
-                    type="text"
-                    {...register("platform")}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                    placeholder="Steam, Netflix, etc."
-                  />
-                </div>
+                <Input
+                  label="Plataforma"
+                  placeholder="Steam, Netflix, etc."
+                  {...register("platform")}
+                />
               </div>
 
               {/* Rating & Hours */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text sm font-medium text-slate-300 mb-2">
-                    Avaliação (0-10)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    {...register("rating")}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                    placeholder="8.5"
-                  />
-                  {errors.rating && <span className="text-red-400 text-xs mt-1">{errors.rating.message}</span>}
-                </div>
+                <Input
+                  label="Avaliação (0-10)"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  placeholder="8.5"
+                  {...register("rating")}
+                  error={errors.rating?.message}
+                />
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Horas Gastas
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    {...register("hoursSpent")}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                    placeholder="25.5"
-                  />
-                </div>
+                <Input
+                  label="Horas Gastas"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  placeholder="25.5"
+                  {...register("hoursSpent")}
+                />
               </div>
 
               {type === "book" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Páginas Totais
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      {...register("totalPages")}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                      placeholder="350"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Página Atual
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      {...register("currentPage")}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                      placeholder="42"
-                    />
-                  </div>
+                  <Input
+                    label="Páginas Totais"
+                    type="number"
+                    min="1"
+                    placeholder="350"
+                    {...register("totalPages")}
+                  />
+                  <Input
+                    label="Página Atual"
+                    type="number"
+                    min="0"
+                    placeholder="42"
+                    {...register("currentPage")}
+                  />
                 </div>
               )}
 
               {/* Dates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Data de Início
-                  </label>
-                  <input
-                    type="date"
-                    {...register("startDate")}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Data de Conclusão
-                  </label>
-                  <input
-                    type="date"
-                    {...register("endDate")}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                  />
-                </div>
+                <Input
+                  label="Data de Início"
+                  type="date"
+                  {...register("startDate")}
+                />
+                <Input
+                  label="Data de Conclusão"
+                  type="date"
+                  {...register("endDate")}
+                />
               </div>
 
               {/* Tags */}
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Tags
-                </label>
-                <input
-                  type="text"
-                  value={tagsInput}
-                  onChange={handleTagsChange}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                  placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
-                />
-              </div>
+              <Input
+                label="Tags"
+                value={tagsInput}
+                onChange={handleTagsChange}
+                placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
+              />
 
               {/* External Link */}
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Link Externo
-                </label>
-                <input
-                  type="url"
-                  {...register("externalLink")}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base"
-                  placeholder="https://store.steampowered.com/..."
-                />
-              </div>
+              <Input
+                label="Link Externo"
+                type="url"
+                placeholder="https://store.steampowered.com/..."
+                {...register("externalLink")}
+              />
 
               {/* Cover Image */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">
                   Imagem de Capa
                 </label>
                 <div className="space-y-3">
                   <div className="flex items-center justify-center sm:justify-start">
                     <label
-                      className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white transition-colors cursor-pointer text-sm sm:text-base touch-target ${isUploading
+                      className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white transition-colors cursor-pointer text-sm sm:text-base touch-target hover:bg-slate-700/50 ${isUploading
                         ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-slate-700"
+                        : ""
                         }`}
                     >
                       {isUploading ? (
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       ) : (
-                        <Upload size={16} className="sm:w-5 sm:h-5" />
+                        <Upload size={16} className="sm:w-5 sm:h-5 text-purple-400" />
                       )}
                       {isUploading
                         ? "Processando..."
@@ -434,7 +387,7 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
                       <img
                         src={coverPreview}
                         alt="Preview"
-                        className="w-24 sm:w-32 h-32 sm:h-40 object-cover rounded-lg"
+                        className="w-24 sm:w-32 h-32 sm:h-40 object-cover rounded-xl shadow-lg border border-white/10"
                       />
                     </div>
                   )}
@@ -443,13 +396,13 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">
                   Descrição
                 </label>
                 <textarea
                   rows={3}
                   {...register("description")}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none text-sm sm:text-base"
+                  className="w-full bg-slate-800/50 text-white rounded-xl border border-slate-700/50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200 resize-none px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base hover:border-slate-600/50"
                   placeholder="Breve descrição ou notas..."
                 />
               </div>
@@ -457,30 +410,24 @@ export const EditMediaPage: React.FC<EditMediaPageProps> = ({
           </div>
 
           {/* Actions - Fixed at bottom */}
-          <div className="flex-shrink-0 bg-gradient-to-t from-slate-900 via-slate-900 to-transparent p-3 sm:p-4 md:p-6 border-t border-white/20 safe-area-padding-bottom">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
-              <button
-                type="button"
+          <div className="flex-shrink-0 bg-slate-900 border-t border-white/10 p-4 sm:p-6 safe-area-padding-bottom z-10">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3">
+              <Button
+                variant="ghost"
                 onClick={onBack}
-                className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base touch-target"
+                className="w-full sm:w-auto"
+                type="button"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
+                isLoading={isSubmitting || isUploading}
+                leftIcon={<Save size={18} />}
+                className="w-full sm:w-auto"
                 type="submit"
-                disabled={isSubmitting || isUploading}
-                className={`w-full sm:w-auto px-6 py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-base font-semibold touch-target no-zoom ${isSubmitting || isUploading
-                  ? "bg-slate-600 cursor-not-allowed"
-                  : "bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg hover:shadow-pink-500/25 active:scale-95"
-                  } text-white`}
               >
-                {isSubmitting ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <Save size={16} className="sm:w-5 sm:h-5" />
-                )}
                 {isSubmitting ? "Salvando..." : "Salvar Alterações"}
-              </button>
+              </Button>
             </div>
           </div>
         </form>

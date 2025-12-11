@@ -82,14 +82,14 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         );
         showSuccess(
           "Deixou de seguir",
-          `Você deixou de seguir ${userProfile.displayName}`,
+          `Você deixou de seguir ${userProfile.name}`,
         );
       } else {
         await followUser(userId);
         setUserProfile((prev) =>
           prev ? { ...prev, isFollowing: true } : null,
         );
-        showSuccess("Seguindo", `Agora você segue ${userProfile.displayName}`);
+        showSuccess("Seguindo", `Agora você segue ${userProfile.name}`);
       }
     } catch (error) {
       console.error("Erro ao seguir/deixar de seguir:", error);
@@ -144,7 +144,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
           <ArrowLeft className="text-slate-400" size={20} />
         </button>
         <h1 className="text-2xl font-bold text-white">
-          Perfil de {userProfile.displayName}
+          Perfil de {userProfile.name}
         </h1>
       </div>
 
@@ -157,7 +157,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">
-                {userProfile.displayName}
+                {userProfile.name}
               </h2>
               <p className="text-slate-400">{userProfile.email}</p>
               {userProfile.bio && (
@@ -169,11 +169,10 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
           {user?.uid !== userId && (
             <button
               onClick={handleFollow}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                userProfile.isFollowing
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${userProfile.isFollowing
                   ? "bg-slate-600 hover:bg-slate-700 text-white"
                   : "bg-purple-600 hover:bg-purple-700 text-white"
-              }`}
+                }`}
             >
               {userProfile.isFollowing ? (
                 <>
@@ -229,11 +228,10 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
           <button
             key={key}
             onClick={() => setActiveTab(key as any)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors ${
-              activeTab === key
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors ${activeTab === key
                 ? "bg-purple-600 text-white"
                 : "text-slate-400 hover:text-white hover:bg-slate-700/50"
-            }`}
+              }`}
           >
             <Icon size={18} />
             {label}
@@ -259,13 +257,12 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 <h3 className="font-semibold text-white mb-2">{item.title}</h3>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-2 py-1 rounded text-xs ${
-                      item.status === "completed"
+                    className={`px-2 py-1 rounded text-xs ${item.status === "completed"
                         ? "bg-green-500/20 text-green-400"
                         : item.status === "in-progress"
                           ? "bg-yellow-500/20 text-yellow-400"
                           : "bg-slate-500/20 text-slate-400"
-                    }`}
+                      }`}
                   >
                     {item.status}
                   </span>

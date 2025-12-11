@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Users, Search, Plus, Activity } from "lucide-react";
 import { UserSearch } from "./UserSearch";
-import { UserProfileView } from "./UserProfileView";
 import { getFollowingActivities } from "../services/socialService";
 import { UserActivity, UserProfile } from "../types/social";
-import { useAppContext } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 import {
   formatTimeAgo as formatTimeAgoUtil,
-  getTimestamp,
 } from "../utils/dateUtils";
 
 export const SocialFeed: React.FC = () => {
-  const { selectedUser, setSelectedUser } = useAppContext();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"feed" | "search">("feed");
   const [activities, setActivities] = useState<UserActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,8 +30,6 @@ export const SocialFeed: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // Usando função utilitária para formatação segura de tempo
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -69,14 +65,13 @@ export const SocialFeed: React.FC = () => {
     }
   };
 
-  if (selectedUser) {
-    return (
-      <UserProfileView
-        userId={selectedUser.uid}
-        onBack={() => setSelectedUser(null)}
-      />
-    );
-  }
+  const handleUserClick = (userId: string) => {
+    navigate(`/user/${userId}`);
+  };
+
+  const handleUserSelect = (user: UserProfile) => {
+    navigate(`/user/${user.uid}`);
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
@@ -94,22 +89,20 @@ export const SocialFeed: React.FC = () => {
       <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg">
         <button
           onClick={() => setActiveTab("feed")}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-            activeTab === "feed"
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${activeTab === "feed"
               ? "bg-purple-600 text-white"
               : "text-slate-400 hover:text-white"
-          }`}
+            }`}
         >
           <Activity size={16} />
           Feed de Atividades
         </button>
         <button
           onClick={() => setActiveTab("search")}
-          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-            activeTab === "search"
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${activeTab === "search"
               ? "bg-purple-600 text-white"
               : "text-slate-400 hover:text-white"
-          }`}
+            }`}
         >
           <Search size={16} />
           Buscar Usuários
@@ -132,18 +125,7 @@ export const SocialFeed: React.FC = () => {
                 <div className="flex items-start gap-4">
                   <div
                     className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0 overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
-                    onClick={() =>
-                      setSelectedUser({
-                        uid: activity.userId,
-                        name: activity.userName,
-                        avatar: activity.userAvatar,
-                        bio: "",
-                        isPublic: true,
-                        followers: [],
-                        following: [],
-                        createdAt: new Date().toISOString(),
-                      })
-                    }
+                    onClick={() => handleUserClick(activity.userId)}
                   >
                     {activity.userAvatar ? (
                       <img
@@ -163,18 +145,7 @@ export const SocialFeed: React.FC = () => {
                       </span>
                       <span
                         className="text-white font-medium cursor-pointer hover:text-purple-300 transition-colors"
-                        onClick={() =>
-                          setSelectedUser({
-                            uid: activity.userId,
-                            name: activity.userName,
-                            avatar: activity.userAvatar,
-                            bio: "",
-                            isPublic: true,
-                            followers: [],
-                            following: [],
-                            createdAt: new Date().toISOString(),
-                          })
-                        }
+                        onClick={() => handleUserClick(activity.userId)}
                       >
                         {activity.userName}
                       </span>
@@ -233,7 +204,7 @@ export const SocialFeed: React.FC = () => {
 
       {activeTab === "search" && (
         <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-          <UserSearch onUserSelect={setSelectedUser} />
+          <UserSearch onUserSelect={handleUserSelect} />
         </div>
       )}
     </div>

@@ -22,11 +22,11 @@ interface AddMediaModalProps {
 }
 
 const mediaTypeLabels = {
-  games: "Jogos",
+  game: "Jogos",
   anime: "Anime",
-  series: "Séries",
-  books: "Livros",
-  movies: "Filmes",
+  tv: "Séries",
+  book: "Livros",
+  movie: "Filmes",
 };
 
 const statusOptions = [
@@ -65,7 +65,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    type: "games" as MediaType,
+    type: "game" as MediaType,
     status: "planned" as Status,
     rating: "",
     hoursSpent: "",
@@ -137,16 +137,12 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
       const typeToCategoryTag = (t: string): string | null => {
         switch (t.toLowerCase()) {
           case "game":
-          case "games":
             return "game";
           case "movie":
-          case "movies":
             return "filme";
           case "tv":
-          case "series":
             return "serie";
           case "book":
-          case "books":
             return "livro";
           case "anime":
             return "anime";
@@ -178,10 +174,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
         externalLink: formData.externalLink?.trim() || undefined,
         description: formData.description?.trim() || undefined,
         coverFile: formData.coverFile,
-        isFeatured: false,
         isFavorite: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       });
 
       showSuccess(
@@ -346,11 +339,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
                   key={option.value}
                   type="button"
                   onClick={() => handleChange("status", option.value)}
-                  className={`p-4 rounded-xl border transition-all duration-200 text-left ${
-                    formData.status === option.value
-                      ? `bg-gradient-to-r ${option.color} text-white ring-2 ring-white/20`
-                      : "bg-slate-800/50 border-white/10 text-white/80 hover:bg-slate-700/50 hover:border-white/20"
-                  }`}
+                  className={`p-4 rounded-xl border transition-all duration-200 text-left ${formData.status === option.value
+                    ? `bg-gradient-to-r ${option.color} text-white ring-2 ring-white/20`
+                    : "bg-slate-800/50 border-white/10 text-white/80 hover:bg-slate-700/50 hover:border-white/20"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{option.icon}</span>
@@ -407,7 +399,7 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             </div>
           </div>
 
-          {formData.type === "books" && (
+          {formData.type === "book" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -524,11 +516,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-center">
                 <label
-                  className={`flex items-center gap-2 px-6 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white transition-colors cursor-pointer ${
-                    isUploading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-slate-700"
-                  }`}
+                  className={`flex items-center gap-2 px-6 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white transition-colors cursor-pointer ${isUploading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-slate-700"
+                    }`}
                 >
                   {isUploading ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -600,11 +591,10 @@ export const AddMediaModal: React.FC<AddMediaModalProps> = ({
             <button
               type="submit"
               disabled={isSaving || isUploading}
-              className={`w-full sm:w-auto px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 font-semibold ${
-                isSaving || isUploading
-                  ? "bg-slate-600 cursor-not-allowed"
-                  : "bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-600/25"
-              } text-white`}
+              className={`w-full sm:w-auto px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 font-semibold ${isSaving || isUploading
+                ? "bg-slate-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-600/25"
+                } text-white`}
             >
               {isSaving ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

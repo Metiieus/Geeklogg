@@ -7,10 +7,11 @@ import React, {
   useMemo,
 } from "react";
 import { Bell, Settings, User, LogOut, Crown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useAppContext } from "../context/AppContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useSettings } from "../hooks/queries";
 
 interface DesktopHeaderProps {
   pageName: string;
@@ -20,7 +21,8 @@ interface DesktopHeaderProps {
 const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
   ({ pageName, pageIcon }) => {
     const { user, profile, logout } = useAuth();
-    const { setActivePage, settings } = useAppContext();
+    const navigate = useNavigate();
+    const { data: settings } = useSettings(user?.uid);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -50,17 +52,17 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
 
         switch (action) {
           case "profile":
-            setActivePage("profile");
+            navigate("/profile");
             break;
           case "settings":
-            setActivePage("settings");
+            navigate("/settings");
             break;
           case "logout":
             logout();
             break;
         }
       },
-      [setActivePage, logout],
+      [navigate, logout],
     );
 
     const displayName = useMemo(
@@ -81,7 +83,7 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
     );
 
     const displayAvatar = useMemo(
-      () => profile?.avatar || profile?.profileImage || settings?.avatar,
+      () => settings?.avatar || profile?.avatar || profile?.profileImage,
       [profile?.avatar, profile?.profileImage, settings?.avatar],
     );
 

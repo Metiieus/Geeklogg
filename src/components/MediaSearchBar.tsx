@@ -16,10 +16,10 @@ interface MediaSearchBarProps {
 
 const mediaTypeOptions = [
   { value: "anime", label: "Anime", icon: Film },
-  { value: "movies", label: "Filmes", icon: Film },
-  { value: "series", label: "Séries", icon: Tv },
-  { value: "games", label: "Jogos", icon: Gamepad2 },
-  { value: "books", label: "Livros", icon: Book },
+  { value: "movie", label: "Filmes", icon: Film },
+  { value: "tv", label: "Séries", icon: Tv },
+  { value: "game", label: "Jogos", icon: Gamepad2 },
+  { value: "book", label: "Livros", icon: Book },
 ] as const;
 
 export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
@@ -93,11 +93,11 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       const finalType = mediaType;
 
       // Verificar se a API necessária está disponível
-      const needsGoogleBooks = finalType === "books";
-      const needsTmdb = ["movies", "series", "anime", "dorama"].includes(
+      const needsGoogleBooks = finalType === "book";
+      const needsTmdb = ["movie", "tv", "anime"].includes(
         finalType,
       );
-      const needsRawg = finalType === "games";
+      const needsRawg = finalType === "game";
 
       if (
         (needsGoogleBooks && !apiStatus.googleBooks) ||
@@ -160,22 +160,22 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
           break;
         case "filme":
         case "filmes":
-          finalType = "movies";
+          finalType = "movie";
           break;
         case "serie":
         case "série":
         case "series":
-          finalType = "series";
+          finalType = "tv";
           break;
         case "jogo":
         case "jogos":
         case "game":
         case "games":
-          finalType = "games";
+          finalType = "game";
           break;
         case "livro":
         case "livros":
-          finalType = "books";
+          finalType = "book";
           break;
       }
       onTypeChange(finalType);
@@ -236,11 +236,10 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
           <button
             key={value}
             onClick={() => onTypeChange(value)}
-            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg whitespace-nowrap transition-all text-sm ${
-              selectedType === value
-                ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg"
-                : "bg-slate-700/50 text-slate-300 hover:bg-slate-700 hover:text-white"
-            }`}
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg whitespace-nowrap transition-all text-sm ${selectedType === value
+              ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg"
+              : "bg-slate-700/50 text-slate-300 hover:bg-slate-700 hover:text-white"
+              }`}
           >
             <Icon size={14} className="sm:w-4 sm:h-4" />
             <span className="hidden sm:inline">{label}</span>
@@ -354,13 +353,12 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
                       {/* Indicador da fonte */}
                       <div className="flex items-center gap-2 mt-2">
                         <span
-                          className={`text-xs px-2 py-1 rounded ${
-                            result.source === "google-books"
-                              ? "bg-blue-500/20 text-blue-400"
-                              : result.source === "rawg"
-                                ? "bg-purple-500/20 text-purple-400"
-                                : "bg-green-500/20 text-green-400"
-                          }`}
+                          className={`text-xs px-2 py-1 rounded ${result.source === "google-books"
+                            ? "bg-blue-500/20 text-blue-400"
+                            : result.source === "rawg"
+                              ? "bg-purple-500/20 text-purple-400"
+                              : "bg-green-500/20 text-green-400"
+                            }`}
                         >
                           {result.source === "google-books"
                             ? "Google Books"
@@ -377,6 +375,6 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };

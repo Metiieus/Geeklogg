@@ -20,45 +20,57 @@ service cloud.firestore {
       allow read, write : if request.auth.uid == userId;   // somente o dono
     }
 
-            /* ------------------------------------------------------------------ *
-     * SEGUIDORES / SEGUINDO  ➜ leitura pública (apenas logado)
+    /* ------------------------------------------------------------------ *
+     * SEGUIDORES / SEGUINDO
      * ------------------------------------------------------------------ */
-    match /users/{userId}/followers/{docId} {
-      allow read, write : if request.auth != null;              // qualquer logado pode ver/editar
+    // Meus seguidores: Qualquer um pode ler. 
+    // Escrita: Apenas o próprio seguidor pode se adicionar/remover (se a lógica for essa)
+    // OU apenas o dono do perfil (se for aprovação).
+    // Vamos assumir o padrão comum: O usuário X decide seguir Y.
+    // X escreve em /users/X/following/Y (PERMITIDO)
+    // X escreve em /users/Y/followers/X (PERMITIDO)
+    
+    match /users/{userId}/followers/{followerId} {
+       allow read : if request.auth != null;
+       // Seguidor (followerId) pode se adicionar/remover da lista de seguidores de alguém
+       allow write: if request.auth.uid == followerId;
     }
 
-    match /users/{userId}/following/{docId} {
-      allow read, write : if request.auth != null;              // qualquer logado pode ver/editar
+    match /users/{userId}/following/{followedId} {
+       allow read : if request.auth != null;
+       // O usuário (userId) controla quem ele segue
+       allow write: if request.auth.uid == userId; 
     }
 
     /* ------------------------------------------------------------------ *
      * NOTIFICAÇÕES PESSOAIS
      * ------------------------------------------------------------------ */
-    match /users/{userId}/notifications/{docId} {
-      allow read, write : if request.auth.uid == userId;
+    match /users/{userId}/notifications/{notificationId} {
+      allow read, update, delete : if request.auth.uid == userId;
+      // Permitir que OUTROS usuários criem notificações "de systema" ou de interação (like/follow)
+      // Isso é perigoso sem validação de schema, mas necessário sem Cloud Functions.
+      // Melhora: garantir que notification.fromUserId == auth.uid
+      allow create: if request.auth != null && request.resource.data.fromUserId == request.auth.uid;
     }
 
-        /* ------------------------------------------------------------------ *
+    /* ------------------------------------------------------------------ *
      * FEED DE ATIVIDADES GLOBAL
      * ------------------------------------------------------------------ */
+    //... (mantendo anterior ou melhorando se necessário)
     match /activities/{docId} {
-      allow read, create : if request.auth != null;                    // todos logados podem ler/criar
-      allow update, delete : if request.auth.uid == resource.data.userId; // só o criador pode editar/deletar
+       allow read: if request.auth != null;
+       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+       allow update, delete: if request.auth.uid == resource.data.userId;
     }
 
     /* ------------------------------------------------------------------ *
-     * NOTIFICAÇÕES GLOBAIS (anúncios)
+     * SOLICITAÇÕES DE AMIZADE / SEGUIR (Se houver)
      * ------------------------------------------------------------------ */
-    match /notifications/{docId} {
-      allow read : if request.auth != null;
-      allow write : if false;
-    }
-
-    /* ------------------------------------------------------------------ *
-     * SOLICITAÇÕES DE AMIZADE / SEGUIR
-     * ------------------------------------------------------------------ */
-    match /followRequests/{docId} {
-      allow read, write : if request.auth != null;
+    match /followRequests/{requestId} {
+      // Quem envia (fromUser) pode criar/deletar.
+      // Quem recebe (toUser) pode ler/deletar (aceitar/recusar).
+      allow create: if request.auth.uid == request.resource.data.fromUserId;
+      allow read, delete: if request.auth.uid == resource.data.fromUserId || request.auth.uid == resource.data.toUser;
     }
   }
 }

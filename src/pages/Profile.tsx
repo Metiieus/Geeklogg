@@ -10,17 +10,16 @@ import {
   Edit,
   BarChart3,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
-import { AchievementTree } from "./AchievementTree";
-import { AchievementModal } from "./modals/AchievementModal";
-import { EditProfileModal } from "./modals/EditProfileModal";
-import { TruncatedBio } from "./TruncatedBio";
-import { EditFavoritesModal } from "./modals/EditFavoritesModal";
-import { FavoritesCarousel } from "./FavoritesCarousel";
-import ProfileSummary from "./ProfileSummary";
-import { saveProfile } from "../services/profileService";
+import { ProfileSkeleton } from "../components/skeletons";
+import { AchievementTree } from "../components/AchievementTree";
+import { AchievementModal } from "../components/modals/AchievementModal";
+import { EditProfileModal } from "../components/modals/EditProfileModal";
+import { TruncatedBio } from "../components/TruncatedBio";
+import { EditFavoritesModal } from "../components/modals/EditFavoritesModal";
+import { FavoritesCarousel } from "../components/FavoritesCarousel";
+import ProfileSummary from "../components/ProfileSummary";
 import {
   getUserNotifications,
   markNotificationAsRead,
@@ -28,18 +27,39 @@ import {
 } from "../services/socialService";
 import { Notification } from "../types/social";
 import { saveProfile as saveProfileService } from "../services/profileService";
-import { saveSettings } from "../services/settingsService";
 import { AchievementNode } from "../types/achievements";
 import { formatDate, normalizeTimestamp } from "../utils/dateUtils";
-import { ConditionalPremiumBadge } from "./PremiumBadge";
-import { SubscriptionBadge } from "./SubscriptionBadge";
-import { UpgradeToPremiumModal } from "./modals/UpgradeToPremiumModal";
+import { ConditionalPremiumBadge } from "../components/PremiumBadge";
+import { SubscriptionBadge } from "../components/SubscriptionBadge";
+import { UpgradeToPremiumModal } from "../components/modals/UpgradeToPremiumModal";
 import { redirectToCustomerPortal } from "../services/stripeService";
+import { useSettings, useUpdateSettings } from "../hooks/queries";
+import { UserSettings } from "../types";
+
+const defaultSettings: UserSettings = {
+  favorites: { characters: [], games: [], movies: [] },
+  defaultLibrarySort: "updatedAt",
+};
 
 const Profile: React.FC = () => {
-  const { settings, setSettings } = useAppContext();
   const { user, profile, loading, logout } = useAuth();
   const { showSuccess } = useToast();
+
+  // Use settings hook
+  const { data: settingsData, isLoading: isSettingsLoading } = useSettings(user?.uid);
+  const updateSettingsMutation = useUpdateSettings();
+
+  if (loading || isSettingsLoading) return <ProfileSkeleton />;
+
+  // Local settings state derived from query
+  const [settings, setSettings] = useState<UserSettings>(defaultSettings);
+
+  useEffect(() => {
+    if (settingsData) {
+      setSettings(settingsData);
+    }
+  }, [settingsData]);
+
   const [editProfile, setEditProfile] = useState(false);
   const [editFav, setEditFav] = useState(false);
   const [selectedAchievement, setSelectedAchievement] =
@@ -57,6 +77,8 @@ const Profile: React.FC = () => {
     avatarFile?: File;
     coverFile?: File;
   }) => {
+    if (!user?.uid) return;
+
     devLog.log("💾 Salvando perfil:", data);
     const result = await saveProfileService(data);
     const updated = {
@@ -66,25 +88,27 @@ const Profile: React.FC = () => {
       avatar: result.avatar ?? settings.avatar,
       cover: result.cover ?? settings.cover,
     };
-    setSettings(updated);
 
-    // Persiste as alterações no banco de dados
-    if (user?.uid) {
-      await saveSettings(user.uid, updated);
-    }
+    // Update both via mutation (optimistic or invalidation will handle sync)
+    // Here we just update local setting for immediate feedback if mutation is slow?
+    // Actually mutation is better.
+    await updateSettingsMutation.mutateAsync({ userId: user.uid, settings: updated });
+    // setSettings(updated); // handled by query invalidation or effect usually, but for instant feedback:
+    setSettings(updated);
 
     setEditProfile(false);
   };
 
   const saveFav = async (fav: typeof settings.favorites) => {
-    const updated = { ...settings, favorites: fav };
-    devLog.log("💾 Salvando favoritos:", updated);
-    setSettings(updated);
     if (!user?.uid) {
-      devLog.error("Usu��rio não autenticado");
+      devLog.error("Usuário não autenticado");
       return;
     }
-    await saveSettings(user.uid, updated);
+    const updated = { ...settings, favorites: fav };
+    devLog.log("💾 Salvando favoritos:", updated);
+
+    await updateSettingsMutation.mutateAsync({ userId: user.uid, settings: updated });
+    setSettings(updated);
     setEditFav(false);
   };
 
@@ -94,11 +118,9 @@ const Profile: React.FC = () => {
     try {
       const userNotifications = await getUserNotifications(user.uid);
       // Normalizar timestamps e filtrar notificações válidas
-      // Garantir que cada notificação tenha os campos obrigatórios
       const normalizedNotifications = userNotifications
         .map(normalizeTimestamp)
         .filter((notif) => {
-          // Validar que a notificação tem os campos essenciais
           return (
             notif &&
             notif.id &&
@@ -123,45 +145,6 @@ const Profile: React.FC = () => {
       loadNotifications();
     }
   }, [activeTab, loadNotifications]);
-
-  const renderCards = (items: typeof settings.favorites.characters) => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-      {items.map((it) => {
-        return (
-          <div
-            key={it.id}
-            className="bg-slate-800/50 p-2 rounded-lg text-center border border-white/10 min-w-0"
-          >
-            <div className="w-full h-16 sm:h-20 bg-slate-700 rounded-md overflow-hidden mb-2">
-              {it.image ? (
-                <img
-                  src={it.image}
-                  alt={it.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : null}
-            </div>
-            <p
-              className="text-xs text-white break-words"
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
-            >
-              {it.name}
-            </p>
-          </div>
-        );
-      })}
-      {items.length === 0 && (
-        <p className="text-slate-500 col-span-full text-xs sm:text-sm">
-          Nenhum item
-        </p>
-      )}
-    </div>
-  );
 
   if (loading) {
     return (
@@ -218,43 +201,39 @@ const Profile: React.FC = () => {
       <div className="flex flex-col sm:flex-row gap-1 sm:gap-1 bg-slate-800/50 p-1 rounded-lg">
         <button
           onClick={() => setActiveTab("summary")}
-          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
-            activeTab === "summary"
-              ? "bg-purple-600 text-white"
-              : "text-slate-400 hover:text-white"
-          }`}
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${activeTab === "summary"
+            ? "bg-purple-600 text-white"
+            : "text-slate-400 hover:text-white"
+            }`}
         >
           <BarChart3 size={14} className="sm:w-4 sm:h-4" />
           <span className="hidden xs:inline sm:inline">Resumo</span>
         </button>
         <button
           onClick={() => setActiveTab("info")}
-          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
-            activeTab === "info"
-              ? "bg-purple-600 text-white"
-              : "text-slate-400 hover:text-white"
-          }`}
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${activeTab === "info"
+            ? "bg-purple-600 text-white"
+            : "text-slate-400 hover:text-white"
+            }`}
         >
           <span className="text-xs sm:text-sm">Perfil</span>
         </button>
         <button
           onClick={() => setActiveTab("achievements")}
-          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
-            activeTab === "achievements"
-              ? "bg-purple-600 text-white"
-              : "text-slate-400 hover:text-white"
-          }`}
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${activeTab === "achievements"
+            ? "bg-purple-600 text-white"
+            : "text-slate-400 hover:text-white"
+            }`}
         >
           <Trophy size={14} className="sm:w-4 sm:h-4" />
           <span className="hidden xs:inline sm:inline">Conquistas</span>
         </button>
         <button
           onClick={() => setActiveTab("notifications")}
-          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${
-            activeTab === "notifications"
-              ? "bg-purple-600 text-white"
-              : "text-slate-400 hover:text-white"
-          }`}
+          className={`flex-1 py-3 sm:py-2 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1 sm:gap-2 touch-target ${activeTab === "notifications"
+            ? "bg-purple-600 text-white"
+            : "text-slate-400 hover:text-white"
+            }`}
         >
           <Bell size={14} className="sm:w-4 sm:h-4" />
           <span className="hidden xs:inline sm:inline">Notif.</span>
@@ -265,20 +244,18 @@ const Profile: React.FC = () => {
         <div className="space-y-6">
           {/* Premium Status Card */}
           <div
-            className={`p-4 sm:p-6 rounded-2xl border-2 overflow-hidden ${
-              profile?.isPremium
-                ? "bg-gradient-to-br from-cyan-900/50 to-pink-900/50 border-cyan-500/50"
-                : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-cyan-500/30"
-            }`}
+            className={`p-4 sm:p-6 rounded-2xl border-2 overflow-hidden ${profile?.isPremium
+              ? "bg-gradient-to-br from-cyan-900/50 to-pink-900/50 border-cyan-500/50"
+              : "bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-cyan-500/30"
+              }`}
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                 <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                    profile?.isPremium
-                      ? "bg-gradient-to-br from-cyan-500 to-pink-500"
-                      : "bg-gradient-to-br from-cyan-400 to-pink-400"
-                  }`}
+                  className={`w-16 h-16 rounded-full flex items-center justify-center ${profile?.isPremium
+                    ? "bg-gradient-to-br from-cyan-500 to-pink-500"
+                    : "bg-gradient-to-br from-cyan-400 to-pink-400"
+                    }`}
                 >
                   <Crown className="w-8 h-8 text-white" />
                 </div>
@@ -451,8 +428,8 @@ const Profile: React.FC = () => {
                   <h2 className="text-xl sm:text-2xl font-semibold text-white break-words">
                     {displayName}
                   </h2>
-                  <SubscriptionBadge 
-                    tier={settings.subscriptionTier || 'free'} 
+                  <SubscriptionBadge
+                    tier={settings.subscriptionTier || 'free'}
                     size="md"
                   />
                 </div>
@@ -484,19 +461,19 @@ const Profile: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
               <FavoritesCarousel
-                items={settings.favorites.characters}
+                items={settings.favorites.characters || []}
                 title="Personagens"
                 color="text-purple-400"
               />
 
               <FavoritesCarousel
-                items={settings.favorites.games}
+                items={settings.favorites.games || []}
                 title="Jogos"
                 color="text-cyan-400"
               />
 
               <FavoritesCarousel
-                items={settings.favorites.movies}
+                items={settings.favorites.movies || []}
                 title="Filmes & Séries"
                 color="text-pink-400"
               />
@@ -510,7 +487,7 @@ const Profile: React.FC = () => {
 
       {/* Achievements Tab */}
       {activeTab === "achievements" && (
-        <AchievementTree onAchievementClick={setSelectedAchievement} />
+        <AchievementTree onClose={() => setActiveTab("summary")} />
       )}
 
       {/* Notifications Tab */}
@@ -544,11 +521,10 @@ const Profile: React.FC = () => {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 rounded-lg border transition-all ${
-                    notification.read
-                      ? "bg-slate-800/50 border-white/10"
-                      : "bg-purple-900/20 border-purple-500/30"
-                  }`}
+                  className={`p-4 rounded-lg border transition-all ${notification.read
+                    ? "bg-slate-800/50 border-white/10"
+                    : "bg-purple-900/20 border-purple-500/30"
+                    }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
@@ -560,7 +536,7 @@ const Profile: React.FC = () => {
                       </p>
                       <p className="text-slate-400 text-xs">
                         {formatDate(
-                          notification.timestamp || notification.createdAt,
+                          notification.timestamp
                         )}
                       </p>
                     </div>

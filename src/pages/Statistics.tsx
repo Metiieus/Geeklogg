@@ -11,72 +11,83 @@ import {
   BookOpen,
   Sparkles,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
+import { useMedias, useReviews } from "../hooks/queries";
 import { MediaType } from "../types";
 
-const mediaTypeIcons = {
-  games: Gamepad2,
+const mediaTypeIcons: Record<string, any> = {
+  game: Gamepad2,
   anime: Sparkles,
-  series: Tv,
-  books: Book,
-  movies: Film,
+  tv: Tv,
+  book: Book,
+  movie: Film,
+  manga: BookOpen,
 };
 
-const mediaTypeColors = {
-  games: "from-blue-500 to-cyan-500",
+const mediaTypeColors: Record<string, string> = {
+  game: "from-blue-500 to-cyan-500",
   anime: "from-pink-500 to-rose-500",
-  series: "from-purple-500 to-violet-500",
-  books: "from-green-500 to-emerald-500",
-  movies: "from-yellow-500 to-orange-500",
+  tv: "from-purple-500 to-violet-500",
+  book: "from-green-500 to-emerald-500",
+  movie: "from-yellow-500 to-orange-500",
+  manga: "from-orange-500 to-red-500",
 };
 
-const mediaTypeLabels = {
-  games: "Jogos",
+const mediaTypeLabels: Record<string, string> = {
+  game: "Jogos",
   anime: "Anime",
-  series: "Séries",
-  books: "Livros",
-  movies: "Filmes",
+  tv: "Séries",
+  book: "Livros",
+  movie: "Filmes",
+  manga: "Mangás",
 };
 
 const Statistics: React.FC = () => {
-  const { mediaItems, reviews } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const { data: reviews = [] } = useReviews(user?.uid);
 
   const getMediaStats = () => {
-    const stats: Record <
+    const stats: Record<
       string,
       { count: number; hours: number; avgRating: number; completed: number }
     > = {
       game: { count: 0, hours: 0, avgRating: 0, completed: 0 },
-      games: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       anime: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       tv: { count: 0, hours: 0, avgRating: 0, completed: 0 },
-      series: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       book: { count: 0, hours: 0, avgRating: 0, completed: 0 },
-      books: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       movie: { count: 0, hours: 0, avgRating: 0, completed: 0 },
-      movies: { count: 0, hours: 0, avgRating: 0, completed: 0 },
       manga: { count: 0, hours: 0, avgRating: 0, completed: 0 },
     };
 
     mediaItems.forEach((item) => {
-      // Validar se o tipo existe no stats antes de acessar
-      if (!stats[item.type]) {
-        console.warn(`Tipo de mídia desconhecido: ${item.type}`);
-        stats[item.type] = { count: 0, hours: 0, avgRating: 0, completed: 0 };
+      // Normalizar se necessário / garantir type
+      // Assumindo que item.type validou no MediaType ou fallback
+      let type = item.type as string;
+      // Compatibilidade com dados legados que podem estar no plural ou incorretos
+      if (type === 'books') type = 'book';
+      if (type === 'games') type = 'game';
+      if (type === 'movies') type = 'movie';
+      if (type === 'series') type = 'tv';
+
+      if (!stats[type]) {
+        // Fallback se type não estiver no map (e.g. legacy data)
+        // console.warn(`Tipo não mapeado: ${type}`);
+        return;
       }
-      
-      stats[item.type].count++;
-      stats[item.type].hours += item.hoursSpent || 0;
+
+      stats[type].count++;
+      stats[type].hours += item.hoursSpent || 0;
       if (item.rating) {
-        const currentAvg = stats[item.type].avgRating;
-        const currentCount = stats[item.type].count;
-        stats[item.type].avgRating =
+        const currentAvg = stats[type].avgRating;
+        const currentCount = stats[type].count;
+        stats[type].avgRating =
           currentCount === 1
             ? item.rating
             : (currentAvg * (currentCount - 1) + item.rating) / currentCount;
       }
       if (item.status === "completed") {
-        stats[item.type].completed++;
+        stats[type].completed++;
       }
     });
 
@@ -84,15 +95,15 @@ const Statistics: React.FC = () => {
   };
 
   const getTotalStats = () => {
-    // Separar horas (jogos, filmes, séries) de páginas (livros)
+    // Separar horas (jogos, filmes, séries) de páginas (livros/mangas)
     const totalHours = mediaItems
-      .filter((item) => item.type !== "books")
+      .filter((item) => item.type !== "book" && item.type !== "manga")
       .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
-    
+
     const totalPages = mediaItems
-      .filter((item) => item.type === "books")
+      .filter((item) => item.type === "book" || item.type === "manga")
       .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
-    
+
     const totalCompleted = mediaItems.filter(
       (item) => item.status === "completed",
     ).length;
@@ -100,7 +111,7 @@ const Statistics: React.FC = () => {
     const avgRating =
       ratedItems.length > 0
         ? ratedItems.reduce((sum, item) => sum + (item.rating || 0), 0) /
-          ratedItems.length
+        ratedItems.length
         : 0;
 
     return {
@@ -276,7 +287,7 @@ const Statistics: React.FC = () => {
             const Icon = mediaTypeIcons[type as MediaType];
             // Skip if Icon is undefined (unknown media type)
             if (!Icon) return null;
-            
+
             return (
               <div
                 key={type}
@@ -303,7 +314,7 @@ const Statistics: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400 text-xs sm:text-sm">
-                      {type === 'books' || type === 'book' ? 'Páginas' : 'Horas'}
+                      {type === 'book' || type === 'manga' ? 'Páginas' : 'Horas'}
                     </span>
                     <span className="text-white font-medium text-xs sm:text-sm">
                       {stats.hours.toFixed(1)}
@@ -370,7 +381,7 @@ const Statistics: React.FC = () => {
                         {item.title}
                       </p>
                       <p className="text-slate-400 text-xs hidden sm:block">
-                        {mediaTypeLabels[item.type]}
+                        {mediaTypeLabels[item.type] || item.type}
                       </p>
                     </div>
                     <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
@@ -429,7 +440,7 @@ const Statistics: React.FC = () => {
                         {item.title}
                       </p>
                       <p className="text-slate-400 text-xs hidden sm:block">
-                        {mediaTypeLabels[item.type]}
+                        {mediaTypeLabels[item.type] || item.type}
                       </p>
                     </div>
                     <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">

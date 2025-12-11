@@ -12,12 +12,14 @@ import { MediaItem, Review, UserSettings } from "../types";
 export async function getUserAchievements(): Promise<UserAchievement[]> {
   try {
     const uid = getUserId();
+    if (!uid) return [];
+
     const snap = await database.getCollection<UserAchievement>([
       "users",
       uid,
       "achievements",
     ]);
-    return snap.map((d) => ({ ...(d.data || d), id: d.id }));
+    return snap;
   } catch (error) {
     devLog.error("Erro ao buscar conquistas:", error);
     return [];
@@ -27,6 +29,8 @@ export async function getUserAchievements(): Promise<UserAchievement[]> {
 export async function unlockAchievement(achievementId: string): Promise<void> {
   try {
     const uid = getUserId();
+    if (!uid) return;
+
     const achievement = ACHIEVEMENTS_DATA.find((a) => a.id === achievementId);
     if (!achievement) return;
 
@@ -130,41 +134,41 @@ export async function checkAchievements(
 
       switch (achievement.id) {
         case "primeiro_game":
-          shouldUnlock = mediaItems.some((item) => item.type === "games");
+          shouldUnlock = mediaItems.some((item) => item.type === "game");
           break;
 
         case "completou_primeiro_game":
           shouldUnlock = mediaItems.some(
-            (item) => item.type === "games" && item.status === "completed",
+            (item) => item.type === "game" && item.status === "completed",
           );
           break;
 
         case "viciado_em_horas":
           shouldUnlock = mediaItems.some(
-            (item) => item.type === "games" && (item.hoursSpent || 0) >= 100,
+            (item) => item.type === "game" && (item.hoursSpent || 0) >= 100,
           );
           break;
 
         case "primeiro_livro":
-          shouldUnlock = mediaItems.some((item) => item.type === "books");
+          shouldUnlock = mediaItems.some((item) => item.type === "book");
           break;
 
         case "devorador_de_livros":
           shouldUnlock =
             mediaItems.filter(
-              (item) => item.type === "books" && item.status === "completed",
+              (item) => item.type === "book" && item.status === "completed",
             ).length >= 10;
           break;
 
         case "primeiro_filme":
           shouldUnlock = mediaItems.some(
-            (item) => item.type === "movies" || item.type === "series",
+            (item) => item.type === "movie" || item.type === "tv",
           );
           break;
 
         case "maratonista":
           const totalAudiovisualHours = mediaItems
-            .filter((item) => item.type === "movies" || item.type === "series")
+            .filter((item) => item.type === "movie" || item.type === "tv")
             .reduce((sum, item) => sum + (item.hoursSpent || 0), 0);
           shouldUnlock = totalAudiovisualHours >= 50;
           break;

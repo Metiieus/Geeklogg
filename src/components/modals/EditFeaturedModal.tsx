@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Check, Star, Search } from "lucide-react";
-import { MediaItem } from "../../types";
-import { useAppContext } from "../../context/AppContext";
+import { useAuth } from "../../context/AuthContext";
+import { useMedias } from "../../hooks/queries";
 import { ModalWrapper } from "../ModalWrapper";
 
 interface EditFeaturedModalProps {
@@ -11,12 +11,13 @@ interface EditFeaturedModalProps {
   onClose: () => void;
 }
 
-const typeLabels = {
-  games: "Jogo",
+const typeLabels: Record<string, string> = {
+  game: "Jogo",
   anime: "Anime",
-  series: "Série",
-  books: "Livro",
-  movies: "Filme",
+  tv: "Série",
+  book: "Livro",
+  movie: "Filme",
+  manga: "Mangá",
 };
 
 export const EditFeaturedModal: React.FC<EditFeaturedModalProps> = ({
@@ -25,7 +26,8 @@ export const EditFeaturedModal: React.FC<EditFeaturedModalProps> = ({
   onSave,
   onClose,
 }) => {
-  const { mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: mediaItems = [] } = useMedias(user?.uid);
   const [localSelected, setLocalSelected] = useState<string[]>(selectedIds);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -34,9 +36,9 @@ export const EditFeaturedModal: React.FC<EditFeaturedModalProps> = ({
   const filteredItems = mediaItems.filter(
     (item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.tags.some((tag) =>
+      (item.tags && item.tags.some((tag) =>
         tag.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
+      )),
   );
 
   const toggle = (id: string) => {
@@ -113,13 +115,12 @@ export const EditFeaturedModal: React.FC<EditFeaturedModalProps> = ({
                     key={item.id}
                     onClick={() => canSelect && toggle(item.id)}
                     disabled={!canSelect}
-                    className={`relative group aspect-[3/4] rounded-xl overflow-hidden border transition-all duration-300 ${
-                      selected
+                    className={`relative group aspect-[3/4] rounded-xl overflow-hidden border transition-all duration-300 ${selected
                         ? "ring-2 ring-purple-500 border-purple-400 scale-105 shadow-lg shadow-purple-500/25"
                         : canSelect
                           ? "border-white/10 hover:border-white/20 hover:scale-105 hover:shadow-lg"
                           : "border-white/5 opacity-50 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     {/* Capa com fallback */}
                     {item.cover ? (
@@ -150,7 +151,7 @@ export const EditFeaturedModal: React.FC<EditFeaturedModalProps> = ({
                           </span>
                         </div>
                         <span className="text-white/60 text-xs">
-                          {typeLabels[item.type]}
+                          {typeLabels[item.type] || item.type}
                         </span>
                       </div>
                     </div>

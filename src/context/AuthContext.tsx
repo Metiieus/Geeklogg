@@ -13,15 +13,7 @@ import {
 import { auth, db } from "../firebase"; // ✅ usa o auth e db exportados do firebase.ts
 import { doc, getDoc } from "firebase/firestore";
 
-interface UserProfile {
-  uid: string;
-  email: string;
-  displayName?: string;
-  isPremium?: boolean;
-  bio?: string;
-  favoriteGenres?: string[];
-  profileImage?: string;
-}
+import { UserProfile } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -65,11 +57,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (db) {
             const userDocRef = doc(db, "users", user.uid);
             const userDocSnap = await getDoc(userDocRef);
-            
+
             if (userDocSnap.exists()) {
               const userData = userDocSnap.data();
               console.log("✅ Dados do usuário carregados do Firestore:", userData);
-              
+
               setProfile({
                 uid: user.uid,
                 email: user.email || "",

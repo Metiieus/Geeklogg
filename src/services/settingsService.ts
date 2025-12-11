@@ -1,21 +1,6 @@
 import { database } from "./database";
 import { removeUndefinedFields, sanitizeStrings, getUserId } from "./utils";
-
-export interface UserSettings {
-  name?: string;
-  avatar?: string;
-  cover?: string;
-  bio?: string;
-  favorites?: {
-    characters: Array<{ id: string; name: string; image?: string }>;
-    games: Array<{ id: string; name: string; image?: string }>;
-    movies: Array<{ id: string; name: string; image?: string }>;
-  };
-  theme?: string;
-  defaultLibrarySort?: string;
-  subscriptionTier?: 'free' | 'premium';
-  subscriptionExpiresAt?: Date;
-}
+import { UserSettings } from "../types";
 
 export async function getSettings(
   userId?: string,
@@ -46,7 +31,7 @@ export async function getSettings(
       avatar: userData.avatar,
       cover: userData.cover,
       bio: userData.bio,
-      favorites: userData.favorites,
+      favorites: userData.favorites || { characters: [], games: [], movies: [] },
       theme: userData.theme,
       defaultLibrarySort: userData.defaultLibrarySort,
     };
@@ -63,7 +48,7 @@ export async function saveSettings(
 ): Promise<void> {
   try {
     // Sanitize and clean the settings data
-    const cleanSettings = sanitizeStrings(removeUndefinedFields(settings));
+    const cleanSettings = sanitizeStrings(removeUndefinedFields(settings as any));
 
     // Update the user document with the new settings
     await database.update(["users"], userId, cleanSettings);

@@ -38,7 +38,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
   const handleFollow = async (targetUser: UserProfile) => {
     try {
       await followUser(targetUser.uid);
-      showSuccess("Seguindo", `Agora você segue ${targetUser.displayName}`);
+      showSuccess("Seguindo", `Agora você segue ${targetUser.name}`);
 
       // Atualizar o resultado local
       setSearchResults((prev) =>
@@ -102,7 +102,7 @@ export const UserSearch: React.FC<UserSearchProps> = ({ onUserSelect }) => {
                   </div>
                   <div>
                     <p className="font-medium text-white">
-                      {searchUser.displayName}
+                      {searchUser.name}
                     </p>
                     <p className="text-sm text-slate-400">{searchUser.email}</p>
                   </div>

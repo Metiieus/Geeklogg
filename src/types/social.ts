@@ -1,12 +1,14 @@
 export interface UserProfile {
+  id?: string;
   uid: string;
   name: string;
   avatar?: string;
+  email?: string;
   bio?: string;
-  isPublic: boolean;
+  isPublic?: boolean;
   followers: string[];
   following: string[];
-  createdAt: string;
+  createdAt?: string;
   plano?: {
     status: string;
     tipo: string;
@@ -14,6 +16,10 @@ export interface UserProfile {
     mercadoPagoPaymentId?: string;
   };
   isPremium?: boolean;
+  postsCount?: number;
+  reviewsCount?: number;
+  // UI helper
+  isFollowing?: boolean;
 }
 
 export interface UserActivity {
@@ -22,11 +28,11 @@ export interface UserActivity {
   userName: string;
   userAvatar?: string;
   type:
-    | "media_added"
-    | "media_completed"
-    | "review_added"
-    | "milestone_added"
-    | "achievement_unlocked";
+  | "media_added"
+  | "media_completed"
+  | "review_added"
+  | "milestone_added"
+  | "achievement_unlocked";
   title: string;
   description: string;
   mediaTitle?: string;
@@ -56,4 +62,5 @@ export interface FollowRequest {
   fromUserName: string;
   fromUserAvatar?: string;
   timestamp: string;
+  status: "pending" | "accepted" | "rejected";
 }

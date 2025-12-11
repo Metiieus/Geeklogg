@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Crown, CheckCircle, Sparkles, XCircle, ArrowLeft } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Componente que detecta retorno do Stripe e mostra mensagem apropriada
  * Uso: Adicionar no App.tsx para detectar query params
  */
 export const StripeReturnHandler: React.FC = () => {
-  const { setActivePage } = useAppContext();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<'success' | 'cancel' | null>(null);
 
   useEffect(() => {
@@ -21,19 +21,19 @@ export const StripeReturnHandler: React.FC = () => {
       setTimeout(() => {
         window.history.replaceState({}, '', '/');
         setStatus(null);
-        setActivePage('profile');
+        navigate('/profile');
       }, 5000);
     } else if (path.includes('/premium/cancel') || params.get('payment') === 'cancel') {
       setStatus('cancel');
     }
-  }, [setActivePage]);
+  }, [navigate]);
 
   if (!status) return null;
 
   const handleClose = () => {
     window.history.replaceState({}, '', '/');
     setStatus(null);
-    setActivePage('profile');
+    navigate('/profile');
   };
 
   return (
@@ -132,7 +132,7 @@ export const StripeReturnHandler: React.FC = () => {
               onClick={() => {
                 window.history.replaceState({}, '', '/');
                 setStatus(null);
-                setActivePage('dashboard');
+                navigate('/dashboard');
               }}
               className="w-full py-3 bg-gray-700/50 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >

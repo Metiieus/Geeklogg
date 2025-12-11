@@ -210,7 +210,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = ({
                   </div>
                 )}
 
-                {item.type === "books" && item.totalPages && (
+                {item.type === "book" && item.totalPages && (
                   <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-white/10">
                     <BookOpen className="w-6 h-6 text-green-400 mx-auto mb-2" />
                     <p className="text-white font-semibold">

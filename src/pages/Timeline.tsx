@@ -8,25 +8,25 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
-import { useAppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
+import { useMilestones, useMedias, useDeleteMilestone } from "../hooks/queries";
 import { Milestone } from "../types";
-import { AddMilestoneModal } from "./modals/AddMilestoneModal";
-import { EditMilestoneModal } from "./modals/EditMilestoneModal";
-import { deleteMilestone } from "../services/milestoneService";
+import { AddMilestoneModal } from "../components/modals/AddMilestoneModal";
+import { EditMilestoneModal } from "../components/modals/EditMilestoneModal";
 import { parseDate, formatDateShort } from "../utils/dateUtils";
 
 // Componente para texto truncado com "ver mais"
 const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, maxChars }) => {
   const [expanded, setExpanded] = useState(false);
   const needsTruncate = text.length > maxChars;
-  const displayText = needsTruncate && !expanded 
-    ? text.substring(0, maxChars) + '...' 
+  const displayText = needsTruncate && !expanded
+    ? text.substring(0, maxChars) + '...'
     : text;
 
   return (
     <div>
-      <p 
-        className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base" 
+      <p
+        className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base"
         dangerouslySetInnerHTML={{ __html: displayText }}
       />
       {needsTruncate && (
@@ -42,7 +42,11 @@ const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, max
 };
 
 const Timeline: React.FC = () => {
-  const { milestones, setMilestones, mediaItems } = useAppContext();
+  const { user } = useAuth();
+  const { data: milestones = [] } = useMilestones(user?.uid);
+  const { data: mediaItems = [] } = useMedias(user?.uid);
+  const deleteMilestoneMutation = useDeleteMilestone();
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(
     null,
@@ -52,7 +56,7 @@ const Timeline: React.FC = () => {
     null,
   );
 
-  const sortedMilestones = milestones.sort(
+  const sortedMilestones = [...milestones].sort(
     (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime(),
   );
 
@@ -69,12 +73,7 @@ const Timeline: React.FC = () => {
   const confirmDelete = async () => {
     if (milestoneToDelete && milestoneToDelete.id) {
       try {
-        await deleteMilestone(milestoneToDelete.id);
-        setMilestones(
-          milestones.filter(
-            (milestone) => milestone.id !== milestoneToDelete.id,
-          ),
-        );
+        await deleteMilestoneMutation.mutateAsync(milestoneToDelete.id);
         // Feedback visual
         const toast = document.createElement("div");
         toast.className =
@@ -94,15 +93,6 @@ const Timeline: React.FC = () => {
       setShowDeleteModal(false);
       setMilestoneToDelete(null);
     }
-  };
-
-  const handleEditMilestone = (updatedMilestone: Milestone) => {
-    setMilestones(
-      milestones.map((milestone) =>
-        milestone.id === updatedMilestone.id ? updatedMilestone : milestone,
-      ),
-    );
-    setEditingMilestone(null);
   };
 
   return (
@@ -268,8 +258,7 @@ const Timeline: React.FC = () => {
       {showAddModal && (
         <AddMilestoneModal
           onClose={() => setShowAddModal(false)}
-          onSave={(newMilestone) => {
-            setMilestones([...milestones, newMilestone]);
+          onSave={() => {
             setShowAddModal(false);
           }}
         />
@@ -280,7 +269,9 @@ const Timeline: React.FC = () => {
         <EditMilestoneModal
           milestone={editingMilestone}
           onClose={() => setEditingMilestone(null)}
-          onSave={handleEditMilestone}
+          onSave={() => {
+            setEditingMilestone(null);
+          }}
         />
       )}
 
