@@ -7,6 +7,8 @@ import {
 } from "../services/externalMediaService";
 import { useToast } from "../context/ToastContext";
 
+import { useI18n } from "../i18n";
+
 interface MediaSearchBarProps {
   selectedType: MediaType;
   onTypeChange: (type: MediaType) => void;
@@ -14,20 +16,24 @@ interface MediaSearchBarProps {
   placeholder?: string;
 }
 
-const mediaTypeOptions = [
-  { value: "anime", label: "Anime", icon: Film },
-  { value: "movie", label: "Filmes", icon: Film },
-  { value: "tv", label: "Séries", icon: Tv },
-  { value: "game", label: "Jogos", icon: Gamepad2 },
-  { value: "book", label: "Livros", icon: Book },
-] as const;
-
 export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
   selectedType,
   onTypeChange,
   onResultSelect,
-  placeholder = "Buscar por título...",
+  placeholder, // Note: placeholder logic below
 }) => {
+  const { t } = useI18n();
+
+  const displayPlaceholder = placeholder || t("search.placeholder");
+
+  const mediaTypeOptions = [
+    { value: "anime", label: t("media_type.anime"), icon: Film },
+    { value: "movie", label: t("media_type.movie"), icon: Film },
+    { value: "tv", label: t("media_type.tv"), icon: Tv },
+    { value: "game", label: t("media_type.game"), icon: Gamepad2 },
+    { value: "book", label: t("media_type.book"), icon: Book },
+  ] as const;
+
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ExternalMediaResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +106,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
       ) {
         showError(
           "API Indisponível",
-          `Busca para ${mediaType} temporariamente indisponível`,
+          t("search.searching") // Using a generic searching message or create specific error key in future
         );
         return;
       }
@@ -218,7 +224,7 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
             onFocus={() => {
               if (results.length > 0) setIsOpen(true);
             }}
-            placeholder={placeholder}
+            placeholder={displayPlaceholder}
             className="w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-sm sm:text-base bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
           />
 
@@ -249,8 +255,8 @@ export const MediaSearchBar: React.FC<MediaSearchBarProps> = ({
             ) : results.length === 0 ? (
               <div className="p-4 text-slate-400 text-center">
                 {query.length < 2
-                  ? "Digite pelo menos 2 caracteres"
-                  : "Nenhum resultado encontrado"}
+                  ? t("tips.hint_use") + "..."
+                  : t("search.no_results")}
               </div>
             ) : (
               <div className="py-2">

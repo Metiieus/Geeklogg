@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useCallback } from "react";
+import React, { useState, useEffect, memo, useCallback, useMemo } from "react";
 import {
   Home,
   BookOpen,
@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { useSettings } from "../hooks/queries";
 import { ActivePage } from "../types";
+import { useI18n } from "../i18n";
 
 interface NavItem {
   id: ActivePage;
@@ -27,65 +28,66 @@ interface NavItem {
   path: string;
 }
 
-const navItems: NavItem[] = [
-  {
-    id: "dashboard",
-    icon: <Home size={20} />,
-    label: "Home",
-    gradient: "from-cyan-400 to-blue-500",
-    path: "/dashboard",
-  },
-  {
-    id: "library",
-    icon: <BookOpen size={20} />,
-    label: "Biblioteca",
-    gradient: "from-pink-400 to-purple-500",
-    path: "/library",
-  },
-  {
-    id: "reviews",
-    icon: <MessageSquare size={20} />,
-    label: "Reviews",
-    gradient: "from-purple-400 to-indigo-500",
-    path: "/reviews",
-  },
-  {
-    id: "timeline",
-    icon: <Clock size={20} />,
-    label: "Jornada",
-    gradient: "from-indigo-400 to-cyan-500",
-    path: "/timeline",
-  },
-  {
-    id: "statistics",
-    icon: <BarChart3 size={20} />,
-    label: "Estatísticas",
-    gradient: "from-cyan-400 to-pink-500",
-    path: "/statistics",
-  },
-  {
-    id: "social",
-    icon: <Users size={20} />,
-    label: "Social",
-    gradient: "from-pink-400 to-purple-500",
-    path: "/social",
-  },
-  {
-    id: "profile",
-    icon: <User size={20} />,
-    label: "Perfil",
-    gradient: "from-cyan-400 to-pink-500",
-    path: "/profile",
-  },
-];
-
 const MobileSidebar: React.FC = () => {
   const { logout, user, profile } = useAuth();
   const { data: settings } = useSettings(user?.uid);
   const { showInfo } = useToast();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+
+  const navItems: NavItem[] = useMemo(() => [
+    {
+      id: "dashboard",
+      icon: <Home size={20} />,
+      label: t("sidebar.dashboard"),
+      gradient: "from-cyan-400 to-blue-500",
+      path: "/dashboard",
+    },
+    {
+      id: "library",
+      icon: <BookOpen size={20} />,
+      label: t("sidebar.library"),
+      gradient: "from-pink-400 to-purple-500",
+      path: "/library",
+    },
+    {
+      id: "reviews",
+      icon: <MessageSquare size={20} />,
+      label: t("sidebar.reviews"),
+      gradient: "from-purple-400 to-indigo-500",
+      path: "/reviews",
+    },
+    {
+      id: "timeline",
+      icon: <Clock size={20} />,
+      label: t("sidebar.timeline"),
+      gradient: "from-indigo-400 to-cyan-500",
+      path: "/timeline",
+    },
+    {
+      id: "statistics",
+      icon: <BarChart3 size={20} />,
+      label: t("sidebar.statistics"),
+      gradient: "from-cyan-400 to-pink-500",
+      path: "/statistics",
+    },
+    {
+      id: "social",
+      icon: <Users size={20} />,
+      label: t("sidebar.social"),
+      gradient: "from-pink-400 to-purple-500",
+      path: "/social",
+    },
+    {
+      id: "profile",
+      icon: <User size={20} />,
+      label: t("header.my_profile"),
+      gradient: "from-cyan-400 to-pink-500",
+      path: "/profile",
+    },
+  ], [t]);
 
   const getActivePage = (pathname: string): string => {
     const path = pathname.split("/")[1] || "dashboard";
@@ -96,12 +98,12 @@ const MobileSidebar: React.FC = () => {
   const handleNavigation = useCallback(
     (item: NavItem) => {
       if (item.id === "social") {
-        showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+        showInfo(t("sidebar.social_coming_soon_title"), t("sidebar.social_coming_soon_message"));
         return;
       }
       navigate(item.path);
     },
-    [showInfo, navigate],
+    [showInfo, navigate, t],
   );
 
   // Close sidebar when page changes
@@ -305,10 +307,10 @@ const MobileSidebar: React.FC = () => {
                       profile?.name ||
                       user?.displayName ||
                       user?.email?.split("@")[0] ||
-                      "Usuário"}
+                      t("header.user")}
                   </p>
                   <p className="text-gray-400 text-sm truncate">
-                    {profile?.isPremium ? "Premium" : "Básico"} • {user?.email}
+                    {profile?.isPremium ? t("header.premium") : t("header.basic")} • {user?.email}
                   </p>
                 </div>
               </div>
@@ -345,8 +347,8 @@ const MobileSidebar: React.FC = () => {
                     to={item.path}
                     onClick={() => setIsOpen(false)}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${activePage === item.id
-                        ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105 shadow-lg"
-                        : "hover:bg-gray-800/50 active:scale-95"
+                      ? "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 border border-cyan-500/30 transform scale-105 shadow-lg"
+                      : "hover:bg-gray-800/50 active:scale-95"
                       }`}
                   >
                     <div
@@ -394,7 +396,7 @@ const MobileSidebar: React.FC = () => {
                   />
                 </div>
                 <span className="font-medium text-gray-300 hover:text-white transition-colors duration-300">
-                  Configurações
+                  {t("header.settings")}
                 </span>
               </button>
 
@@ -409,7 +411,7 @@ const MobileSidebar: React.FC = () => {
                   />
                 </div>
                 <span className="font-medium text-red-400 group-hover:text-red-300 transition-colors duration-300">
-                  Sair
+                  {t("header.logout")}
                 </span>
               </button>
             </div>

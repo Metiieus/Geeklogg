@@ -16,9 +16,11 @@ import { Notification } from "../types/social";
 import { useAuth } from "../context/AuthContext";
 import { formatTimeAgo } from "../utils/dateUtils";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "../i18n";
 
 export const NotificationCenter: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -126,7 +128,7 @@ export const NotificationCenter: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/20">
             <h3 className="text-white font-semibold text-sm sm:text-base">
-              Notificações
+              {t("notifications.title")}
             </h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
@@ -134,6 +136,7 @@ export const NotificationCenter: React.FC = () => {
                   onClick={handleMarkAllAsRead}
                   disabled={loading}
                   className="text-xs text-purple-400 hover:text-purple-300 disabled:opacity-50 touch-target"
+                  title={t("notifications.mark_all_read")}
                 >
                   <CheckCheck size={16} />
                 </button>
@@ -185,11 +188,10 @@ export const NotificationCenter: React.FC = () => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <p className="text-white text-xs sm:text-sm font-medium line-clamp-1">
-                              {notification.title || "Notificação"}
+                              {notification.title || t("notifications.default_type")}
                             </p>
                             <p className="text-slate-300 text-xs sm:text-sm line-clamp-2">
-                              {notification.message ||
-                                "Nova notificação recebida"}
+                              {notification.message || t("notifications.new_default")}
                             </p>
                           </div>
 
@@ -214,7 +216,7 @@ export const NotificationCenter: React.FC = () => {
                           {getNotificationIcon(notification.type || "default")}
                           <span className="text-xs text-slate-500 capitalize">
                             {notification.type?.replace("_", " ") ||
-                              "notificação"}
+                              t("notifications.default_type").toLowerCase()}
                           </span>
                         </div>
                       </div>
@@ -228,7 +230,7 @@ export const NotificationCenter: React.FC = () => {
                   className="mx-auto mb-3 sm:mb-4 text-slate-500 opacity-50"
                 />
                 <p className="text-slate-400 text-sm sm:text-base">
-                  Nenhuma notificação
+                  {t("notifications.empty")}
                 </p>
               </div>
             )}
@@ -237,7 +239,7 @@ export const NotificationCenter: React.FC = () => {
           {notifications.length > 10 && (
             <div className="p-3 text-center border-t border-white/20">
               <button className="text-purple-400 hover:text-purple-300 text-xs sm:text-sm touch-target">
-                Ver todas as notificações
+                {t("notifications.view_all")}
               </button>
             </div>
           )}

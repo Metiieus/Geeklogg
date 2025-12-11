@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { Register } from "./Register";
 import { auth, isFirebaseOffline } from "../firebase";
+import { useI18n } from "../i18n";
 
 interface LoginProps {
   onCancel?: () => void;
@@ -15,6 +16,7 @@ interface LoginProps {
 }
 
 export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
@@ -30,37 +32,37 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
     switch (code) {
       case "auth/user-not-found":
-        return "Usuário não encontrado. Verifique o email ou registre-se.";
+        return t("auth.error.user_not_found");
       case "auth/wrong-password":
-        return "Senha incorreta. Tente novamente.";
+        return t("auth.error.wrong_password");
       case "auth/invalid-email":
-        return "Email inválido. Verifique o formato do email.";
+        return t("auth.error.invalid_email");
       case "auth/user-disabled":
-        return "Esta conta foi desabilitada. Entre em contato com o suporte.";
+        return t("auth.error.user_disabled");
       case "auth/too-many-requests":
-        return "Muitas tentativas de login. Tente novamente mais tarde.";
+        return t("auth.error.too_many_requests");
       case "auth/network-request-failed":
-        return "Erro de conexão. Verifique sua internet.";
+        return t("auth.error.network_failed");
       case "auth/invalid-credential":
-        return "Credenciais inválidas. Verifique email e senha.";
+        return t("auth.error.invalid_credential");
       default:
-        return "Erro no sistema. Tente novamente.";
+        return t("auth.error.default");
     }
   };
 
   const handleForgotPassword = async () => {
     if (!resetEmail.trim()) {
-      showError("Email obrigatório", "Insira seu email para resetar a senha");
+      showError(t("auth.error.invalid_email"), t("auth.forgot.desc"));
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(resetEmail)) {
-      showError("Email inválido", "Insira um email válido");
+      showError(t("auth.error.invalid_email"), t("auth.error.invalid_email"));
       return;
     }
 
     if (!auth || isFirebaseOffline()) {
-      showError("Modo Offline", "Funcionalidade não disponível offline");
+      showError("Modo Offline", t("auth.error.offline"));
       return;
     }
 
@@ -69,15 +71,15 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
     try {
       await resetPassword(resetEmail);
       showSuccess(
-        "Email enviado!",
-        "Verifique sua caixa de entrada para redefinir sua senha"
+        t("auth.forgot.success_title"),
+        t("auth.forgot.success_desc")
       );
       setShowForgotPassword(false);
       setResetEmail("");
     } catch (error: any) {
       devLog.error("Erro ao resetar senha:", error);
       const errorMessage = getErrorMessage(error);
-      showError("Erro ao enviar email", errorMessage);
+      showError(t("auth.forgot.error_title"), errorMessage);
     } finally {
       setIsResettingPassword(false);
     }
@@ -89,7 +91,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
     try {
       await login(email, password);
-      showSuccess("Bem-vindo de volta!", "Login realizado com sucesso");
+      showSuccess(t("auth.login.success_title"), t("auth.login.success_msg"));
     } catch (error: any) {
       devLog.error("Erro no login:", error);
       const errorMessage = getErrorMessage(error);
@@ -131,7 +133,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                 className="absolute top-6 left-6 flex items-center space-x-2 text-slate-400 hover:text-white transition-colors"
               >
                 <ArrowLeft size={20} />
-                <span className="text-sm">Voltar</span>
+                <span className="text-sm">{t("auth.back")}</span>
               </button>
             )}
 
@@ -146,11 +148,11 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
 
             <h1 className="text-3xl font-bold mb-2">
               <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
-                Bem-vindo de Volta!
+                {t("auth.login.title")}
               </span>
             </h1>
             <p className="text-slate-400">
-              Entre para continuar sua jornada nerd
+              {t("auth.login.subtitle")}
             </p>
           </div>
 
@@ -171,7 +173,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                 >
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold text-white">
-                      Recuperar Senha
+                      {t("auth.forgot.title")}
                     </h2>
                     <button
                       onClick={() => {
@@ -185,7 +187,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                   </div>
 
                   <p className="text-slate-400">
-                    Digite seu email e enviaremos instruções para redefinir sua senha
+                    {t("auth.forgot.desc")}
                   </p>
 
                   <div className="relative">
@@ -208,7 +210,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                     isLoading={isResettingPassword}
                     className="w-full mt-4"
                   >
-                    Enviar Email
+                    {t("auth.forgot.send_btn")}
                   </Button>
                 </motion.div>
               </motion.div>
@@ -218,7 +220,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Email"
+              label={t("auth.login.email")}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -229,7 +231,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
             />
 
             <Input
-              label="Senha"
+              label={t("auth.login.password")}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -246,7 +248,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
                 onClick={() => setShowForgotPassword(true)}
                 className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
               >
-                Esqueceu a senha?
+                {t("auth.login.forgot_password")}
               </button>
             </div>
 
@@ -257,7 +259,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
               className="w-full"
               rightIcon={!isLoading && <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />}
             >
-              Entrar
+              {t("auth.login.submit")}
             </Button>
           </form>
 
@@ -268,7 +270,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-slate-900 text-slate-400">
-                Novo por aqui?
+                {t("auth.login.new_here")}
               </span>
             </div>
           </div>
@@ -286,25 +288,25 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
             className="w-full border-white/10 hover:border-cyan-500/50"
             leftIcon={<Shield size={20} className="text-cyan-400" />}
           >
-            Criar Conta Grátis
+            {t("auth.login.create_account")}
           </Button>
 
           {/* Security Badge */}
           <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-slate-500">
             <Shield className="w-4 h-4" />
-            <span>Seus dados estão protegidos e criptografados</span>
+            <span>{t("auth.security_badge")}</span>
           </div>
         </div>
 
         {/* Bottom Text */}
         <p className="text-center text-slate-500 text-sm mt-6">
-          Ao entrar, você concorda com nossos{" "}
+          {t("auth.login.terms_agreement")}{" "}
           <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-            Termos de Uso
+            {t("auth.terms")}
           </a>{" "}
           e{" "}
           <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-            Política de Privacidade
+            {t("auth.privacy")}
           </a>
         </p>
       </motion.div>

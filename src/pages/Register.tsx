@@ -9,6 +9,7 @@ import { useToast } from "../context/ToastContext";
 import { User, Mail, Lock, Calendar, UserPlus, ArrowLeft, Sparkles, Shield } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import { useI18n } from "../i18n";
 
 interface RegisterProps {
   onCancel: () => void;
@@ -16,6 +17,7 @@ interface RegisterProps {
 }
 
 export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     nome: "",
     apelido: "",
@@ -58,8 +60,8 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       // Validações
       if (formData.senha.length < 6) {
         showError(
-          "Senha muito curta",
-          "A senha deve ter pelo menos 6 caracteres",
+          t("auth.error.weak_password"),
+          t("auth.error.password_length"),
         );
         return;
       }
@@ -67,7 +69,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       if (!validateAge(formData.dataNascimento)) {
         showError(
           "Idade mínima",
-          "Você precisa ter pelo menos 13 anos para se registrar",
+          t("auth.error.age_verification"),
         );
         return;
       }
@@ -77,7 +79,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       if (!auth || isFirebaseOffline()) {
         showError(
           "Modo Offline",
-          "Não é possível criar conta no modo offline. Conecte-se à internet e tente novamente.",
+          t("auth.error.offline"),
         );
         return;
       }
@@ -120,22 +122,22 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
       devLog.log("✅ Conta criada com sucesso!");
       showSuccess(
-        "Conta criada!",
-        `Bem-vindo(a), ${formData.apelido}! 🎉`,
+        t("auth.register.success_title"),
+        `${t("auth.register.success_msg_prefix")}, ${formData.apelido}! 🎉`,
       );
 
 
     } catch (error: any) {
       devLog.error("❌ Erro ao criar conta:", error);
 
-      let errorMessage = "Erro ao criar conta. Tente novamente.";
+      let errorMessage = t("auth.error.default");
 
       if (error.code === "auth/email-already-in-use") {
-        errorMessage = "Este email já está em uso. Tente fazer login.";
+        errorMessage = t("auth.error.email_in_use");
       } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Email inválido. Verifique o formato.";
+        errorMessage = t("auth.error.invalid_email");
       } else if (error.code === "auth/weak-password") {
-        errorMessage = "Senha muito fraca. Use pelo menos 6 caracteres.";
+        errorMessage = t("auth.error.weak_password");
       }
 
       showError("Erro no cadastro", errorMessage);
@@ -171,7 +173,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
               className="absolute top-6 left-6 flex items-center space-x-2 text-slate-400 hover:text-white transition-colors"
             >
               <ArrowLeft size={20} />
-              <span className="text-sm">Voltar</span>
+              <span className="text-sm">{t("auth.back")}</span>
             </button>
 
             <motion.div
@@ -185,18 +187,18 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
             <h1 className="text-3xl font-bold mb-2">
               <span className="bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
-                Crie Sua Conta
+                {t("auth.register.title")}
               </span>
             </h1>
             <p className="text-slate-400">
-              Junte-se à comunidade nerd
+              {t("auth.register.subtitle")}
             </p>
           </div>
 
           {/* Register Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Nome Completo"
+              label={t("auth.register.fullname")}
               name="nome"
               value={formData.nome}
               onChange={handleInputChange}
@@ -207,7 +209,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             />
 
             <Input
-              label="Apelido"
+              label={t("auth.register.nickname")}
               name="apelido"
               value={formData.apelido}
               onChange={handleInputChange}
@@ -218,7 +220,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             />
 
             <Input
-              label="Data de Nascimento"
+              label={t("auth.register.birthdate")}
               type="date"
               name="dataNascimento"
               value={formData.dataNascimento}
@@ -226,12 +228,12 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
               required
               max={new Date().toISOString().split("T")[0]}
               leftIcon={<Calendar size={20} className="text-pink-400" />}
-              helperText="Você deve ter pelo menos 13 anos"
+              helperText={t("auth.register.birthdate_helper")}
               containerClassName="text-left"
             />
 
             <Input
-              label="Email"
+              label={t("auth.login.email")}
               type="email"
               name="email"
               value={formData.email}
@@ -243,7 +245,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             />
 
             <Input
-              label="Senha"
+              label={t("auth.login.password")}
               type="password"
               name="senha"
               value={formData.senha}
@@ -252,7 +254,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
               required
               minLength={6}
               leftIcon={<Lock size={20} className="text-pink-400" />}
-              helperText="Mínimo de 6 caracteres"
+              helperText={t("auth.error.password_length")}
               containerClassName="text-left"
             />
 
@@ -263,7 +265,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
               className="w-full"
               rightIcon={!isLoading && <UserPlus size={20} className="group-hover:translate-x-1 transition-transform" />}
             >
-              Criar Conta
+              {t("auth.register.submit")}
             </Button>
           </form>
 
@@ -274,7 +276,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-slate-900 text-slate-400">
-                Já tem uma conta?
+                {t("auth.register.already_account")}
               </span>
             </div>
           </div>
@@ -286,25 +288,25 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
             className="w-full border-white/10 hover:border-cyan-500/50"
             leftIcon={<Shield size={20} className="text-cyan-400" />}
           >
-            Fazer Login
+            {t("auth.register.login_btn")}
           </Button>
 
           {/* Security Badge */}
           <div className="mt-6 flex items-center justify-center space-x-2 text-xs text-slate-500">
             <Shield className="w-4 h-4" />
-            <span>Seus dados estão protegidos e criptografados</span>
+            <span>{t("auth.security_badge")}</span>
           </div>
         </div>
 
         {/* Bottom Text */}
         <p className="text-center text-slate-500 text-sm mt-6">
-          Ao criar uma conta, você concorda com nossos{" "}
+          {t("auth.register.terms_agreement")}{" "}
           <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-            Termos de Uso
+            {t("auth.terms")}
           </a>{" "}
           e{" "}
           <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-            Política de Privacidade
+            {t("auth.privacy")}
           </a>
         </p>
       </motion.div>

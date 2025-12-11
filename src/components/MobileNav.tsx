@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Home,
   BookOpen,
@@ -12,6 +12,7 @@ import {
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
 import { ActivePage } from "../types";
+import { useI18n } from "../i18n";
 
 interface NavItem {
   id: ActivePage;
@@ -21,48 +22,49 @@ interface NavItem {
   path: string;
 }
 
-const navItems: NavItem[] = [
-  {
-    id: "dashboard",
-    icon: <Home size={20} />,
-    label: "Home",
-    gradient: "from-cyan-400 to-blue-500",
-    path: "/dashboard",
-  },
-  {
-    id: "reviews",
-    icon: <MessageSquare size={20} />,
-    label: "Reviews",
-    gradient: "from-purple-400 to-indigo-500",
-    path: "/reviews",
-  },
-  {
-    id: "timeline",
-    icon: <Clock size={20} />,
-    label: "Jornada",
-    gradient: "from-indigo-400 to-cyan-500",
-    path: "/timeline",
-  },
-  {
-    id: "social",
-    icon: <Users size={20} />,
-    label: "Social",
-    gradient: "from-pink-400 to-purple-500",
-    path: "/social",
-  },
-  {
-    id: "profile",
-    icon: <User size={20} />,
-    label: "Perfil",
-    gradient: "from-cyan-400 to-pink-500",
-    path: "/profile",
-  },
-];
-
 export const MobileNav: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showInfo } = useToast();
+  const { t } = useI18n();
+
+  const navItems: NavItem[] = useMemo(() => [
+    {
+      id: "dashboard",
+      icon: <Home size={20} />,
+      label: t("sidebar.dashboard"),
+      gradient: "from-cyan-400 to-blue-500",
+      path: "/dashboard",
+    },
+    {
+      id: "reviews",
+      icon: <MessageSquare size={20} />,
+      label: t("sidebar.reviews"),
+      gradient: "from-purple-400 to-indigo-500",
+      path: "/reviews",
+    },
+    {
+      id: "timeline",
+      icon: <Clock size={20} />,
+      label: t("sidebar.timeline"),
+      gradient: "from-indigo-400 to-cyan-500",
+      path: "/timeline",
+    },
+    {
+      id: "social",
+      icon: <Users size={20} />,
+      label: t("sidebar.social"),
+      gradient: "from-pink-400 to-purple-500",
+      path: "/social",
+    },
+    {
+      id: "profile",
+      icon: <User size={20} />,
+      label: t("header.my_profile"),
+      gradient: "from-cyan-400 to-pink-500",
+      path: "/profile",
+    },
+  ], [t]);
 
   const getActivePage = (pathname: string): string => {
     const path = pathname.split("/")[1] || "dashboard";
@@ -72,7 +74,7 @@ export const MobileNav: React.FC = () => {
 
   const handleNavigation = (item: NavItem) => {
     if (item.id === "social") {
-      showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+      showInfo(t("sidebar.social_coming_soon_title"), t("sidebar.social_coming_soon_message"));
       return;
     }
     navigate(item.path);
@@ -116,8 +118,8 @@ export const MobileNav: React.FC = () => {
               >
                 <div
                   className={`relative p-1.5 rounded-lg transition-all duration-300 ${activePage === item.id
-                      ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
-                      : ""
+                    ? `bg-gradient-to-r ${item.gradient} shadow-lg shadow-cyan-500/25`
+                    : ""
                     }`}
                 >
                   <div

@@ -12,6 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useSettings } from "../hooks/queries";
+import { useI18n } from "../i18n";
 
 interface DesktopHeaderProps {
   pageName: string;
@@ -22,6 +23,7 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
   ({ pageName, pageIcon }) => {
     const { user, profile, logout } = useAuth();
     const navigate = useNavigate();
+    const { t } = useI18n();
     const { data: settings } = useSettings(user?.uid);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -72,13 +74,14 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
         profile?.displayName ||
         user?.displayName ||
         user?.email?.split("@")[0] ||
-        "Usuário",
+        t("header.user"),
       [
         settings?.name,
         profile?.name,
         profile?.displayName,
         user?.displayName,
         user?.email,
+        t
       ],
     );
 
@@ -187,7 +190,7 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
                         </p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-slate-400">
-                            {profile?.isPremium ? "Premium" : "Básico"}
+                            {profile?.isPremium ? t("header.premium") : t("header.basic")}
                           </span>
                           {profile?.isPremium && (
                             <Crown size={12} className="text-yellow-400" />
@@ -203,7 +206,7 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
                       className="w-full flex items-center gap-3 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors"
                     >
                       <User size={16} />
-                      <span className="text-sm">Meu Perfil</span>
+                      <span className="text-sm">{t("header.my_profile")}</span>
                     </button>
 
                     <button
@@ -211,7 +214,7 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
                       className="w-full flex items-center gap-3 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors"
                     >
                       <Settings size={16} />
-                      <span className="text-sm">Configurações</span>
+                      <span className="text-sm">{t("header.settings")}</span>
                     </button>
 
                     <div className="border-t border-white/10 my-2"></div>
@@ -221,7 +224,7 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = memo(
                       className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
                     >
                       <LogOut size={16} />
-                      <span className="text-sm">Sair</span>
+                      <span className="text-sm">{t("header.logout")}</span>
                     </button>
                   </div>
                 </div>

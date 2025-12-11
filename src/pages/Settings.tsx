@@ -20,6 +20,7 @@ import {
 import { UserSettings } from "../types";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
+import { useI18n } from "../i18n";
 
 // Services for deletion
 import { getMedias, deleteMedia } from "../services/mediaService";
@@ -35,6 +36,7 @@ const defaultSettings: UserSettings = {
 
 const Settings: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
 
@@ -69,9 +71,9 @@ const Settings: React.FC = () => {
         userId: user.uid,
         settings: localSettings,
       });
-      showSuccess("Configurações salvas!", "Suas preferências foram atualizadas com sucesso.");
+      showSuccess(t("settings.toast.saved"), t("settings.toast.saved_desc"));
     } catch (error) {
-      showError("Erro ao salvar", "Não foi possível salvar suas configurações. Tente novamente.");
+      showError(t("settings.toast.error"), t("settings.toast.error_desc"));
     }
   };
 
@@ -96,7 +98,7 @@ const Settings: React.FC = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showSuccess("Backup exportado!", "O download do seu backup deve começar em instantes.");
+    showSuccess(t("settings.toast.exported"), t("settings.toast.backup_started"));
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,12 +111,12 @@ const Settings: React.FC = () => {
         const data = JSON.parse(e.target?.result as string);
         if (data.settings) {
           setLocalSettings(prev => ({ ...prev, ...data.settings }));
-          showSuccess("Importação realizada", "Configurações carregadas. Clique em Salvar para persistir.");
+          showSuccess(t("settings.toast.imported"), t("settings.toast.config_loaded"));
         } else {
-          showError("Arquivo inválido", "O arquivo selecionado não parece ser um backup válido.");
+          showError(t("settings.toast.invalid_file"), t("settings.toast.invalid_file_desc"));
         }
       } catch (error) {
-        showError("Erro na importação", "Falha ao ler o arquivo de backup.");
+        showError(t("settings.toast.import_error"), t("settings.toast.import_error_desc"));
       }
     };
     reader.readAsText(file);
@@ -123,15 +125,16 @@ const Settings: React.FC = () => {
   const handleDeleteAllData = async () => {
     if (!user?.uid) return;
 
-    const confirmMessage = `🚨 ATENÇÃO! 🚨\n\nIsso apagará PERMANENTEMENTE:\n• ${mediaItems.length} Mídias\n• ${reviews.length} Resenhas\n• ${milestones.length} Marcos\n\nEssa ação é IRREVERSÍVEL!`;
+    const confirmMessage = `🚨 ${t("settings.danger.confirm_question")} 🚨\n\n${t("settings.danger.desc")}`;
 
     if (!confirm(confirmMessage)) return;
 
-    const finalConfirm = `Digite "APAGAR TUDO" para confirmar a exclusão:`;
+    const keyword = t("settings.danger.confirm_delete_keyword");
+    const finalConfirm = t("settings.danger.confirm_delete_instruction", { keyword });
     const userInput = prompt(finalConfirm);
 
-    if (userInput !== "APAGAR TUDO") {
-      alert("Ação cancelada. Seus dados estão seguros.");
+    if (userInput !== keyword) {
+      alert(t("settings.danger.action_cancelled"));
       return;
     }
 
@@ -162,13 +165,13 @@ const Settings: React.FC = () => {
         settings: defaultSettings,
       });
 
-      showSuccess("Dados excluídos", "Sua conta foi resetada com sucesso.");
+      showSuccess(t("settings.toast.data_wiped"), t("settings.toast.data_wiped_desc"));
       // Reload to refresh all queries / disconnect valid states
       window.location.reload();
 
     } catch (error) {
       console.error("Critical error wiping data", error);
-      showError("Erro Crítico", "Falha ao apagar alguns dados. Tente novamente.");
+      showError(t("settings.toast.critical_error"), t("settings.toast.critical_error_desc"));
       setIsDeleting(false);
     }
   };
@@ -177,17 +180,17 @@ const Settings: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Configurações</h1>
-        <p className="text-slate-400">Personalize sua experiência no NerdLog</p>
+        <h1 className="text-3xl font-bold text-white mb-2">{t("settings.title")}</h1>
+        <p className="text-slate-400">{t("settings.subtitle")}</p>
       </div>
 
       {/* Data Management */}
       <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-        <h2 className="text-xl font-semibold text-white mb-6">Configurações</h2>
+        <h2 className="text-xl font-semibold text-white mb-6">{t("settings.title")}</h2>
 
         <div className="mb-6">
           <label className="block text-sm font-medium text-slate-300 mb-2">
-            Ordenação Padrão da Biblioteca
+            {t("settings.sort_label")}
           </label>
           <select
             value={localSettings.defaultLibrarySort}
@@ -199,10 +202,10 @@ const Settings: React.FC = () => {
             }
             className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <option value="updatedAt">Recém Atualizados</option>
-            <option value="title">Título A-Z</option>
-            <option value="rating">Melhor Avaliados</option>
-            <option value="hoursSpent">Mais Horas</option>
+            <option value="updatedAt">{t("settings.sort.updated")}</option>
+            <option value="title">{t("settings.sort.az")}</option>
+            <option value="rating">{t("settings.sort.rating")}</option>
+            <option value="hoursSpent">{t("settings.sort.hours")}</option>
           </select>
         </div>
 
@@ -211,16 +214,16 @@ const Settings: React.FC = () => {
           <div className="p-4 bg-slate-800/30 rounded-lg">
             <h3 className="font-medium text-white mb-2 flex items-center gap-2">
               <Download className="text-green-400" size={18} />
-              Exportar Dados
+              {t("settings.export.title")}
             </h3>
             <p className="text-slate-400 text-sm mb-4">
-              Baixe um backup de todos os seus dados
+              {t("settings.export.desc")}
             </p>
             <button
               onClick={handleExport}
               className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Exportar Backup
+              {t("settings.export.button")}
             </button>
           </div>
 
@@ -228,13 +231,13 @@ const Settings: React.FC = () => {
           <div className="p-4 bg-slate-800/30 rounded-lg">
             <h3 className="font-medium text-white mb-2 flex items-center gap-2">
               <Upload className="text-blue-400" size={18} />
-              Importar Dados
+              {t("settings.import.title")}
             </h3>
             <p className="text-slate-400 text-sm mb-4">
-              Restaurar de um arquivo de backup
+              {t("settings.import.desc")}
             </p>
             <label className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer text-center">
-              Selecionar Arquivo de Backup
+              {t("settings.import.button")}
               <input
                 type="file"
                 accept=".json"
@@ -249,23 +252,22 @@ const Settings: React.FC = () => {
         <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
           <h3 className="font-medium text-red-400 mb-2 flex items-center gap-2">
             <Trash2 size={18} />
-            Zona de Perigo
+            {t("settings.danger.title")}
           </h3>
           <p className="text-slate-300 text-sm mb-4">
-            Isso irá excluir permanentemente todos os seus dados incluindo itens
-            de mídia, resenhas e marcos.
+            {t("settings.danger.desc")}
           </p>
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Excluir Todos os Dados
+              {t("settings.danger.delete_all")}
             </button>
           ) : (
             <div className="space-y-2">
               <p className="text-red-400 text-sm font-medium">
-                Tem certeza absoluta?
+                {t("settings.danger.confirm_question")}
               </p>
               <div className="flex gap-2">
                 <button
@@ -273,14 +275,14 @@ const Settings: React.FC = () => {
                   disabled={isDeleting}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-wait"
                 >
-                  {isDeleting ? "Excluindo..." : "Sim, Excluir Tudo"}
+                  {isDeleting ? "Excluindo..." : t("settings.danger.confirm_yes")}
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
                   disabled={isDeleting}
                   className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
-                  Cancelar
+                  {t("actions.cancel")}
                 </button>
               </div>
             </div>
@@ -292,7 +294,7 @@ const Settings: React.FC = () => {
       <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
         <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
           <Shield className="text-blue-400" size={20} />
-          Legal e Privacidade
+          {t("settings.legal.title")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -300,16 +302,16 @@ const Settings: React.FC = () => {
           <div className="p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
             <h3 className="font-medium text-white mb-2 flex items-center gap-2">
               <FileText className="text-blue-400" size={18} />
-              Política de Privacidade
+              {t("settings.legal.privacy")}
             </h3>
             <p className="text-slate-400 text-sm mb-4">
-              Saiba como coletamos, usamos e protegemos seus dados
+              {t("settings.legal.privacy_desc")}
             </p>
             <button
               onClick={() => navigate("/privacy-policy")}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Ver Política de Privacidade
+              {t("settings.legal.privacy_button")}
             </button>
           </div>
 
@@ -317,26 +319,23 @@ const Settings: React.FC = () => {
           <div className="p-4 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors">
             <h3 className="font-medium text-white mb-2 flex items-center gap-2">
               <UserX className="text-red-400" size={18} />
-              Exclusão de Conta
+              {t("settings.legal.delete_account")}
             </h3>
             <p className="text-slate-400 text-sm mb-4">
-              Excluir permanentemente sua conta e todos os dados
+              {t("settings.legal.delete_account_desc")}
             </p>
             <button
               onClick={() => navigate("/account-deletion")}
               className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Gerenciar Exclusão de Conta
+              {t("settings.legal.delete_account_button")}
             </button>
           </div>
         </div>
 
         <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
           <p className="text-blue-300 text-sm">
-            <strong>Seus Direitos:</strong> Você tem direito ao acesso,
-            retificação, exclusão e portabilidade dos seus dados, conforme a Lei
-            Geral de Proteção de Dados (LGPD). Para exercer esses direitos, use
-            as opções acima ou entre em contato conosco.
+            <strong>{t("settings.legal.rights")}</strong>
           </p>
         </div>
       </div>
@@ -348,7 +347,7 @@ const Settings: React.FC = () => {
           className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center gap-2"
         >
           <Save size={18} />
-          Salvar Configurações
+          {t("actions.save")}
         </button>
       </div>
     </div>

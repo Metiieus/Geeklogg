@@ -4,12 +4,14 @@ import { motion } from "framer-motion";
 import { useAddMedia } from "../../hooks/queries";
 import { useToast } from "../../context/ToastContext";
 import { MediaType } from "../../types";
+import { useI18n } from "../../i18n";
 
 interface ManualAddModalProps {
   onClose: () => void;
 }
 
 export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     title: "",
     type: "book",
@@ -30,11 +32,11 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
   const [lastError, setLastError] = useState<string | null>(null);
 
   const mediaTypes = [
-    { id: "book", label: "Livro", icon: BookOpen },
-    { id: "movie", label: "Filme", icon: Film },
-    { id: "game", label: "Jogo", icon: Gamepad2 },
-    { id: "tv", label: "Série", icon: Tv },
-    { id: "anime", label: "Anime", icon: Tv },
+    { id: "book", label: t("media_type.book"), icon: BookOpen },
+    { id: "movie", label: t("media_type.movie"), icon: Film },
+    { id: "game", label: t("media_type.game"), icon: Gamepad2 },
+    { id: "tv", label: t("media_type.tv"), icon: Tv },
+    { id: "anime", label: t("media_type.anime"), icon: Tv },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,8 +50,8 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
         .map((t) => t.trim().toLowerCase())
         .filter((t) => t);
       if (rawTags.length === 0) {
-        showError("Erro", "Tags obrigatórias. Adicione pelo menos uma tag (ex.: game, filme, serie, livro, anime)");
-        setLastError("Tags obrigatórias.");
+        showError(t("modals.manual_add.title_field"), t("modals.manual_add.tags_helper"));
+        setLastError(t("modals.manual_add.tags_helper"));
         setIsSubmitting(false);
         return;
       }
@@ -92,7 +94,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
         tags,
       });
 
-      showSuccess("Sucesso", "Mídia adicionada com sucesso!");
+      showSuccess("Sucesso", t("modals.toast.added_success") || "Mídia adicionada com sucesso!");
       onClose();
     } catch (error: any) {
       console.error("Erro ao adicionar mídia:", error);
@@ -111,14 +113,14 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
   const getCreatorLabel = () => {
     switch (formData.type) {
       case "book":
-        return "Autor";
+        return t("modals.manual_add.creator.author");
       case "movie":
       case "tv":
-        return "Diretor";
+        return t("modals.manual_add.creator.director");
       case "game":
-        return "Desenvolvedor";
+        return t("modals.manual_add.creator.developer");
       default:
-        return "Criador";
+        return t("modals.manual_add.creator.creator");
     }
   };
 
@@ -178,9 +180,9 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   <Plus className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">Adicionar Manualmente</h2>
+                  <h2 className="text-2xl font-bold text-white">{t("modals.manual_add.title")}</h2>
                   <p className="text-slate-400 text-sm mt-1">
-                    Preencha os detalhes manualmente
+                    {t("modals.manual_add.subtitle")}
                   </p>
                 </div>
               </div>
@@ -201,7 +203,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Media Type Selection */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-3">
-                  Tipo de Mídia
+                  {t("modals.manual_add.media_type")}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {mediaTypes.map((type) => {
@@ -229,14 +231,14 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Title */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Título <span className="text-red-400">*</span>
+                  {t("modals.manual_add.title_field")} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  placeholder="Digite o título"
+                  placeholder={t("modals.manual_add.title_field")}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                 />
               </div>
@@ -244,23 +246,23 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Tags (required) */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Tags <span className="text-red-400">*</span>
+                  {t("modals.manual_add.tags_field")} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.tags}
                   onChange={(e) => handleChange("tags", e.target.value)}
-                  placeholder="game, rpg, aventura (separado por vírgula)"
+                  placeholder={t("modals.manual_add.tags_placeholder")}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                 />
-                <p className="text-xs text-slate-400 mt-1">Inclua a tag da categoria (ex.: game, filme, serie, livro, anime).</p>
+                <p className="text-xs text-slate-400 mt-1">{t("modals.manual_add.tags_helper")}</p>
               </div>
 
               {/* Cover Image URL */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  URL da Capa
+                  {t("modals.manual_add.cover_url")}
                 </label>
                 <div className="relative">
                   <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -268,7 +270,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                     type="url"
                     value={formData.cover}
                     onChange={(e) => handleChange("cover", e.target.value)}
-                    placeholder="https://exemplo.com/imagem.jpg"
+                    placeholder={t("modals.manual_add.cover_placeholder")}
                     className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -276,7 +278,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   <div className="mt-3">
                     <img
                       src={formData.cover}
-                      alt="Pré-visualização"
+                      alt={t("modals.manual_add.preview")}
                       className="w-32 h-48 object-cover rounded-xl border border-white/10"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
@@ -297,7 +299,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                     type="text"
                     value={getCreatorValue()}
                     onChange={(e) => setCreatorValue(e.target.value)}
-                    placeholder={`Digite o ${getCreatorLabel().toLowerCase()}`}
+                    placeholder={`${t("actions.add")} ${getCreatorLabel().toLowerCase()}`}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -305,7 +307,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 {/* Year */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">
-                    Ano
+                    {t("modals.manual_add.year")}
                   </label>
                   <input
                     type="number"
@@ -324,13 +326,13 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 {/* Genre */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">
-                    Gênero
+                    {t("modals.manual_add.genre")}
                   </label>
                   <input
                     type="text"
                     value={formData.genre}
                     onChange={(e) => handleChange("genre", e.target.value)}
-                    placeholder="Ação, Drama, etc."
+                    placeholder={t("modals.manual_add.genre_placeholder")}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
@@ -338,7 +340,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                 {/* Rating */}
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">
-                    Avaliação (0-10)
+                    {t("modals.manual_add.rating")}
                   </label>
                   <input
                     type="number"
@@ -356,12 +358,12 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
               {/* Notes */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Notas / Descrição
+                  {t("modals.manual_add.notes")}
                 </label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => handleChange("notes", e.target.value)}
-                  placeholder="Adicione seus pensamentos, notas ou descrição..."
+                  placeholder={t("modals.manual_add.notes_placeholder")}
                   rows={4}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 focus:bg-white/10 transition-all resize-none"
                 />
@@ -377,7 +379,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   disabled={isSubmitting}
                   className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition-all disabled:opacity-50"
                 >
-                  Cancelar
+                  {t("actions.cancel")}
                 </motion.button>
                 <motion.button
                   type="submit"
@@ -386,7 +388,7 @@ export const ManualAddModal: React.FC<ManualAddModalProps> = ({ onClose }) => {
                   disabled={isSubmitting}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl text-white font-medium hover:shadow-lg hover:shadow-violet-500/25 transition-all disabled:opacity-50"
                 >
-                  {isSubmitting ? "Adicionando..." : "Adicionar à Biblioteca"}
+                  {isSubmitting ? t("modals.manual_add.submitting") : t("modals.manual_add.submit_btn")}
                 </motion.button>
               </div>
             </div>

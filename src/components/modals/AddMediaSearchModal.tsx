@@ -6,6 +6,8 @@ import { MediaType } from "../../types";
 import { ExternalMediaResult } from "../../services/externalMediaService";
 import { ManualAddModal } from "../../pages/Library/ManualAddModal";
 
+import { useI18n } from "../../i18n";
+
 interface AddMediaSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,6 +19,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
   onClose,
   onResultSelect,
 }) => {
+  const { t } = useI18n();
   const [selectedType, setSelectedType] = useState<MediaType>("book");
   const [showManualAdd, setShowManualAdd] = useState(false);
 
@@ -35,10 +38,10 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
   };
 
   const mediaTypes: Array<{ id: MediaType; label: string; icon: React.ElementType }> = [
-    { id: "book", label: "Livros", icon: BookOpen },
-    { id: "movie", label: "Filmes", icon: Film },
-    { id: "game", label: "Jogos", icon: Gamepad2 },
-    { id: "tv", label: "Séries", icon: Tv },
+    { id: "book", label: t("media_type.book"), icon: BookOpen },
+    { id: "movie", label: t("media_type.movie"), icon: Film },
+    { id: "game", label: t("media_type.game"), icon: Gamepad2 },
+    { id: "tv", label: t("media_type.tv"), icon: Tv },
   ];
 
   return (
@@ -74,9 +77,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           <Search className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <h2 className="text-2xl font-bold text-white">Adicionar Mídia</h2>
+                          <h2 className="text-2xl font-bold text-white">{t("modals.add.title")}</h2>
                           <p className="text-slate-400 text-sm mt-1">
-                            Busque em bases de dados online ou adicione manualmente
+                            {t("modals.add.subtitle")}
                           </p>
                         </div>
                       </div>
@@ -122,7 +125,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                         className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10 transition-all text-sm font-medium"
                       >
                         <Plus className="w-4 h-4" />
-                        <span>Adicionar Manualmente</span>
+                        <span>{t("modals.add.manual")}</span>
                       </motion.button>
                     </div>
                   </div>
@@ -141,10 +144,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           <Sparkles className="w-5 h-5 text-violet-400" />
                         </div>
                         <div>
-                          <h3 className="text-white font-semibold mb-1">Busca Inteligente</h3>
+                          <h3 className="text-white font-semibold mb-1">{t("modals.add.smart_search")}</h3>
                           <p className="text-slate-400 text-sm">
-                            Busque em múltiplas bases de dados incluindo Google Books, TMDb e RAWG.
-                            Encontraremos as melhores correspondências com capas, descrições e metadados.
+                            {t("modals.add.smart_search_desc")}
                           </p>
                         </div>
                       </div>
@@ -155,16 +157,7 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           selectedType={selectedType}
                           onTypeChange={setSelectedType}
                           onResultSelect={handleResultSelect}
-                          placeholder={`Buscar ${selectedType === "book"
-                            ? "livros por título ou autor"
-                            : selectedType === "movie"
-                              ? "filmes por título"
-                              : selectedType === "game"
-                                ? "jogos por título"
-                                : selectedType === "tv"
-                                  ? "séries por título"
-                                  : "mídias"
-                            }...`}
+                        // Uses MediaSearchBar's internal default or passed via prop if needed
                         />
                       </div>
 
@@ -174,9 +167,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center mb-3">
                             <Search className="w-4 h-4 text-violet-400" />
                           </div>
-                          <h4 className="text-white font-semibold text-sm mb-1">1. Buscar</h4>
+                          <h4 className="text-white font-semibold text-sm mb-1">{t("modals.add.step1")}</h4>
                           <p className="text-slate-400 text-xs">
-                            Digite o nome do que você procura
+                            {t("modals.add.step1_desc")}
                           </p>
                         </div>
 
@@ -184,9 +177,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-3">
                             <Sparkles className="w-4 h-4 text-cyan-400" />
                           </div>
-                          <h4 className="text-white font-semibold text-sm mb-1">2. Selecionar</h4>
+                          <h4 className="text-white font-semibold text-sm mb-1">{t("modals.add.step2")}</h4>
                           <p className="text-slate-400 text-xs">
-                            Escolha entre os resultados encontrados
+                            {t("modals.add.step2_desc")}
                           </p>
                         </div>
 
@@ -194,9 +187,9 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
                           <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center mb-3">
                             <Plus className="w-4 h-4 text-green-400" />
                           </div>
-                          <h4 className="text-white font-semibold text-sm mb-1">3. Adicionar</h4>
+                          <h4 className="text-white font-semibold text-sm mb-1">{t("modals.add.step3")}</h4>
                           <p className="text-slate-400 text-xs">
-                            É adicionado automaticamente à sua biblioteca
+                            {t("modals.add.step3_desc")}
                           </p>
                         </div>
                       </div>
@@ -211,5 +204,4 @@ export const AddMediaSearchModal: React.FC<AddMediaSearchModalProps> = ({
     </AnimatePresence>
   );
 };
-
 export default AddMediaSearchModal;

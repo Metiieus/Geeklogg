@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Save, Upload } from "lucide-react";
 import { MediaItem, MediaType, Status } from "../../types";
-import { updateMedia } from "../../services/mediaService";
+import { useI18n } from "../../i18n";
 
 interface EditMediaModalProps {
   isOpen: boolean;
@@ -10,21 +10,13 @@ interface EditMediaModalProps {
   onSave: (id: string, updates: Partial<MediaItem>) => void;
 }
 
-const mediaTypeLabels = {
-  game: "Jogos",
-  anime: "Anime",
-  tv: "Séries",
-  book: "Livros",
-  movie: "Filmes",
-  dorama: "Doramas",
-};
-
 export const EditMediaModal: React.FC<EditMediaModalProps> = ({
   isOpen,
   item,
   onClose,
   onSave,
 }) => {
+  const { t } = useI18n();
   if (!isOpen) return null;
   const [formData, setFormData] = useState({
     title: item.title,
@@ -43,6 +35,22 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
     coverFile: undefined as File | undefined,
     description: item.description || "",
   });
+
+  const mediaTypeLabels = {
+    game: t("media_type.game"),
+    anime: t("media_type.anime"),
+    tv: t("media_type.tv"),
+    book: t("media_type.book"),
+    movie: t("media_type.movie"),
+    dorama: t("media_type.dorama"), // Ensure this key exists or fallback
+  };
+
+  const statusLabels = {
+    planned: t("status.planned"),
+    "in-progress": t("status.in_progress"),
+    completed: t("status.completed"),
+    dropped: t("status.dropped"),
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +134,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/20 flex-shrink-0">
           <h2 className="text-xl sm:text-2xl font-bold text-white">
-            Editar Mídia
+            {t("modals.edit.title")}
           </h2>
           <button
             onClick={onClose}
@@ -146,7 +154,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Título *
+                  {t("modals.manual_add.title_field")} *
                 </label>
                 <input
                   type="text"
@@ -154,13 +162,13 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
                   value={formData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Digite o título da mídia"
+                  placeholder={t("modals.manual_add.title_field")}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Tipo *
+                  {t("modals.manual_add.media_type")} *
                 </label>
                 <select
                   value={formData.type}
@@ -179,23 +187,23 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Status *
+                  {t("modals.edit.status")} *
                 </label>
                 <select
                   value={formData.status}
                   onChange={(e) => handleChange("status", e.target.value)}
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
-                  <option value="planned">Planejado</option>
-                  <option value="in-progress">Em Progresso</option>
-                  <option value="completed">Concluído</option>
-                  <option value="dropped">Abandonado</option>
+                  <option value="planned">{statusLabels["planned"]}</option>
+                  <option value="in-progress">{statusLabels["in-progress"]}</option>
+                  <option value="completed">{statusLabels["completed"]}</option>
+                  <option value="dropped">{statusLabels["dropped"]}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Plataforma
+                  {t("modals.edit.platform")}
                 </label>
                 <input
                   type="text"
@@ -211,7 +219,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Avaliação (0-10)
+                  {t("modals.manual_add.rating")}
                 </label>
                 <input
                   type="number"
@@ -227,7 +235,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Páginas Totais
+                  {t("modals.edit.total_pages")}
                 </label>
                 <input
                   type="number"
@@ -240,7 +248,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Página Atual
+                  {t("modals.edit.current_page")}
                 </label>
                 <input
                   type="number"
@@ -260,7 +268,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Data de Início
+                  {t("modals.edit.start_date")}
                 </label>
                 <input
                   type="date"
@@ -272,7 +280,7 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Data de Conclusão
+                  {t("modals.edit.end_date")}
                 </label>
                 <input
                   type="date"
@@ -286,21 +294,21 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             {/* Tags */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Tags
+                {t("modals.manual_add.tags_field")}
               </label>
               <input
                 type="text"
                 value={formData.tags}
                 onChange={(e) => handleChange("tags", e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="RPG, Fantasia, Multiplayer (separado por vírgula)"
+                placeholder={t("modals.manual_add.tags_placeholder")}
               />
             </div>
 
             {/* External Link */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Link Externo
+                {t("modals.edit.external_link")}
               </label>
               <input
                 type="url"
@@ -314,13 +322,13 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             {/* Cover Image */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Imagem de Capa
+                {t("modals.edit.cover_image")}
               </label>
               <div className="space-y-3">
                 <div className="flex items-center justify-center">
                   <label className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white cursor-pointer hover:bg-slate-700 transition-colors">
                     <Upload size={18} />
-                    Fazer Upload da Imagem
+                    {t("modals.edit.upload_image")}
                     <input
                       type="file"
                       accept="image/*"
@@ -344,14 +352,14 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Descrição
+                {t("modals.edit.description")}
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => handleChange("description", e.target.value)}
                 rows={3}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                placeholder="Breve descrição ou notas..."
+                placeholder={t("modals.manual_add.notes_placeholder")}
               />
             </div>
           </div>
@@ -364,14 +372,14 @@ export const EditMediaModal: React.FC<EditMediaModalProps> = ({
                 onClick={onClose}
                 className="w-full sm:w-auto px-6 py-3 text-slate-300 hover:text-white transition-colors order-2 sm:order-1 text-sm sm:text-base"
               >
-                Cancelar
+                {t("actions.cancel")}
               </button>
               <button
                 type="submit"
                 className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-200 flex items-center justify-center gap-2 order-1 sm:order-2 text-sm sm:text-base"
               >
                 <Save size={18} />
-                Salvar Alterações
+                {t("modals.edit.save_btn")}
               </button>
             </div>
           </div>

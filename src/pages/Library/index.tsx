@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
+import { useI18n } from "../../i18n";
 import MediaPreviewModal from "./MediaPreviewModal";
 import AddMediaSearchModal from "../../components/modals/AddMediaSearchModal";
 import { EditMediaModal } from "../../components/modals/EditMediaModal";
@@ -37,6 +38,7 @@ import { BestMediaModal } from "../../components/modals/BestMediaModal";
 import { LibrarySkeleton } from "../../components/skeletons";
 
 const ProLibrary: React.FC = () => {
+  const { t } = useI18n();
   const { user } = useAuth();
   const { data: mediaItems = [], isLoading } = useMedias(user?.uid);
   const addMediaMutation = useAddMedia();
@@ -200,11 +202,11 @@ const ProLibrary: React.FC = () => {
   };
 
   const bestPerCategory: { title: string; tag: string; icon: React.ElementType; item?: MediaItem }[] = [
-    { title: "Melhor Jogo", tag: "game", icon: Gamepad2 },
-    { title: "Melhor Filme", tag: "filme", icon: Film },
-    { title: "Melhor Série", tag: "serie", icon: Tv },
-    { title: "Melhor Livro", tag: "livro", icon: BookOpen },
-    { title: "Melhor Anime", tag: "anime", icon: Tv },
+    { title: t("library.best.game"), tag: "game", icon: Gamepad2 },
+    { title: t("library.best.movie"), tag: "filme", icon: Film },
+    { title: t("library.best.tv"), tag: "serie", icon: Tv },
+    { title: t("library.best.book"), tag: "livro", icon: BookOpen },
+    { title: t("library.best.anime"), tag: "anime", icon: Tv },
   ].map((c) => ({ ...c, item: getBestByCategoryTag(c.tag) }));
 
   const handleCardClick = (item: MediaItem) => {
@@ -401,8 +403,13 @@ const ProLibrary: React.FC = () => {
                 <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-bold text-white">Minhas Mídias</h1>
-                <p className="text-xs text-slate-400">{collection.length} itens</p>
+                <h1 className="text-lg sm:text-xl font-bold text-white">{t("library.title")}</h1>
+                <p className="text-xs text-slate-400">
+                  {t("library.stats_total_media", {
+                    count: collection.length,
+                    total: collection.length
+                  })}
+                </p>
               </div>
             </div>
 
@@ -430,7 +437,7 @@ const ProLibrary: React.FC = () => {
                 className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-xl font-medium text-xs sm:text-sm hover:shadow-lg hover:shadow-violet-500/25 transition-all disabled:opacity-50 flex-1 sm:flex-none justify-center"
               >
                 <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>{isAddingMedia ? "Adicionando..." : "Adicionar"}</span>
+                <span>{isAddingMedia ? t("actions.add_media") + "..." : t("actions.add_media")}</span>
               </motion.button>
             </div>
           </div>
@@ -438,12 +445,12 @@ const ProLibrary: React.FC = () => {
           {/* Filters */}
           <div className="flex gap-2 mt-3 sm:mt-4 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent pb-2 -mx-3 px-3 sm:mx-0 sm:px-0">
             {[
-              { id: "all", label: "Todas", icon: null },
-              { id: "books", label: "Livros", icon: BookOpen },
-              { id: "games", label: "Jogos", icon: Gamepad2 },
-              { id: "movies", label: "Filmes", icon: Film },
-              { id: "tv", label: "Séries", icon: Tv },
-              { id: "anime", label: "Animes", icon: Sparkles },
+              { id: "all", label: t("library.filter_all"), icon: null },
+              { id: "books", label: t("library.filter_books"), icon: BookOpen },
+              { id: "games", label: t("library.filter_games"), icon: Gamepad2 },
+              { id: "movies", label: t("library.filter_movies"), icon: Film },
+              { id: "tv", label: t("library.filter_tv"), icon: Tv },
+              { id: "anime", label: t("library.filter_anime"), icon: Sparkles },
             ].map((category) => {
               const Icon = category.icon;
               return (
@@ -491,20 +498,21 @@ const ProLibrary: React.FC = () => {
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/90 to-transparent" />
 
+
                   {/* Content */}
                   <div className="relative h-full flex items-center px-4 sm:px-8 lg:px-12">
                     <div className="max-w-2xl space-y-3 sm:space-y-6">
                       <div className="flex items-center gap-2 text-violet-400">
                         <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="text-xs sm:text-sm font-medium">Coleção em Destaque</span>
+                        <span className="text-xs sm:text-sm font-medium">{t("library.hero.featured_collection")}</span>
                       </div>
 
                       <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                        Continue sua jornada..
+                        {t("library.hero.title")}
                       </h2>
 
                       <p className="text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed max-w-xl hidden sm:block">
-                        Continue explorando as histórias que você ama. Não pare de explorar sua lista e mergulhe no mundo do entretenimento.
+                        {t("library.hero.description")}
                       </p>
 
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
@@ -514,7 +522,7 @@ const ProLibrary: React.FC = () => {
                           onClick={() => handleCardClick(customFeatured[0])}
                           className="px-4 sm:px-6 py-2 sm:py-3 bg-slate-900 hover:bg-slate-800 rounded-xl font-medium text-sm border border-white/10 hover:border-white/20 transition-all inline-flex items-center justify-center gap-2"
                         >
-                          Ver Mais
+                          {t("actions.view_more")}
                           <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                         </motion.button>
 
@@ -525,8 +533,8 @@ const ProLibrary: React.FC = () => {
                           className="px-4 sm:px-6 py-2 sm:py-3 bg-white/5 hover:bg-white/10 rounded-xl font-medium text-sm border border-white/10 hover:border-white/20 transition-all inline-flex items-center justify-center gap-2"
                         >
                           <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                          <span className="hidden sm:inline">Editar Destaques</span>
-                          <span className="sm:hidden">Editar</span>
+                          <span className="hidden sm:inline">{t("library.edit_featured")}</span>
+                          <span className="sm:hidden">{t("actions.edit")}</span>
                         </motion.button>
                       </div>
                     </div>
@@ -577,10 +585,10 @@ const ProLibrary: React.FC = () => {
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold text-white flex items-center gap-2">
                     <Heart className="w-6 h-6 text-pink-400 fill-pink-400" />
-                    Meus Favoritos
+                    {t("library.favorites.title")}
                   </h3>
                   <div className="text-sm text-slate-400">
-                    {favorites.length} favoritos
+                    {t("library.favorites.count", { count: favorites.length })}
                   </div>
                 </div>
 

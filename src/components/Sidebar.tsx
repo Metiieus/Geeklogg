@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { useState, useEffect } from "react";
 import {
   Home,
@@ -20,6 +20,8 @@ import { useSettings } from "../hooks/queries";
 import { ActivePage } from "../types";
 import { ConditionalPremiumBadge } from "./PremiumBadge";
 
+import { useI18n } from "../i18n";
+
 interface NavItem {
   id: ActivePage;
   icon: React.ReactNode;
@@ -28,56 +30,57 @@ interface NavItem {
   path: string;
 }
 
-const navigationItems: NavItem[] = [
-  {
-    id: "dashboard",
-    icon: <Home size={20} />,
-    label: "Dashboard",
-    gradient: "from-cyan-400 to-blue-500",
-    path: "/dashboard",
-  },
-  {
-    id: "library",
-    icon: <BookOpen size={20} />,
-    label: "Biblioteca",
-    gradient: "from-pink-400 to-purple-500",
-    path: "/library",
-  },
-  {
-    id: "reviews",
-    icon: <MessageSquare size={20} />,
-    label: "Resenhas",
-    gradient: "from-purple-400 to-indigo-500",
-    path: "/reviews",
-  },
-  {
-    id: "timeline",
-    icon: <Clock size={20} />,
-    label: "Jornada",
-    gradient: "from-indigo-400 to-cyan-500",
-    path: "/timeline",
-  },
-  {
-    id: "statistics",
-    icon: <BarChart3 size={20} />,
-    label: "Estatísticas",
-    gradient: "from-cyan-400 to-pink-500",
-    path: "/statistics",
-  },
-  {
-    id: "social",
-    icon: <Users size={20} />,
-    label: "Social",
-    gradient: "from-pink-400 to-purple-500",
-    path: "/social",
-  },
-];
-
 const Sidebar: React.FC = () => {
   const { logout, profile, user } = useAuth();
   const { data: settings } = useSettings(user?.uid);
   const { showInfo } = useToast();
+  const { t } = useI18n();
   const navigate = useNavigate();
+
+  const navigationItems: NavItem[] = useMemo(() => [
+    {
+      id: "dashboard",
+      icon: <Home size={20} />,
+      label: t("sidebar.dashboard"),
+      gradient: "from-cyan-400 to-blue-500",
+      path: "/dashboard",
+    },
+    {
+      id: "library",
+      icon: <BookOpen size={20} />,
+      label: t("sidebar.library"),
+      gradient: "from-pink-400 to-purple-500",
+      path: "/library",
+    },
+    {
+      id: "reviews",
+      icon: <MessageSquare size={20} />,
+      label: t("sidebar.reviews"),
+      gradient: "from-purple-400 to-indigo-500",
+      path: "/reviews",
+    },
+    {
+      id: "timeline",
+      icon: <Clock size={20} />,
+      label: t("sidebar.timeline"),
+      gradient: "from-indigo-400 to-cyan-500",
+      path: "/timeline",
+    },
+    {
+      id: "statistics",
+      icon: <BarChart3 size={20} />,
+      label: t("sidebar.statistics"),
+      gradient: "from-cyan-400 to-pink-500",
+      path: "/statistics",
+    },
+    {
+      id: "social",
+      icon: <Users size={20} />,
+      label: t("sidebar.social"),
+      gradient: "from-pink-400 to-purple-500",
+      path: "/social",
+    },
+  ], [t]);
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -93,12 +96,15 @@ const Sidebar: React.FC = () => {
   const handleNavigation = useCallback(
     (item: NavItem) => {
       if (item.id === "social") {
-        showInfo("Em breve", "A seção social estará disponível em breve! 🚀");
+        showInfo(
+          t("sidebar.social_coming_soon_title"),
+          t("sidebar.social_coming_soon_message")
+        );
         return;
       }
       navigate(item.path);
     },
-    [showInfo, navigate],
+    [showInfo, navigate, t],
   );
 
   return (
@@ -280,7 +286,7 @@ const Sidebar: React.FC = () => {
                     : "text-gray-200 group-hover:text-white"
                     }`}
                 >
-                  Perfil
+                  {t("header.my_profile")}
                 </span>
               )}
             </button>
@@ -319,7 +325,7 @@ const Sidebar: React.FC = () => {
                     : "text-gray-200 group-hover:text-white"
                     }`}
                 >
-                  Configurações
+                  {t("header.settings")}
                 </span>
               )}
             </button>
@@ -332,7 +338,7 @@ const Sidebar: React.FC = () => {
                     {settings?.avatar ? (
                       <img
                         src={settings.avatar}
-                        alt={settings.name || profile?.displayName || "Usuário"}
+                        alt={settings.name || profile?.displayName || t("header.user")}
                         className="w-full h-full object-cover rounded-full"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -364,10 +370,10 @@ const Sidebar: React.FC = () => {
                       {settings?.name ||
                         profile?.name ||
                         profile?.displayName ||
-                        "Usuário"}
+                        t("header.user")}
                     </p>
                     <p className="text-slate-400 text-xs truncate">
-                      {profile?.isPremium ? "Premium" : "Básico"}
+                      {profile?.isPremium ? t("header.premium") : t("header.basic")}
                     </p>
                   </div>
                 )}
@@ -386,7 +392,7 @@ const Sidebar: React.FC = () => {
               </div>
               {isExpanded && (
                 <span className="ml-3 text-sm font-medium text-gray-200 group-hover:text-red-400 whitespace-nowrap">
-                  Sair
+                  {t("header.logout")}
                 </span>
               )}
             </button>
