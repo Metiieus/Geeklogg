@@ -12,12 +12,16 @@ import { Login } from "../pages/Login";
 import { LandingPage } from "../pages/Landing";
 import { Register } from "../pages/Register";
 
-// Lazy Loaded Pages
+// Lazy Loaded Pages with preload
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const ProLibrary = React.lazy(() => import("../pages/Library"));
 const Reviews = React.lazy(() => import("../pages/Reviews"));
 const Timeline = React.lazy(() => import("../pages/Timeline"));
 const Statistics = React.lazy(() => import("../pages/Statistics"));
+
+// Preload critical routes
+const preloadDashboard = () => import("../pages/Dashboard");
+const preloadLibrary = () => import("../pages/Library");
 const SettingsComponent = React.lazy(() => import("../pages/Settings"));
 const Profile = React.lazy(() => import("../pages/Profile"));
 const AddMediaPage = React.lazy(() => import("../pages/AddMedia").then(module => ({ default: module.AddMediaPage })));
@@ -47,6 +51,14 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Preload critical routes on mount
+    React.useEffect(() => {
+        if (user) {
+            preloadDashboard();
+            preloadLibrary();
+        }
+    }, [user]);
+
     if (!user) {
         return (
             <AnimatePresence mode="wait">
@@ -61,16 +73,15 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
     }
 
     return (
-        <AnimatePresence mode="wait">
-            <Suspense fallback={
-                <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                        <p className="text-slate-300">Carregando...</p>
-                    </div>
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+                    <p className="text-slate-300">Carregando...</p>
                 </div>
-            }>
-                <Routes location={location} key={location.pathname}>
+            </div>
+        }>
+            <Routes location={location}>
                     {/* Auth Routes redirection for logged in users */}
                     <Route path="/landing" element={<Navigate to="/dashboard" />} />
                     <Route path="/login" element={<Navigate to="/dashboard" />} />
@@ -105,8 +116,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
                         <Route path="/" element={<Navigate to="/dashboard" />} />
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                     </Route>
-                </Routes>
-            </Suspense>
-        </AnimatePresence>
+            </Routes>
+        </Suspense>
     );
 };
