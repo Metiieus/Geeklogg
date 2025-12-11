@@ -92,9 +92,9 @@ const Dashboard: React.FC = () => {
   if (!user) return null;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-down">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-slide-down">
         <div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">
             {getGreeting()}, {settings?.name || "Nerd"}
@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Featured Content & Quick Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 animate-slide-in-left">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 animate-slide-in-left">
         {/* Featured Item */}
         <div className="lg:col-span-2 hover:scale-105 transition-transform duration-300">
           <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/10">
@@ -181,7 +181,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="space-y-2 sm:space-y-3 md:space-y-4 animate-slide-in-right">
+        <div className="space-y-3 animate-slide-in-right">
           <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-blue-500/20 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
             <div className="flex items-center gap-3 mb-2">
               <Clock
@@ -229,13 +229,13 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Gamification Row - Streak & Challenges */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-slide-in-right">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 animate-slide-in-right">
         <StreakCard userId={user.uid} />
         <WeeklyChallengesCard userId={user.uid} mediaItems={mediaItems} />
       </div>
 
       {/* Achievements & Goals Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-in-scale">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 animate-fade-in-scale">
         <AchievementsCard 
           userId={user.uid} 
           mediaItems={mediaItems} 
@@ -245,7 +245,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Status Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 animate-slide-up">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 animate-slide-up">
         <div className="bg-gradient-to-br from-green-500/5 to-green-600/5 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-green-500/10 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
           <p className="text-green-400 text-xs sm:text-sm font-medium">
             Concluídos
