@@ -255,7 +255,7 @@ export const ArchiviusAgent: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [mediaItems, reviews, settings, milestones, analyzeWithWorker, generateEnhancedUserContext]);
+  }, [mediaItems, reviews, settings, milestones, analyzeWithWorker]);
 
   const createMessage = useCallback((text: string, isUser: boolean): Message => {
     return {
