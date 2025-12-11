@@ -61,15 +61,15 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
     }
 
     return (
-        <Suspense fallback={
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                    <p className="text-slate-300">Carregando...</p>
+        <AnimatePresence mode="wait">
+            <Suspense fallback={
+                <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+                        <p className="text-slate-300">Carregando...</p>
+                    </div>
                 </div>
-            </div>
-        }>
-            <AnimatePresence mode="wait">
+            }>
                 <Routes location={location} key={location.pathname}>
                     {/* Auth Routes redirection for logged in users */}
                     <Route path="/landing" element={<Navigate to="/dashboard" />} />
@@ -106,7 +106,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
                         <Route path="*" element={<Navigate to="/dashboard" />} />
                     </Route>
                 </Routes>
-            </AnimatePresence>
-        </Suspense>
+            </Suspense>
+        </AnimatePresence>
     );
 };
