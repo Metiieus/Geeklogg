@@ -4,13 +4,19 @@ import {
   Star,
   TrendingUp,
   Calendar,
-  Plus,
   BookOpen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useMedias, useMilestones, useSettings } from "../hooks/queries";
 import { MediaItem, Status } from "../types";
+import { StreakCard } from "../components/StreakCard";
+import { WeeklyChallengesCard } from "../components/WeeklyChallengesCard";
+import { QuickActions } from "../components/QuickActions";
+import { ProgressChart } from "../components/ProgressChart";
+import { AchievementsCard } from "../components/AchievementsCard";
+import { GoalsCard } from "../components/GoalsCard";
+import { getStreakData } from "../services/streakService";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -83,6 +89,8 @@ const Dashboard: React.FC = () => {
   const stats = getStats();
   const statusCounts = getStatusCounts();
 
+  if (!user) return null;
+
   return (
     <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
       {/* Header */}
@@ -100,6 +108,27 @@ const Dashboard: React.FC = () => {
             {new Date().toLocaleDateString("pt-BR")}
           </p>
         </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="animate-slide-in-left">
+        <QuickActions onAddMedia={() => navigate('/library')} />
+      </div>
+
+      {/* Gamification Row - Streak & Challenges */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-slide-in-right">
+        <StreakCard userId={user.uid} />
+        <WeeklyChallengesCard userId={user.uid} mediaItems={mediaItems} />
+      </div>
+
+      {/* Achievements & Goals Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-in-scale">
+        <AchievementsCard 
+          userId={user.uid} 
+          mediaItems={mediaItems} 
+          currentStreak={getStreakData(user.uid).currentStreak}
+        />
+        <GoalsCard mediaItems={mediaItems} />
       </div>
 
       {/* Featured Content & Quick Stats */}
@@ -162,7 +191,7 @@ const Dashboard: React.FC = () => {
                   Nenhum item na sua biblioteca ainda
                 </p>
                 <button
-                  onClick={() => navigate("/add-media")}
+                  onClick={() => navigate("/library")}
                   className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-200"
                 >
                   Adicionar Primeiro Item
@@ -250,6 +279,13 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Progress Charts */}
+      {mediaItems.length > 0 && (
+        <div className="animate-fade-in">
+          <ProgressChart mediaItems={mediaItems} />
+        </div>
+      )}
 
       {/* Recent Activity */}
       <div className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/10 animate-fade-in hover:scale-105 transition-all duration-300">
