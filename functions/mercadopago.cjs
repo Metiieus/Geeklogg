@@ -9,8 +9,18 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 // Configurar Mercado Pago
+// Usar token de teste se NODE_ENV for development, senão usar produção
+const accessToken = process.env.NODE_ENV === 'development' 
+  ? process.env.MERCADOPAGO_ACCESS_TOKEN_TEST 
+  : process.env.MERCADOPAGO_ACCESS_TOKEN;
+
+if (!accessToken) {
+  console.error('❌ MERCADOPAGO_ACCESS_TOKEN não configurado!');
+  throw new Error('Mercado Pago Access Token não encontrado');
+}
+
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+  accessToken: accessToken,
 });
 
 const preferenceClient = new Preference(client);
