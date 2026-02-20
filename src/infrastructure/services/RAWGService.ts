@@ -90,8 +90,8 @@ class RAWGService {
   async searchGames(params: RAWGSearchParams): Promise<RAWGSearchResult[]> {
     try {
       const queryParams = this.buildQueryParams(params);
-      console.log("🔍 RAWG Query params:", queryParams);
-      console.log("📝 Parâmetros de busca:", params);
+      logger.log("🔍 RAWG Query params:", queryParams);
+      logger.log("📝 Parâmetros de busca:", params);
 
       const url = `${this.baseUrl}/games?${queryParams}`;
       const response = await fetch(url);
@@ -221,7 +221,7 @@ class RAWGService {
 
       return response.ok;
     } catch (error) {
-      console.warn("RAWG API not available:", error);
+      logger.warn("RAWG API not available:", error);
       return false;
     }
   }

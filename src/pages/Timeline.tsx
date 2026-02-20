@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DOMPurify from 'dompurify';
 import {
   Clock,
   Plus,
@@ -23,11 +24,18 @@ const TruncatedText: React.FC<{ text: string; maxChars: number }> = ({ text, max
     ? text.substring(0, maxChars) + '...'
     : text;
 
+  // Sanitizar HTML antes de renderizar
+  const sanitizedHtml = DOMPurify.sanitize(displayText, {
+    ALLOWED_TAGS: ['b', 'i', 'u', 'strong', 'em', 'p', 'br', 'ul', 'ol', 'li', 'a'],
+    ALLOWED_ATTR: ['href', 'target', 'rel'],
+    ALLOW_DATA_ATTR: false,
+  });
+
   return (
     <div>
       <p
         className="text-slate-300 leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base"
-        dangerouslySetInnerHTML={{ __html: displayText }}
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
       />
       {needsTruncate && (
         <button

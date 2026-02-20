@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import compression from 'compression';
 
 dotenv.config();
 
@@ -8,6 +10,30 @@ const app = express();
 const PORT = process.env.PORT || 4242;
 
 // Servidor simplificado - pagamentos agora usam link direto do MercadoPago
+
+// Middlewares de segurança
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https://*.firebaseio.com", "https://*.googleapis.com"],
+    },
+  },
+}));
+
+app.use(compression());
+
+// HTTPS redirect em produção
+app.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production') {
+    res.redirect(`https://${req.header('host')}${req.url}`);
+  } else {
+    next();
+  }
+});
 
 // Middlewares
 app.use(cors({

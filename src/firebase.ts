@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
+import { logger } from 'utils/logger';
 import { getAuth } from "firebase/auth";
+import { logger } from 'utils/logger';
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { logger } from 'utils/logger';
 import { getStorage } from "firebase/storage";
+import { logger } from 'utils/logger';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -37,29 +41,29 @@ if (firebaseConfig.apiKey && typeof window !== "undefined") {
             await enableIndexedDbPersistence(_db);
           } catch (err: any) {
             if (err && err.code === "failed-precondition") {
-              console.warn("⚠️ Persistence falhou: várias abas abertas");
+              logger.warn("⚠️ Persistence falhou: várias abas abertas");
             } else if (err && err.code === "unimplemented") {
-              console.warn("⚠️ Navegador não suporta persistence");
+              logger.warn("⚠️ Navegador não suporta persistence");
             } else {
-              console.warn("⚠️ Erro ao habilitar persistence:", err);
+              logger.warn("⚠️ Erro ao habilitar persistence:", err);
             }
           }
         })();
       } else {
-        console.info("ℹ️ IndexedDB persistence não habilitada neste ambiente (localhost ou não suportado).");
+        logger.info("ℹ️ IndexedDB persistence não habilitada neste ambiente (localhost ou não suportado).");
       }
     } catch (err) {
-      console.warn("⚠️ Erro verificando IndexedDB/persistência:", err);
+      logger.warn("⚠️ Erro verificando IndexedDB/persistência:", err);
     }
   } catch (e) {
-    console.warn("⚠️ Falha ao inicializar Firebase:", e);
+    logger.warn("⚠️ Falha ao inicializar Firebase:", e);
     app = null;
     _auth = null;
     _db = null;
     _storage = null;
   }
 } else {
-  console.warn(
+  logger.warn(
     "⚠️ Variáveis de ambiente do Firebase não configuradas ou código rodando fora do navegador. Autenticação e Firestore estarão desabilitados.",
   );
 }
@@ -90,7 +94,7 @@ export async function withRetry<T>(
   }
 }
 
-console.log(
+logger.log(
   "🔥 Firebase inicializado com Auth:",
   !!auth,
   " | Firestore conectado:",

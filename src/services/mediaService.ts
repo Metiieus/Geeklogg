@@ -1,8 +1,13 @@
 import type { MediaItem } from "../types";
+import { logger } from '../utils/logger';
 import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
+import { logger } from '../utils/logger';
 import { database } from "./database";
+import { logger } from '../utils/logger';
 import { storageClient } from "./storageClient";
+import { logger } from '../utils/logger';
 import secureLog from "../utils/secureLogger";
+import { logger } from '../utils/logger';
 
 // Interface para atualização de mídia (exceto ID, que é passado separado)
 export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {
@@ -152,7 +157,7 @@ export async function addMedia(data: AddMediaData): Promise<MediaItem> {
 export async function getMedias(userId?: string): Promise<MediaItem[]> {
   const uid = userId || getUserId();
   if (!uid) {
-    console.warn("User not authenticated, returning empty array");
+    logger.warn("User not authenticated, returning empty array");
     return [];
   }
 
@@ -163,7 +168,7 @@ export async function getMedias(userId?: string): Promise<MediaItem[]> {
         const hasValidId =
           media.id && typeof media.id === "string" && media.id.trim() !== "";
         if (!hasValidId) {
-          console.warn("Documento de mídia encontrado sem ID válido:", media);
+          logger.warn("Documento de mídia encontrado sem ID válido:", media);
         }
         return hasValidId;
       })

@@ -1,6 +1,9 @@
 import { database } from "./database";
+import { logger } from '../utils/logger';
 import { removeUndefinedFields, sanitizeStrings, getUserId } from "./utils";
+import { logger } from '../utils/logger';
 import { UserSettings } from "../types";
+import { logger } from '../utils/logger';
 
 export async function getSettings(
   userId?: string,
@@ -9,7 +12,7 @@ export async function getSettings(
     const uid = userId || getUserId();
 
     if (!uid) {
-      console.warn("User not authenticated, skipping settings fetch");
+      logger.warn("User not authenticated, skipping settings fetch");
       return null;
     }
 

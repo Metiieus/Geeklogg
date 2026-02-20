@@ -7,11 +7,11 @@ const isDev = import.meta.env.DEV;
 
 export const logger = {
   log: (...args: any[]) => {
-    if (isDev) console.log(...args);
+    if (isDev) logger.log(...args);
   },
   
   warn: (...args: any[]) => {
-    if (isDev) console.warn(...args);
+    if (isDev) logger.warn(...args);
   },
   
   error: (...args: any[]) => {
@@ -20,7 +20,7 @@ export const logger = {
   },
   
   info: (...args: any[]) => {
-    if (isDev) console.info(...args);
+    if (isDev) logger.info(...args);
   },
   
   debug: (...args: any[]) => {

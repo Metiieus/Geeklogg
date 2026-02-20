@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import DOMPurify from 'dompurify';
 import {
   Bold,
   Italic,
@@ -31,10 +32,18 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [charCount, setCharCount] = useState(0);
 
+  // Configuração de sanitização
+  const sanitizeConfig = {
+    ALLOWED_TAGS: ['b', 'i', 'u', 'strong', 'em', 'p', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3'],
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true,
+  };
+
   // Inicializar conteúdo do editor
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value;
+      const sanitizedValue = DOMPurify.sanitize(value, sanitizeConfig);
+      editorRef.current.innerHTML = sanitizedValue;
       updateCharCount();
     }
   }, [value]);
@@ -63,11 +72,28 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       // Verificar limite de caracteres
       if (maxLength && text.length > maxLength) {
         // Reverter para o conteúdo anterior
-        editorRef.current.innerHTML = value;
+        const sanitizedValue = DOMPurify.sanitize(value, sanitizeConfig);
+        editorRef.current.innerHTML = sanitizedValue;
         return;
       }
 
-      onChange(content);
+      // Sanitizar conteúdo antes de salvar
+      const sanitizedContent = DOMPurify.sanitize(content, sanitizeConfig);
+      
+      // Se o conteúdo foi alterado pela sanitização, atualizar o editor
+      if (content !== sanitizedContent) {
+        editorRef.current.innerHTML = sanitizedContent;
+        
+        // Restaurar cursor no final
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(editorRef.current);
+        range.collapse(false);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+
+      onChange(sanitizedContent);
       updateCharCount();
     }
   };
@@ -76,7 +102,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const text = e.clipboardData.getData("text/plain");
-    document.execCommand("insertText", false, text);
+    // Sanitizar antes de inserir
+    const sanitizedText = DOMPurify.sanitize(text, sanitizeConfig);
+    document.execCommand("insertHTML", false, sanitizedText);
   };
 
   // Botões da barra de ferramentas

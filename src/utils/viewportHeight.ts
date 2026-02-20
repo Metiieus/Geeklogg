@@ -38,7 +38,7 @@ export function initializeViewportHeight() {
   }
 
   isInitialized = true;
-  console.log("✅ Viewport height utility inicializado");
+  logger.log("✅ Viewport height utility inicializado");
 }
 
 /**

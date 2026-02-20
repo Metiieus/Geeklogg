@@ -1,5 +1,7 @@
 import { MediaType } from "../types";
+import { logger } from '../utils/logger';
 import {
+import { logger } from '../utils/logger';
   rawgService,
   RAWGSearchResult,
 } from "../infrastructure/services/RAWGService";
@@ -476,7 +478,7 @@ class ExternalMediaService {
       );
       results.googleBooks = booksResponse.ok;
     } catch (error) {
-      console.warn("Google Books API não disponível:", error);
+      logger.warn("Google Books API não disponível:", error);
     }
 
     try {
@@ -486,14 +488,14 @@ class ExternalMediaService {
       );
       results.tmdb = tmdbResponse.ok;
     } catch (error) {
-      console.warn("TMDb API não disponível:", error);
+      logger.warn("TMDb API não disponível:", error);
     }
 
     try {
       // Testar RAWG API
       results.rawg = await rawgService.checkApiAvailability();
     } catch (error) {
-      console.warn("RAWG API não disponível:", error);
+      logger.warn("RAWG API não disponível:", error);
     }
 
     return results;

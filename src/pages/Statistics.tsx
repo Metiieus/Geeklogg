@@ -1,5 +1,7 @@
 import React from "react";
+import { logger } from '../utils/logger';
 import {
+import { logger } from '../utils/logger';
   BarChart3,
   Clock,
   Star,
@@ -12,8 +14,11 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { logger } from '../utils/logger';
 import { useMedias, useReviews } from "../hooks/queries";
+import { logger } from '../utils/logger';
 import { MediaType } from "../types";
+import { logger } from '../utils/logger';
 
 const mediaTypeIcons: Record<string, any> = {
   game: Gamepad2,
@@ -72,7 +77,7 @@ const Statistics: React.FC = () => {
 
       if (!stats[type]) {
         // Fallback se type não estiver no map (e.g. legacy data)
-        // console.warn(`Tipo não mapeado: ${type}`);
+        // logger.warn(`Tipo não mapeado: ${type}`);
         return;
       }
 

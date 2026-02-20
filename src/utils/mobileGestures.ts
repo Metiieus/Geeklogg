@@ -101,7 +101,7 @@ export async function triggerHapticFeedback(
       return;
     }
   } catch (error) {
-    console.warn("Capacitor haptics não disponível:", error);
+    logger.warn("Capacitor haptics não disponível:", error);
   }
 
   // Fallback para vibração web

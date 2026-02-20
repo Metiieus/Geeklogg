@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { logger } from '../utils/logger';
 
 /**
  * Componente para aplicar otimizações globais de performance
@@ -44,10 +45,10 @@ const PerformanceOptimizer: React.FC = () => {
       navigator.serviceWorker
         .register("/sw.js")
         .then((registration) => {
-          console.log("🔧 Service Worker registrado:", registration.scope);
+          logger.log("🔧 Service Worker registrado:", registration.scope);
         })
         .catch((error) => {
-          console.log("❌ Falha ao registrar Service Worker:", error);
+          logger.log("❌ Falha ao registrar Service Worker:", error);
         });
     }
 
@@ -115,7 +116,7 @@ const PerformanceOptimizer: React.FC = () => {
         entries.forEach((entry) => {
           if (entry.duration > 100) {
             // Log apenas operações lentas
-            console.warn(
+            logger.warn(
               `⚠️ Performance: ${entry.name} demorou ${entry.duration}ms`,
             );
           }

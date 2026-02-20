@@ -1,10 +1,17 @@
 import React, { useState } from "react";
+import { logger } from '../../utils/logger';
 import { Save, X, Upload, AlertCircle, User } from "lucide-react";
+import { logger } from '../../utils/logger';
 import { UserSettings } from "../../types";
+import { logger } from '../../utils/logger';
 import { useToast } from "../../context/ToastContext";
+import { logger } from '../../utils/logger';
 import { validateFile, compressImage } from "../../utils/fileValidation";
+import { logger } from '../../utils/logger';
 import { sanitizeText, sanitizeBioText } from "../../utils/sanitizer";
+import { logger } from '../../utils/logger';
 import { ModalWrapper } from "../ModalWrapper";
+import { logger } from '../../utils/logger';
 
 interface EditProfileData {
   name: string;
@@ -75,7 +82,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     }
 
     try {
-      console.log("💾 Salvando perfil no modal:", local);
+      logger.log("💾 Salvando perfil no modal:", local);
       onSave({
         name: local.name.trim(),
         bio: local.bio.trim(),

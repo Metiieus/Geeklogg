@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { logger } from '../utils/logger';
 
 interface UseOptimizedAvatarProps {
   avatarUrl?: string;
@@ -56,7 +57,7 @@ export const useOptimizedAvatar = ({
       setDisplayAvatar(null);
       setIsLoading(false);
       setHasError(true);
-      console.warn(`Falha ao carregar avatar: ${avatarUrl}`);
+      logger.warn(`Falha ao carregar avatar: ${avatarUrl}`);
     };
 
     img.onload = handleLoad;

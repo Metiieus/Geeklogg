@@ -1,5 +1,7 @@
 import { db, auth, isFirebaseOffline, withRetry } from "../firebase";
+import { logger } from '../utils/logger';
 import { database } from "../services/database";
+import { logger } from '../utils/logger';
 
 export interface ConnectivityTestResult {
   networkStatus: boolean;
@@ -41,7 +43,7 @@ export const runConnectivityTest =
           databaseStatus = true;
         }
       } catch (error: any) {
-        console.warn("Database connectivity test failed:", error.message);
+        logger.warn("Database connectivity test failed:", error.message);
         databaseStatus = false;
       }
 
@@ -69,17 +71,17 @@ export const logConnectivityStatus = async () => {
 
   const result = await runConnectivityTest();
 
-  console.log("📊 Test Results:");
-  console.log(
+  logger.log("📊 Test Results:");
+  logger.log(
     `  🌐 Network: ${result.networkStatus ? "✅ Online" : "❌ Offline"}`,
   );
-  console.log(
+  logger.log(
     `  🔥 Firebase: ${result.firebaseStatus ? "✅ Connected" : "❌ Disconnected"}`,
   );
-  console.log(
+  logger.log(
     `  🔐 Auth: ${result.authStatus ? "✅ Available" : "❌ Unavailable"}`,
   );
-  console.log(
+  logger.log(
     `  💾 Database: ${result.databaseStatus ? "✅ Accessible" : "❌ Inaccessible"}`,
   );
 
@@ -87,7 +89,7 @@ export const logConnectivityStatus = async () => {
     console.error("❌ Error:", result.error);
   }
 
-  console.log(`⏰ Timestamp: ${result.timestamp}`);
+  logger.log(`⏰ Timestamp: ${result.timestamp}`);
   console.groupEnd();
 
   return result;

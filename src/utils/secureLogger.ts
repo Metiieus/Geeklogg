@@ -10,7 +10,7 @@ export const secureLog = {
    */
   dev: (...args: any[]) => {
     if (isDevelopment) {
-      console.log(...args);
+      logger.log(...args);
     }
   },
 
@@ -18,7 +18,7 @@ export const secureLog = {
    * Log de informações gerais (sempre exibido, mas sem dados sensíveis)
    */
   info: (message: string, safeData?: any) => {
-    console.log(message, safeData);
+    logger.log(message, safeData);
   },
 
   /**
@@ -40,7 +40,7 @@ export const secureLog = {
    * Log de warning seguro
    */
   warn: (message: string, safeData?: any) => {
-    console.warn(message, safeData);
+    logger.warn(message, safeData);
   },
 
   /**
@@ -48,9 +48,9 @@ export const secureLog = {
    */
   userAction: (action: string, userId?: string, extraData?: any) => {
     if (isDevelopment) {
-      console.log(`👤 ${action}:`, { userId, ...extraData });
+      logger.log(`👤 ${action}:`, { userId, ...extraData });
     } else {
-      console.log(`👤 ${action} - UID: ${userId || "anonymous"}`);
+      logger.log(`👤 ${action} - UID: ${userId || "anonymous"}`);
     }
   },
 
@@ -59,7 +59,7 @@ export const secureLog = {
    */
   api: (endpoint: string, method: string, success: boolean) => {
     const status = success ? "✅" : "❌";
-    console.log(`${status} API ${method.toUpperCase()} ${endpoint}`);
+    logger.log(`${status} API ${method.toUpperCase()} ${endpoint}`);
   },
 };
 

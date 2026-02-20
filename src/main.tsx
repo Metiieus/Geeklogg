@@ -1,20 +1,31 @@
 import { StrictMode } from "react";
+import { logger } from 'utils/logger';
 import { createRoot } from "react-dom/client";
+import { logger } from 'utils/logger';
 import { BrowserRouter } from "react-router-dom";
+import { logger } from 'utils/logger';
 import App from "./App";
+import { logger } from 'utils/logger';
 import { I18nProvider } from "./i18n";
+import { logger } from 'utils/logger';
 import "./styles/merged.css";
+import { logger } from 'utils/logger';
 import "./utils/viewportHeight";
+import { logger } from 'utils/logger';
 
 // Context Providers
 import { AuthProvider } from "./context/AuthContext";
+import { logger } from 'utils/logger';
 import { ToastProvider } from "./context/ToastContext";
+import { logger } from 'utils/logger';
 import { QueryClientProvider } from "@tanstack/react-query";
+import { logger } from 'utils/logger';
 import { queryClient } from "./config/queryClient";
+import { logger } from 'utils/logger';
 
 // Analytics & Performance (now imported via `src/styles/merged.css`)
 
-console.log("🚀 GeekLog inicializando...");
+logger.log("🚀 GeekLog inicializando...");
 
 // Error handling para carregamento inicial
 const handleInitError = (error: Error) => {
@@ -66,7 +77,7 @@ if (!rootElement) {
   handleInitError(new Error("Root element não encontrado"));
 } else {
   try {
-    console.log("✅ Root element encontrado");
+    logger.log("✅ Root element encontrado");
 
     const root = createRoot(rootElement);
 
@@ -86,13 +97,13 @@ if (!rootElement) {
       </StrictMode>,
     );
 
-    console.log("✅ GeekLog renderizado com sucesso!");
-    console.log("🎉 Bem-vindo à sua jornada nerd!");
+    logger.log("✅ GeekLog renderizado com sucesso!");
+    logger.log("🎉 Bem-vindo à sua jornada nerd!");
 
     // Log de informações do ambiente
     if (import.meta.env.DEV) {
-      console.log("🔧 Modo de desenvolvimento ativo");
-      console.log("📊 Informações do ambiente:", {
+      logger.log("🔧 Modo de desenvolvimento ativo");
+      logger.log("📊 Informações do ambiente:", {
         node: import.meta.env.NODE_ENV,
         dev: import.meta.env.DEV,
         prod: import.meta.env.PROD,
@@ -122,7 +133,7 @@ window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => 
         message.includes("Failed to fetch") ||
         message.includes("NetworkError when attempting to fetch resource")
       ) {
-        console.warn("Suppressed known noisy unhandled rejection:", message);
+        logger.warn("Suppressed known noisy unhandled rejection:", message);
         event.preventDefault();
         return;
       }
@@ -139,7 +150,7 @@ if (import.meta.env.DEV) {
   // Log de performance do carregamento inicial
   window.addEventListener("load", () => {
     const loadTime = performance.now();
-    console.log(`⚡ Aplicação carregada em ${loadTime.toFixed(2)}ms`);
+    logger.log(`⚡ Aplicação carregada em ${loadTime.toFixed(2)}ms`);
   });
 
   // Observer de recursos carregados
@@ -147,7 +158,7 @@ if (import.meta.env.DEV) {
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         if (entry.entryType === "navigation") {
-          console.log("📊 Navegação:", {
+          logger.log("📊 Navegação:", {
             duration: `${entry.duration.toFixed(2)}ms`,
             type: (entry as PerformanceNavigationTiming).type,
           });
@@ -158,7 +169,7 @@ if (import.meta.env.DEV) {
     try {
       observer.observe({ entryTypes: ["navigation"] });
     } catch (e) {
-      console.warn("⚠️ Performance Observer não suportado:", e);
+      logger.warn("⚠️ Performance Observer não suportado:", e);
     }
   }
 }
@@ -169,10 +180,10 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
     navigator.serviceWorker
       .register("/sw.js")
       .then((registration) => {
-        console.log("✅ Service Worker registrado:", registration);
+        logger.log("✅ Service Worker registrado:", registration);
       })
       .catch((error) => {
-        console.log("❌ Service Worker falhou:", error);
+        logger.log("❌ Service Worker falhou:", error);
       });
   });
 }

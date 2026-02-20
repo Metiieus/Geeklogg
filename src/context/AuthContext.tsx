@@ -1,7 +1,10 @@
 // src/context/AuthContext.tsx
 import type { ReactNode } from "react";
+import { logger } from '../utils/logger';
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { logger } from '../utils/logger';
 import {
+import { logger } from '../utils/logger';
   User,
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -11,9 +14,12 @@ import {
   deleteUser,
 } from "firebase/auth";
 import { auth, db } from "../firebase"; // ✅ usa o auth e db exportados do firebase.ts
+import { logger } from '../utils/logger';
 import { doc, getDoc } from "firebase/firestore";
+import { logger } from '../utils/logger';
 
 import { UserProfile } from "../types";
+import { logger } from '../utils/logger';
 
 interface AuthContextType {
   user: User | null;
@@ -43,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!auth) {
-      console.warn("⚠️ Firebase auth não inicializado");
+      logger.warn("⚠️ Firebase auth não inicializado");
       setLoading(false);
       return;
     }
@@ -60,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             if (userDocSnap.exists()) {
               const userData = userDocSnap.data();
-              console.log("✅ Dados do usuário carregados do Firestore:", userData);
+              logger.log("✅ Dados do usuário carregados do Firestore:", userData);
 
               setProfile({
                 uid: user.uid,
@@ -72,7 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 profileImage: userData.avatar || userData.profileImage || "",
               });
             } else {
-              console.warn("⚠️ Documento do usuário não encontrado no Firestore");
+              logger.warn("⚠️ Documento do usuário não encontrado no Firestore");
               // Fallback para dados básicos do Firebase Auth
               setProfile({
                 uid: user.uid,
@@ -85,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               });
             }
           } else {
-            console.warn("⚠️ Firestore não inicializado");
+            logger.warn("⚠️ Firestore não inicializado");
             // Fallback para dados básicos do Firebase Auth
             setProfile({
               uid: user.uid,
