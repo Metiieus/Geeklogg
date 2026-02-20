@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Crown, Sparkles, Check, Zap, Star, Brain } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { redirectToCheckout } from '../../services/stripeService';
+import { redirectToCheckout } from '../../services/checkoutService';
 
 interface UpgradeToPremiumModalProps {
   onClose: () => void;
@@ -24,7 +24,7 @@ export const UpgradeToPremiumModal: React.FC<UpgradeToPremiumModalProps> = ({
     setError(null);
 
     try {
-      // Redirecionar para checkout do Stripe
+      // Redirecionar para checkout do Mercado Pago
       await redirectToCheckout(user.uid, profile.email);
     } catch (err) {
       console.error('❌ Erro ao iniciar checkout:', err);

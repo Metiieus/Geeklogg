@@ -32,7 +32,7 @@ import { formatDate, normalizeTimestamp } from "../utils/dateUtils";
 import { ConditionalPremiumBadge } from "../components/PremiumBadge";
 import { SubscriptionBadge } from "../components/SubscriptionBadge";
 import { UpgradeToPremiumModal } from "../components/modals/UpgradeToPremiumModal";
-import { redirectToCustomerPortal } from "../services/stripeService";
+// Stripe removido - usando Mercado Pago
 import { useSettings, useUpdateSettings } from "../hooks/queries";
 import { UserSettings } from "../types";
 
@@ -342,13 +342,8 @@ const Profile: React.FC = () => {
                   </div>
                   <button
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg text-sm transition-colors"
-                    onClick={async () => {
-                      if (!user?.uid) return;
-                      try {
-                        await redirectToCustomerPortal(user.uid);
-                      } catch (error) {
-                        showSuccess("Erro ao abrir portal de gerenciamento. Tente novamente.");
-                      }
+                    onClick={() => {
+                      showSuccess("Gerenciamento de assinatura em breve!");
                     }}
                   >
                     Gerenciar
