@@ -1,5 +1,5 @@
 // Simple localStorage-based service for offline development fallback
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 
 export const localStorageService = {
   // Get collection from localStorage
@@ -9,7 +9,7 @@ export const localStorageService = {
       const data = localStorage.getItem(`firebase_${key}`);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      devLog.warn("localStorage getCollection error:", error);
+      logger.warn("localStorage getCollection error:", error);
       return [];
     }
   },
@@ -32,7 +32,7 @@ export const localStorageService = {
 
       return { exists: () => false, data: () => null };
     } catch (error) {
-      devLog.warn("localStorage getDocument error:", error);
+      logger.warn("localStorage getDocument error:", error);
       return { exists: () => false, data: () => null };
     }
   },
@@ -61,7 +61,7 @@ export const localStorageService = {
 
       return id;
     } catch (error) {
-      devLog.warn("localStorage addDocument error:", error);
+      logger.warn("localStorage addDocument error:", error);
       return Date.now().toString();
     }
   },
@@ -84,7 +84,7 @@ export const localStorageService = {
         );
       }
     } catch (error) {
-      devLog.warn("localStorage updateDocument error:", error);
+      logger.warn("localStorage updateDocument error:", error);
     }
   },
 
@@ -99,7 +99,7 @@ export const localStorageService = {
       const docKey = `${key}/${docId}`;
       localStorage.removeItem(`firebase_${docKey}`);
     } catch (error) {
-      devLog.warn("localStorage removeItem error:", error);
+      logger.warn("localStorage removeItem error:", error);
     }
   },
 
@@ -113,11 +113,11 @@ export const localStorageService = {
 
   enableOfflineMode: (): void => {
     localStorage.setItem("firebase_offline_mode", "true");
-    devLog.log("📴 Offline mode enabled");
+    logger.log("📴 Offline mode enabled");
   },
 
   disableOfflineMode: (): void => {
     localStorage.removeItem("firebase_offline_mode");
-    devLog.log("🌐 Offline mode disabled");
+    logger.log("🌐 Offline mode disabled");
   },
 };

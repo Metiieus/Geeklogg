@@ -1,5 +1,5 @@
 import type { Review } from "../types";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import {
   getUserId,
   removeUndefinedFields,
@@ -16,7 +16,7 @@ import { storageClient } from "./storageClient";
 export async function getReviews(userId?: string): Promise<Review[]> {
   const uid = userId || getUserId();
   if (!uid) {
-    devLog.warn("User not authenticated, returning empty reviews list");
+    logger.warn("User not authenticated, returning empty reviews list");
     return [];
   }
 
@@ -51,7 +51,7 @@ export async function addReview(data: AddReviewData): Promise<Review> {
 
   // 1️⃣ Adiciona o doc
   const docRef = await database.add(["users", uid, "reviews"], toSave);
-  devLog.log("📝 Review criada com ID:", docRef.id);
+  logger.log("📝 Review criada com ID:", docRef.id);
 
   // 2️⃣ Upload opcional da imagem
   if (imageFile instanceof File) {
@@ -64,9 +64,9 @@ export async function addReview(data: AddReviewData): Promise<Review> {
         image: imageUrl,
       });
       (toSave as Review).image = imageUrl;
-      devLog.log("✅ Imagem da review enviada");
+      logger.log("✅ Imagem da review enviada");
     } catch (err) {
-      devLog.error("Erro ao enviar imagem da review", err);
+      logger.error("Erro ao enviar imagem da review", err);
     }
   }
 
@@ -100,16 +100,16 @@ export async function updateReview(
 
   // 1️⃣ Atualiza campos de texto
   await database.set(["users", uid, "reviews"], id, toUpdate, { merge: true });
-  devLog.log("📝 Review atualizada:", id);
+  logger.log("📝 Review atualizada:", id);
 
   // 2️⃣ Nova imagem? Faz upload e salva URL
   if (imageFile instanceof File) {
     try {
       const url = await storageClient.upload(`reviews/${id}`, imageFile);
       await database.update(["users", uid, "reviews"], id, { image: url });
-      devLog.log("✅ Imagem da review atualizada");
+      logger.log("✅ Imagem da review atualizada");
     } catch (err) {
-      devLog.error("Erro ao atualizar imagem da review", err);
+      logger.error("Erro ao atualizar imagem da review", err);
     }
   }
 }
@@ -125,12 +125,12 @@ export async function deleteReview(id: string): Promise<void> {
 
   // 1️⃣ Remove documento
   await database.delete(["users", uid, "reviews"], id);
-  devLog.log("🗑️ Review removida:", id);
+  logger.log("🗑️ Review removida:", id);
 
   // 2️⃣ Remove imagem
   try {
     await storageClient.remove(`reviews/${id}`);
   } catch (error) {
-    devLog.warn("Falha ao remover imagem da review", error);
+    logger.warn("Falha ao remover imagem da review", error);
   }
 }

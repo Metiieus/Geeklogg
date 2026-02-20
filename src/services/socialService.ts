@@ -1,5 +1,5 @@
 // src/services/socialService.ts
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import { database } from "./database";
 import {
   getUserId,
@@ -54,7 +54,7 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
   if (query.trim().length < 2) return [];
 
   try {
-    devLog.log("📋 Tentando buscar usuários no banco...");
+    logger.log("📋 Tentando buscar usuários no banco...");
     const usersRaw = await database.getCollection<any>(["users"]);
     if (usersRaw.length === 0) return getMockUsers(query);
 
@@ -90,7 +90,7 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
 
     return filtered.length ? filtered : getMockUsers(query);
   } catch (err) {
-    devLog.error("❌ Erro na busca, usando mock:", err);
+    logger.error("❌ Erro na busca, usando mock:", err);
     return getMockUsers(query);
   }
 }
@@ -124,7 +124,7 @@ export async function getUserProfile(
       reviewsCount: data.reviewsCount || 0,
     };
   } catch (err) {
-    devLog.error("Erro ao buscar perfil:", err);
+    logger.error("Erro ao buscar perfil:", err);
     return null;
   }
 }
@@ -303,5 +303,5 @@ export async function getPendingFollowRequests(
 export async function markAllNotificationsAsRead(): Promise<void> {
   const uid = getUserId();
   ensureValidId(uid, "markAllNotificationsAsRead: UID inválido");
-  devLog.log("📖 (implementação futura) marcar todas como lidas para", uid);
+  logger.log("📖 (implementação futura) marcar todas como lidas para", uid);
 }

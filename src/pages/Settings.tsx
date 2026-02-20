@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import {
   Download,
   Upload,
@@ -61,11 +61,11 @@ const Settings: React.FC = () => {
 
   const handleSave = async () => {
     if (!user?.uid) {
-      devLog.error("Usuário não autenticado");
+      logger.error("Usuário não autenticado");
       return;
     }
 
-    devLog.log("💾 Salvando configurações:", localSettings);
+    logger.log("💾 Salvando configurações:", localSettings);
     try {
       await updateSettingsMutation.mutateAsync({
         userId: user.uid,

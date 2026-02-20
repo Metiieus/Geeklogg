@@ -1,5 +1,5 @@
 import { database } from "./database";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import { storageClient } from "./storageClient";
 import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
 
@@ -25,16 +25,16 @@ export interface Profile {
  * e gravando as URLs em Firestore.
  */
 export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
-  devLog.log("🔥 saveProfile iniciado:", data);
+  logger.log("🔥 saveProfile iniciado:", data);
 
   const uid = getUserId();
   if (!uid) throw new Error("Usuário não autenticado");
-  devLog.log("✅ UID obtido:", uid);
+  logger.log("✅ UID obtido:", uid);
 
   // Carrega os dados existentes do perfil
-  devLog.log("📖 Carregando perfil existente...");
+  logger.log("📖 Carregando perfil existente...");
   const existingProfile = await loadProfile();
-  devLog.log("📋 Perfil existente:", existingProfile);
+  logger.log("📋 Perfil existente:", existingProfile);
 
   // --------------------
   // 1. Upload de imagens
@@ -43,30 +43,30 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
   let coverUrl: string | undefined;
 
   if (data.avatarFile instanceof File) {
-    devLog.log("🖼️ Fazendo upload do avatar...");
+    logger.log("🖼️ Fazendo upload do avatar...");
     try {
       avatarUrl = await storageClient.upload(
         `users/${uid}/avatar.jpg`,
         data.avatarFile,
       );
-      devLog.log("✅ Avatar upload concluído:", avatarUrl);
+      logger.log("✅ Avatar upload concluído:", avatarUrl);
     } catch (err) {
-      devLog.warn(
+      logger.warn(
         "⚠️ Erro ao fazer upload do avatar (continuando sem avatar):",
         err,
       );
     }
   }
   if (data.coverFile instanceof File) {
-    devLog.log("🖼️ Fazendo upload da capa...");
+    logger.log("🖼️ Fazendo upload da capa...");
     try {
       coverUrl = await storageClient.upload(
         `users/${uid}/cover.jpg`,
         data.coverFile,
       );
-      devLog.log("✅ Capa upload concluído:", coverUrl);
+      logger.log("✅ Capa upload concluído:", coverUrl);
     } catch (err) {
-      devLog.warn(
+      logger.warn(
         "⚠️ Erro ao fazer upload da capa (continuando sem capa):",
         err,
       );
@@ -84,14 +84,14 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
     updatedAt: now,
   });
 
-  devLog.log("💾 Payload para salvar no Firestore:", payload);
-  devLog.log("📍 Caminho: users/" + uid);
+  logger.log("💾 Payload para salvar no Firestore:", payload);
+  logger.log("📍 Caminho: users/" + uid);
 
   try {
     await database.set(["users"], uid, payload, { merge: true });
-    devLog.log("✅ Firestore atualizado com sucesso!");
+    logger.log("✅ Firestore atualizado com sucesso!");
   } catch (error) {
-    devLog.error("❌ Erro ao salvar no Firestore:", error);
+    logger.error("❌ Erro ao salvar no Firestore:", error);
     throw error;
   }
 
@@ -104,7 +104,7 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
     updatedAt: now,
   };
 
-  devLog.log("🎉 saveProfile concluído, retornando:", result);
+  logger.log("🎉 saveProfile concluído, retornando:", result);
   return result;
 }
 
@@ -112,21 +112,21 @@ export async function saveProfile(data: SaveProfileInput): Promise<Profile> {
  * Carrega o perfil do usuário logado.
  */
 export async function loadProfile(): Promise<Profile | null> {
-  devLog.log("📖 loadProfile iniciado");
+  logger.log("📖 loadProfile iniciado");
 
   const uid = getUserId();
   if (!uid) {
-    devLog.log("❌ UID não encontrado no loadProfile");
+    logger.log("❌ UID não encontrado no loadProfile");
     return null;
   }
-  devLog.log("✅ UID para loadProfile:", uid);
+  logger.log("✅ UID para loadProfile:", uid);
 
   try {
     const doc = await database.get(["users"], uid);
-    devLog.log("📄 Documento carregado:", doc);
+    logger.log("📄 Documento carregado:", doc);
 
     if (!doc) {
-      devLog.log("❌ Documento não encontrado");
+      logger.log("❌ Documento não encontrado");
       return null;
     }
 
@@ -135,10 +135,10 @@ export async function loadProfile(): Promise<Profile | null> {
       ...doc,
     } as Profile;
 
-    devLog.log("✅ Perfil carregado:", profile);
+    logger.log("✅ Perfil carregado:", profile);
     return profile;
   } catch (error) {
-    devLog.error("❌ Erro ao carregar perfil:", error);
+    logger.error("❌ Erro ao carregar perfil:", error);
     return null;
   }
 }

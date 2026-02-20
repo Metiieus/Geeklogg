@@ -1,5 +1,5 @@
 import type { Milestone } from "../types";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import {
   getUserId,
   removeUndefinedFields,
@@ -19,7 +19,7 @@ import { storageClient } from "./storageClient";
 export async function getMilestones(userId?: string): Promise<Milestone[]> {
   const uid = userId || getUserId();
   if (!uid) {
-    devLog.warn("User not authenticated, returning empty milestones list");
+    logger.warn("User not authenticated, returning empty milestones list");
     return [];
   }
 
@@ -29,7 +29,7 @@ export async function getMilestones(userId?: string): Promise<Milestone[]> {
     "milestones",
   ]);
 
-  devLog.log("📥 Milestones carregadas:", docs.length);
+  logger.log("📥 Milestones carregadas:", docs.length);
   return docs;
 }
 
@@ -61,14 +61,14 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
 
   // 1️⃣ Adiciona o documento
   const docRef = await database.add(["users", uid, "milestones"], toSave);
-  devLog.log("📝 Marco criado com ID:", docRef.id);
+  logger.log("📝 Marco criado com ID:", docRef.id);
 
   let imageUrl = "";
 
   // 2️⃣ Faz upload da imagem (opcional) e atualiza o doc com o link
   if (imageFile instanceof File) {
     try {
-      devLog.log("🚀 Iniciando upload da imagem do marco...");
+      logger.log("🚀 Iniciando upload da imagem do marco...");
       imageUrl = await storageClient.upload(
         `milestones/${docRef.id}`,
         imageFile,
@@ -77,7 +77,7 @@ export async function addMilestone(data: AddMilestoneData): Promise<Milestone> {
         image: imageUrl,
       });
     } catch (err) {
-      devLog.error("❌ Erro ao enviar imagem do marco", err);
+      logger.error("❌ Erro ao enviar imagem do marco", err);
     }
   }
 
@@ -121,7 +121,7 @@ export async function updateMilestone(
       const url = await storageClient.upload(`milestones/${id}`, imageFile);
       await database.update(["users", uid, "milestones"], id, { image: url });
     } catch (err) {
-      devLog.error("❌ Erro ao atualizar imagem do marco", err);
+      logger.error("❌ Erro ao atualizar imagem do marco", err);
     }
   }
 }
@@ -149,6 +149,6 @@ export async function deleteMilestone(id: string): Promise<void> {
   try {
     await storageClient.remove(`milestones/${id}`);
   } catch (error) {
-    devLog.warn("Falha ao remover imagem do marco", error);
+    logger.warn("Falha ao remover imagem do marco", error);
   }
 }

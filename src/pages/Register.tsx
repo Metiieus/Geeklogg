@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import { auth, db, isFirebaseOffline } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -74,7 +74,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
         return;
       }
 
-      devLog.log("📝 Iniciando registro...");
+      logger.log("📝 Iniciando registro...");
 
       if (!auth || isFirebaseOffline()) {
         showError(
@@ -120,7 +120,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
       // Salvar no Firestore
       await setDoc(doc(db, "users", user.uid), userData);
 
-      devLog.log("✅ Conta criada com sucesso!");
+      logger.log("✅ Conta criada com sucesso!");
       showSuccess(
         t("auth.register.success_title"),
         `${t("auth.register.success_msg_prefix")}, ${formData.apelido}! 🎉`,
@@ -128,7 +128,7 @@ export const Register: React.FC<RegisterProps> = ({ onCancel, onLogin }) => {
 
 
     } catch (error: any) {
-      devLog.error("❌ Erro ao criar conta:", error);
+      logger.error("❌ Erro ao criar conta:", error);
 
       let errorMessage = t("auth.error.default");
 

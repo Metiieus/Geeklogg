@@ -1,5 +1,5 @@
 import { storage } from "../firebase";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import {
   ref,
   uploadBytes,
@@ -32,7 +32,7 @@ class StorageClient {
     try {
       return await uploadBytes(storageRef, file);
     } catch (e) {
-      devLog.error("Erro ao fazer upload:", e);
+      logger.error("Erro ao fazer upload:", e);
       throw e;
     }
   }
@@ -45,7 +45,7 @@ class StorageClient {
     try {
       return await getDownloadURL(storageRef);
     } catch (e) {
-      devLog.error("Erro ao obter URL:", e);
+      logger.error("Erro ao obter URL:", e);
       throw e;
     }
   }
@@ -60,11 +60,11 @@ class StorageClient {
     } catch (e: unknown) {
       // Se o arquivo não existe, consideramos como sucesso
       if (e && typeof e === 'object' && 'code' in e && e.code === "storage/object-not-found") {
-        devLog.log("ℹ️ Arquivo não encontrado (já foi deletado):", e);
+        logger.log("ℹ️ Arquivo não encontrado (já foi deletado):", e);
         return; // Não é erro, apenas ignora
       }
 
-      devLog.error("Erro ao deletar arquivo:", e);
+      logger.error("Erro ao deletar arquivo:", e);
       throw e;
     }
   }

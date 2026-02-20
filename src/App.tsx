@@ -1,4 +1,4 @@
-import { devLog } from "./utils/logger";
+import { logger } from "./utils/logger";
 import { AppRoutes } from "./routes/AppRoutes";
 import React, { useEffect } from "react";
 import { useAuth } from "./context/AuthContext";
@@ -40,7 +40,7 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    devLog.error("Error boundary caught an error:", error, errorInfo);
+    logger.error("Error boundary caught an error:", error, errorInfo);
   }
 
   render() {
@@ -66,7 +66,7 @@ const App: React.FC = () => {
         const reason = (event && (event.reason as any)) || null;
         const message = reason && (reason.message || String(reason)) ? (reason.message || String(reason)) : "";
         if (typeof message === "string" && message.includes("ReadableStreamDefaultReader constructor can only accept readable streams")) {
-          devLog.warn("Suppressed known Firestore ReadableStream error:", message);
+          logger.warn("Suppressed known Firestore ReadableStream error:", message);
           event.preventDefault();
           return;
         }

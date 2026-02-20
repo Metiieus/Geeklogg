@@ -1,5 +1,5 @@
 import { Capacitor } from "@capacitor/core";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { Keyboard, KeyboardStyle, KeyboardResize } from "@capacitor/keyboard";
@@ -17,13 +17,13 @@ class CapacitorService {
    */
   async initialize() {
     if (!this.isNative) {
-      devLog.log(
+      logger.log(
         "🌐 Executando no navegador - plugins Capacitor não disponíveis",
       );
       return;
     }
 
-    devLog.log("📱 Inicializando Capacitor para dispositivo móvel");
+    logger.log("📱 Inicializando Capacitor para dispositivo móvel");
 
     // Marcar o HTML com classes específicas para estilos mobile/Capacitor
     document.documentElement.classList.add("capacitor-app");
@@ -44,9 +44,9 @@ class CapacitorService {
       // Monitorar network
       await this.setupNetworkMonitoring();
 
-      devLog.log("✅ Capacitor inicializado com sucesso");
+      logger.log("✅ Capacitor inicializado com sucesso");
     } catch (error) {
-      devLog.warn("⚠️ Erro ao inicializar Capacitor:", error);
+      logger.warn("⚠️ Erro ao inicializar Capacitor:", error);
     }
   }
 
@@ -57,9 +57,9 @@ class CapacitorService {
     try {
       await StatusBar.setStyle({ style: Style.Dark });
       await StatusBar.setBackgroundColor({ color: "#1e293b" });
-      devLog.log("✅ StatusBar configurada");
+      logger.log("✅ StatusBar configurada");
     } catch (error) {
-      devLog.warn("⚠️ Erro ao configurar StatusBar:", error);
+      logger.warn("⚠️ Erro ao configurar StatusBar:", error);
     }
   }
 
@@ -70,9 +70,9 @@ class CapacitorService {
     try {
       await Keyboard.setStyle({ style: KeyboardStyle.Dark });
       await Keyboard.setResizeMode({ mode: KeyboardResize.Body });
-      devLog.log("✅ Keyboard configurado");
+      logger.log("✅ Keyboard configurado");
     } catch (error) {
-      devLog.warn("⚠️ Erro ao configurar Keyboard:", error);
+      logger.warn("⚠️ Erro ao configurar Keyboard:", error);
     }
   }
 
@@ -84,10 +84,10 @@ class CapacitorService {
       // Ocultar splash screen após inicialização
       setTimeout(async () => {
         await SplashScreen.hide();
-        devLog.log("✅ SplashScreen ocultada");
+        logger.log("✅ SplashScreen ocultada");
       }, 2000);
     } catch (error) {
-      devLog.warn("⚠️ Erro ao configurar SplashScreen:", error);
+      logger.warn("⚠️ Erro ao configurar SplashScreen:", error);
     }
   }
 
@@ -98,19 +98,19 @@ class CapacitorService {
     try {
       // Verificar status inicial
       const status = await Network.getStatus();
-      devLog.log("🌐 Status da rede:", status);
+      logger.log("🌐 Status da rede:", status);
 
       // Monitorar mudanças
       Network.addListener("networkStatusChange", (status) => {
-        devLog.log("🌐 Mudança na rede:", status);
+        logger.log("🌐 Mudança na rede:", status);
         if (!status.connected) {
           this.showOfflineNotification();
         }
       });
 
-      devLog.log("✅ Monitoramento de rede configurado");
+      logger.log("✅ Monitoramento de rede configurado");
     } catch (error) {
-      devLog.warn("⚠️ Erro ao configurar monitoramento de rede:", error);
+      logger.warn("⚠️ Erro ao configurar monitoramento de rede:", error);
     }
   }
 
@@ -130,7 +130,7 @@ class CapacitorService {
 
       await Haptics.impact({ style: impactStyle });
     } catch (error) {
-      devLog.warn("⚠️ Erro no feedback háptico:", error);
+      logger.warn("⚠️ Erro no feedback háptico:", error);
     }
   }
 
@@ -143,7 +143,7 @@ class CapacitorService {
     try {
       await Haptics.vibrate({ duration });
     } catch (error) {
-      devLog.warn("⚠️ Erro na vibração:", error);
+      logger.warn("⚠️ Erro na vibração:", error);
     }
   }
 
@@ -177,7 +177,7 @@ class CapacitorService {
     try {
       await StatusBar.hide();
     } catch (error) {
-      devLog.warn("⚠️ Erro ao ocultar StatusBar:", error);
+      logger.warn("⚠️ Erro ao ocultar StatusBar:", error);
     }
   }
 
@@ -190,7 +190,7 @@ class CapacitorService {
     try {
       await StatusBar.show();
     } catch (error) {
-      devLog.warn("⚠️ Erro ao mostrar StatusBar:", error);
+      logger.warn("⚠️ Erro ao mostrar StatusBar:", error);
     }
   }
 
@@ -199,7 +199,7 @@ class CapacitorService {
    */
   private showOfflineNotification() {
     // Este método pode ser integrado com o sistema de toast da aplicação
-    devLog.warn("⚠️ Dispositivo offline");
+    logger.warn("⚠️ Dispositivo offline");
   }
 
   /**
@@ -213,7 +213,7 @@ class CapacitorService {
     try {
       return await Network.getStatus();
     } catch (error) {
-      devLog.warn("⚠️ Erro ao obter status da rede:", error);
+      logger.warn("⚠️ Erro ao obter status da rede:", error);
       return { connected: true, connectionType: "unknown" };
     }
   }

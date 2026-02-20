@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import {
   Trophy,
   Crown,
@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
   }) => {
     if (!user?.uid) return;
 
-    devLog.log("💾 Salvando perfil:", data);
+    logger.log("💾 Salvando perfil:", data);
     const result = await saveProfileService(data);
     const updated = {
       ...settings,
@@ -101,11 +101,11 @@ const Profile: React.FC = () => {
 
   const saveFav = async (fav: typeof settings.favorites) => {
     if (!user?.uid) {
-      devLog.error("Usuário não autenticado");
+      logger.error("Usuário não autenticado");
       return;
     }
     const updated = { ...settings, favorites: fav };
-    devLog.log("💾 Salvando favoritos:", updated);
+    logger.log("💾 Salvando favoritos:", updated);
 
     await updateSettingsMutation.mutateAsync({ userId: user.uid, settings: updated });
     setSettings(updated);
@@ -132,7 +132,7 @@ const Profile: React.FC = () => {
         });
       setNotifications(normalizedNotifications);
     } catch (error) {
-      devLog.error("Erro ao carregar notificações:", error);
+      logger.error("Erro ao carregar notificações:", error);
       setNotifications([]);
     } finally {
       setLoadingNotifications(false);

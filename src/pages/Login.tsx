@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { devLog } from "../utils/logger";
+import { logger } from "../utils/logger";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogIn, User, Lock, Sparkles, X, Mail, ArrowLeft, Shield } from "lucide-react";
 import { Button } from "../components/ui/Button";
@@ -77,7 +77,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       setShowForgotPassword(false);
       setResetEmail("");
     } catch (error: any) {
-      devLog.error("Erro ao resetar senha:", error);
+      logger.error("Erro ao resetar senha:", error);
       const errorMessage = getErrorMessage(error);
       showError(t("auth.forgot.error_title"), errorMessage);
     } finally {
@@ -93,7 +93,7 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
       await login(email, password);
       showSuccess(t("auth.login.success_title"), t("auth.login.success_msg"));
     } catch (error: any) {
-      devLog.error("Erro no login:", error);
+      logger.error("Erro no login:", error);
       const errorMessage = getErrorMessage(error);
       showError("Erro no login", errorMessage);
     } finally {
