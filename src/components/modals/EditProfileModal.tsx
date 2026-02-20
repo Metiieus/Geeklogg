@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { logger } from '../utils/logger';
+import { logger } from '../../utils/logger';
 import { Save, X, Upload, AlertCircle, User } from "lucide-react";
 import { UserSettings } from "../../types";
 import { useToast } from "../../context/ToastContext";

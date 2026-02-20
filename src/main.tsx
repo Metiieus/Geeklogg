@@ -5,7 +5,7 @@ import App from "./App";
 import { I18nProvider } from "./i18n";
 import "./styles/merged.css";
 import "./utils/viewportHeight";
-import { logger } from "./utils/logger";
+import { logger } from './utils/logger';
 
 // Context Providers
 import { AuthProvider } from "./context/AuthContext";
