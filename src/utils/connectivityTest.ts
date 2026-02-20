@@ -1,7 +1,6 @@
 import { db, auth, isFirebaseOffline, withRetry } from "../firebase";
 import { logger } from '../utils/logger';
 import { database } from "../services/database";
-import { logger } from '../utils/logger';
 
 export interface ConnectivityTestResult {
   networkStatus: boolean;

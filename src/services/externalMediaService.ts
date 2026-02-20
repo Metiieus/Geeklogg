@@ -1,7 +1,6 @@
 import { MediaType } from "../types";
 import { logger } from '../utils/logger';
 import {
-import { logger } from '../utils/logger';
   rawgService,
   RAWGSearchResult,
 } from "../infrastructure/services/RAWGService";

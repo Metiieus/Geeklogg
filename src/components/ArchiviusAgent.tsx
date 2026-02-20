@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { logger } from '../utils/logger';
 import { motion, AnimatePresence } from "framer-motion";
-import { logger } from '../utils/logger';
 import {
-import { logger } from '../utils/logger';
   X,
   Send,
   Sparkles,
@@ -13,32 +11,21 @@ import { logger } from '../utils/logger';
   Crown,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { logger } from '../utils/logger';
 import { useToast } from "../context/ToastContext";
-import { logger } from '../utils/logger';
 import { useI18n } from "../i18n";
-import { logger } from '../utils/logger';
 import { ConditionalPremiumBadge } from "./PremiumBadge";
-import { logger } from '../utils/logger';
 import { UpgradeToPremiumModal } from "./modals/UpgradeToPremiumModal";
-import { logger } from '../utils/logger';
 import { openaiService } from "../services/openaiService";
-import { logger } from '../utils/logger';
 import { archiviusService } from "../services/archiviusService";
-import { logger } from '../utils/logger';
 import { useArchiviusWorker } from "../hooks/useArchiviusWorker";
-import { logger } from '../utils/logger';
 import { canUseArchivius, ARCHIVIUS_CONFIG } from "../config/archivius";
-import { logger } from '../utils/logger';
 import {
-import { logger } from '../utils/logger';
   useMedias,
   useReviews,
   useSettings,
   useMilestones
 } from "../hooks/queries";
 import { UserSettings } from "../types";
-import { logger } from '../utils/logger';
 
 // Constantes
 const ARCHIVIUS_AVATAR_URL = "https://cdn.builder.io/api/v1/image/assets%2Feb1c9410e9d14d94bbc865b98577c45c%2F8c1388df34ab45c29d2be300fe11111f?format=webp&width=800";

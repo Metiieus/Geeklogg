@@ -1,10 +1,8 @@
 // src/context/AuthContext.tsx
+import { logger } from '../utils/logger';
 import type { ReactNode } from "react";
-import { logger } from '../utils/logger';
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { logger } from '../utils/logger';
 import {
-import { logger } from '../utils/logger';
   User,
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -14,12 +12,9 @@ import { logger } from '../utils/logger';
   deleteUser,
 } from "firebase/auth";
 import { auth, db } from "../firebase"; // ✅ usa o auth e db exportados do firebase.ts
-import { logger } from '../utils/logger';
 import { doc, getDoc } from "firebase/firestore";
-import { logger } from '../utils/logger';
 
 import { UserProfile } from "../types";
-import { logger } from '../utils/logger';
 
 interface AuthContextType {
   user: User | null;

@@ -1,11 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { logger } from 'utils/logger';
+import { logger } from '../utils/logger';
 import { getAuth } from "firebase/auth";
-import { logger } from 'utils/logger';
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
-import { logger } from 'utils/logger';
 import { getStorage } from "firebase/storage";
-import { logger } from 'utils/logger';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

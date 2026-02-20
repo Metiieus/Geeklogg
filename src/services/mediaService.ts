@@ -1,13 +1,9 @@
 import type { MediaItem } from "../types";
 import { logger } from '../utils/logger';
 import { getUserId, removeUndefinedFields, sanitizeStrings } from "./utils";
-import { logger } from '../utils/logger';
 import { database } from "./database";
-import { logger } from '../utils/logger';
 import { storageClient } from "./storageClient";
-import { logger } from '../utils/logger';
 import secureLog from "../utils/secureLogger";
-import { logger } from '../utils/logger';
 
 // Interface para atualização de mídia (exceto ID, que é passado separado)
 export interface UpdateMediaData extends Partial<Omit<MediaItem, "id">> {

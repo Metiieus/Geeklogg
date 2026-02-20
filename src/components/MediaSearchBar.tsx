@@ -1,19 +1,14 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { logger } from '../utils/logger';
 import { Search, X, AlertCircle, Book, Film, Tv, Gamepad2 } from "lucide-react";
-import { logger } from '../utils/logger';
 import { MediaType } from "../types";
-import { logger } from '../utils/logger';
 import {
-import { logger } from '../utils/logger';
   externalMediaService,
   ExternalMediaResult,
 } from "../services/externalMediaService";
 import { useToast } from "../context/ToastContext";
-import { logger } from '../utils/logger';
 
 import { useI18n } from "../i18n";
-import { logger } from '../utils/logger';
 
 interface MediaSearchBarProps {
   selectedType: MediaType;

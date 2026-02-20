@@ -1,7 +1,6 @@
 import React from "react";
 import { logger } from '../utils/logger';
 import {
-import { logger } from '../utils/logger';
   BarChart3,
   Clock,
   Star,
@@ -14,11 +13,8 @@ import { logger } from '../utils/logger';
   Sparkles,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { logger } from '../utils/logger';
 import { useMedias, useReviews } from "../hooks/queries";
-import { logger } from '../utils/logger';
 import { MediaType } from "../types";
-import { logger } from '../utils/logger';
 
 const mediaTypeIcons: Record<string, any> = {
   game: Gamepad2,
