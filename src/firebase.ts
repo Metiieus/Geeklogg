@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { logger } from '../utils/logger';
+import { logger } from './utils/logger';
 import { getAuth } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
