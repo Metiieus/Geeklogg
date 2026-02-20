@@ -7,6 +7,7 @@ let isInitialized = false;
 
 /**
  * Define a variável CSS --vh com a altura real do viewport
+import { logger } from './logger';
  */
 function setViewportHeight() {
   const vh = window.innerHeight * 0.01;
