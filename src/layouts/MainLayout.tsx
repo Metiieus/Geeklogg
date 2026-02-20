@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
 import { DesktopHeader } from "../components/DesktopHeader";
 import { MobileSidebar } from "../components/MobileSidebar";
-import { StripeReturnHandler } from "../components/StripeReturnHandler";
+// Stripe removido
 
 import {
     Home,
@@ -84,7 +84,7 @@ export const MainLayout: React.FC = () => {
                 </div>
             </main>
 
-            <StripeReturnHandler />
+
         </div>
     );
 };
