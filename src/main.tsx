@@ -1,27 +1,17 @@
 import { StrictMode } from "react";
-import { logger } from 'utils/logger';
 import { createRoot } from "react-dom/client";
-import { logger } from 'utils/logger';
 import { BrowserRouter } from "react-router-dom";
-import { logger } from 'utils/logger';
 import App from "./App";
-import { logger } from 'utils/logger';
 import { I18nProvider } from "./i18n";
-import { logger } from 'utils/logger';
 import "./styles/merged.css";
-import { logger } from 'utils/logger';
 import "./utils/viewportHeight";
-import { logger } from 'utils/logger';
+import { logger } from "./utils/logger";
 
 // Context Providers
 import { AuthProvider } from "./context/AuthContext";
-import { logger } from 'utils/logger';
 import { ToastProvider } from "./context/ToastContext";
-import { logger } from 'utils/logger';
 import { QueryClientProvider } from "@tanstack/react-query";
-import { logger } from 'utils/logger';
 import { queryClient } from "./config/queryClient";
-import { logger } from 'utils/logger';
 
 // Analytics & Performance (now imported via `src/styles/merged.css`)
 
