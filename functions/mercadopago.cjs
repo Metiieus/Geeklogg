@@ -1,5 +1,9 @@
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const admin = require('firebase-admin');
+const { defineString } = require('firebase-functions/params');
+
+// Definir parâmetros de ambiente
+const mercadopagoAccessToken = defineString('MERCADOPAGO_ACCESS_TOKEN');
 
 // Inicializar Firebase Admin se ainda não foi
 if (!admin.apps.length) {
@@ -8,23 +12,19 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-// Configurar Mercado Pago
-// Usar token de teste se NODE_ENV for development, senão usar produção
-const accessToken = process.env.NODE_ENV === 'development' 
-  ? process.env.MERCADOPAGO_ACCESS_TOKEN_TEST 
-  : process.env.MERCADOPAGO_ACCESS_TOKEN;
-
-if (!accessToken) {
-  console.error('❌ MERCADOPAGO_ACCESS_TOKEN não configurado!');
-  throw new Error('Mercado Pago Access Token não encontrado');
+// Função para obter cliente do Mercado Pago
+function getMercadoPagoClient() {
+  const accessToken = mercadopagoAccessToken.value();
+  
+  if (!accessToken) {
+    console.error('❌ MERCADOPAGO_ACCESS_TOKEN não configurado!');
+    throw new Error('Mercado Pago Access Token não encontrado');
+  }
+  
+  return new MercadoPagoConfig({
+    accessToken: accessToken,
+  });
 }
-
-const client = new MercadoPagoConfig({
-  accessToken: accessToken,
-});
-
-const preferenceClient = new Preference(client);
-const paymentClient = new Payment(client);
 
 /**
  * Criar preferência de pagamento (assinatura mensal)
@@ -40,6 +40,10 @@ async function createPreference(req, res) {
     }
 
     console.log(`📝 Criando preferência para usuário: ${uid} (${email})`);
+
+    // Obter cliente do Mercado Pago
+    const client = getMercadoPagoClient();
+    const preferenceClient = new Preference(client);
 
     // Criar preferência de pagamento
     const preference = await preferenceClient.create({
@@ -175,6 +179,10 @@ async function handleWebhook(req, res) {
     if (type === 'payment') {
       const paymentId = data.id;
       console.log(`💳 Processando pagamento: ${paymentId}`);
+
+      // Obter cliente do Mercado Pago
+      const client = getMercadoPagoClient();
+      const paymentClient = new Payment(client);
 
       // Buscar informações do pagamento
       const payment = await paymentClient.get({ id: paymentId });
