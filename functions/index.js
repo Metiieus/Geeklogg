@@ -1,7 +1,7 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const express = require("express");
 const cors = require("cors");
-const stripeService = require("./stripe.cjs");
+const mercadopagoService = require("./mercadopago.cjs");
 
 const app = express();
 
@@ -41,10 +41,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-// Webhook do Stripe precisa do raw body
-app.post("/stripe-webhook", express.raw({ type: "application/json" }), (req, res) => {
-  req.rawBody = req.body;
-  stripeService.handleWebhook(req, res);
+// Webhook do Mercado Pago
+app.post("/mercadopago-webhook", (req, res) => {
+  mercadopagoService.handleWebhook(req, res);
 });
 
 // JSON parser para outras rotas
@@ -56,13 +55,16 @@ app.get("/health", (req, res) => {
   res.status(200).send("Backend Gen 2 está no ar! 🚀");
 });
 
-// --- ROTAS DO STRIPE ---
+// --- ROTAS DO MERCADO PAGO ---
 
-// Criar sessão de checkout do Stripe
-app.post("/stripe-create-checkout", stripeService.createCheckoutSession);
+// Criar preferência de pagamento
+app.post("/create-preference", mercadopagoService.createPreference);
 
-// Criar portal de gerenciamento de assinatura
-app.post("/stripe-customer-portal", stripeService.createCustomerPortal);
+// Atualizar usuário para Premium
+app.post("/update-premium", mercadopagoService.updateUserPremium);
+
+// Cancelar assinatura Premium
+app.post("/cancel-premium", mercadopagoService.cancelPremium);
 
 // --- EXPORTAÇÃO DA FUNÇÃO (Gen 2) ---
 exports.api = onRequest(

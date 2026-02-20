@@ -30,6 +30,9 @@ const CreateMediaPage = React.lazy(() => import("../pages/CreateMedia"));
 const UserProfileView = React.lazy(() => import("../pages/UserProfile").then(module => ({ default: module.UserProfileView })));
 const PrivacyPolicy = React.lazy(() => import("../components/PrivacyPolicy"));
 const AccountDeletion = React.lazy(() => import("../components/AccountDeletion"));
+const PremiumSuccess = React.lazy(() => import("../pages/PremiumSuccess"));
+const PremiumCancel = React.lazy(() => import("../pages/PremiumCancel"));
+const PremiumPending = React.lazy(() => import("../pages/PremiumPending"));
 
 // Types for Props if needed (none strictly required for now)
 interface AppRoutesProps {
@@ -89,6 +92,9 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
 
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/account-deletion" element={<AccountDeletion />} />
+                    <Route path="/premium-success" element={<PremiumSuccess />} />
+                    <Route path="/premium-cancel" element={<PremiumCancel />} />
+                    <Route path="/premium-pending" element={<PremiumPending />} />
 
                     <Route element={<MainLayout />}>
                         <Route path="/dashboard" element={<Dashboard />} />
