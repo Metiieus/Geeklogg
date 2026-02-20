@@ -85,6 +85,28 @@ export async function createPreference(): Promise<CheckoutResponse> {
 }
 
 /**
+ * Redireciona para o checkout do Mercado Pago.
+ * @param uid - ID do usuário
+ * @param email - Email do usuário
+ */
+export async function redirectToCheckout(uid: string, email: string): Promise<void> {
+  try {
+    const result = await createPreference();
+
+    if (result.success && result.init_point) {
+      window.location.href = result.init_point;
+    } else {
+      throw new Error(
+        result.error || "Não foi possível obter o link de pagamento.",
+      );
+    }
+  } catch (error) {
+    logger.error("Erro ao redirecionar para checkout:", error);
+    throw error;
+  }
+}
+
+/**
  * Orquestra o processo de checkout completo, redirecionando o usuário.
  */
 export async function handleCheckout(): Promise<void> {
