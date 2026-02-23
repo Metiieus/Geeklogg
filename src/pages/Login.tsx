@@ -141,9 +141,21 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-pink-500 mb-6 shadow-lg shadow-cyan-500/25"
+              className="mb-6"
             >
-              <Sparkles className="w-10 h-10 text-white" />
+              <img
+                src="/logo.png"
+                alt="GeekLogg"
+                className="w-24 h-24 mx-auto"
+                onError={(e) => {
+                  // Fallback para ícone se logo não carregar
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <div className="hidden inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-pink-500 shadow-lg shadow-cyan-500/25 mx-auto">
+                <Sparkles className="w-10 h-10 text-white" />
+              </div>
             </motion.div>
 
             <h1 className="text-3xl font-bold mb-2">

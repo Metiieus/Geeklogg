@@ -1,7 +1,6 @@
 
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import { Users } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { MainLayout } from "../layouts/MainLayout";
@@ -64,14 +63,12 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
 
     if (!user) {
         return (
-            <AnimatePresence mode="wait">
-                <Routes location={location} key={location.pathname}>
-                    <Route path="/landing" element={<LandingPage onLogin={() => navigate("/login")} onRegister={() => navigate("/register")} />} />
-                    <Route path="/login" element={<Login onCancel={() => navigate("/landing")} onRegister={() => navigate("/register")} />} />
-                    <Route path="/register" element={<Register onCancel={() => navigate("/landing")} onLogin={() => navigate("/login")} />} />
-                    <Route path="*" element={<Navigate to="/landing" />} />
-                </Routes>
-            </AnimatePresence>
+            <Routes>
+                <Route path="/landing" element={<LandingPage onLogin={() => navigate("/login")} onRegister={() => navigate("/register")} />} />
+                <Route path="/login" element={<Login onCancel={() => navigate("/landing")} onRegister={() => navigate("/register")} />} />
+                <Route path="/register" element={<Register onCancel={() => navigate("/landing")} onLogin={() => navigate("/login")} />} />
+                <Route path="*" element={<Navigate to="/landing" />} />
+            </Routes>
         );
     }
 
@@ -84,7 +81,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = () => {
                 </div>
             </div>
         }>
-            <Routes location={location}>
+            <Routes>
                     {/* Auth Routes redirection for logged in users */}
                     <Route path="/landing" element={<Navigate to="/dashboard" />} />
                     <Route path="/login" element={<Navigate to="/dashboard" />} />
