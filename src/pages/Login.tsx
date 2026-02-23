@@ -144,9 +144,9 @@ export const Login: React.FC<LoginProps> = ({ onCancel, onRegister }) => {
               className="mb-6"
             >
               <img
-                src="/logo.png"
+                src="/assets/logo.png"
                 alt="GeekLogg"
-                className="w-24 h-24 mx-auto"
+                className="w-24 h-24 mx-auto object-contain"
                 onError={(e) => {
                   // Fallback para ícone se logo não carregar
                   e.currentTarget.style.display = 'none';
