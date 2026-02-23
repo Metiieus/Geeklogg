@@ -1,3 +1,4 @@
+import { logger } from '../utils/logger';
 /**
  * Sistema de logging seguro - evita exposição de dados sensíveis em produção
  */

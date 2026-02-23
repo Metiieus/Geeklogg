@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 // RAWG API Service for Game Search
 export interface RAWGGame {
   id: number;

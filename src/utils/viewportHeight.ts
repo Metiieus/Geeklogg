@@ -1,3 +1,4 @@
+import { logger } from '../utils/logger';
 /**
  * Utilitário para definir altura correta do viewport em dispositivos móveis
  * Resolve o problema do 100vh em mobile onde a barra de endereço altera a altura

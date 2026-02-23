@@ -1,3 +1,4 @@
+import { logger } from '../utils/logger';
 /**
  * Utilitários para melhorar gestos e interações em mobile
  */
